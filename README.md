@@ -2,7 +2,7 @@
 
 Reusable AI assets for Claude Code, Codex, and Windsurf.
 
-This repository is organized as copy-ready runtime folders. You can either copy `.claude`, `.agents`, `.codex`, and `.windsurf` manually into a target project, or use the installer scripts to sync the global Claude/Codex packages into your user home directory.
+This repository is organized as copy-ready runtime folders. You can either copy `.claude`, `.agents`, `.codex`, and `.windsurf` manually into a target project, or use the installer scripts to sync the global packages into your user home directory.
 
 ## Structure
 
@@ -36,10 +36,9 @@ By default the scripts sync:
 - `.claude` -> `~/.claude`
 - `.agents` -> `~/.agents`
 - `.codex` -> `~/.codex`
+- `.windsurf` -> `~/.windsurf`
 
 Both scripts also remove stale files inside those target directories so the global package stays aligned with the repository contents.
-
-`.windsurf` is intentionally not part of the global installer because this package is organized around workspace-scoped Windsurf assets (`rules/`, `skills/`, `workflows/`, `hooks.json`) that are meant to live in a project root.
 
 ## Project Install
 

@@ -14,7 +14,8 @@ $HomeDir = [System.IO.Path]::GetFullPath($HomeDir)
 $Mappings = @(
     @{ Source = ".claude"; Target = Join-Path $HomeDir ".claude" },
     @{ Source = ".agents"; Target = Join-Path $HomeDir ".agents" },
-    @{ Source = ".codex"; Target = Join-Path $HomeDir ".codex" }
+    @{ Source = ".codex"; Target = Join-Path $HomeDir ".codex" },
+    @{ Source = ".windsurf"; Target = Join-Path $HomeDir ".windsurf" }
 )
 
 function Sync-Directory {

@@ -48,4 +48,7 @@ echo "[ok] .agents -> $HOME_DIR/.agents"
 sync_dir "$SCRIPT_DIR/.codex" "$HOME_DIR/.codex"
 echo "[ok] .codex -> $HOME_DIR/.codex"
 
+sync_dir "$SCRIPT_DIR/.windsurf" "$HOME_DIR/.windsurf"
+echo "[ok] .windsurf -> $HOME_DIR/.windsurf"
+
 echo "Done."
