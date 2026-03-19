@@ -39,6 +39,7 @@ By default the scripts sync:
 - `.windsurf` -> `~/.windsurf`
 
 Both scripts also remove stale files inside those target directories so the global package stays aligned with the repository contents.
+For Claude, the installer also rewrites global hook commands in `~/.claude/settings.json` to point at Python scripts inside `~/.claude/hooks/scripts`, so hooks do not depend on a project-local `.claude/` folder.
 
 ## Project Install
 
