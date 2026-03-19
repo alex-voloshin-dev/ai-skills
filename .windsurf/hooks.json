@@ -1,0 +1,53 @@
+{
+  "hooks": {
+    "pre_write_code": [
+      {
+        "command": "python3 .windsurf/hooks/scripts/block-secrets-in-code.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Scan edits for hardcoded secrets (API keys, tokens, passwords, private keys)"
+      }
+    ],
+    "pre_run_command": [
+      {
+        "command": "python3 .windsurf/hooks/scripts/block-dangerous-commands.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Block destructive commands (rm -rf, DROP DATABASE, terraform destroy, etc.)"
+      }
+    ],
+    "pre_read_code": [
+      {
+        "command": "python3 .windsurf/hooks/scripts/block-sensitive-files.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Prevent reading .env, private keys, credentials, and other sensitive files"
+      }
+    ],
+    "post_write_code": [
+      {
+        "command": "python3 .windsurf/hooks/scripts/log-actions.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Log file write actions to audit log"
+      }
+    ],
+    "post_run_command": [
+      {
+        "command": "python3 .windsurf/hooks/scripts/log-actions.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Log command executions to audit log"
+      }
+    ],
+    "post_read_code": [
+      {
+        "command": "python3 .windsurf/hooks/scripts/log-actions.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Log file read actions to audit log"
+      }
+    ],
+    "post_mcp_tool_use": [
+      {
+        "command": "python3 .windsurf/hooks/scripts/log-actions.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Log MCP tool invocations to audit log"
+      }
+    ]
+  }
+}

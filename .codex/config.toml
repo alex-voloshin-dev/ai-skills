@@ -1,0 +1,21 @@
+version = 1
+name = "codex-assets"
+description = "Copy-ready Codex runtime package stored in the shared ai-assets repository."
+
+[paths]
+instructions = "instructions.md"
+skills = "../.agents/skills"
+roles = "roles"
+rules = "rules"
+operations = "operations"
+templates = "templates"
+checklists = "checklists"
+
+[parity]
+semantic_match_with = "../.claude"
+require_role_match = true
+require_skill_match = true
+
+[policy]
+contains_install_logic = false
+copy_ready_runtime = true

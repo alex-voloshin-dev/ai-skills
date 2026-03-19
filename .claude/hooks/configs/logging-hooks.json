@@ -1,0 +1,32 @@
+{
+  "hooks": {
+    "post_write_code": [
+      {
+        "command": "python3 .claude/hooks/scripts/log-actions.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Log file write actions to audit log"
+      }
+    ],
+    "post_run_command": [
+      {
+        "command": "python3 .claude/hooks/scripts/log-actions.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Log command executions to audit log"
+      }
+    ],
+    "post_read_code": [
+      {
+        "command": "python3 .claude/hooks/scripts/log-actions.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Log file read actions to audit log"
+      }
+    ],
+    "post_mcp_tool_use": [
+      {
+        "command": "python3 .claude/hooks/scripts/log-actions.py",
+        "working_directory": "${workspaceFolder}",
+        "description": "Log MCP tool invocations to audit log"
+      }
+    ]
+  }
+}
