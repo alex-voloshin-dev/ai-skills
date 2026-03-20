@@ -119,10 +119,21 @@ Every piece of content must pass these gates before publication:
 - [ ] License compliance for stock assets
 - [ ] No dark patterns in copy
 
+### Gate 7: Humanization (mandatory)
+- [ ] Text scanned for AI writing patterns using `@humanizer` skill
+- [ ] No AI vocabulary words (delve, foster, landscape, tapestry, underscore, vibrant, pivotal)
+- [ ] No promotional inflation (nestled, groundbreaking, stunning, renowned)
+- [ ] No chatbot artifacts or sycophantic tone
+- [ ] No em dash overuse, emoji decoration, or bold-header lists
+- [ ] No filler phrases, excessive hedging, or generic positive conclusions
+- [ ] Anti-AI audit performed for text longer than 2 paragraphs
+- [ ] Text sounds natural when read aloud
+
 See `content-tools-guide.md` for detailed AI prompting workflows and `page-content-patterns.md` for proven page structure templates.
 
 ## Integration
 
-- **Follows rules**: `Agent(content-designer)` (content strategy, conversion copy), `Agent(ui-ux-designer)` (visual direction)
+- **Follows rules**: `Agent(content-designer)` (content strategy, conversion copy), `Agent(ui-ux-designer)` (visual direction), `humanize-content` rule (enforces AI pattern removal)
 - **Used by workflows**: `/blog-post` (blog authoring), `/ui-ux-design` (content phase), `/docs` (public-facing content)
+- **Skills**: `@humanizer` (Gate 7 — AI writing pattern removal)
 - **Companion resources**: `content-tools-guide.md`, `page-content-patterns.md`, `seo-content-sync-checklist.md`

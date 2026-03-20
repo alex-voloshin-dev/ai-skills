@@ -11,6 +11,12 @@ This file captures the operational intent of `.claude/hooks/scripts`.
 | `log-actions.py` | create an audit trail of tool activity | explicit commentary updates and optional local verification scripts |
 | `normalize-tool-results.py` | keep tool outputs clean before reuse | summarize tool output before turning it into prompts or assets |
 
+## Content Guardrails
+
+| Claude rule | Intent | Codex equivalent |
+|---|---|---|
+| `humanize-content.md` | Enforce humanizer pass on all public-facing text | `humanize-content` rule in `.codex/rules/` plus `humanizer` skill in `.agents/skills/` |
+
 ## Codex Rule
 
 If a hook intent is safety-critical, express it in `AGENTS.md`, skills, or validation scripts.

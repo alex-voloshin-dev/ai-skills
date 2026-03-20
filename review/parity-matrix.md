@@ -46,6 +46,24 @@ Parity means the runtimes provide equivalent capability coverage, even when the 
 - Codex templates focus on `AGENTS.md`, skill authoring, and Codex-native scaffolding
 - Windsurf stores template and checklist material as supporting resources inside relevant skills instead of a separate top-level primitive
 
+## Change Log
+
+### 2026-03-19: humanizer skill + humanize-content guardrail
+
+Added `humanizer` skill and `humanize-content` guardrail across all three packages.
+
+| Asset | Claude | Codex | Windsurf |
+|---|---|---|---|
+| Skill | `.claude/skills/humanizer/` | `.agents/skills/humanizer/` | `.windsurf/skills/humanizer/` |
+| Pattern catalog | `ai-writing-patterns.md` (resource) | `ai-writing-patterns.md` (resource) | `ai-writing-patterns.md` (resource) |
+| Guardrail rule | `.claude/rules/humanize-content.md` | `.codex/rules/humanize-content.md` | `.windsurf/rules/humanize-content.md` |
+| blog-post | step 4 added | step 4 added | workflow step 4 added |
+| content-creation | Gate 7 added | Gate 7 added | Gate 7 added |
+| docs | public content checklist added | public content humanizer step added | public content checklist added |
+| marketing | social-post + email steps added | step 4 added | social-post + email steps added |
+
+Canonical name: `humanizer` (skill), `humanize-content` (rule/guardrail).
+
 ## Review Rules
 
 - new roles must be added to all runtime packages in the same change set

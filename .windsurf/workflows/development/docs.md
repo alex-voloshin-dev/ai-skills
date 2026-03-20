@@ -53,7 +53,7 @@ Follow `@content-writer` standards:
 
 ### For Blog / Public Content
 
-Additionally follow `@seo-engineer` standards:
+Additionally apply `humanizer` skill — scan for and remove AI writing patterns. Then follow `@seo-engineer` standards:
 
 - **Title tag**: Descriptive, matches search intent
 - **Meta description**: Compelling summary
@@ -71,6 +71,12 @@ Additionally follow `@seo-engineer` standards:
 - [ ] Formatting follows existing documentation patterns
 - [ ] No secrets, PII, or internal-only information in public content
 - [ ] No source code, config, or infrastructure files were modified
+
+### For Public Content — Humanization Checklist
+
+- [ ] Text scanned for AI writing patterns (`humanizer` skill)
+- [ ] Anti-AI audit performed for text longer than 2 paragraphs
+- [ ] Text sounds natural when read aloud
 
 ### For Public Content — SEO Checklist
 
@@ -100,5 +106,7 @@ Additionally follow `@seo-engineer` standards:
 ## Integration
 
 - **Roles**: `@content-writer` (primary), `@seo-engineer` (public-facing content), `@product-manager` (PRDs)
+- **Skills**: `humanizer` (AI writing pattern removal for public-facing content)
+- **Rules**: `humanize-content` (enforces humanizer pass)
 - **Follow-up**: `/seo-review` (for public content), `/pre-commit`, `/create-pr`
 - **Related**: `/feature-dev` (inline docs during development), `/release` (release notes)

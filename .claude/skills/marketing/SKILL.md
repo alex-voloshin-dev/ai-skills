@@ -167,9 +167,10 @@ Ask the user which marketing operation to perform:
    - **X/Twitter**: ≤280 chars, hook first line, 1-3 hashtags, thread if longer
    - **LinkedIn**: Professional tone, 1-3 paragraphs, personal angle, 3-5 hashtags
    - **Reddit**: Community tone, value-first, no self-promotion, context-aware
-4. **Visual direction**: Suggest image/graphic if appropriate
-5. **Save to `marketing/posts/YYYY-MM-DD-[platform]-[topic].md`**
-6. Present draft. **Wait for user approval.**
+4. **Humanize** — apply `@humanizer` skill to remove AI writing patterns from the draft
+5. **Visual direction**: Suggest image/graphic if appropriate
+6. **Save to `marketing/posts/YYYY-MM-DD-[platform]-[topic].md`**
+7. Present draft. **Wait for user approval.**
 
 #### blog-post
 
@@ -181,9 +182,10 @@ Delegate to `/blog-post` workflow. Pass context from `marketing/MARKETING.md` (I
 
 1. **Define campaign**: Newsletter / product update / nurture sequence / announcement
 2. **Draft**: Subject line (3 variants), preview text, body, CTA
-3. **Segmentation**: Target audience segment
-4. **Save to `marketing/emails/YYYY-MM-DD-[campaign-name].md`**
-5. Present draft. **Wait for user approval.**
+3. **Humanize** — apply `@humanizer` skill to remove AI writing patterns
+4. **Segmentation**: Target audience segment
+5. **Save to `marketing/emails/YYYY-MM-DD-[campaign-name].md`**
+6. Present draft. **Wait for user approval.**
 
 #### trend-research
 
@@ -271,6 +273,7 @@ marketing/
 ## Integration
 
 - **Roles**: `Agent(marketing-strategist)` (strategy, analysis), `Agent(product-manager)` (product context, ICP), `Agent(content-designer)` (social posts, copy), `Agent(content-writer)` (blog, email), `Agent(seo-engineer)` (SEO optimization)
-- **Skills**: `marketing-operations` skill (setup template, channel playbooks), `content-creation` skill (AI content tools)
+- **Skills**: `marketing-operations` skill (setup template, channel playbooks), `content-creation` skill (AI content tools), `@humanizer` (AI writing pattern removal)
+- **Rules**: `humanize-content` (auto-enforces humanizer pass on all content)
 - **Sub-workflows**: `/blog-post` (blog content), `/seo-review` (SEO audit), `/docs` (documentation)
 - **Follow-up**: `/pre-commit`, `/create-pr`
