@@ -1,7 +1,7 @@
 ---
 name: ui-ux-design
 description: UI/UX design systems, Figma workflows, accessibility checklists, browser-based visual audit with automated screenshots, component specification patterns, and design-to-code handoff procedures. Use when designing interfaces, creating design systems, auditing accessibility, reviewing existing UI via browser screenshots, specifying components, or preparing design handoff for developers.
-user-invocable: false
+user-invocable: true
 ---
 
 # UI/UX Design

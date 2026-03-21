@@ -1,7 +1,7 @@
 ---
 name: marketing-operations
 description: Marketing operations knowledge base — MARKETING.md setup template, social media and email channel playbooks, trend research methodology, content calendar patterns, and recurring task definitions. Use when initializing marketing strategy, creating social media posts, drafting email campaigns, researching trends, or reviewing marketing analytics. Provides templates, platform-specific best practices, and quality checklists.
-user-invocable: false
+user-invocable: true
 ---
 
 # Marketing Operations

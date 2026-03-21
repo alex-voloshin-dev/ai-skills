@@ -1,7 +1,7 @@
 ---
 name: content-creation
 description: Content creation tools, AI content generators, image generation workflows, copywriting patterns, page content optimization, blog authoring patterns, content research workflows, and SEO content sync procedures. Use when creating page content, blog posts, generating visuals with AI tools, writing conversion copy, optimizing landing pages, integrating external content services, or synchronizing content across metadata and structured data. Provides tool guides, prompt templates, content brief templates, and quality checklists.
-user-invocable: false
+user-invocable: true
 ---
 
 # Content Creation
