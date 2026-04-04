@@ -20,9 +20,9 @@ Quality is maintained through manual review and the parity matrix.
 - Exit code 2 blocks correctly, exit code 0 allows correctly
 - Pattern lists cover intended cases without false positives
 
-**Parity:**
+**Parity** (see [PARITY.md](PARITY.md) for full model and validation commands):
 - Every role exists in `.claude/agents/`, `.codex/roles/`, `.windsurf/rules/roles/`
-- Every skill exists in `.claude/skills/`, `.agents/skills/`, `.windsurf/skills/`
+- Every skill exists in `.claude/skills/`, `.agents/skills/`, `.windsurf/skills/` (except documented Claude-only skills)
 - Every guardrail rule exists in `.claude/rules/`, `.codex/rules/`, `.windsurf/rules/`
 - `review/parity-matrix.md` reflects the current state
 

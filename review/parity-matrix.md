@@ -18,12 +18,22 @@ Parity means the runtimes provide equivalent capability coverage, even when the 
 
 - Status: full semantic match
 - Coverage target: every role in `.claude/agents/` has a corresponding role in `.codex/roles/` and `.windsurf/rules/roles/`
+- Codex execution note: runtime behavior may be attached to skills via visible `.codex/rules/role-overlays/` plus `codex-roles` frontmatter instead of hidden agent invocation
 
 ### Skills
 
-- Status: full semantic match
+- Status: full semantic match (with documented exceptions)
 - Coverage target: every skill in `.agents/skills/` has a corresponding skill in `.windsurf/skills/`
 - Notes: Windsurf skill bodies stay concise and use `.claude/skills/` as workflow/reference input when the Claude version is more detailed
+
+#### Intentional Claude-only skills
+
+These skills rely on Claude Code's native multi-agent spawning capability, which has no equivalent in Codex or Windsurf runtimes. They are intentionally excluded from parity.
+
+| Skill | Reason |
+|---|---|
+| `multi-agent-orchestration` | Shared protocols for Claude Code's Agent tool with named subagent spawning. Codex and Windsurf lack runtime multi-agent primitives. |
+| `multi-agent-bugfix-audit` | Multi-agent coordinated bugfix workflow using Claude Code's parallel Agent spawning. No equivalent runtime primitive exists. |
 
 ### Rules and Guardrails
 
@@ -47,6 +57,28 @@ Parity means the runtimes provide equivalent capability coverage, even when the 
 - Windsurf stores template and checklist material as supporting resources inside relevant skills instead of a separate top-level primitive
 
 ## Change Log
+
+### 2026-04-04: social-media-manager generalization
+
+Removed all project-specific references (friendly4AI, founder names, product-specific domain)
+from the `social-media-manager` skill across all three packages. The skill now reads product
+context from `marketing/MARKETING.md` at runtime, making it reusable for any project.
+Cleaned machine-specific paths from `settings.json`. Scoped parity rules in `.claude/CLAUDE.md`
+as "ai-assets repo only". Created `PARITY.md` documenting the full cross-vendor parity model.
+
+### 2026-03-23: social-media-manager skill
+
+Added `social-media-manager` skill across all three packages. Creates social media posts across X/Twitter, LinkedIn, and Facebook with 2026 algorithm knowledge, brand voice guidelines, anti-AI-detection patterns, and post templates.
+
+| Asset | Claude | Codex | Windsurf |
+|---|---|---|---|
+| Skill | `.claude/skills/social-media-manager/` | `.agents/skills/social-media-manager/` | `.windsurf/skills/social-media-manager/` |
+| Brand voice reference | `references/brand-voice.md` (resource) | `references/brand-voice.md` (resource) | `references/brand-voice.md` (resource) |
+| Platform guide reference | `references/platform-guide.md` (resource) | `references/platform-guide.md` (resource) | `references/platform-guide.md` (resource) |
+| Workflow | user-invocable skill | user-invocable skill | `.windsurf/workflows/marketing/social-media-manager.md` |
+| Consumers | `marketing`, `content-creation` | `marketing`, `content-creation` | `marketing`, `content-creation` |
+
+Canonical name: `social-media-manager` (skill).
 
 ### 2026-03-19: humanizer skill + humanize-content guardrail
 

@@ -1,6 +1,6 @@
 # Microsoft Azure Reference
 
-Platform-specific patterns for **Azure**. Load this module when the project's `AGENTS.md` or infrastructure files indicate Azure, AKS, Azure SQL, Azure DevOps, or related services.
+Platform-specific patterns for **Azure**. Load this module when the project's AGENTS.md declares Azure, AKS, Azure SQL, Azure DevOps, or related services.
 
 ## 1. Core Platform
 

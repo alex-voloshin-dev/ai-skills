@@ -1,33 +1,38 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Edit(/.claude/skills/**)",
+      "Bash(docker exec:*)",
+      "Bash(curl -s http://localhost*)",
+      "Bash(docker compose:*)",
+      "Bash(python3 -m json.tool)",
+      "Bash(xxd*)",
+      "Bash(cd * && mvn *)",
+      "Bash(mvn *)",
+      "Bash(cd * && ./mvnw *)",
+      "Bash(./mvnw *)",
+      "Bash(ls *)",
+      "Bash(wc -l *)",
+      "Bash(which *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(cd * && yarn *)",
+      "Bash(yarn *)",
+      "Bash(cd * && npm *)",
+      "Bash(npm *)",
+      "Bash(cd * && pytest*)",
+      "Bash(pytest*)",
+      "Bash(cd * && pip *)",
+      "Bash(pip *)"
+    ]
+  },
   "hooks": {
     "PostToolUse": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 .claude/hooks/scripts/log-actions.py"
-          }
-        ],
-        "matcher": "Write|Edit"
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 .claude/hooks/scripts/log-actions.py"
-          }
-        ],
-        "matcher": "Bash"
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 .claude/hooks/scripts/log-actions.py"
-          }
-        ],
-        "matcher": "Read"
-      },
       {
         "hooks": [
           {
@@ -39,31 +44,31 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
             "command": "python3 .claude/hooks/scripts/block-secrets-in-code.py"
           }
-        ],
-        "matcher": "Write|Edit"
+        ]
       },
       {
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
             "command": "python3 .claude/hooks/scripts/block-dangerous-commands.py"
           }
-        ],
-        "matcher": "Bash"
+        ]
       },
       {
+        "matcher": "Read",
         "hooks": [
           {
             "type": "command",
             "command": "python3 .claude/hooks/scripts/block-sensitive-files.py"
           }
-        ],
-        "matcher": "Read"
+        ]
       }
     ]
   }

@@ -1,6 +1,6 @@
 # Figma Workflow Guide
 
-Best practices for Figma project structure, component organization, design token management, and developer handoff. Use alongside the `ui-ux-design` skill and UI/UX design guidance.
+Best practices for Figma project structure, component organization, design token management, and developer handoff. Use alongside `ui-ux-designer` role and `ui-ux-design` skill.
 
 ## Project Structure
 

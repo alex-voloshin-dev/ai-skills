@@ -1,3 +1,8 @@
+---
+trigger: always_on
+description: Enforce humanizer pass on all public-facing text — blog posts, social media, UI copy, emails, landing pages, marketing content, documentation for external users.
+---
+
 # Humanize All Published Content
 
 Every piece of text intended for publication or end-user display must pass through the `humanizer` skill before finalization.

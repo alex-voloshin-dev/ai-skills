@@ -1,29 +1,45 @@
 ---
 name: cloud-platforms
-description: Cloud platform reference modules for GCP, Azure, and AWS. Use when working with cloud infrastructure, Kubernetes, managed databases, networking, IAM, or production diagnostics. Detect the target platform from AGENTS.md and repository context.
+description: Cloud platform reference modules — GCP, Azure, AWS. Provides platform-specific CLI commands, managed service patterns, networking, IAM, observability, and operational procedures. Activated when working with cloud infrastructure, production environments, managed databases, container orchestration, or cloud-native services. Detect the target platform from the project's `AGENTS.md` tech stack declaration.
+user-invocable: false
 ---
 
 # Cloud Platforms
 
-Load the provider-specific reference file that matches the repository context.
+Pluggable cloud platform knowledge modules. Each resource file contains platform-specific patterns for one cloud provider.
 
-## Workflow
+## How It Works
 
-1. Read root `AGENTS.md` and relevant infrastructure files.
-2. Detect the platform from concrete signals in the repo.
-3. Load only the matching provider reference file.
-4. Apply platform-specific CLI commands and operational patterns from that file.
+1. **Detect platform**: Read the project's `AGENTS.md` tech stack declaration to identify which cloud platform(s) are in use
+2. **Load the right module**: Read the corresponding resource file(s) below
+3. **Apply patterns**: Use platform-specific CLI commands, service names, and operational patterns from the loaded module
 
-## Detection Signals
+## Platform Detection Signals
 
-| Signal in `AGENTS.md` or repo | Platform | Resource |
+| Signal in AGENTS.md / Project | Platform | Resource File |
 |---|---|---|
-| GCP, GKE, Cloud SQL, Cloud Build, Artifact Registry | GCP | `gcp-reference.md` |
-| Azure, AKS, Azure Database for PostgreSQL, Azure Monitor, ACR | Azure | `azure-reference.md` |
-| AWS, EKS, RDS, CloudWatch, ECR | AWS | `aws-reference.md` |
+| GCP, Google Cloud, GKE, Cloud SQL, Cloud Build, gcloud, Artifact Registry | **Google Cloud Platform** | `gcp-reference.md` |
+| Azure, AKS, Azure SQL, Azure DevOps, az CLI, ACR, Azure Monitor | **Microsoft Azure** | `azure-reference.md` |
+| AWS, EKS, RDS, CodePipeline, aws CLI, ECR, CloudWatch | **Amazon Web Services** | `aws-reference.md` |
 
-If multiple platforms are present, scope the reference by service.
+If AGENTS.md does not declare a cloud platform, ask the user before proceeding with platform-specific operations.
+
+If the project uses **multi-cloud**, load all relevant modules and apply patterns per service based on where it runs.
+
+## Module Structure
+
+Each reference file follows a consistent structure:
+
+1. **Core Platform** — account/project structure, IAM, networking, secrets, tagging
+2. **Container Orchestration** — managed Kubernetes (GKE/AKS/EKS) patterns
+3. **Managed Database** — managed SQL service patterns and reliability
+4. **CI/CD** — platform-native build and deploy services
+5. **Observability** — monitoring, logging, alerting, dashboards
+6. **CLI Reference** — essential CLI commands for diagnostics and operations
+7. **Security and Compliance** — audit logging, encryption, network security
 
 ## Integration
 
-- Used by: `analyze-prod`, `bugfix`, `infra-change`, `deploy-production`, `deploy-to-production`
+- **Used by roles**: `devops-engineer` role, `sre-engineer` role, `cloud-architect` role
+- **Used by workflows**: `analyze-prod` skill, `bugfix` skill, `infra-change` skill, `deploy-production` skill, `ml-pipeline` skill
+- **Complements**: `deploy-to-production` skill (rollback procedures)

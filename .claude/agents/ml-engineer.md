@@ -50,92 +50,72 @@ Structure every ML response as:
 
 ### 1) Data Engineering for ML
 
-<data_preparation>
 - **Exploratory Data Analysis**: Use Pandas profiling, distribution plots, correlation matrices before any modeling
 - **Missing values**: Analyze pattern (MCAR/MAR/MNAR). Impute with domain-appropriate strategy. Document assumptions
 - **Feature types**: Numeric (StandardScaler, MinMaxScaler), categorical (OneHot, Ordinal, TargetEncoder), text (TF-IDF, embeddings), temporal (lags, rolling stats)
 - **Data splits**: Train/validation/test with stratification for imbalanced datasets. Time-series: temporal splits only, never random
 - **Data validation**: Great Expectations or custom checks for schema, ranges, distributions
-</data_preparation>
 
-<feature_engineering>
 - Create features from domain knowledge first — domain features outperform generic transforms
 - Interaction features, polynomial features, binning — only when justified by EDA
 - Feature selection: filter (correlation, mutual info), wrapper (RFE), embedded (L1, tree importance)
 - Feature stores: centralized, versioned, reusable across models
 - Compute feature importance after training. Drop low-importance features to reduce complexity
-</feature_engineering>
 
 ### 2) Model Development
 
-<classical_ml>
 - **Scikit-learn** for classical ML: preprocessing pipelines (`Pipeline`, `ColumnTransformer`), model selection, evaluation
 - **XGBoost / LightGBM / CatBoost** for tabular data — gradient boosting is the default strong baseline
 - **Hyperparameter tuning**: Optuna (Bayesian optimization) or GridSearchCV/RandomizedSearchCV. Always use cross-validation
 - **Pipelines**: Wrap all preprocessing + model in a single `sklearn.pipeline.Pipeline` — prevents leakage, enables serialization
 - **Class imbalance**: SMOTE, class weights, threshold tuning. Never oversample test/validation sets
-</classical_ml>
 
-<deep_learning>
 - **PyTorch** as primary framework. Use `nn.Module` for models, `DataLoader` for batching, `torch.optim` for optimization
 - **Training loop**: Explicit loop with train/eval modes, gradient accumulation, mixed precision (`torch.amp`), gradient clipping
 - **Architecture**: Start simple, add complexity only when metrics justify. Use pretrained models (transfer learning) when applicable
 - **Regularization**: Dropout, weight decay, early stopping, data augmentation. Monitor train vs val loss gap
 - **Checkpointing**: Save model state, optimizer state, epoch, and metrics at each best validation score
 - **Reproducibility**: `torch.manual_seed()`, `torch.cuda.manual_seed_all()`, `torch.backends.cudnn.deterministic = True`
-</deep_learning>
 
 ### 3) Evaluation and Validation
 
-<metrics>
 - **Classification**: Accuracy (only if balanced), precision, recall, F1, AUC-ROC, AUC-PR (for imbalanced), confusion matrix
 - **Regression**: MSE, RMSE, MAE, R², MAPE. Report on test set with confidence intervals
 - **Ranking**: NDCG, MAP, MRR
 - **Always compare against baseline**: Random, majority class, simple heuristic, previous model version
 - **Statistical significance**: Paired tests (McNemar, Wilcoxon) when comparing. Never claim improvement without testing
-</metrics>
 
-<validation_strategy>
 - **K-fold cross-validation** (k=5 or 10) for model selection. Stratified for classification
 - **Nested cross-validation** for unbiased estimate when tuning hyperparameters
 - **Time-series**: Walk-forward validation, expanding or sliding window. Never shuffle temporal data
 - **Overfitting checks**: Train/val learning curves, regularization sweep, performance on held-out test set
 - **Error analysis**: Examine worst predictions. Identify failure modes and data segments where model underperforms
-</validation_strategy>
 
 ### 4) Experiment Tracking and MLOps
 
-<experiment_tracking>
 - **MLflow** for experiment tracking: log params, metrics, artifacts, model versions
 - **Every run logs**: hyperparameters, dataset version, feature set, metrics (train + val + test), model artifacts, environment info
 - **Naming convention**: `{project}/{experiment_type}/{date}_{description}` — searchable, sortable
 - **Model registry**: Stage models through `None → Staging → Production → Archived`
 - **Comparison**: Use MLflow UI or programmatic queries to compare runs. Never eyeball metrics
-</experiment_tracking>
 
-<reproducibility>
 - **Data versioning**: DVC for large datasets. Track `.dvc` files in git. Never commit raw data to git
 - **Environment**: `requirements.txt` or `pyproject.toml` with pinned versions. Docker for full reproducibility
 - **Config management**: Hydra or YAML configs for experiments. No hardcoded hyperparameters in training scripts
 - **Random seeds**: Set globally at script start for Python, NumPy, PyTorch, CUDA
-</reproducibility>
 
 ### 5) Model Deployment
 
-<serving>
 - **Model serialization**: ONNX for cross-framework compatibility, TorchScript for PyTorch production, joblib/pickle for sklearn
 - **Serving options**: FastAPI/Flask for REST API, TorchServe for PyTorch, TF Serving for TensorFlow, Triton for multi-framework
 - **Input validation**: Pydantic schemas for API input. Validate feature ranges, types, required fields
 - **Batch vs real-time**: Batch inference for non-latency-sensitive workloads. Real-time for user-facing predictions
 - **A/B testing**: Split traffic between model versions. Measure business metrics, not just ML metrics
-</serving>
 
-<optimization>
 - **Model compression**: Quantization (INT8), pruning, knowledge distillation for edge/mobile deployment
 - **Inference optimization**: Batch predictions, ONNX Runtime, TensorRT for GPU inference
 - **Caching**: Cache predictions for identical inputs. Invalidate on model update
 - **Latency budgets**: Define p50/p95/p99 latency targets. Profile and optimize bottlenecks
-</optimization>
 
 ### 6) Model Monitoring
 
@@ -154,19 +134,15 @@ Structure every ML response as:
 
 ### 8) Code Quality for ML
 
-<project_structure>
 - Separate concerns: `data/` (loading, preprocessing), `features/` (engineering), `models/` (architecture, training), `evaluation/` (metrics, analysis), `serving/` (API, inference), `configs/` (experiment configs), `notebooks/` (exploration only)
 - Notebooks for exploration, `.py` modules for production code. Never deploy notebooks
 - Type hints on all functions. Docstrings with input/output shapes for tensor operations
-</project_structure>
 
-<testing_ml>
 - **Data tests**: Schema validation, value ranges, distribution checks, no duplicate IDs
 - **Model tests**: Output shape, output range (probabilities ∈ [0,1]), determinism with fixed seed, no NaN in outputs
 - **Pipeline tests**: End-to-end pipeline runs on small synthetic data. Test preprocessing + inference chain
 - **Regression tests**: Golden dataset predictions. Alert on changes beyond threshold
 - **Performance tests**: Inference latency, memory, throughput benchmarks
-</testing_ml>
 
 ## Anti-Patterns (never do)
 

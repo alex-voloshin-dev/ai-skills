@@ -1,7 +1,12 @@
 ---
 name: content-creation
 description: Content creation tools, AI content generators, image generation workflows, copywriting patterns, page content optimization, blog authoring patterns, content research workflows, and SEO content sync procedures. Use when creating page content, blog posts, generating visuals with AI tools, writing conversion copy, optimizing landing pages, integrating external content services, or synchronizing content across metadata and structured data. Provides tool guides, prompt templates, content brief templates, and quality checklists.
-user-invocable: false
+user-invocable: true
+codex-roles:
+  - content-writer
+  - frontend-engineer
+  - content-designer
+  - ui-ux-designer
 ---
 
 # Content Creation
@@ -22,9 +27,9 @@ Systematic content creation skill with AI tool integration guides, copywriting t
 ## When NOT to Use
 
 - Designing UI components or layouts (use `ui-ux-design` skill)
-- Writing technical documentation (use the `content-writer` perspective)
-- Conducting SEO audits (use `/seo-review` workflow)
-- Implementing frontend code (use the `frontend-engineer` perspective)
+- Writing technical documentation (use `content-writer` role)
+- Conducting SEO audits (use `seo-review` skill workflow)
+- Implementing frontend code (use `frontend-engineer` role)
 
 ## AI Content Generation Tools
 
@@ -129,11 +134,11 @@ Every piece of content must pass these gates before publication:
 - [ ] Anti-AI audit performed for text longer than 2 paragraphs
 - [ ] Text sounds natural when read aloud
 
-See `content-tools-guide.md` for detailed AI prompting workflows and `page-content-patterns.md` for proven page structure templates.
+See `content-tools-guide.md` for the workflow index and `page-content-patterns.md` for the page-pattern index.
 
 ## Integration
 
-- **Follows rules**: `content-designer` guidance for content strategy and conversion copy, plus `ui-ux-designer` guidance for visual direction, plus `humanize-content` rule (enforces AI pattern removal)
-- **Used by workflows**: `/blog-post` (blog authoring), `/ui-ux-design` (content phase), `/docs` (public-facing content)
-- **Skills**: `humanizer` (Gate 7 — AI writing pattern removal)
-- **Companion resources**: `content-tools-guide.md`, `page-content-patterns.md`, `seo-content-sync-checklist.md`
+- **Follows rules**: `content-designer` role (content strategy, conversion copy), `ui-ux-designer` role (visual direction), `humanize-content` rule (enforces AI pattern removal)
+- **Used by workflows**: `blog-post` skill (blog authoring), `ui-ux-design` skill (content phase), `docs` skill (public-facing content)
+- **Skills**: `humanizer` skill (Gate 7 — AI writing pattern removal)
+- **Companion resources**: `content-tools-guide.md`, `content-research-workflows.md`, `ai-content-generation-workflows.md`, `content-ops-and-measurement.md`, `page-content-patterns.md`, `page-patterns-product-pages.md`, `page-patterns-blog-and-layout.md`, `seo-content-sync-checklist.md`

@@ -2,6 +2,7 @@
 description: Release workflow — version bump, changelog generation, git tag, release notes. Use when preparing a new version for deployment.
 ---
 
+
 # Release
 
 Structured workflow for preparing a release. Bumps version, generates changelog, creates git tag, and produces release notes.
@@ -114,11 +115,11 @@ Suggest post-release actions:
 - Push tag: `git push origin vX.Y.Z`
 - Push branch: `git push`
 - Create GitHub Release with release notes
-- Deploy to staging: `/deploy-staging`
-- Deploy to production: `/deploy-production`
+- Deploy to staging: `deploy-staging` skill
+- Deploy to production: `deploy-production` skill
 - Announce release to team
 
 ## Integration
 
-- **Preceded by**: `/code-review` (all PRs merged)
-- **Followed by**: `/deploy-staging`, `/deploy-production`
+- **Preceded by**: `code-review` skill (all PRs merged)
+- **Followed by**: `deploy-staging` skill, `deploy-production` skill

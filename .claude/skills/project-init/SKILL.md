@@ -2,6 +2,7 @@
 name: project-init
 description: Initialize AI context for an existing project — deep scan the codebase, detect tech stack, identify subprojects and major modules, generate root CLAUDE.md, ARCHITECTURE.md, TESTING.md, and directory-scoped CLAUDE.md files for subprojects and significant directories. Works with monorepos, polyglot projects, and large codebases via iterative scanning.
 context: fork
+argument-hint: "project path or description"
 ---
 
 # Project Init
@@ -100,7 +101,7 @@ Identify directories warranting their own scoped `CLAUDE.md`. **Criteria** (any 
 
 ## 3. Generate Root CLAUDE.md
 
-Use the matching stack-specific template from `templates/agentsmd/` as a starting point. If no stack matches, use `templates/agentsmd/universal.agentmd.template.md`. Fill in all sections based on deep scan results from Step 2.
+Use the matching stack-specific template from `../../templates/*.claude.template.md` as a starting point. If no stack matches, use `../../templates/universal.claude.template.md`. Fill in all sections based on deep scan results from Step 2.
 
 **Critical rules:**
 - State the **tech stack explicitly** — this drives Claude Code's role activation via (agent)
@@ -115,7 +116,7 @@ Use the matching stack-specific template from `templates/agentsmd/` as a startin
 
 **Apply `Agent(system-architect)` role** for this step. The system architect owns the ARCHITECTURE.md file — creation, updates, and reviews.
 
-Use `templates/architecture.template.md` as the starting point. Fill in all 11 sections based on the deep scan results from Step 2.
+Use `../../templates/architecture.template.md` as the starting point. Fill in all 11 sections based on the deep scan results from Step 2.
 
 **Rules:**
 - Mermaid/ASCII diagrams for all visual elements
@@ -127,17 +128,17 @@ Use `templates/architecture.template.md` as the starting point. Fill in all 11 s
 
 **Apply `Agent(qa-engineer)` role** for this step. The QA engineer owns the TESTING.md file — creation, updates, and reviews.
 
-Use `templates/testing.template.md` as the starting point. Fill in all sections based on the deep scan results from Step 2.
+Use `../../templates/testing.template.md` as the starting point. Fill in all sections based on the deep scan results from Step 2.
 
 ### 5a. Root TESTING.md
 
-Create `TESTING.md` at the project root using `templates/testing.template.md` (root template section). Fill in all placeholders based on deep scan results from Step 2. All sections in the template are required — remove only those marked with `<!-- Remove ... -->` comments.
+Create `TESTING.md` at the project root using `../../templates/testing.template.md` (root template section). Fill in all placeholders based on deep scan results from Step 2. All sections in the template are required — remove only those marked with `<!-- Remove ... -->` comments.
 
 **Key data sources**: test config files → test types and commands; CI pipeline → pipeline stages; directory listing → test organization; `.env.example` → credential structure.
 
 ### 5b. Per-Service TESTING.md (Monorepos)
 
-For each subproject/service identified in Step 1b, create a scoped `TESTING.md` using `templates/testing.template.md` (per-service template section at the bottom of the file).
+For each subproject/service identified in Step 1b, create a scoped `TESTING.md` using `../../templates/testing.template.md` (per-service template section at the bottom of the file).
 
 **Rules:**
 - Include actual commands — copy-pastable, tested
@@ -244,7 +245,7 @@ Verify:
 ## Integration
 
 - **Precedes**: All other workflows — run this first on a new project
-- **Templates**: `templates/agentsmd/*.agentmd.template.md`, `templates/architecture.template.md`, `templates/testing.template.md`
+- **Templates**: `../../templates/*.claude.template.md`, `../../templates/architecture.template.md`, `../../templates/testing.template.md`
 - **Roles**: `Agent(system-architect)` (ARCHITECTURE.md creation/review), `Agent(qa-engineer)` (TESTING.md creation/review), `Agent(cloud-architect)` (cloud infrastructure context), `Agent(devops-architect)` (CI/CD architecture context)
 - **Skills**: `testing-procedures` skill (test strategy, coverage targets)
 - **Enables**: `/feature-plan`, `/feature-dev`, `/bugfix`, `/test-local`, `/run-tests`

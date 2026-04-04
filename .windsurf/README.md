@@ -13,11 +13,10 @@ This directory is the copy-ready Windsurf runtime package for the shared `ai-ass
 │   └── scripts/
 ├── rules/
 │   ├── roles/
-│   ├── ai-asset-authoring-standards.md
 │   ├── failure-recovery.md
 │   ├── git-conventions.md
 │   ├── global-package-rules.md
-│   ├── global_rules.md
+│   ├── global-rules.md
 │   └── memory-validation.md
 ├── skills/
 └── workflows/
@@ -25,7 +24,7 @@ This directory is the copy-ready Windsurf runtime package for the shared `ai-ass
 
 ## Purpose
 
-- keep Windsurf assets versioned beside the Claude and Codex packages
+- keep Windsurf assets versioned beside the other runtime packages in this repository
 - preserve semantic parity across `.claude`, `.agents`, `.codex`, and `.windsurf`
 - stay directly copyable into a project root as `.windsurf/`
 
@@ -36,4 +35,4 @@ This directory is the copy-ready Windsurf runtime package for the shared `ai-ass
 - reusable knowledge lives under `skills/`
 - manual entry points live under `workflows/`
 - hook runtime config lives at `hooks.json`
-- legacy Codex-only primitives are preserved as supporting resources inside relevant Windsurf skills
+- parity support resources are preserved inside relevant Windsurf skills when Windsurf has no matching top-level primitive

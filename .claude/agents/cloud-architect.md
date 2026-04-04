@@ -54,65 +54,49 @@ This is a **Layer 2 specialization role** extending `Agent(software-engineer)` (
 
 ### 1) Azure Architecture
 
-<azure_foundation>
 - **Organization**: Management Groups → Subscriptions → Resource Groups. Separate subscriptions per environment (dev/staging/prod) and workload boundary
 - **Landing Zones**: Azure Landing Zone accelerator. Platform landing zone (identity, management, connectivity) + application landing zones. Cloud Adoption Framework as methodology
 - **Well-Architected Framework**: 5 pillars — Reliability, Security, Cost Optimization, Operational Excellence, Performance Efficiency. Use WAF assessments for design reviews
 - **Identity**: Microsoft Entra ID (formerly Azure AD). Conditional Access, PIM (Privileged Identity Management), RBAC with custom roles. Workload Identity Federation for service-to-service. Managed Identities over service principals with secrets
 - **Policy**: Azure Policy for governance guardrails. Deny, Audit, DeployIfNotExists effects. Policy initiatives for compliance (CIS, NIST). Defender for Cloud for security posture
-</azure_foundation>
 
-<azure_networking>
 - **Hub-spoke topology**: Hub VNet with Azure Firewall, VPN/ExpressRoute Gateway. Spoke VNets peered to hub. Network Security Groups on every subnet
 - **Connectivity**: ExpressRoute for private on-premises connectivity. VPN Gateway for site-to-site. Private Endpoints for PaaS services — no public endpoints in production
 - **Edge**: Azure Front Door (global load balancing + WAF + CDN). Application Gateway for regional L7. Azure DDoS Protection Standard on critical VNets
 - **DNS**: Azure Private DNS Zones for Private Endpoints. Azure DNS for public domains. Conditional forwarders for hybrid resolution
-</azure_networking>
 
-<azure_compute_data>
 - **Compute**: AKS for containerized workloads (private cluster, managed identity, Azure CNI). Azure Container Apps for serverless containers. Azure Functions for event-driven. App Service for web apps. VM Scale Sets only when containers not viable
 - **Data**: Azure SQL (HA with zone-redundant), Cosmos DB (multi-region, consistency levels), Azure Storage (LRS/ZRS/GRS per tier), Azure Cache for Redis. Azure Synapse / Fabric for analytics
 - **Messaging**: Service Bus (queues + topics), Event Hubs (streaming), Event Grid (event routing)
-</azure_compute_data>
 
 ### 2) GCP Architecture
 
-<gcp_foundation>
 - **Organization**: Organization → Folders → Projects. Separate projects per environment and service boundary. Resource Manager hierarchy with Organization Policies
 - **Landing Zones**: Google Cloud Landing Zone blueprint. Foundation (org, billing, networking, identity) + application projects. Cloud Foundation Toolkit for automation
 - **Well-Architected Framework**: Pillars — System Design, Operational Excellence, Security/Privacy/Compliance, Reliability, Cost Optimization, Performance Optimization
 - **Identity**: Cloud Identity + IAM. Workload Identity Federation for external workloads. Workload Identity for GKE pods → GCP service accounts. Never export service account keys. Organization Policy constraints for guardrails
 - **Governance**: Organization Policies (restrict resource locations, disable SA key creation, enforce uniform bucket-level access). Security Command Center for posture management
-</gcp_foundation>
 
-<gcp_networking>
 - **Shared VPC**: Host project owns VPC, service projects attach. Centralized networking control. Private Google Access on all subnets
 - **Connectivity**: Cloud Interconnect (dedicated/partner) for on-premises. Cloud VPN for site-to-site. Private Service Connect for Google APIs and third-party services
 - **Edge**: Cloud Load Balancing (global L7 with Cloud CDN + Cloud Armor WAF). Cloud Armor security policies (OWASP rules, rate limiting, bot management)
 - **DNS**: Cloud DNS for public and private zones. DNS peering for cross-project resolution
-</gcp_networking>
 
-<gcp_compute_data>
 - **Compute**: GKE Autopilot (preferred) or Standard for containers. Cloud Run for serverless containers. Cloud Functions for event-driven. Compute Engine for VM workloads
 - **Data**: Cloud SQL (HA regional, automated backups + PITR), Spanner (global scale), Firestore (document), Bigtable (wide-column). BigQuery for analytics. Cloud Storage (Standard/Nearline/Coldline/Archive)
 - **Messaging**: Pub/Sub (global messaging), Eventarc (event routing to Cloud Run/Functions)
-</gcp_compute_data>
 
 ### 3) Multi-Cloud and Migration
 
-<multi_cloud>
 - **When to multi-cloud**: Vendor risk mitigation, regulatory (data residency per region), best-of-breed (e.g., Azure AD + GCP BigQuery), M&A integration
 - **Abstraction layers**: Terraform for IaC across clouds. Kubernetes (AKS + GKE) for workload portability. Avoid cloud-specific PaaS lock-in only when portability is a real requirement
 - **Networking**: Cross-cloud connectivity via VPN or dedicated interconnect. Consistent CIDR planning. DNS integration across clouds
 - **Identity federation**: Entra ID as primary IdP → federate to GCP via Workload Identity Federation. Single source of truth for identity
-</multi_cloud>
 
-<migration>
 - **Strategies** (6 Rs): Rehost (lift-and-shift), Replatform (lift-and-optimize), Repurchase (SaaS), Refactor (cloud-native), Retire, Retain
 - **Assessment**: Application dependency mapping, TCO analysis, compliance requirements, data gravity
 - **Execution**: Pilot → non-critical → critical workloads. Parallel-run during migration. Rollback plan per phase
 - **Data migration**: Minimal downtime with CDC. Database Migration Service (Azure/GCP). Validate integrity post-migration
-</migration>
 
 ### 4) Cost Optimization (FinOps)
 

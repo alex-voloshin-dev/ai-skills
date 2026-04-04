@@ -1,7 +1,6 @@
 ---
 name: create-pr
 description: Create a pull request — collect diff, generate PR description with context, apply checklist, and push. Use when ready to submit code for review.
-disable-model-invocation: true
 ---
 
 # Create Pull Request
@@ -25,7 +24,7 @@ git status --short
 - Working directory is clean (all changes committed)
 - Branch is up to date with remote
 
-If uncommitted changes exist, suggest running `/pre-commit` first.
+If uncommitted changes exist, suggest running `pre-commit` skill first.
 
 ## 2. Collect Diff
 
@@ -128,9 +127,9 @@ Suggest next steps:
 - Add labels (feature, bugfix, priority)
 - Link to related issues
 - Request specific reviewers based on changed files
-- Run `/code-review` for self-review before requesting others
+- Run `code-review` skill for self-review before requesting others
 
 ## Integration
 
-- **Preceded by**: `/pre-commit` (quality gate passed)
-- **Followed by**: `/code-review`
+- **Preceded by**: `pre-commit` skill (quality gate passed)
+- **Followed by**: `code-review` skill

@@ -1,67 +1,114 @@
 ---
 name: docs
-description: Documentation workflow for updating markdown docs, technical writing, PRDs, release notes, and public content without touching application source code.
+description: Documentation workflow — edit markdown docs, technical writing, blog content, release notes without touching source code. Applies Content Writer role. Includes SEO review branch for public-facing content.
+argument-hint: [documentation target or section]
 ---
 
 # Documentation
 
-Use this workflow for documentation-only changes.
+Safe documentation-only workflow. Edit markdown files without touching application source code, configs, or infrastructure. Applies `content-writer` role for all writing tasks.
 
-## Scope
+**⚠️ CONSTRAINT: This workflow NEVER modifies source code (*.java, *.ts, *.tsx, *.py, *.go), configs (*.yaml, *.yml, *.json), infrastructure (*.tf, Dockerfile, Helm), or dependency files (pom.xml, package.json, requirements.txt).**
 
-Allowed:
+## 1. Define Scope
 
-- Markdown docs
-- PRDs
-- ADRs
-- Release notes
-- Blog or marketing copy
+Ask the user (or extract from parent workflow):
 
-Not allowed:
+- **What documentation?** (technical docs, API reference, README, PRD, design doc, ADR, blog post, release notes, UI copy)
+- **Content type**:
+  - **Internal** (technical docs, design docs, ADRs) → `content-writer` role only
+  - **Public-facing** (blog, landing page, marketing) → `content-writer` role + `seo-engineer` role
+- **Action**: Create new / update existing / restructure
+- **Target files**: Which `.md` files will be affected
 
-- Application source code
-- Build config
-- Infrastructure code
-- Dependency manifests
+## 2. Apply Roles
 
-## 1. Gather Context
+| Content Type | Primary Role | Additional Role |
+|---|---|---|
+| Technical documentation | `content-writer` role | — |
+| API reference | `content-writer` role | Stack-specific role for accuracy |
+| Blog / landing page content | `content-writer` role | `seo-engineer` role |
+| PRD / acceptance criteria | `product-manager` role | — |
+| Architecture / ADR | `solution-architect` role | — |
+| Release notes | `content-writer` role | — |
+| UI microcopy | `content-writer` role | `frontend-engineer` role for context |
+| Page content (landing, product) | `content-designer` role | `seo-engineer` role, `ui-ux-designer` role |
 
-Read:
+## 3. Gather Context
 
-1. Root `AGENTS.md`
-2. Relevant scoped `AGENTS.md`
-3. Existing docs in the target area
-4. Related code only when needed for technical accuracy
+Before writing:
 
-## 2. Classify the Content
+1. **Read project's `AGENTS.md`** — terminology, conventions, tech stack
+2. **Read existing docs** — understand structure, tone, terminology already in use
+3. **Identify Diátaxis mode** — Tutorial, How-to, Reference, or Explanation
+4. **Check related code** (read-only) — verify technical accuracy of claims
 
-Identify whether the change is:
+## 4. Write Content
 
-- Internal technical docs
-- Product or planning docs
-- Public-facing marketing or blog content
-- Release communication
+Follow `content-writer` role standards:
 
-## 3. Write
+- **Diátaxis framework** for documentation structure
+- **English only** unless explicitly requested otherwise
+- **Progressive disclosure** — overview first, details on demand
+- **Tested examples** — all code snippets must be accurate
+- **Consistent terminology** — match existing project conventions
 
-Rules:
+### For Blog / Public Content
 
-- English only unless the user requests otherwise
-- Match existing terminology
-- Keep examples technically accurate
-- Prefer concise, scannable structure
+Additionally apply `humanizer` skill — scan for and remove AI writing patterns. Then follow `seo-engineer` role standards:
 
-For public content, include SEO-aware structure where relevant.
+- **Title tag**: Descriptive, matches search intent
+- **Meta description**: Compelling summary
+- **Heading hierarchy**: One H1, logical H2→H3 flow
+- **Internal links**: Descriptive anchor text to related content
+- **Images**: Descriptive alt text
+- **Structured data**: Article/BlogPosting schema (JSON-LD) where applicable
+- **No keyword stuffing** — write for users, not crawlers
 
-## 4. Verify
+## 5. Verify
 
-Check:
+- [ ] All internal links are valid (no broken references)
+- [ ] Code examples are accurate and match current implementation
+- [ ] Terminology is consistent with project conventions
+- [ ] Formatting follows existing documentation patterns
+- [ ] No secrets, PII, or internal-only information in public content
+- [ ] No source code, config, or infrastructure files were modified
 
-- Links resolve
-- Terminology matches project conventions
-- Formatting is consistent
-- No code or config files were changed
+### For Public Content — Humanization Checklist
 
-## 5. Report
+- [ ] Text scanned for AI writing patterns (`humanizer` skill)
+- [ ] Anti-AI audit performed for text longer than 2 paragraphs
+- [ ] Text sounds natural when read aloud
 
-Summarize the files changed and any follow-up review recommended.
+### For Public Content — SEO Checklist
+
+- [ ] Title and meta description present and unique
+- [ ] Heading hierarchy is logical (H1→H2→H3)
+- [ ] Internal links with descriptive anchors added
+- [ ] Images have alt text
+- [ ] Page is indexable (no accidental noindex)
+- [ ] Canonical URL is correct
+- [ ] Structured data validates (Rich Results Test)
+
+## 6. Summary
+
+```
+## Documentation Summary
+- **Type**: [technical docs / blog / API reference / release notes / etc.]
+- **Content mode**: [Tutorial / How-to / Reference / Explanation]
+- **Files changed**:
+  - [file1.md]: [created/updated — what changed]
+  - [file2.md]: [created/updated — what changed]
+- **Role(s) applied**: [`content-writer` role, `seo-engineer` role if public]
+- **SEO review**: [pass / N/A for internal docs]
+- **Verification**: [links valid, formatting correct, no code files modified]
+- **Next steps**: [if any]
+```
+
+## Integration
+
+- **Roles**: `content-writer` role (primary), `seo-engineer` role (public-facing content), `product-manager` role (PRDs)
+- **Skills**: `humanizer` skill (AI writing pattern removal for public-facing content)
+- **Rules**: `humanize-content` (auto-enforces humanizer pass)
+- **Follow-up**: `seo-review` skill (for public content), `pre-commit` skill, `create-pr` skill
+- **Related**: `feature-dev` skill (inline docs during development), `release` skill (release notes)

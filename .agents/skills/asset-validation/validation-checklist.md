@@ -1,41 +1,37 @@
 # Codex Asset Validation Checklist
 
-## Core Checks
+## Structure
 
-- [ ] Asset uses Codex-native concepts
+- [ ] required directories exist
+- [ ] each skill has a `SKILL.md`
+- [ ] required role overlays exist for every referenced `codex-roles` value
+
+## Content Rules
+
 - [ ] English only
-- [ ] No secrets or credentials
-- [ ] References resolve
-- [ ] No machine-specific paths unless intentionally local docs
-- [ ] File sits in the correct package directory
+- [ ] no secrets or credentials
+- [ ] no installer-specific commands
+- [ ] no application-specific commands copied from another repository
 
-## `AGENTS.md` Checks
+## Cross-References
 
-- [ ] Global policy stays in root `AGENTS.md`
-- [ ] Scoped `AGENTS.md` files stay directory-specific
-- [ ] Hard rules are near the top
-- [ ] No redundant restatement of parent guidance
+- [ ] skill mentions resolve
+- [ ] role references resolve
+- [ ] hook script paths resolve
+- [ ] operation and template references resolve
 
-## `SKILL.md` Checks
+## Runtime Readiness
 
-- [ ] `name` present
-- [ ] `description` is specific and activation-safe
-- [ ] Workflow is actionable
-- [ ] Bulky references moved to companion files
-- [ ] No Claude-specific syntax, legacy file names, or Claude hook contracts
+- [ ] paths assume the Codex runtime layout under `.agents/skills/` and `.codex/`
+- [ ] operation docs stay aligned with current hook and settings intent
 
-## Template and Checklist Checks
+## Naming
 
-- [ ] Template is reusable
-- [ ] Checklist is concise and scannable
-- [ ] Examples do not conflict with project policy
+- [ ] role files use `kebab-case.md`
+- [ ] skill folders use `kebab-case/`
+- [ ] template files use the current Codex naming convention
 
-## Script Checks
+## Outcome
 
-- [ ] Script purpose is explicit
-- [ ] Dry-run or safe inspection path exists when appropriate
-- [ ] Script does not perform hidden destructive behavior
-
-## PowerShell Pattern
-
-For non-trivial validation commands, prefer a `.ps1` file over large inline PowerShell blocks.
+- [ ] ready for parity review
+- [ ] parity-impacting changes reflected in `../../../review/parity-matrix.md`

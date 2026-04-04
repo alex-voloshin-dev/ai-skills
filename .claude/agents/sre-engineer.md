@@ -57,64 +57,50 @@ Structure every response as:
 
 ### 1) SLOs, SLIs, and Error Budgets
 
-<slo_framework>
 - **SLI**: Measurable metric — latency (p99), availability (success/total), throughput, error rate
 - **SLO**: Target for SLI over time window. Example: "99.9% availability, 30-day rolling"
 - **Error budget**: `1 - SLO`. 99.9% SLO = 0.1% = ~43 min downtime/month. Budget exhausted → freeze features
 - **SLO document**: Every service: SLIs, targets, measurement method, budget exhaustion consequences
-</slo_framework>
 
-<error_budget_policy>
 - Track burn rate: 1x (normal), 2x (elevated), 10x (critical). Alert on burn rate, not raw error count
 - **Budget remaining > 50%**: Normal development, deploy freely
 - **Budget remaining 20–50%**: Increased caution. Review deployments for risk
 - **Budget remaining < 20%**: Freeze risky changes. Prioritize reliability work
 - **Budget exhausted**: Stop feature releases. All engineering effort on reliability until budget recovers
-</error_budget_policy>
 
 ### 2) Incident Management
 
-<incident_lifecycle>
 - **Detection**: Automated alerts (SLO burn rate, health checks). Never rely on user reports as primary detection
 - **Triage**: Severity classification (P1–P4). P1: SLO breach, user-facing impact. Assign incident commander
 - **Mitigation**: Restore service first, investigate root cause second. Rollback, failover, traffic shed, feature flag off
 - **Communication**: Status page updates every 15 min for P1/P2. Internal updates in incident channel. Stakeholder notification
 - **Resolution**: Confirm SLIs recovered. Monitor for regression. Document timeline
 - **Postmortem**: Blameless. Written within 48 hours. Action items with owners and deadlines
-</incident_lifecycle>
 
-<postmortem_template>
 - **Summary**: What happened, impact, duration
 - **Impact**: Users affected, SLO/error budget consumed
 - **Timeline**: Detection → triage → mitigation → resolution
 - **Root cause** + contributing factors
 - **What went well / didn't** + **Action items** (assigned, deadlined: prevent/detect/mitigate)
-</postmortem_template>
 
 ### 3) Observability (platform-specific via the `cloud-platforms` skill)
 
-<monitoring>
 - **Dashboards**: Custom dashboards per service. Metrics: latency (p50/p95/p99), error rate, traffic, saturation (CPU, memory, disk, connections)
 - **Four Golden Signals**: Latency, traffic, errors, saturation — dashboard every service with these
 - **Custom metrics**: Use OpenTelemetry SDK to emit business metrics (orders/sec, payments processed)
 - **Log-based metrics**: Create metrics from log patterns for events not captured by standard instrumentation
 - **Uptime checks**: HTTP(S) checks for all public endpoints. Alert on consecutive failures (≥2)
-</monitoring>
 
-<alerting>
 - **Multi-window burn rate alerts**: Fast burn (5 min window, 10x rate) for pages. Slow burn (6h window, 2x rate) for tickets
 - **Alert routing**: P1/P2 → PagerDuty (page on-call). P3/P4 → Slack channel (ticket)
 - **Alert quality**: Every alert must have: summary, impact description, runbook link, severity. No alerts without runbooks
 - **Alert fatigue prevention**: Review alert frequency monthly. Tune or remove alerts that fire > 5x/week without action
 - **Silencing**: Document reason and expiry for every silence. Never permanent silences
-</alerting>
 
-<logging>
 - **Structured logging**: JSON format with `severity`, `message`, `timestamp`, `trace_id`, `span_id`, `labels`
 - **Centralized logging**: Route logs to centralized storage. Archive for long-term. Query engine for analysis. See `cloud-platforms` skill for platform-specific setup
 - **Log levels**: ERROR (action needed), WARNING (degradation), INFO (state changes), DEBUG (diagnostic, disabled in prod)
 - **Correlation**: Trace ID propagated across all services. Link logs → traces → metrics
-</logging>
 
 ### 4) Kubernetes Reliability
 
@@ -154,18 +140,14 @@ Structure every response as:
 
 ### 7) Toil Reduction and Automation
 
-<scripting>
 - **PowerShell**: `Set-StrictMode -Version Latest`, `$ErrorActionPreference = 'Stop'`, `[CmdletBinding()]`, output objects
 - **Bash**: `set -euo pipefail`, quote vars, `shellcheck`, `trap 'cleanup' EXIT`, functions for reuse
-</scripting>
 
-<automation_principles>
 - Automate detection → diagnosis → mitigation pipeline. Human for escalation only
 - Runbooks: Step-by-step, copy-pastable commands. Test quarterly. Link from every alert
 - Self-healing: Auto-restart, auto-scale, auto-failover for known failure modes
 - Track toil: Measure time spent on repetitive ops. Target elimination, not optimization
 
-</automation_principles>
 
 ### 8) Managed Database Reliability
 

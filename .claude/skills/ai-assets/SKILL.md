@@ -25,7 +25,7 @@ Read and internalize before making any changes:
 
 1. **Target asset** (if exists — for modify/validate/analyze)
 2. **Vendor specs**: `framework-summary.md` — Section 2.x matching the asset type. This is the authoritative source for Claude Code capabilities, formats, and constraints
-3. **Authoring standards**: `rules/global_rules.md` — language, file size limits, cross-reference rules
+3. **Authoring standards**: `rules/global-rules.md` — language, file size limits, cross-reference rules
 4. **Project conventions**: `CLAUDE.md` — naming, frontmatter, source management, interconnection patterns
 5. **Existing assets of the same type** — scan the target directory to understand tone, structure, and naming patterns already in use
 6. **Context engineering guide**: `context-engineering` skill — context stack model, production checklists, reference templates. Required reading for AI-facing assets
@@ -183,38 +183,15 @@ Apply `context-engineering` skill principles — every asset is context that ent
 
 **This step is non-optional.** Run the full checklist on every create or modify operation to prevent dependency corruption, broken cross-references, and size violations.
 
-**Format and structure:**
-- [ ] Correct YAML frontmatter for asset type
-- [ ] File size ≤ 12,000 characters (rules, workflows, SKILL.md)
-- [ ] All content in English
-- [ ] File name follows naming convention (see `CLAUDE.md`)
+**Format**: correct frontmatter, ≤12K chars, English, naming convention per `CLAUDE.md`
 
-**References and dependencies:**
-- [ ] All `/workflow` references resolve to existing workflow files
-- [ ] All `@skill` references resolve to existing skill folders
-- [ ] All relative paths are valid and point to existing files
-- [ ] No absolute or machine-specific paths (`C:\Users\...`, `/home/...`)
-- [ ] Related assets updated with cross-references to this asset
+**References**: all `/workflow`, `@skill`, and relative paths resolve. No absolute paths. Cross-references updated
 
-**Prompt quality** (per `Agent(prompt-engineer)` review — Step 6):
-- [ ] All checks from Step 6 passed (universal + asset-type-specific)
-- [ ] `description` is keyword-rich and activation-appropriate
-- [ ] No secrets, API keys, or PII
-- [ ] Consistent with existing assets in tone and structure
-- [ ] Behavioral test: Claude Code would produce correct behavior with this asset active
+**Prompt quality**: Step 6 checks passed, `description` activation-appropriate, no secrets/PII, behavioral test passes
 
-**Context engineering** (per `context-engineering` skill — Step 6):
-- [ ] Asset maps to a context stack layer (or spans multiple with justification)
-- [ ] No "lost-in-the-middle" — critical info not buried in middle of long asset
-- [ ] Policy and knowledge sections distinct
-- [ ] AI-facing assets reference `context-engineering` skill where relevant
+**Context engineering**: maps to context stack layer, no lost-in-the-middle, policy/knowledge separated
 
-**Dependency chain integrity:**
-- [ ] No broken outgoing references
-- [ ] Asset is reachable (referenced by at least one other asset or is top-level)
-- [ ] No collateral damage — assets that reference this one still work after the change
-- [ ] Companion assets (from step 4) are also validated
-- [ ] SDLC lifecycle map in `ARCHITECTURE.md` updated if applicable
+**Dependency chain**: no broken refs, asset reachable, no collateral damage, companions validated
 
 ## 8. Finalize
 

@@ -4,19 +4,19 @@ This summary captures the Claude Code primitives used by this repository.
 
 ## Rules
 
-- Location: `.claude/rules/*.md`
+- Location in installed runtime: `rules/*.md`
 - Format: markdown guidance files; hot-path files should stay within the package size guidance
 - Use for reusable guardrails, authoring standards, and package-wide constraints
 
 ## Agents
 
-- Location: `.claude/agents/*.md`
+- Location in installed runtime: `agents/*.md`
 - Format: markdown files with frontmatter such as `name`, `description`, `tools`, and `model`
 - Use for role-specialized agent prompts and routing
 
 ## Skills
 
-- Location: `.claude/skills/<skill-name>/SKILL.md`
+- Location in installed runtime: `skills/<skill-name>/SKILL.md`
 - Format: folder with `SKILL.md` plus supporting resource files
 - Required frontmatter: `name`, `description`
 - Optional fields used in this package include `user-invocable`, `context`, and `argument-hint`
@@ -24,13 +24,13 @@ This summary captures the Claude Code primitives used by this repository.
 
 ## Hooks
 
-- Config fragments live under `.claude/hooks/configs/*.json`
-- Scripts live under `.claude/hooks/scripts/*.py`
-- Hook configs should reference runtime paths under `.claude/hooks/scripts/`
+- Config fragments live under `hooks/configs/*.json`
+- Scripts live under `hooks/scripts/*.py`
+- Source package commands may use `.claude/hooks/scripts/...`; installers rewrite them to installed `~/.claude/hooks/scripts/...` paths
 
 ## Settings
 
-- Workspace settings live in `.claude/settings.json`
+- Workspace settings live in `settings.json`
 - Keep hook-related commands aligned with the installed scripts and supported runtime behavior
 
 ## CLAUDE.md
@@ -40,7 +40,7 @@ This summary captures the Claude Code primitives used by this repository.
 
 ## This Package Mapping
 
-- `.claude/agents` is the Claude source of truth for role behavior
-- `.claude/skills` is the Claude source of truth for detailed user-facing workflows
-- `.claude/rules`, `.claude/hooks`, and `.claude/settings.json` capture Claude-specific guardrails
+- `agents/` is the Claude source of truth for role behavior
+- `skills/` is the Claude source of truth for detailed user-facing workflows
+- `rules/`, `hooks/`, and `settings.json` capture Claude-specific guardrails
 - Sibling `.agents`, `.codex`, and `.windsurf` directories preserve the same capabilities in runtime-native formats

@@ -134,28 +134,7 @@ For feature-level design (PRD input), produce deliverables in this order:
 - **NFR impact**: [How it affects availability, latency, cost, etc.]
 ```
 
-**2. Architecture Decision Record (ARD/ADR)**:
-
-```
-# ADR-NNN: [Title]
-
-## Status
-Proposed
-
-## Context
-[Problem statement, business drivers, technical constraints]
-
-## Decision
-[Selected option with clear rationale]
-
-## Consequences
-- **Positive**: [benefits]
-- **Negative**: [trade-offs, risks accepted]
-- **Neutral**: [side effects]
-
-## Alternatives Considered
-[Brief summary of rejected options and why]
-```
+**2. Architecture Decision Record (ARD/ADR)** — Status, Context (problem + constraints), Decision (selected option + rationale), Consequences (positive/negative/neutral), Alternatives Considered.
 
 **3. Detailed Design**:
 - **C4 diagrams** (Mermaid) — Context and/or Container level showing the feature's impact
@@ -191,7 +170,7 @@ For analysis scope, produce:
 |---|---|---|---|---|
 | [debt item] | High/Med/Low | S/M/L/XL | [rank] | [action] |
 
-**4. ARCHITECTURE.md Update** — create or update following `templates/architecture.template.md`.
+**4. ARCHITECTURE.md Update** — create or update following `../../templates/architecture.template.md`.
 
 ### 4c. Architecture Evolution → Both Roles
 
@@ -240,36 +219,7 @@ Skip this step for pure analysis scope.
 
 ## 7. Present Deliverables
 
-Compile and present all architecture deliverables:
-
-```
-# Architecture Deliverables: [Title]
-
-## Scope
-[1–2 sentences — what was designed/analyzed]
-
-## Deliverables Produced
-| Document | Type | Status |
-|---|---|---|
-| ADR-NNN: [title] | Architecture Decision Record | Proposed |
-| [Feature] HLD | High-Level Design | Draft |
-| API Contract: [endpoint] | OpenAPI spec | Draft |
-| ARCHITECTURE.md | System documentation | Updated |
-
-## Key Decisions
-1. [Decision]: [rationale in one sentence]
-2. [Decision]: [rationale in one sentence]
-
-## Risks
-| Risk | Impact | Mitigation |
-|---|---|---|
-| [risk] | High/Med/Low | [mitigation] |
-
-## Next Steps
-- [ ] Stakeholder review and approval
-- [ ] Run `/feature-plan` to decompose into work packages
-- [ ] Run `/feature-dev` per work package with designated roles
-```
+Compile and present: scope summary, deliverables table (document/type/status), key decisions with rationale, risk table (risk/impact/mitigation), and next steps (stakeholder review → `/feature-plan` → `/feature-dev`).
 
 Wait for user review. The user may request changes, additional analysis, or approve.
 
@@ -301,5 +251,5 @@ Guide the next steps based on scope:
 - **Input from**: `/feature-design` (PRD output), `/feature-plan` (architecture questions during planning), direct analysis requests
 - **Followed by**: `/feature-plan` (work decomposition), `/feature-dev` (implementation)
 - **Roles**: `Agent(solution-architect)` (feature design, ADRs, API contracts), `Agent(system-architect)` (system analysis, ARCHITECTURE.md, component boundaries), `Agent(cloud-architect)` (cloud platform design, landing zones, networking, cost), `Agent(devops-architect)` (CI/CD architecture, deployment strategies, platform engineering)
-- **Templates**: `templates/architecture.template.md` (ARCHITECTURE.md structure)
+- **Templates**: `../../templates/architecture.template.md` (ARCHITECTURE.md structure)
 - **Skills**: `context-engineering` skill (for AI/agent system architecture)

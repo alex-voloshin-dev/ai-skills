@@ -34,5 +34,7 @@ Use this template for repository-wide Codex guidance.
 - Use root `AGENTS.md` for global policy
 - Use local `AGENTS.md` files for directory-specific rules
 - Use `.agents/skills` for reusable task workflows
+- When a skill declares `codex-roles`, activate the matching files under `.codex/rules/role-overlays/` as mandatory instructions for that task
+- Announce active role overlays in the next progress update when they affect execution
 - Keep documentation in English
 ````

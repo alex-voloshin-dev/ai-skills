@@ -123,7 +123,7 @@ Based on `guides/context_engineering_guide.md` §11.
   - [ ] Goal drift → re-anchor goal + prune plan
   - [ ] Hallucinated tool args → schema validation + reject + retry with grounding
   - [ ] Injection escape → tighten wrappers + post-call assertions
-  - [ ] Cascade failure → circuit breaker + error propagation policy
+  - [ ] Worker failure → circuit breaker + error propagation policy
 - [ ] Prompt version logged in every trace
 - [ ] Cache hit rate monitored (`cache_prefix_ratio`)
 - [ ] Context health metrics monitored: `context_utilization`, `cache_prefix_ratio`, `output_to_input_ratio`

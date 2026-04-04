@@ -91,15 +91,14 @@ Based on `guides/context_engineering_guide.md` §11.
 - [ ] Retrieval evals exist and monitored: recall@k, MRR, nDCG
 - [ ] Faithfulness eval: are all claims supported by retrieved context? (separate from citation correctness)
 - [ ] Citation correctness eval: does each [Source N] match the content it references?
-- [ ] Context health metrics tracked (alert on **trend over time window**, not single-point thresholds):
-  - [ ] `context_utilization` = input_tokens / max_context_window (alert: p95 > 0.7 for 24h)
-  - [ ] `cache_prefix_ratio` = cached_tokens / total_input_tokens (alert: p95 < 0.1 for 24h)
-  - [ ] `evidence_density` = evidence_tokens / total_input_tokens (alert: p95 < 0.3 for 24h)
-  - [ ] `output_to_input_ratio` = output_tokens / input_tokens (alert: p95 > 2.0 for 24h)
+- [ ] Context health metrics tracked:
+  - [ ] `context_utilization` = input_tokens / max_context_window (alert > 0.9)
+  - [ ] `cache_prefix_ratio` = cached_tokens / total_input_tokens (alert < 0.1)
+  - [ ] `evidence_density` = evidence_tokens / total_input_tokens (alert < 0.3)
+  - [ ] `output_to_input_ratio` = output_tokens / input_tokens (alert > 2.0)
 - [ ] Prompt-injection tests run in CI
 - [ ] Observability dashboards exist for token/latency/error rates
 - [ ] Scheduled eval sweeps configured (weekly + on model/corpus update) to detect silent degradation
-- [ ] LLM-as-judge evals use **positional bias mitigation**: shuffle candidate order, use blinded evaluation prompts, run each judgment twice with swapped positions
 - [ ] Context pipeline tests exist:
   - [ ] Unit: context assembly, token budget enforcement, memory filtering
   - [ ] Integration: end-to-end pipeline with fixtures and stub model

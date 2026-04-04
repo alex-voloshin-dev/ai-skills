@@ -1,5 +1,4 @@
 ---
-trigger: agent
 description: Enforce humanizer pass on all public-facing text — blog posts, social media posts, UI copy, microcopy, emails, landing pages, marketing content, newsletters, documentation for external users. Activates when writing, editing, or reviewing any content intended for publication or end-user display.
 ---
 

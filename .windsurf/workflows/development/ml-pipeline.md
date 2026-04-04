@@ -1,6 +1,7 @@
 ---
-description: ML pipeline orchestrator — single entry point for ML-related tasks. Coordinates ML Engineer (analysis, modeling, recommendations), SRE Engineer (production data extraction), and Product Manager (task formulation). Domain context from AGENTS.md. MVP flow: define data requirements → extract from prod → analyze → model → recommend → feature plan.
+description: ML pipeline orchestrator — single entry point for ML-related tasks. Coordinates ML Engineer (analysis, modeling, recommendations), SRE Engineer (production data extraction), and Product Manager (task formulation). Domain context from `AGENTS.md`. MVP flow: define data requirements → extract from prod → analyze → model → recommend → feature plan.
 ---
+
 
 # ML Pipeline
 
@@ -17,7 +18,7 @@ Gather the ML task from the user:
 - **Expected output**: What decisions will the analysis inform?
 - **Constraints**: Timeline, data sensitivity, compute budget
 
-If the user provides a vague request — proceed to Step 2 where `@product-manager` will help formulate it.
+If the user provides a vague request — proceed to Step 2 where `product-manager` role will help formulate it.
 
 ## 2. Determine Pipeline Type
 
@@ -34,7 +35,7 @@ For MVP, proceed with **Data Analysis** pipeline (Steps 3–9). Future pipeline 
 
 ## 3. Read Project Context
 
-**Apply `@product-manager`.**
+**Apply `product-manager` role.**
 
 Read and internalize the project's domain:
 
@@ -52,7 +53,7 @@ Present the domain summary to the user for confirmation before proceeding.
 
 ## 4. Formulate ML Task
 
-**Continue with `@product-manager`.**
+**Continue with `product-manager` role.**
 
 Transform the user's request into a structured ML task specification:
 
@@ -86,7 +87,7 @@ Present to user for approval. Adjust based on feedback.
 
 ## 5. Define Data Requirements
 
-**Apply `@ml-engineer`.**
+**Apply `ml-engineer` role.**
 
 Based on the ML task specification from Step 4, define exactly what data is needed:
 
@@ -101,13 +102,13 @@ Based on the ML task specification from Step 4, define exactly what data is need
 - **Anonymization**: Which fields contain PII and how to handle?
 </data_requirements>
 
-Produce a concrete **data extraction plan** — either SQL queries, API calls, or log extraction commands that `@sre-engineer` can execute.
+Produce a concrete **data extraction plan** — either SQL queries, API calls, or log extraction commands that `sre-engineer` role can execute.
 
 Present the data requirements and extraction plan to the user for review.
 
 ## 6. Extract Production Data
 
-**Apply `@sre-engineer`.**
+**Apply `sre-engineer` role.**
 
 Execute the data extraction plan from Step 5. This step uses SRE's production access and operational expertise.
 
@@ -115,7 +116,7 @@ Execute the data extraction plan from Step 5. This step uses SRE's production ac
 
 ### 6a. Establish Production Access
 
-Follow `/analyze-prod` Steps 3a–3b to verify cloud platform context. Consult `cloud-platforms` skill for platform-specific CLI commands.
+Follow `analyze-prod` skill Steps 3a–3b to verify cloud platform context. Consult `cloud-platforms` skill for platform-specific CLI commands.
 
 ### 6b. Execute Data Extraction
 
@@ -151,7 +152,7 @@ Present extraction summary:
 
 ## 7. Analyze Data and Build Models
 
-**Apply `@ml-engineer`.**
+**Apply `ml-engineer` role.**
 
 Perform the analysis following ML Engineer's reasoning protocol:
 
@@ -205,7 +206,7 @@ Present analysis as a structured report:
 
 ## 8. Produce Recommendations
 
-**Continue with `@ml-engineer`, consult `@product-manager` for business framing.**
+**Continue with `ml-engineer` role, consult `product-manager` role for business framing.**
 
 Translate analysis findings into actionable recommendations:
 
@@ -250,7 +251,7 @@ Present recommendations to the user. Wait for approval before proceeding.
 
 ## 9. Generate Feature Plan
 
-After user approves the recommendations, invoke `/feature-plan` with the following input:
+After user approves the recommendations, invoke `feature-plan` skill with the following input:
 
 **Feature specification** (auto-generated from Step 8):
 - **Goal**: Implement ML-recommended changes to [parameters/prompts/models]
@@ -258,7 +259,7 @@ After user approves the recommendations, invoke `/feature-plan` with the followi
 - **Acceptance criteria**: Metrics improve by the predicted amounts (with tolerance)
 - **Constraints**: Include validation plan (A/B test, monitoring) as non-functional requirements
 
-`/feature-plan` will decompose the work into role-scoped work packages and produce an implementation plan.
+`feature-plan` skill will decompose the work into role-scoped work packages and produce an implementation plan.
 
 ## 10. Summary
 
@@ -266,16 +267,16 @@ Present the completed ML pipeline run:
 
 - **ML task**: original objective
 - **Domain**: project context used
-- **Roles applied**: `@product-manager`, `@ml-engineer`, `@sre-engineer`
+- **Roles applied**: `product-manager` role, `ml-engineer` role, `sre-engineer` role
 - **Data**: source, volume, time range
 - **Key findings**: top 3 insights
 - **Recommendations**: summary of proposed changes
 - **Feature plan**: link to generated plan or status
-- **Next step**: `/feature-dev` per work package
+- **Next step**: `feature-dev` skill per work package
 
 ## Integration
 
-- **Sub-workflows**: `/analyze-prod` (production data access, Steps 6a–6b)
-- **Followed by**: `/feature-plan` (Step 9), then `/feature-dev` (implementation)
-- **Roles**: `@product-manager` (task formulation), `@ml-engineer` (analysis, modeling), `@sre-engineer` (data extraction)
+- **follow-up skills**: `analyze-prod` skill (production data access, Steps 6a–6b)
+- **Followed by**: `feature-plan` skill (Step 9), then `feature-dev` skill (implementation)
+- **Roles**: `product-manager` role (task formulation), `ml-engineer` role (analysis, modeling), `sre-engineer` role (data extraction)
 - **Skills**: `testing-procedures` skill (validation plan), `context-engineering` skill (context pipeline design, RAG, memory engineering, agent harness — for LLM/prompt recommendations), `prompt-engineering` skill (technique selection, eval strategy)

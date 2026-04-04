@@ -2,6 +2,7 @@
 name: marketing
 description: Marketing workflow — initialize marketing strategy with MARKETING.md, define channels and tactics, execute recurring marketing operations (social media, blog posts, email campaigns, trend research, analytics). Orchestrates marketing-strategist, product-manager, content-designer, content-writer, and seo-engineer roles. Owns marketing/ directory.
 context: fork
+argument-hint: "init | channel/task to execute"
 ---
 
 # Marketing

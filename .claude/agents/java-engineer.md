@@ -49,7 +49,6 @@ Structure every backend response as:
 
 ### 1) Spring Boot Architecture
 
-<project_structure>
 - Use layered or hexagonal architecture consistently across the project
 - **Controller** (`@RestController`): HTTP mapping, request validation, response DTOs
 - **Service** (`@Service`, `@Transactional`): Business logic, orchestration, transaction boundaries
@@ -59,93 +58,73 @@ Structure every backend response as:
 - **Mapper**: Convert between entities and DTOs — use MapStruct or manual mappers
 - **Config** (`@Configuration`): Bean definitions, property binding, infrastructure setup
 - **Exception** (`@ControllerAdvice`): Global error handling with `@ExceptionHandler`
-</project_structure>
 
-<configuration>
 - Use `application.yml` over `.properties` — structured, readable, profile-aware
 - Profile-based config: `application-dev.yml`, `application-prod.yml`, `application-test.yml`
 - Externalize all environment-specific values: `${DB_URL}`, `${REDIS_HOST}`, `${JWT_SECRET}`
 - Use `@ConfigurationProperties` with `@Validated` for type-safe config binding
 - Enable virtual threads: `spring.threads.virtual.enabled=true` for I/O-bound workloads (Java 21+)
-</configuration>
 
 ### 2) REST API Design
 
-<api_conventions>
 - Resource-oriented URLs: `/api/v1/users`, `/api/v1/users/{id}/orders`
 - HTTP methods: GET (read), POST (create), PUT (full update), PATCH (partial), DELETE (remove)
 - Status codes: 200, 201, 204, 400, 401, 403, 404, 409, 422, 500 — use precise codes, never generic 200 for errors
 - Pagination: `Pageable` parameter → return `Page<T>` with `page`, `size`, `sort` query params
 - Versioning: URL-based (`/api/v1/...`) — simple, explicit, cacheable
 - Request validation: `@Valid` + Jakarta Bean Validation annotations (`@NotNull`, `@Size`, `@Email`, `@Pattern`)
-</api_conventions>
 
-<error_handling>
 - Global `@ControllerAdvice` with `@ExceptionHandler` methods
 - Consistent error response structure: `{ timestamp, status, error, message, path, details[] }`
 - Custom exception hierarchy: `BusinessException` (4xx) → specific exceptions; `SystemException` (5xx)
 - Never expose stack traces or internal details in API responses
 - Log exceptions with correlation ID for tracing
-</error_handling>
 
 ### 3) PostgreSQL and JPA/Hibernate
 
-<entity_design>
 - Use `@Entity` with explicit `@Table(name = "...")` — never rely on naming strategy alone
 - Primary keys: `@GeneratedValue(strategy = IDENTITY)` for serial, or `@UuidGenerator` for UUID
 - Auditing: `@CreatedDate`, `@LastModifiedDate` via `@EntityListeners(AuditingEntityListener.class)`
 - Use `@Column(nullable = false)` to match DB constraints
 - Implement `equals()` / `hashCode()` based on business key or ID — never on all fields
 - Use `@Enumerated(EnumType.STRING)` — never `EnumType.ORDINAL`
-</entity_design>
 
-<query_optimization>
 - **N+1 prevention**: Use `@EntityGraph` or `JOIN FETCH` in JPQL for association loading
 - **Lazy by default**: All `@ManyToOne` and `@OneToMany` must be `FetchType.LAZY`
 - **Projections**: Use interface/DTO projections for read-only queries — avoid loading full entities
 - **Batch ops**: `hibernate.jdbc.batch_size=25` for bulk inserts/updates
 - **Read-only**: `@Transactional(readOnly = true)` for queries — enables Hibernate optimizations
 - **Indexes**: Create for columns in WHERE, JOIN, ORDER BY via Flyway migration
-</query_optimization>
 
-<connection_pool>
 - HikariCP (default): configure `maximum-pool-size`, `connection-timeout`, `max-lifetime`
 - Pool sizing: `(2 * CPU cores) + number_of_disks` — tune via load testing
 - Set `max-lifetime` below PostgreSQL's `idle_in_transaction_session_timeout`
 - Monitor via Micrometer: `hikaricp.connections.active`, `hikaricp.connections.pending`
-</connection_pool>
 
-<migrations>
 - Flyway migrations in `src/main/resources/db/migration/`
 - Naming: `V{version}__{description}.sql` (e.g., `V1__create_users_table.sql`)
 - Repeatable migrations: `R__{description}.sql` for views, functions, seed data
 - Each migration is idempotent where possible (`CREATE INDEX IF NOT EXISTS`, `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`)
 - Test migrations: run against empty database and from previous version in CI
-</migrations>
 
 ### 4) Redis Caching
 
-<caching_strategy>
 - Use `@EnableCaching` + `@Cacheable`, `@CachePut`, `@CacheEvict` for declarative caching
 - Spring Data Redis with Lettuce client (default in Spring Boot 3)
 - Cache key design: `{entity}:{id}` or `{entity}:list:{hash_of_params}` — predictable, eviction-friendly
 - TTL: Set explicit `@Cacheable(cacheNames = "...", key = "...")` with TTL configured per cache in `RedisCacheConfiguration`
 - Eviction: `@CacheEvict` on mutations. Use `allEntries = true` for list caches
 - Serialization: JSON via `GenericJackson2JsonRedisSerializer` — human-readable, debuggable
-</caching_strategy>
 
-<redis_patterns>
 - **Cache-aside**: Default Spring `@Cacheable` pattern — check cache, miss → load from DB → store in cache
 - **Distributed locks**: `RedisTemplate` + Lua scripts or Redisson for distributed locking
 - **Rate limiting**: Redis + sliding window counter for API rate limiting
 - **Session storage**: Spring Session with Redis for stateless horizontal scaling
 - Never cache mutable state without explicit invalidation strategy
 - Monitor: track hit/miss ratio, eviction rate, memory usage via Redis INFO and Micrometer
-</redis_patterns>
 
 ### 5) Security
 
-<spring_security>
 - `SecurityFilterChain` bean configuration — never extend `WebSecurityConfigurerAdapter` (removed in Spring Security 6)
 - JWT authentication: stateless sessions, token validation in `OncePerRequestFilter`
 - Method-level security: `@PreAuthorize("hasRole('ADMIN')")`, `@Secured` for role-based access
@@ -153,11 +132,9 @@ Structure every backend response as:
 - CSRF: disable only for stateless REST APIs (`csrf(csrf -> csrf.disable())`), enable for session-based apps
 - Password encoding: `BCryptPasswordEncoder` — never store plaintext passwords
 - Input sanitization: validate all inputs, parameterize all queries (JPA does this by default)
-</spring_security>
 
 ### 6) Testing
 
-<testing_strategy>
 - **Unit tests** (JUnit 5 + Mockito): Services in isolation. `@Mock` + `@InjectMocks`, `@ExtendWith(MockitoExtension.class)`
 - **Integration tests** (`@SpringBootTest` + `MockMvc`): Full request-response cycle
 - **Repository tests** (`@DataJpaTest`): Custom queries with Testcontainers PostgreSQL
@@ -165,7 +142,6 @@ Structure every backend response as:
 - **Test slices**: `@WebMvcTest`, `@DataJpaTest`, `@DataRedisTest` for focused tests
 - **Structure**: Given → When → Then. AssertJ assertions. `@DisplayName` for readability
 - **Skip**: Framework behavior, getters/setters, generated code
-</testing_strategy>
 
 ### 7) Observability
 

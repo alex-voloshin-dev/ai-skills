@@ -134,9 +134,9 @@ Wait for user confirmation before proceeding to fix.
 Create an ordered fix plan following the applied role's guidelines:
 
 1. **Root cause fix** — address the actual cause, not symptoms
-2. **Minimal change** — smallest change that fixes the bug without side effects
+2. **Complete fix** — fix everything described in the bug report. Do not leave cosmetic issues, lint warnings, or minor problems unfixed. Do not create follow-up tickets for things you can fix now
 3. **Regression test** — test that would have caught this bug
-4. **Related fixes** — any adjacent issues discovered during investigation
+4. **Related fixes** — any adjacent issues discovered during investigation. Fix them in the same changeset — do not increase tech debt
 
 Present the plan:
 
@@ -178,12 +178,31 @@ Execute the approved plan step by step.
 
 **Rules:**
 - Fix the root cause, not the symptom
-- Minimal, focused changes — do not refactor unrelated code
+- Fix EVERYTHING reported in the bug — do not leave non-blocking or cosmetic issues unfixed
+- Fix all lint errors, style violations, and warnings introduced or exposed by the change
 - Follow existing code patterns and conventions
-- No new warnings or linter errors
+- No new warnings or linter errors — and fix pre-existing ones in the affected files if trivial
+- Do not defer fixes to "follow-up" tasks — complete the fix in this changeset
+- Do not increase tech debt — if you touch it, leave it better than you found it
 - If the fix is more complex than expected — stop and discuss with the user
+- If you need more information about the environment, launch sub-agents (`/analyze-local` or `/analyze-prod`) to collect it
 
-## 8. Verify the Fix
+## 8. Self-Review the Fix
+
+Before declaring the bug fixed, perform a thorough self-review. Do NOT skip this step.
+
+**Code review checklist:**
+- [ ] Re-read every changed file diff — verify correctness and completeness
+- [ ] Every item from the bug report or user description is addressed — nothing left unfixed
+- [ ] No cosmetic issues, lint warnings, or style violations remain in changed files
+- [ ] No TODO, FIXME, or "will fix later" comments introduced
+- [ ] No tech debt created — the code is clean and production-ready
+- [ ] Run linter on all changed files — zero warnings
+- [ ] Run formatter on all changed files — zero diffs
+
+If the self-review reveals any remaining issues — fix them before proceeding. Do not declare the bug fixed with known remaining problems.
+
+## 9. Verify the Fix
 
 Verify the bug is resolved in the appropriate environment:
 
@@ -191,6 +210,7 @@ Verify the bug is resolved in the appropriate environment:
 - Run the reproduction steps — confirm the bug no longer occurs
 - Run the full test suite — all tests pass (new + existing)
 - If Docker-based: rebuild and verify with `/analyze-local` (optional)
+- If you need more data, launch sub-agents for `/analyze-local` to collect environment state
 
 **For production bugs:**
 - Verify the fix locally first
@@ -200,15 +220,17 @@ Verify the bug is resolved in the appropriate environment:
 
 **Verification checklist:**
 - [ ] Original bug no longer reproduces
+- [ ] ALL items from the bug report are fixed — not just the primary symptom
 - [ ] Regression test passes
 - [ ] Full test suite passes (no new failures)
-- [ ] No new warnings or linter errors
+- [ ] Linter passes with zero warnings on changed files
 - [ ] No unrelated files modified
 - [ ] Code follows project conventions and role guidelines
+- [ ] No deferred work — everything is done in this changeset
 
-If any check fails — fix and re-verify.
+If any check fails — fix and re-verify. Do NOT declare the bug fixed until every checkbox passes.
 
-## 9. Summary
+## 10. Summary
 
 Present the completed bugfix:
 
@@ -219,11 +241,13 @@ Present the completed bugfix:
 - **Root cause**: technical explanation
 - **Fix**: what was changed (files, brief description)
 - **Tests added**: count and description
+- **Self-review**: passed — all items verified
 - **Verification**: how it was confirmed fixed
+- **Remaining issues**: NONE (if any remain, go back and fix them before reporting)
 - **Prevention**: recommendations to avoid similar bugs (e.g., add validation, improve error handling, add monitoring)
 
 ## Integration
 
-- **Sub-workflows**: `/analyze-local`, `/analyze-prod` (environment diagnostics)
+- **Sub-workflows**: `/analyze-local`, `/analyze-prod` (environment diagnostics — launch as sub-agents when more data is needed)
 - **Follow-up**: `/run-tests` (verify fix), `/pre-commit` (quality gate), `/create-pr` (submit fix)
-- **Skills**: `code-review` skill (review fix), `testing-procedures` skill (test strategy)
+- **Skills**: `code-review` skill (review fix), `testing-procedures` skill (test strategy), `worktree-isolation` skill (branch isolation)

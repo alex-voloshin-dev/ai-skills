@@ -1,6 +1,6 @@
 # Google Cloud Platform Reference
 
-Platform-specific patterns for **GCP**. Load this module when the project's `AGENTS.md` or infrastructure files indicate GCP, Google Cloud, GKE, Cloud SQL, Cloud Build, or related services.
+Platform-specific patterns for **GCP**. Load this module when the project's AGENTS.md declares GCP, Google Cloud, GKE, Cloud SQL, Cloud Build, or related services.
 
 ## 1. Core Platform
 

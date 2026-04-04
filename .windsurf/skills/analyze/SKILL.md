@@ -1,6 +1,8 @@
 ---
 name: analyze
 description: Deep analysis workflow for codebases, architectures, systems, products, markets, or research topics. Use when the user asks to analyze, investigate, assess, evaluate, compare, or research something in a structured way.
+context: fork
+argument-hint: [topic, question, or area to analyze]
 ---
 
 # Analyze

@@ -1,6 +1,6 @@
 # Design System Creation Checklist
 
-Comprehensive checklist for building a design system from scratch or auditing an existing one. Use alongside `@ui-ux-designer` role and `ui-ux-design` skill.
+Comprehensive checklist for building a design system from scratch or auditing an existing one. Use alongside `ui-ux-designer` role and `ui-ux-design` skill.
 
 ## Phase 1: Audit and Discovery
 

@@ -74,90 +74,39 @@ Be direct. Show code. Omit filler.
 
 ### 1) Software Architecture
 
-<principles>
-- **SOLID**: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
-- **DRY**: Extract shared logic — but avoid premature abstraction. Rule of Three: duplicate first, extract when pattern is clear
-- **KISS**: Simplest solution that works. Complexity must be justified
-- **YAGNI**: Build for today, design for extensibility. No hypothetical features
-- **Separation of Concerns**: Presentation → Business Logic → Data Access
-</principles>
-
-<architecture_patterns>
-- **Layered**: Controller/Router → Service → Repository → Model. Default for most apps
-- **Hexagonal**: Core domain has no framework deps. External systems plug in via interfaces
-- **DDD**: Bounded contexts, aggregates, value objects, domain events — for complex domains
-- **Monolith first**: Extract services only when team or scaling boundaries demand it
-- Every architectural decision needs documented rationale
-</architecture_patterns>
+- **SOLID**, **DRY** (Rule of Three), **KISS**, **YAGNI**. Separation of Concerns: Presentation → Business Logic → Data Access
+- **Layered** (default): Controller → Service → Repository → Model. **Hexagonal**: domain has no framework deps. **DDD**: for complex domains
+- Monolith first — extract services only when team or scaling boundaries demand it. Document rationale for every architectural decision
 
 ### 2) Code Quality
 
-<naming>
-- Names reveal intent: `calculateOrderTotal()` not `calc()`, `isValidEmail` not `check`
-- Booleans: `is`, `has`, `should`, `can` prefix. Collections: plural nouns
-- Functions: verb + noun (`fetchUser`, `validateInput`). Constants: UPPER_SNAKE_CASE
-- No abbreviations unless universal (`id`, `url`, `http`)
-</naming>
-
-<code_structure>
-- Functions: ≤30 lines, ≤4 params. Classes: ≤300 lines. Files: ≤500 lines
-- Nesting: ≤3 levels — early returns, guard clauses. Complexity: ≤10 per function
+- Names reveal intent: `calculateOrderTotal()` not `calc()`. Booleans: `is`/`has`/`should` prefix. No abbreviations
+- Functions: ≤30 lines, ≤4 params. Classes: ≤300 lines. Nesting: ≤3 levels, use guard clauses
 - Imports: stdlib → framework → third-party → local. No unused imports
-</code_structure>
 
 ### 3) API Design
 
-<rest_principles>
-- Resource-oriented URLs: nouns, not verbs (`/api/v1/users`, not `/api/v1/getUsers`)
-- HTTP methods map to operations: GET (read), POST (create), PUT (replace), PATCH (partial update), DELETE
-- Status codes: use precise codes. 200/201/204 for success. 400/401/403/404/409/422 for client errors. 500 for server errors
-- Versioning: URL-based (`/api/v1/...`) or header-based. Be consistent
-- Pagination: offset/limit or cursor-based. Always return total count or next cursor
-- Filtering and sorting via query parameters: `?status=active&sort=-created_at`
-</rest_principles>
-
-<api_contracts>
-- Request/response bodies: always typed schemas (Pydantic, Zod, Java records, etc.)
-- Error responses: consistent structure (`{ status, error, message, details }`)
-- Idempotency: POST/PUT/DELETE should be safely retriable. Use idempotency keys for payment-like operations
-- Rate limiting: implement for all public endpoints. Return `429` with `Retry-After` header
-- Documentation: OpenAPI/Swagger spec auto-generated from code annotations
-</api_contracts>
+- Resource-oriented URLs: nouns, not verbs (`/api/v1/users`). HTTP methods map to CRUD
+- Precise status codes: 200/201/204 success, 400/401/403/404/409/422 client errors, 500 server
+- Pagination: offset/limit or cursor-based. Filtering/sorting via query params
+- Typed request/response schemas. Consistent error structure (`{ status, error, message, details }`)
+- Idempotency keys for payment-like operations. Rate limiting on all public endpoints
+- OpenAPI spec auto-generated from code annotations
 
 ### 4) Database Design
 
-<fundamentals>
-- Normalize to 3NF by default. Denormalize only with measured performance justification
-- Every table has a primary key. Prefer surrogate keys (auto-increment or UUID)
-- Foreign keys with explicit ON DELETE behavior (CASCADE, SET NULL, or RESTRICT)
-- Indexes: create for columns in WHERE, JOIN, ORDER BY. Composite indexes for multi-column queries
-- Naming: `snake_case` for tables and columns. Plural table names (`users`, `orders`)
-</fundamentals>
-
-<data_access>
-- Use ORM for standard CRUD. Drop to raw SQL only for complex queries with performance justification
-- N+1 prevention: always eager-load or batch-load associations when iterating collections
-- Transactions: wrap multi-step mutations in explicit transactions. Keep transactions short
-- Connection pooling: configure pool size, timeouts, max lifetime. Monitor pool metrics
-- Read replicas: route read-only queries to replicas when available
-</data_access>
+- Normalize to 3NF by default. Denormalize only with measured justification
+- Every table: primary key (surrogate preferred), FKs with explicit ON DELETE, snake_case naming
+- Indexes for WHERE/JOIN/ORDER BY columns. Composite for multi-column queries
+- ORM for CRUD, raw SQL only with justification. Prevent N+1 with eager/batch loading
+- Explicit transactions for multi-step mutations, keep short. Connection pooling with monitoring
 
 ### 5) Testing Strategy
 
-<test_pyramid>
-- **Unit tests** (70%): Test individual functions/methods in isolation. Mock external dependencies. Fast, deterministic
-- **Integration tests** (20%): Test component interactions (API → service → DB). Use real databases (containers). Test realistic scenarios
-- **E2E tests** (10%): Test critical user journeys through the full stack. Slow but high-confidence
-</test_pyramid>
-
-<testing_practices>
-- Write tests for behavior, not implementation. Test what a function does, not how it does it
-- Structure: Arrange → Act → Assert (Given → When → Then)
-- Each test: single assertion focus, descriptive name, independent (no shared mutable state)
-- Edge cases: null/empty inputs, boundary values, error paths, concurrent access
-- Regression: every bug fix includes a test that reproduces the bug before the fix
-- Never mock what you don't own. Use fakes or containers for external services
-</testing_practices>
+- **Unit** (70%): Isolated, fast, mock externals. **Integration** (20%): Real DBs via containers. **E2E** (10%): Critical user journeys
+- Test behavior, not implementation. Structure: Arrange → Act → Assert
+- Each test: single focus, descriptive name, independent. Cover edge cases and error paths
+- Every bug fix includes a regression test. Never mock what you don't own
 
 ### 6) Security Fundamentals
 
@@ -187,28 +136,14 @@ Be direct. Show code. Omit filler.
 
 ### 9) Debugging Methodology
 
-1. **Reproduce**: Get a reliable reproduction before investigating. Define exact steps
-2. **Isolate**: Narrow down to the smallest failing unit. Use binary search through code/commits
-3. **Hypothesize**: Form a theory based on evidence, not assumptions
-4. **Verify**: Add targeted logging or breakpoints to confirm/reject hypothesis
-5. **Fix root cause**: Address the underlying issue, not symptoms. Avoid downstream workarounds
-6. **Prevent**: Add test for the bug. Check if similar bugs exist elsewhere
+1. **Reproduce** reliably. **Isolate** to smallest failing unit (binary search). **Hypothesize** from evidence
+2. **Verify** with targeted logging/breakpoints. **Fix root cause**, not symptoms. **Prevent** with regression test
 
 ### 10) Code Review and Technical Debt
 
-<code_review>
 - Review for: correctness, security, performance, readability, test coverage, edge cases
-- Small PRs: ≤400 lines changed. Break large features into incremental PRs
-- Every PR: descriptive title, context in description, linked to issue/ticket
-- Approve only when: tests pass, no security concerns, code is readable, edge cases handled
-</code_review>
-
-<technical_debt>
-- Track debt explicitly: TODO comments with ticket references, not bare TODOs
-- Boy Scout Rule: leave code cleaner than you found it — small improvements during every change
-- Refactor incrementally: never mix feature work with large refactors in the same PR
-- Debt budget: dedicate ≤20% of sprint capacity to debt reduction
-</technical_debt>
+- PRs: ≤400 lines, descriptive title, linked to issue. Approve only when tests pass and edge cases handled
+- Track debt with TODO + ticket reference. Boy Scout Rule. Never mix features with large refactors
 
 ## Anti-Patterns (never do)
 

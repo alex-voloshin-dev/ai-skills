@@ -1,10 +1,11 @@
 ---
-description: Plan feature implementation across services and roles — parse requirements, understand project architecture (ARCHITECTURE.md, AGENTS.md), decompose into work packages per service/role, estimate complexity, produce an actionable implementation plan. Part of the umbrella feature workflow.
+description: Plan feature implementation across services and roles — parse requirements, understand project architecture (`ARCHITECTURE.md`, `AGENTS.md`), decompose into work packages per service/role, estimate complexity, produce an actionable implementation plan. Part of the umbrella feature workflow.
 ---
+
 
 # Feature Plan
 
-Plan a feature implementation by understanding the project architecture, decomposing work into service-level and role-level packages, and producing an actionable plan. This is the **planning phase** — no code is written here. Output feeds into `/feature-dev` for execution.
+Plan a feature implementation by understanding the project architecture, decomposing work into service-level and role-level packages, and producing an actionable plan. This is the **planning phase** — no code is written here. Output feeds into `feature-dev` skill for execution.
 
 ## 1. Receive Feature Requirements
 
@@ -64,9 +65,9 @@ Create a map of services/modules the feature touches:
 
 | Service/Module | Tech Stack | Role | Affected by Feature |
 |---|---|---|---|
-| [name] | [lang + framework] | @[role] | [yes/no — how] |
-| [name] | [lang + framework] | @[role] | [yes/no — how] |
-| infrastructure | Terraform / K8s | @devops-engineer | [yes/no — how] |
+| [name] | [lang + framework] | `role-id` | [yes/no — how] |
+| [name] | [lang + framework] | `role-id` | [yes/no — how] |
+| infrastructure | Terraform / K8s | `devops-engineer` role | [yes/no — how] |
 ```
 
 ## 3. Decompose into Work Packages
@@ -79,18 +80,18 @@ Group changes by responsibility:
 
 | Work Stream | Role | Scope |
 |---|---|---|
-| **Frontend** | `@frontend-engineer` | UI components, pages, client-side logic, API integration |
-| **Backend API** | `@java-engineer` / `@python-engineer` | Endpoints, business logic, data access, validation |
-| **Data Layer** | `@db-engineer` | Database schema, migrations, queries, indexing, optimization |
-| **Infrastructure** | `@devops-engineer` | Terraform, Docker, K8s, config, secrets |
-| **Cloud Architecture** | `@cloud-architect` | Cloud platform design, landing zones, networking, cost optimization |
-| **CI/CD Architecture** | `@devops-architect` | Pipeline design, deployment strategy, GitHub org governance, platform engineering |
-| **ML / Data** | `@ml-engineer` | Models, pipelines, feature engineering. For LLM/RAG/agent features also consult `context-engineering` skill |
-| **Data Pipelines** | `@data-engineer` | ETL/ELT, data warehousing, Spark, dbt, Airflow |
-| **Mobile** | `@mobile-engineer` | React Native, Flutter, iOS, Android apps |
-| **Marketing Content** | `@marketing-strategist` | Positioning, messaging, GTM, landing pages |
-| **Architecture** | `@system-architect` | System design, ARCHITECTURE.md, component boundaries, tech selection |
-| **Cross-cutting** | `@software-engineer` | Shared libraries, contracts, API specs |
+| **Frontend** | `frontend-engineer` role | UI components, pages, client-side logic, API integration |
+| **Backend API** | `java-engineer` role / `python-engineer` role | Endpoints, business logic, data access, validation |
+| **Data Layer** | `db-engineer` role | Database schema, migrations, queries, indexing, optimization |
+| **Infrastructure** | `devops-engineer` role | Terraform, Docker, K8s, config, secrets |
+| **Cloud Architecture** | `cloud-architect` role | Cloud platform design, landing zones, networking, cost optimization |
+| **CI/CD Architecture** | `devops-architect` role | Pipeline design, deployment strategy, GitHub org governance, platform engineering |
+| **ML / Data** | `ml-engineer` role | Models, pipelines, feature engineering. For LLM/RAG/agent features also consult `context-engineering` skill |
+| **Data Pipelines** | `data-engineer` role | ETL/ELT, data warehousing, Spark, dbt, Airflow |
+| **Mobile** | `mobile-engineer` role | React Native, Flutter, iOS, Android apps |
+| **Marketing Content** | `marketing-strategist` role | Positioning, messaging, GTM, landing pages |
+| **Architecture** | `system-architect` role | System design, ARCHITECTURE.md, component boundaries, tech selection |
+| **Cross-cutting** | `software-engineer` role | Shared libraries, contracts, API specs |
 
 Only include work streams that the feature actually requires. Do not add empty streams.
 
@@ -99,7 +100,7 @@ Only include work streams that the feature actually requires. Do not add empty s
 For each work stream, create ordered work packages:
 
 ```
-### [Work Stream]: [Service Name] — @[role]
+### [Work Stream]: [Service Name] — `role-id`
 
 #### WP-[N]: [Title]
 - **Description**: What to implement
@@ -180,13 +181,13 @@ Compile the full plan and present to the user:
 
 ## Work Packages
 
-### Stream 1: [name] — @[role]
+### Stream 1: [name] — `role-id`
 | WP | Title | Complexity | Dependencies | Status |
 |----|-------|------------|--------------|--------|
 | WP-1 | [title] | M | — | planned |
 | WP-2 | [title] | S | WP-1 | planned |
 
-### Stream 2: [name] — @[role]
+### Stream 2: [name] — `role-id`
 | WP | Title | Complexity | Dependencies | Status |
 |----|-------|------------|--------------|--------|
 | WP-3 | [title] | L | WP-1 | planned |
@@ -198,14 +199,14 @@ WP-1 → WP-2 → WP-5 (estimated: [timeframe])
 [table from Step 5]
 
 ## Next Step
-Run `/feature-dev` per work package, applying the designated role.
+Run `feature-dev` skill per work package, applying the designated role.
 ```
 
 Wait for user approval. The user may reorder, split, merge, or remove work packages.
 
 ## 7. Update FEATURES.md
 
-After the plan is approved, **apply `@product-manager`** and update `FEATURES.md`:
+After the plan is approved, **apply `product-manager` role** and update `FEATURES.md`:
 
 1. If `FEATURES.md` does not exist — create it at the project root
 2. Add or update the feature entry with status `planned`
@@ -215,7 +216,7 @@ After the plan is approved, **apply `@product-manager`** and update `FEATURES.md
 
 After approval, guide execution:
 
-- **Sequential** (single developer): Execute WPs in dependency order using `/feature-dev` for each
+- **Sequential** (single developer): Execute WPs in dependency order using `feature-dev` skill for each
 - **Parallel** (multiple developers/sessions): Assign independent WPs to separate sessions, each applying the appropriate role
 - Track WP status: `planned` → `in_progress` → `done`
 - Update the plan if scope changes during implementation
@@ -223,7 +224,7 @@ After approval, guide execution:
 ## Integration
 
 - **Input**: PRD, ARD, design doc, or user request
-- **Preceded by**: `/feature-design` (produces PRD), `/architecture` (produces ARD, design docs, API contracts, engineering estimates)
-- **Followed by**: `/feature-dev` (implementation per work package)
-- **Roles**: `@product-manager` (requirements), `@solution-architect` / `@system-architect` (architecture), `@cloud-architect` (cloud platform), `@devops-architect` (CI/CD architecture), stack-specific roles (work packages)
+- **Preceded by**: `feature-design` skill (produces PRD), `architecture` skill (produces ARD, design docs, API contracts, engineering estimates)
+- **Followed by**: `feature-dev` skill (implementation per work package)
+- **Roles**: `product-manager` role (requirements), `solution-architect` role / `system-architect` role (architecture), `cloud-architect` role (cloud platform), `devops-architect` role (CI/CD architecture), stack-specific roles (work packages)
 - **Skills**: `context-engineering` skill (context pipeline design, RAG, memory, agent harness — for AI/LLM feature work packages)

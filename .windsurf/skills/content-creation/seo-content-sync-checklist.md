@@ -1,6 +1,6 @@
 # SEO Content Sync Checklist
 
-When updating page content, multiple locations must stay in sync. Missing even one creates inconsistencies between visible text, search engine metadata, and structured data. Use this checklist alongside `@content-designer`, `@seo-engineer`, and `content-creation` skill.
+When updating page content, multiple locations must stay in sync. Missing even one creates inconsistencies between visible text, search engine metadata, and structured data. Use this checklist alongside `content-designer` role, `seo-engineer` role, and `content-creation` skill.
 
 ## Content Update Sync Matrix
 
@@ -88,6 +88,6 @@ Before committing content changes, run these checks:
 
 ## Integration
 
-- **Roles**: `@content-designer` (content changes), `@seo-engineer` (metadata, structured data), `@frontend-engineer` (implementation)
+- **Roles**: `content-designer` role (content changes), `seo-engineer` role (metadata, structured data), `frontend-engineer` role (implementation)
 - **Skills**: `content-creation` skill (parent skill), `ui-ux-design` skill (visual audit post-change)
-- **Workflows**: `/ui-ux-design` (content phase), `/seo-review` (SEO audit), `/pre-commit` (verification)
+- **Workflows**: `ui-ux-design` skill (content phase), `seo-review` skill (SEO audit), `pre-commit` skill (verification)

@@ -189,7 +189,7 @@ Verify each layer is distinct — no mixing:
 
 | Context Stack Layer | Claude Code Asset Type | Notes |
 |---|---|---|
-| L1: System policy | Global rules ((auto-loaded)) | `global_rules.md`, safety hooks |
+| L1: System policy | Global rules ((auto-loaded)) | `global-rules.md`, safety hooks |
 | L2: Developer instructions | Role rules ((agent)), CLAUDE.md | `.role.md` files, workflow steps |
 | L3: Tool contracts | MCP configs, hook schemas | Tool descriptions in workflows |
 | L4: Runtime state | CLAUDE.md (directory-scoped), project files | Claude reads automatically |

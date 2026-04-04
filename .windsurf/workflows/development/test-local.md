@@ -2,11 +2,12 @@
 description: Local dev testing workflow — verify test environment, provision infrastructure (Docker, Testcontainers), run multi-level test suite (unit → integration → E2E), coverage analysis, quality gate. Applies QA Engineer role. Use for full local QA cycle before commit or PR.
 ---
 
+
 # Test Local
 
-Full QA cycle for local development environments. Verifies test infrastructure, provisions dependencies, runs tests at all levels (unit → integration → E2E), analyzes coverage, and applies quality gates. Orchestrated by `@qa-engineer`.
+Full QA cycle for local development environments. Verifies test infrastructure, provisions dependencies, runs tests at all levels (unit → integration → E2E), analyzes coverage, and applies quality gates. Orchestrated by `qa-engineer` role.
 
-**Key difference from `/run-tests`**: This workflow manages the full local test environment lifecycle (setup → test → report → cleanup). `/run-tests` is a lightweight sub-workflow that only executes and analyzes tests.
+**Key difference from `run-tests` skill**: This workflow manages the full local test environment lifecycle (setup → test → report → cleanup). `run-tests` skill is a lightweight follow-up skill that only executes and analyzes tests.
 
 ## 1. Define Scope
 
@@ -22,16 +23,16 @@ If invoked by another workflow — extract scope from parent context.
 
 ## 2. Apply Roles
 
-**Primary**: `@qa-engineer` — owns test strategy, quality gates, and test infrastructure decisions.
+**Primary**: `qa-engineer` role — owns test strategy, quality gates, and test infrastructure decisions.
 
 **Secondary** (applied as needed during test execution):
 
 | Need | Role |
 |---|---|
-| Fix failing unit/integration tests | Stack-specific: `@java-engineer` / `@python-engineer` / `@frontend-engineer` |
-| Docker/compose/infra issues | `@devops-engineer` |
-| Test data / database schema | `@db-engineer` |
-| General debugging | `@software-engineer` |
+| Fix failing unit/integration tests | Stack-specific: `java-engineer` role / `python-engineer` role / `frontend-engineer` role |
+| Docker/compose/infra issues | `devops-engineer` role |
+| Test data / database schema | `db-engineer` role |
+| General debugging | `software-engineer` role |
 
 ## 3. Detect Project Stack
 
@@ -125,7 +126,7 @@ Wait for services to be healthy:
 docker compose -f docker-compose.test.yml ps
 ```
 
-Check health status. If any service is unhealthy — collect logs and diagnose using `@devops-engineer`.
+Check health status. If any service is unhealthy — collect logs and diagnose using `devops-engineer` role.
 
 ### 5c. Seed Data
 
@@ -152,7 +153,7 @@ Execute tests in pyramid order: unit → integration → E2E. Stop at first fail
 
 **Expected**: Fast (< 2 min), high pass rate. If unit tests fail — fix before proceeding.
 
-For failures — delegate to `/run-tests` for analysis and auto-fix (Step 3-4 of that workflow).
+For failures — delegate to `run-tests` skill for analysis and auto-fix (Step 3-4 of that workflow).
 
 ### 6b. Integration Tests
 
@@ -303,8 +304,8 @@ Testcontainers handles its own cleanup automatically — verify no orphaned cont
 
 ## Integration
 
-- **Roles**: `@qa-engineer` (primary), stack-specific roles (test fixes), `@devops-engineer` (infra issues)
+- **Roles**: `qa-engineer` role (primary), stack-specific roles (test fixes), `devops-engineer` role (infra issues)
 - **Skills**: `testing-procedures` skill (test patterns, coverage targets)
-- **Sub-workflows**: `/run-tests` (test execution and auto-fix for failures)
-- **Called by**: `/feature-dev` (pre-commit testing), `/bugfix` (verify fix)
-- **Follow-up**: `/pre-commit` (quality gate), `/create-pr` (submit changes)
+- **follow-up skills**: `run-tests` skill (test execution and auto-fix for failures)
+- **Called by**: `feature-dev` skill (pre-commit testing), `bugfix` skill (verify fix)
+- **Follow-up**: `pre-commit` skill (quality gate), `create-pr` skill (submit changes)

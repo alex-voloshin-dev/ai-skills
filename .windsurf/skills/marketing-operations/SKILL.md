@@ -1,11 +1,12 @@
 ---
 name: marketing-operations
 description: Marketing operations knowledge base — MARKETING.md setup template, social media and email channel playbooks, trend research methodology, content calendar patterns, and recurring task definitions. Use when initializing marketing strategy, creating social media posts, drafting email campaigns, researching trends, or reviewing marketing analytics. Provides templates, platform-specific best practices, and quality checklists.
+user-invocable: true
 ---
 
 # Marketing Operations
 
-Systematic marketing operations skill with strategy setup templates, channel-specific playbooks, and recurring task frameworks. Supports the `/marketing` workflow with reusable knowledge and templates.
+Systematic marketing operations skill with strategy setup templates, channel-specific playbooks, and recurring task frameworks. Supports the `marketing` skill workflow with reusable knowledge and templates.
 
 ## When to Use
 
@@ -19,10 +20,10 @@ Systematic marketing operations skill with strategy setup templates, channel-spe
 
 ## When NOT to Use
 
-- Writing blog posts (use `/blog-post` workflow with `content-creation` skill)
-- SEO audits (use `/seo-review` workflow)
-- Landing page design (use `/ui-ux-design` workflow)
-- Technical documentation (use `/docs` workflow)
+- Writing blog posts (use `blog-post` skill workflow with `content-creation` skill)
+- SEO audits (use `seo-review` skill workflow)
+- Landing page design (use `ui-ux-design` skill workflow)
+- Technical documentation (use `docs` skill workflow)
 
 ## Key Concepts
 
@@ -79,6 +80,6 @@ Each piece of content should map to exactly one pillar. Track pillar distributio
 
 ## Integration
 
-- **Follows rules**: `marketing-strategist` guidance for strategy and positioning, `content-designer` guidance for copy and social posts, and `content-writer` guidance for blog and email content
-- **Used by workflows**: `/marketing` (primary), `/blog-post` (marketing context), `/docs` (public-facing content)
+- **Follows rules**: `marketing-strategist` role (strategy, positioning, demand gen), `content-designer` role (copywriting, social posts), `content-writer` role (blog, email content)
+- **Used by workflows**: `marketing` skill (primary), `blog-post` skill (marketing context), `docs` skill (public-facing content)
 - **Companion skills**: `content-creation` skill (AI content tools, image generation, content briefs)

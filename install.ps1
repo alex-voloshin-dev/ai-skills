@@ -30,7 +30,11 @@ function Sync-Directory {
 
     New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
 
-    $sourceFiles = Get-ChildItem -LiteralPath $SourceDir -Recurse -File
+    $sourceFiles = Get-ChildItem -LiteralPath $SourceDir -Recurse -File | Where-Object {
+        $_.Name -ne "settings.local.json" -and
+        $_.DirectoryName -notmatch '(^|\\)__pycache__(\\|$)' -and
+        @('.pyc', '.pyo') -notcontains $_.Extension
+    }
     $sourceIndex = @{}
 
     foreach ($file in $sourceFiles) {
@@ -43,10 +47,14 @@ function Sync-Directory {
         Copy-Item -LiteralPath $file.FullName -Destination $targetFile -Force
     }
 
+    $skipExtensions = @('.sqlite', '.sqlite-shm', '.sqlite-wal', '.log')
     $targetFiles = Get-ChildItem -LiteralPath $TargetDir -Recurse -File -ErrorAction SilentlyContinue
     foreach ($file in $targetFiles) {
         $relativePath = $file.FullName.Substring($TargetDir.Length).TrimStart('\', '/')
         if (-not $sourceIndex.ContainsKey($relativePath)) {
+            if ($skipExtensions -contains $file.Extension) {
+                continue
+            }
             try {
                 Remove-Item -LiteralPath $file.FullName -Force -ErrorAction Stop
             } catch {

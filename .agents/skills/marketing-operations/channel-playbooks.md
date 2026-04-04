@@ -1,6 +1,6 @@
 # Channel Playbooks
 
-Platform-specific best practices for marketing channels. Used by the `/marketing` workflow (Phase 2: Execute) for social media posts, email campaigns, and community engagement.
+Platform-specific best practices for marketing channels. Used by the `marketing` skill workflow (Phase 2: Execute) for social media posts, email campaigns, and community engagement.
 
 ## X/Twitter Playbook
 

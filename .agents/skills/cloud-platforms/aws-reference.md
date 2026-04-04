@@ -1,6 +1,6 @@
 # Amazon Web Services Reference
 
-Platform-specific patterns for **AWS**. Load this module when the project's `AGENTS.md` or infrastructure files indicate AWS, EKS, RDS, CodePipeline, or related services.
+Platform-specific patterns for **AWS**. Load this module when the project's AGENTS.md declares AWS, EKS, RDS, CodePipeline, or related services.
 
 ## 1. Core Platform
 

@@ -2,6 +2,7 @@
 description: Deploy to staging workflow — build, deploy to staging environment, run smoke tests, verify. Use after feature completion before production deployment.
 ---
 
+
 # Deploy to Staging
 
 Structured workflow for deploying to staging environment. Builds the application, deploys, runs smoke tests, and verifies the deployment.
@@ -25,7 +26,7 @@ git status --short
 
 ### 1b. Run Tests
 
-Invoke `/run-tests` sub-workflow. All tests must pass before deploying.
+Invoke `run-tests` skill follow-up skill. All tests must pass before deploying.
 
 ### 1c. Identify Deployment Method
 
@@ -146,10 +147,10 @@ Check for errors, warnings, or unexpected behavior in the first 2–5 minutes.
 
 If all checks pass, suggest:
 - Run full QA testing on staging
-- When ready: `/deploy-production`
+- When ready: `deploy-production` skill
 
 ## Integration
 
-- **Preceded by**: `/pre-commit`, `/create-pr` (code ready)
-- **Followed by**: `/deploy-production`
-- **Roles**: `@devops-engineer`, `@devops-architect` (deployment strategy design)
+- **Preceded by**: `pre-commit` skill, `create-pr` skill (code ready)
+- **Followed by**: `deploy-production` skill
+- **Roles**: `devops-engineer` role, `devops-architect` role (deployment strategy design)

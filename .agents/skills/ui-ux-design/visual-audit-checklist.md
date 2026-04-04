@@ -1,6 +1,6 @@
 # Visual Audit Checklist — Browser Screenshots and Analysis
 
-Automated browser-based visual audit of existing or newly implemented UI. Use alongside the `ui-ux-design` skill and UI/UX design guidance.
+Automated browser-based visual audit of existing or newly implemented UI. Use alongside `ui-ux-designer` role and `ui-ux-design` skill. Referenced by `ui-ux-design` skill workflow (Step 3a and Step 11).
 
 ## Prerequisites
 
@@ -243,11 +243,11 @@ Compare mobile vs tablet vs desktop screenshots:
 ### Delegation
 | Fix | Delegate To |
 |---|---|
-| Layout/CSS fixes | `frontend-engineer` perspective |
-| Content/copy changes | `content-designer` perspective |
-| Accessibility fixes | `frontend-engineer` plus UI/UX design guidance |
-| SEO issues | `seo-review` workflow or SEO guidance |
-| Design system gaps | UI/UX design guidance |
+| Layout/CSS fixes | `frontend-engineer` role |
+| Content/copy changes | `content-designer` role |
+| Accessibility fixes | `frontend-engineer` role + `ui-ux-designer` role |
+| SEO issues | `seo-engineer` role |
+| Design system gaps | `ui-ux-designer` role |
 ```
 
 ## Post-Implementation Comparison
@@ -260,4 +260,4 @@ When verifying implementation against design specs (Step 11):
 4. **Test all states**: hover, focus, active, disabled, loading, error, empty
 5. **Check responsive breakpoints**: layout changes match design spec per viewport
 6. **Test animations/transitions**: duration, easing, triggers match spec
-7. **Flag deviations**: record implementation fixes for the frontend engineering flow
+7. **Flag deviations**: file as implementation fixes for `frontend-engineer` role

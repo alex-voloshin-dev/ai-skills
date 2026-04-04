@@ -2,6 +2,7 @@
 name: analyze-local
 description: Analyze local Docker environment — collect container status, logs, networking, resource usage, and diagnose issues. Applies SRE or DevOps roles for investigation. Use standalone or as part of local environment bugfixing.
 context: fork
+argument-hint: "container name, symptom, or issue description"
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

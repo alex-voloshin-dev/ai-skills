@@ -2,9 +2,10 @@
 description: Documentation workflow — edit markdown docs, technical writing, blog content, release notes without touching source code. Applies Content Writer role. Includes SEO review branch for public-facing content.
 ---
 
+
 # Documentation
 
-Safe documentation-only workflow. Edit markdown files without touching application source code, configs, or infrastructure. Applies `@content-writer` for all writing tasks.
+Safe documentation-only workflow. Edit markdown files without touching application source code, configs, or infrastructure. Applies `content-writer` role for all writing tasks.
 
 **⚠️ CONSTRAINT: This workflow NEVER modifies source code (*.java, *.ts, *.tsx, *.py, *.go), configs (*.yaml, *.yml, *.json), infrastructure (*.tf, Dockerfile, Helm), or dependency files (pom.xml, package.json, requirements.txt).**
 
@@ -14,8 +15,8 @@ Ask the user (or extract from parent workflow):
 
 - **What documentation?** (technical docs, API reference, README, PRD, design doc, ADR, blog post, release notes, UI copy)
 - **Content type**:
-  - **Internal** (technical docs, design docs, ADRs) → `@content-writer` only
-  - **Public-facing** (blog, landing page, marketing) → `@content-writer` + `@seo-engineer`
+  - **Internal** (technical docs, design docs, ADRs) → `content-writer` role only
+  - **Public-facing** (blog, landing page, marketing) → `content-writer` role + `seo-engineer` role
 - **Action**: Create new / update existing / restructure
 - **Target files**: Which `.md` files will be affected
 
@@ -23,14 +24,14 @@ Ask the user (or extract from parent workflow):
 
 | Content Type | Primary Role | Additional Role |
 |---|---|---|
-| Technical documentation | `@content-writer` | — |
-| API reference | `@content-writer` | Stack-specific role for accuracy |
-| Blog / landing page content | `@content-writer` | `@seo-engineer` |
-| PRD / acceptance criteria | `@product-manager` | — |
-| Architecture / ADR | `@solution-architect` | — |
-| Release notes | `@content-writer` | — |
-| UI microcopy | `@content-writer` | `@frontend-engineer` for context |
-| Page content (landing, product) | `@content-designer` | `@seo-engineer`, `@ui-ux-designer` |
+| Technical documentation | `content-writer` role | — |
+| API reference | `content-writer` role | Stack-specific role for accuracy |
+| Blog / landing page content | `content-writer` role | `seo-engineer` role |
+| PRD / acceptance criteria | `product-manager` role | — |
+| Architecture / ADR | `solution-architect` role | — |
+| Release notes | `content-writer` role | — |
+| UI microcopy | `content-writer` role | `frontend-engineer` role for context |
+| Page content (landing, product) | `content-designer` role | `seo-engineer` role, `ui-ux-designer` role |
 
 ## 3. Gather Context
 
@@ -43,7 +44,7 @@ Before writing:
 
 ## 4. Write Content
 
-Follow `@content-writer` standards:
+Follow `content-writer` role standards:
 
 - **Diátaxis framework** for documentation structure
 - **English only** unless explicitly requested otherwise
@@ -53,7 +54,7 @@ Follow `@content-writer` standards:
 
 ### For Blog / Public Content
 
-Additionally apply `humanizer` skill — scan for and remove AI writing patterns. Then follow `@seo-engineer` standards:
+Additionally apply `humanizer` skill — scan for and remove AI writing patterns. Then follow `seo-engineer` role standards:
 
 - **Title tag**: Descriptive, matches search intent
 - **Meta description**: Compelling summary
@@ -97,7 +98,7 @@ Additionally apply `humanizer` skill — scan for and remove AI writing patterns
 - **Files changed**:
   - [file1.md]: [created/updated — what changed]
   - [file2.md]: [created/updated — what changed]
-- **Role(s) applied**: [@content-writer, @seo-engineer if public]
+- **Role(s) applied**: [`content-writer` role, `seo-engineer` role if public]
 - **SEO review**: [pass / N/A for internal docs]
 - **Verification**: [links valid, formatting correct, no code files modified]
 - **Next steps**: [if any]
@@ -105,8 +106,8 @@ Additionally apply `humanizer` skill — scan for and remove AI writing patterns
 
 ## Integration
 
-- **Roles**: `@content-writer` (primary), `@seo-engineer` (public-facing content), `@product-manager` (PRDs)
-- **Skills**: `humanizer` (AI writing pattern removal for public-facing content)
-- **Rules**: `humanize-content` (enforces humanizer pass)
-- **Follow-up**: `/seo-review` (for public content), `/pre-commit`, `/create-pr`
-- **Related**: `/feature-dev` (inline docs during development), `/release` (release notes)
+- **Roles**: `content-writer` role (primary), `seo-engineer` role (public-facing content), `product-manager` role (PRDs)
+- **Skills**: `humanizer` skill (AI writing pattern removal for public-facing content)
+- **Rules**: `humanize-content` (auto-enforces humanizer pass)
+- **Follow-up**: `seo-review` skill (for public content), `pre-commit` skill, `create-pr` skill
+- **Related**: `feature-dev` skill (inline docs during development), `release` skill (release notes)

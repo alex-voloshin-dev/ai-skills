@@ -23,6 +23,8 @@ Gather all input documentation provided by the user:
   - **Constraints**: performance, security, compatibility, dependencies
   - **Out of scope**: what this feature explicitly does NOT cover
 
+**Check for an existing implementation plan.** Search the documentation, linked files, and project directory for an implementation plan (file named `*plan*`, `*implementation*`, or a plan section inside the PRD/ARD). If one exists — it is the authority. Proceed to Step 2 with the existing plan loaded.
+
 If the documentation is ambiguous or incomplete, ask the user before proceeding.
 
 ## 2. Detect Tech Stack and Apply Role
@@ -64,9 +66,21 @@ Map how the new feature fits into the existing architecture. Identify:
 - Files to **modify** (integration points, routes, configs)
 - Files to **not touch** (unrelated code — minimize blast radius)
 
-## 4. Create Implementation Plan
+## 4. Resolve Implementation Plan
 
-Break the feature into ordered, atomic implementation steps:
+<plan_policy>
+An implementation plan is MANDATORY. Never start coding without an approved plan.
+
+**If a plan already exists** (from documentation, PRD, ARD, or `/feature-plan` output):
+- Use it as-is. Do NOT rewrite, reorder, or simplify it
+- Follow it STRICTLY — step by step, in the exact order specified
+- Present the loaded plan to the user for confirmation before proceeding
+
+**If no plan exists:**
+- Create one from scratch based on the parsed requirements and codebase analysis
+</plan_policy>
+
+When creating a plan, break the feature into ordered, atomic implementation steps:
 
 1. Number each step sequentially
 2. Each step = one logical unit of work (one file or one cohesive change across tightly coupled files)
@@ -78,6 +92,7 @@ Present the plan to the user:
 ```
 Feature: [name]
 Stack: [detected] | Role: [applied]
+Plan source: [loaded from <file> | created from scratch]
 Steps:
   1. [description] → [file(s)]
   2. [description] → [file(s)]
@@ -89,7 +104,26 @@ Wait for user approval before proceeding. The user may reorder, add, remove, or 
 
 ## 5. Implement
 
-Execute the approved plan step by step.
+Execute the approved plan STRICTLY step by step. Do not skip steps, reorder steps, or combine steps.
+
+<plan_adherence>
+**Hard rules:**
+- Follow the plan in the EXACT order approved by the user
+- Complete each step fully before moving to the next
+- Do not add steps that are not in the plan
+- Do not skip steps you consider unnecessary
+- Do not silently modify the plan's intent
+
+**If the plan needs correction** (a step is blocked, wrong, or a new step is needed):
+1. STOP implementation immediately
+2. Explain to the user what happened and why the plan needs to change
+3. Propose the specific correction (add/remove/modify steps)
+4. Wait for user approval
+5. Update the plan document if one exists as a file
+6. Resume implementation from the corrected point
+
+Never silently deviate from the plan. Every deviation requires explicit user approval.
+</plan_adherence>
 
 **For each step:**
 1. State what you are about to do (step number, file, change summary)
@@ -152,4 +186,4 @@ Present the completed work:
 
 - **Precedes**: `/run-tests`, `/pre-commit`, `/create-pr`
 - **Planning**: `/feature-plan` (produces the implementation plan this workflow executes)
-- **Skills**: `testing-procedures` skill (test strategy), `code-review` skill (review standards), `context-engineering` skill (context pipelines, RAG, agent harness, production checklists — for AI/LLM features)
+- **Skills**: `testing-procedures` skill (test strategy), `code-review` skill (review standards), `context-engineering` skill (context pipelines, RAG, agent harness, production checklists — for AI/LLM features), `worktree-isolation` skill (branch isolation via git worktree)

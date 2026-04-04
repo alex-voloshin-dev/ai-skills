@@ -33,10 +33,10 @@ This is NOT about how to structure a single prompt (see `prompt-engineering` ski
 - Error handling instructions ("if uncertain, say so") belong here
 - Keep instructions at **Goldilocks altitude** — simple, direct policies and heuristics. If you need complex logic, move it into code (router, validator, tool orchestration)
 
-**Mapping to Cascade**:
-- (auto-loaded) rules → Layer 2 (always present)
-- (agent) rules → Layer 2 (conditionally present based on task)
-- Role rules (`.role.md`) → Layer 2
+**Mapping to Windsurf**:
+- package rules → Layer 2 (always present)
+- role files under `.windsurf/rules/roles/**/*.role.md` support Layer 2
+- workflow steps and `AGENTS.md` guidance also contribute to Layer 2
 
 ### Layer 3: Tool Contracts
 
@@ -70,7 +70,7 @@ This is NOT about how to structure a single prompt (see `prompt-engineering` ski
 - For continuation prompts (not first turn), include only the **state delta** + relevant memory + active constraints
 - Keep compact — state grows across turns if not compressed
 
-**Mapping to Cascade**:
+**Mapping to Windsurf**:
 - AGENTS.md files (directory-scoped project context) → Layer 4
 - Active file contents, project structure → Layer 4
 
@@ -185,20 +185,20 @@ Verify each layer is distinct — no mixing:
 - [ ] Examples demonstrate output format, NOT embed policy rules
 - [ ] Output contract is a standalone section, NOT scattered across instructions
 
-## Mapping to Cascade AI assets
+## Mapping to Windsurf AI assets
 
-| Context Stack Layer | Cascade Asset Type | Notes |
+| Context Stack Layer | Windsurf Asset Type | Notes |
 |---|---|---|
-| L1: System policy | Global rules ((auto-loaded)) | `global_rules.md`, safety hooks |
-| L2: Developer instructions | Role rules ((agent)), AGENTS.md | `.role.md` files, workflow steps |
-| L3: Tool contracts | MCP configs, hook schemas | Tool descriptions in workflows |
-| L4: Runtime state | AGENTS.md (directory-scoped), project files | Claude reads automatically |
-| L5: Knowledge | Retrieved content, `read_file` results | Wrapped as untrusted by Cascade |
-| L6: Memory | Claude memories, conversation history | Cascade memory system |
+| L1: System policy | Global package rules and top-level constraints | `.windsurf/rules/*.md` |
+| L2: Developer instructions | Role files, AGENTS.md, workflow steps | `.windsurf/rules/roles/**/*.role.md`, `AGENTS.md`, workflow steps |
+| L3: Tool contracts | MCP configs and tool schemas | Tool descriptions in workflows |
+| L4: Runtime state | AGENTS.md (directory-scoped), project files | Windsurf receives this from repository context and task state |
+| L5: Knowledge | Retrieved content, `read_file` results | Wrapped as untrusted by Windsurf |
+| L6: Memory | Conversation history and any explicit memory layer | Windsurf memory or session state |
 | L7: Examples | Few-shot in skills, workflow templates | Skill resource files |
 | L8: Output contract | Role response formats, workflow step outputs | `## Response Format` sections |
 
-**Implication for asset authoring**: Every AI asset is context that Claude consumes. When writing rules, workflows, or skills:
+**Implication for asset authoring**: Every AI asset is context that Windsurf consumes. When writing rules, workflows, or skills:
 - Place critical constraints early (Hard Rules section = Layer 1-2 content)
 - Separate policy from knowledge (Core Competencies = Layer 5-like knowledge reference)
 - Keep Integration sections at the end (low-priority cross-reference)

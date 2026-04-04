@@ -22,9 +22,9 @@
 
 ## Runtime Readiness
 
-- [ ] paths assume Claude runtime layout under `.claude/`
-- [ ] hook configs use `.claude/hooks/scripts/...`
-- [ ] `settings.json` remains consistent with hook scripts
+- [ ] docs describe the installed runtime layout under `~/.claude/`
+- [ ] nested file references resolve relative to their own directory
+- [ ] hook configs and `settings.json` resolve after installer patching
 
 ## Naming
 
@@ -35,4 +35,4 @@
 ## Outcome
 
 - [ ] ready for parity review
-- [ ] parity-impacting changes reflected in `../../../review/parity-matrix.md`
+- [ ] (ai-assets repo only) parity-impacting changes reflected in `../../../review/parity-matrix.md`

@@ -6,25 +6,25 @@ This repository stores reusable AI coding assistant configurations for three run
 
 ```text
 ai-assets/
-├── .agents/skills/          # 42 skills (shared between Codex and Windsurf)
+├── .agents/skills/          # 38 skills (shared between Codex and Windsurf)
 ├── .claude/                  # Claude Code runtime package
-│   ├── agents/              # 20 sub-agent definitions
-│   ├── skills/              # 42 skills (user-invocable + background)
-│   ├── rules/               # guardrails (git-conventions, global_rules, humanize-content)
+│   ├── agents/              # 22 sub-agent definitions
+│   ├── skills/              # 40 skills (38 shared + 2 Claude-only)
+│   ├── rules/               # 7 guardrail rules
 │   ├── hooks/scripts/       # 4 Python enforcement scripts
 │   ├── hooks/configs/       # hook wiring fragments
 │   ├── templates/           # 7 CLAUDE.md scaffolds per tech stack
 │   └── settings.json        # global hook wiring
 ├── .codex/                   # Codex runtime package
-│   ├── roles/               # 20 role definitions (mirrors .claude/agents/)
-│   ├── rules/               # 9 rule files
-│   ├── operations/          # hook-intents, launch-reference, settings-mapping, source-sync
-│   ├── templates/           # 14 AGENTS.md scaffolds
+│   ├── roles/               # 22 role definitions (mirrors .claude/agents/)
+│   ├── rules/               # 8 rule files + 2 aliases + 5 role overlays
+│   ├── operations/          # hook-intents, launch-reference, settings-mapping, source-sync, skill-role-mapping
+│   ├── templates/           # 14 AGENTS.md scaffolds (includes parity aliases)
 │   └── checklists/          # review checklists
 ├── .windsurf/                # Windsurf runtime package
-│   ├── rules/roles/         # 20 role files (mirrors .claude/agents/)
-│   ├── skills/              # 42 skills (mirrors .agents/skills/)
-│   ├── workflows/           # 22 user-facing workflow files
+│   ├── rules/roles/         # 22 role files (mirrors .claude/agents/)
+│   ├── skills/              # 38 skills (mirrors .agents/skills/)
+│   ├── workflows/           # 26 user-facing workflow files
 │   ├── hooks/               # same 4 Python scripts + configs
 │   └── hooks.json           # Windsurf-native hook wiring
 ├── review/parity-matrix.md  # cross-package alignment tracker
@@ -43,6 +43,8 @@ Runtime primitives differ but capability coverage must match:
 - Claude skills = `.agents/skills/` = Windsurf skills
 - Claude user-invocable skills = Windsurf workflows
 - Claude hooks = Codex operations (documented intent) = Windsurf hooks
+
+See [PARITY.md](PARITY.md) for the full parity model, current status, intentional gaps, and the process for adding new capabilities.
 
 ### Skill Format
 
@@ -68,7 +70,7 @@ Exit code 2 = block, exit code 0 = allow.
 ## Editing Rules
 
 - all asset contents must be in English
-- Markdown assets have a 12,000 character limit
+- SKILL.md and rule files have a 12,000 character limit (skill resources have no hard limit but should stay focused)
 - use relative runtime paths, never absolute user paths
 - new roles/skills/guardrails must be added to all three packages simultaneously
 - update `review/parity-matrix.md` for any parity-impacting change

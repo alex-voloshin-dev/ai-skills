@@ -1,6 +1,7 @@
+
 # Failure Recovery
 
-Use this recovery flow when Codex work starts looping, drifting, or losing constraints.
+Use this recovery flow when work starts looping, drifting, or losing constraints.
 
 ## Context Loss
 

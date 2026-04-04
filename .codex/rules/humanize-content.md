@@ -1,6 +1,7 @@
+
 # Humanize All Published Content
 
-Every piece of text intended for publication or end-user display must pass through the `humanizer` skill before finalization.
+Every piece of text intended for publication or end-user display MUST pass through the `humanizer` skill before finalization.
 
 ## Scope
 

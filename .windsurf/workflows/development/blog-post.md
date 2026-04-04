@@ -2,9 +2,10 @@
 description: Blog post workflow — research topic, create content brief, write article, SEO optimize, quality review with feedback loop. Orchestrates product-manager, content-writer, and seo-engineer roles for public blog content creation and updates.
 ---
 
+
 # Blog Post
 
-End-to-end workflow for creating and updating blog posts. Orchestrates multi-role collaboration: `@product-manager` (research, brief, quality gate), `@content-writer` (authoring), `@seo-engineer` (optimization). Includes a review loop until the post meets quality standards.
+End-to-end workflow for creating and updating blog posts. Orchestrates multi-role collaboration: `product-manager` role (research, brief, quality gate), `content-writer` role (authoring), `seo-engineer` role (optimization). Includes a review loop until the post meets quality standards.
 
 ## 1. Define Scope
 
@@ -20,7 +21,7 @@ If updating an existing post — read it first, note what needs to change.
 
 ## 2. Research and Content Brief
 
-**Apply `@product-manager`.**
+**Apply `product-manager` role.**
 
 ### 2a. Topic Research
 
@@ -48,7 +49,7 @@ Present the brief to the user. **Wait for user approval before proceeding.** Adj
 
 ## 3. Write Draft
 
-**Apply `@content-writer`.** Use `content-creation` skill — Blog Post pattern from `page-content-patterns.md`.
+**Apply `content-writer` role.** Use `content-creation` skill — Blog Post pattern from `page-content-patterns.md`.
 
 ### 3a. Create the Post File
 
@@ -88,7 +89,7 @@ Do NOT skip this step. The `humanize-content` rule enforces this for all public-
 
 ## 5. SEO Optimization
 
-**Apply `@seo-engineer`.**
+**Apply `seo-engineer` role.**
 
 Run an SEO pass on the draft:
 
@@ -125,7 +126,7 @@ Run an SEO pass on the draft:
 
 ## 6. Quality Review
 
-**Apply `@product-manager`.**
+**Apply `product-manager` role.**
 
 Review the complete post against the original brief:
 
@@ -193,7 +194,7 @@ Based on user intent:
 - **Topic**: [one-sentence summary]
 - **Target keyword**: [primary keyword]
 - **Word count**: [count]
-- **Roles applied**: @product-manager → @content-writer → humanizer → @seo-engineer → @product-manager
+- **Roles applied**: `product-manager` role → `content-writer` role → `humanizer` skill → `seo-engineer` role → `product-manager` role
 - **Review rounds**: [number of iterations]
 - **Cross-links added**: [count — list of linked posts]
 - **Discovery assets**: [llms.txt updated: yes/no, sitemap: auto/manual]
@@ -213,8 +214,8 @@ When creating a multi-part series:
 
 ## Integration
 
-- **Roles**: `@product-manager` (research, brief, review), `@content-writer` (authoring), `@seo-engineer` (optimization)
-- **Skills**: `content-creation` skill (Blog Post pattern, AI generation tools, content brief template), `humanizer` (AI writing pattern removal — step 4)
-- **Rules**: `humanize-content` (enforces humanizer pass on all public-facing text)
-- **Follow-up**: `/seo-review` (deep SEO audit if needed), `/pre-commit`, `/create-pr`
-- **Related**: `/docs` (technical documentation), `/ui-ux-design` (visual design for blog assets)
+- **Roles**: `product-manager` role (research, brief, review), `content-writer` role (authoring), `seo-engineer` role (optimization)
+- **Skills**: `content-creation` skill (Blog Post pattern, AI generation tools, content brief template), `humanizer` skill (AI writing pattern removal — step 4)
+- **Rules**: `humanize-content` (auto-enforces humanizer pass on all public-facing text)
+- **Follow-up**: `seo-review` skill (deep SEO audit if needed), `pre-commit` skill, `create-pr` skill
+- **Related**: `docs` skill (technical documentation), `ui-ux-design` skill (visual design for blog assets)

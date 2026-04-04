@@ -2,9 +2,10 @@
 description: Infrastructure change workflow — Terraform plan/apply, Helm diff/upgrade, Kubernetes manifest changes with mandatory approval gates. Applies DevOps role. Safe-by-default with plan review before any mutation.
 ---
 
+
 # Infrastructure Change
 
-Safe infrastructure change workflow for Terraform, Helm, and Kubernetes. Every mutation requires explicit user approval after reviewing the plan/diff. Applies `@devops-engineer` for all steps.
+Safe infrastructure change workflow for Terraform, Helm, and Kubernetes. Every mutation requires explicit user approval after reviewing the plan/diff. Applies `devops-engineer` role for all steps.
 
 **⚠️ SAFETY: No `apply`, `upgrade`, `delete`, or `scale` command runs without explicit user APPROVE.**
 
@@ -26,7 +27,7 @@ Affected: [list resources/services]
 
 ## 2. Apply Roles
 
-Apply `@devops-engineer`. For production changes, also apply `@sre-engineer` for SLO impact assessment. For cloud infrastructure design (landing zones, networking topology, IAM), consult `@cloud-architect`. For CI/CD pipeline architecture changes, consult `@devops-architect`.
+Apply `devops-engineer` role. For production changes, also apply `sre-engineer` role for SLO impact assessment. For cloud infrastructure design (landing zones, networking topology, IAM), consult `cloud-architect` role. For CI/CD pipeline architecture changes, consult `devops-architect` role.
 
 ## 3. Review Current State
 
@@ -66,7 +67,7 @@ kubectl get pods -n <namespace> -o wide
 
 ## 4. Implement Changes
 
-Make the infrastructure code changes following `@devops-engineer` standards:
+Make the infrastructure code changes following `devops-engineer` role standards:
 
 **For Terraform:**
 - Modify `.tf` files as needed
@@ -229,6 +230,6 @@ kubectl rollout undo deployment/<name> -n <namespace>
 
 ## Integration
 
-- **Roles**: `@devops-engineer` (primary), `@sre-engineer` (review), `@cloud-architect` (cloud design review), `@devops-architect` (CI/CD pipeline architecture)
-- **Preceded by**: `/feature-plan` (infra work stream), `/architecture` (cloud architecture design)
-- **Followed by**: `/deploy-staging`, `/deploy-production`
+- **Roles**: `devops-engineer` role (primary), `sre-engineer` role (review), `cloud-architect` role (cloud design review), `devops-architect` role (CI/CD pipeline architecture)
+- **Preceded by**: `feature-plan` skill (infra work stream), `architecture` skill (cloud architecture design)
+- **Followed by**: `deploy-staging` skill, `deploy-production` skill

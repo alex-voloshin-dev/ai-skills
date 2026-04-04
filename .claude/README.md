@@ -14,5 +14,6 @@ This directory is a copy-ready Claude Code runtime package.
 
 ## Notes
 
-- copy this directory into a project root as `.claude/`
-- semantic parity with Codex is mandatory for agents and skills
+- installers sync this package into `~/.claude/`
+- hook commands are rewritten at install time to absolute `~/.claude/hooks/scripts/...` paths
+- semantic parity with Codex is a source-repository maintenance rule, not an installed-runtime requirement

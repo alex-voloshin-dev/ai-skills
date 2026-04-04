@@ -4,9 +4,9 @@ These rules apply to the Codex runtime package in this repository.
 
 ## Runtime Boundaries
 
-- `.claude/` is the sibling Claude runtime package
-- `.agents/skills/` and `.codex/` together make up the Codex runtime package
-- Claude-oriented assets must be normalized before they become Codex runtime material
+- `.agents/skills/` plus `.codex/` together make up the Codex runtime package in this repository
+- `.claude/` is the semantic source of truth, not the Codex runtime format
+- Claude-oriented assets must be translated into Codex-native primitives before they become Codex runtime material
 
 ## Validation
 

@@ -1,20 +1,30 @@
 ---
 name: marketing
-description: Run marketing operations for the product by defining messaging, selecting channels, producing content tasks, humanizing all output, and reviewing performance signals.
+description: Marketing workflow — initialize marketing strategy with MARKETING.md, define channels and tactics, execute recurring marketing operations (social media, blog posts, email campaigns, trend research, analytics). Orchestrates marketing-strategist, product-manager, content-designer, content-writer, and seo-engineer roles. Owns marketing/ directory.
+context: fork
+argument-hint: "init | channel/task to execute"
+codex-roles:
+  - product-manager
+  - marketing-strategist
+  - content-designer
+  - content-writer
+  - seo-engineer
 ---
 
 # Marketing
 
-End-to-end marketing workflow with two phases: **Init** (strategy setup) and **Execute** (recurring operations). Owns the `marketing/` directory.
+End-to-end marketing workflow with two phases: **Init** (one-time strategy setup) and **Execute** (recurring marketing operations). Owns the `marketing/` directory for all materials.
 
-This workflow creates and edits only markdown files in the `marketing/` directory.
+**⚠️ CONSTRAINT: This workflow NEVER modifies source code (*.java, *.ts, *.tsx, *.py, *.go), configs (*.yaml, *.yml, *.json), infrastructure (*.tf, Dockerfile, Helm), or dependency files (pom.xml, package.json, requirements.txt). Marketing workflow creates and edits only markdown files in the `marketing/` directory.**
 
 ## Phase Selection
 
-- **`init`** — first-time setup: gather context, define strategy, create MARKETING.md
-- **`execute`** — run a specific marketing operation
+Ask the user:
 
-If `marketing/MARKETING.md` does not exist, start with `init`.
+- **`init`** — First-time setup: gather context, define strategy, create MARKETING.md
+- **`execute`** — Run a specific marketing operation (social post, blog, email, trend research, etc.)
+
+If `marketing/MARKETING.md` does not exist → start with `init` regardless.
 
 ---
 
@@ -22,47 +32,110 @@ If `marketing/MARKETING.md` does not exist, start with `init`.
 
 ### 1. Gather Project Context
 
-Read:
+**Apply `product-manager` role + `marketing-strategist` role.**
 
-1. `AGENTS.md` — tech stack, project purpose
-2. `README.md` — product description
-3. `FEATURES.md` (if exists) — feature inventory
-4. `marketing/` directory — existing materials
-5. Blog posts directory — existing content
+1. **Read project files**:
+   - `AGENTS.md` — tech stack, project purpose
+   - `README.md` — product description
+   - `FEATURES.md` (if exists) — feature inventory
+   - Website/landing page (if URL known) — current positioning
+2. **Read existing marketing materials** (if any):
+   - `marketing/` directory contents
+   - Blog posts directory
+   - Any existing brand guidelines
+3. **Summarize findings**: product type, target market signals, existing messaging, content gaps.
 
 ### 2. User Interview
 
-Gather:
+Present the **Marketing Setup Questionnaire** from `marketing-operations` skill (`marketing-setup-template.md`). Gather:
 
-- Product name, one-line description, target audience
-- Key problem solved, top 3 competitors
+<questionnaire>
+**Product and Market**:
+- Product name and one-line description
+- Target audience (who buys/uses this?)
+- Key problem you solve
+- Top 3 competitors or alternatives (including "do nothing")
+- Current stage (pre-launch / launched / growing / mature)
+
+**Goals and Metrics**:
 - Primary marketing goal (awareness / leads / signups / revenue)
-- Active channels (X/Twitter, LinkedIn, Reddit, email, blog)
-- Brand personality (3-5 adjectives) and topics to avoid
-- Available resources and time per week
+- Target metrics (e.g., X signups/month, Y website visitors)
+- Budget constraints (free/organic only, small budget, significant budget)
+- Timeline (when do you need results?)
+
+**Channels and Tools**:
+- Active social accounts (X/Twitter, LinkedIn, Reddit, Product Hunt, etc.)
+- Email list (exists? size? tool used?)
+- Blog (exists? platform? publishing frequency?)
+- Paid advertising (any? which platforms?)
+- Analytics tools (GA4, Mixpanel, etc.)
+- Community presence (Discord, Slack, forums?)
+
+**Brand and Voice**:
+- Brand personality (3-5 adjectives)
+- Tone examples (link to existing content that represents your voice)
+- Topics to avoid
+- Compliance requirements (regulated industry? legal review needed?)
+
+**Resources**:
+- Who creates content? (founder only / small team / agency)
+- Available time per week for marketing activities
+- Design resources (can create visuals? tools available?)
+</questionnaire>
+
+Record all answers. Ask clarifying questions if answers are vague.
 
 ### 3. Define Strategy
 
-Produce:
+**Apply `marketing-strategist` role.**
 
-1. ICP and positioning (April Dunford framework)
-2. Messaging framework — value proposition, 3-5 pillars, boilerplates
-3. Channel strategy — focus channels, effort vs impact
-4. Content pillars — 3-5 topic areas aligned with ICP pain points
-5. Tactical plan — recurring tasks with frequency
+Based on project context + user answers, produce:
+
+1. **ICP and Positioning** — ideal customer profile, JTBD, competitive positioning (April Dunford framework)
+2. **Messaging Framework** — core value proposition, 3-5 pillars, proof points, boilerplates (short/medium/long)
+3. **Channel Strategy** — which channels to focus on, why, expected effort vs impact
+4. **Content Pillars** — 3-5 topic areas aligned with ICP pain points and product strengths
+5. **Tactical Plan** — specific recurring tasks with frequency, matched to available resources
 
 ### 4. Create MARKETING.md
 
-Create `marketing/MARKETING.md` as single source of truth. Use template from `marketing-operations` skill.
+Create `marketing/MARKETING.md` using the template from `marketing-operations` skill (`marketing-setup-template.md`).
+
+This file is the **single source of truth** for marketing strategy. Sections:
+
+- Product summary and positioning
+- ICP and personas
+- Messaging framework (value prop, pillars, boilerplates)
+- Channel strategy with prioritization
+- Content pillars and calendar
+- Tactical plan (daily/weekly/monthly tasks)
+- KPIs and measurement plan
+- Brand voice guidelines
+- Tools and accounts
 
 ### 5. Create Content Calendar
 
-Create `marketing/content-calendar.md` with recurring task schedule.
+Create `marketing/content-calendar.md` with the recurring task schedule. Recommended defaults (adjust based on user resources):
+
+| Frequency | Task | Channel | Role |
+|---|---|---|---|
+| Daily | Social media post | X/Twitter, LinkedIn | `content-designer` role |
+| Daily | Community engagement | X/Twitter, Reddit, forums | `marketing-strategist` role |
+| 2-3x/week | Blog post | Blog | `blog-post` skill |
+| Weekly | Trend research | X/Twitter, HN, Reddit, Google Trends | `marketing-strategist` role |
+| Weekly | Analytics review | GA4, social analytics | `marketing-strategist` role |
+| Bi-weekly | Email newsletter | Email list | `content-writer` role |
+| Monthly | Strategy review and adjustment | — | `marketing-strategist` role + `product-manager` role |
 
 ### 6. Present and Approve
 
-Present strategy summary, content calendar, and recommended first 3 actions.
-Wait for user approval.
+Present the complete strategy to the user:
+
+- MARKETING.md summary
+- Content calendar
+- Recommended first 3 actions to start immediately
+
+**Wait for user approval.** Adjust based on feedback.
 
 ---
 
@@ -70,108 +143,144 @@ Wait for user approval.
 
 ### 1. Select Operation
 
-| Operation | Description |
-|---|---|
-| **social-post** | Draft social media post(s) for one or more platforms |
-| **blog-post** | Write a blog post (delegates to `blog-post` skill) |
-| **email** | Draft email campaign or newsletter |
-| **trend-research** | Research trends and content opportunities |
-| **analytics** | Review marketing metrics and adjust tactics |
-| **content-repurpose** | Adapt existing content for other channels |
-| **community** | Plan community engagement responses |
-| **strategy-review** | Monthly strategy review and adjustment |
+Ask the user which marketing operation to perform:
+
+| Operation | Description | Typical Frequency |
+|---|---|---|
+| **social-post** | Draft social media post(s) for one or more platforms | Daily |
+| **blog-post** | Write a blog post (delegates to `blog-post` skill) | 2-3x/week |
+| **email** | Draft email campaign or newsletter | Bi-weekly |
+| **trend-research** | Research trends and content opportunities | Weekly |
+| **analytics** | Review marketing metrics and adjust tactics | Weekly |
+| **content-repurpose** | Adapt existing content for other channels | As needed |
+| **community** | Plan community engagement responses | Daily |
+| **strategy-review** | Monthly strategy review and adjustment | Monthly |
 
 ### 2. Load Context
 
-Read:
-
-1. `marketing/MARKETING.md` — strategy, ICP, messaging, voice
-2. `marketing/content-calendar.md` — planned tasks
-3. Recent materials in `marketing/` — maintain consistency
+1. **Read `marketing/MARKETING.md`** — strategy, ICP, messaging, voice
+2. **Read `marketing/content-calendar.md`** — planned tasks, completed items
+3. **Scan recent materials** in `marketing/` — maintain consistency
 
 ### 3. Execute Operation
 
 #### social-post
 
-1. Determine topic from content calendar, trending topic, or user request
-2. Research current conversations if trend-based
-3. Draft post per platform:
-   - X/Twitter: 280 chars max, hook first line, 1-3 hashtags
-   - LinkedIn: professional tone, 1-3 paragraphs, 3-5 hashtags
-   - Reddit: community tone, value-first, no self-promotion
-4. Humanize — apply `humanizer` skill to remove AI writing patterns
-5. Suggest visual direction if appropriate
-6. Save to `marketing/posts/YYYY-MM-DD-[platform]-[topic].md`
-7. Present draft. Wait for approval.
+**Apply `content-designer` role + `marketing-strategist` role.**
+
+1. **Determine topic**: Content calendar, trending topic, product update, or user request
+2. **Research** (if trend-based): Search X/Twitter, HN, Reddit for current conversations
+3. **Draft post** per platform. See `marketing-operations` skill `channel-playbooks.md` for format rules:
+   - **X/Twitter**: ≤280 chars, hook first line, 1-3 hashtags, thread if longer
+   - **LinkedIn**: Professional tone, 1-3 paragraphs, personal angle, 3-5 hashtags
+   - **Reddit**: Community tone, value-first, no self-promotion, context-aware
+4. **Humanize** — apply `humanizer` skill to remove AI writing patterns from the draft
+5. **Visual direction**: Suggest image/graphic if appropriate
+6. **Save to `marketing/posts/YYYY-MM-DD-[platform]-[topic].md`**
+7. Present draft. **Wait for user approval.**
 
 #### blog-post
 
-Delegate to `blog-post` skill. Pass ICP, content pillars, and voice from MARKETING.md.
+Delegate to `blog-post` skill workflow. Pass context from `marketing/MARKETING.md` (ICP, content pillars, voice).
 
 #### email
 
-1. Define campaign type (newsletter / update / nurture / announcement)
-2. Draft subject line (3 variants), preview text, body, CTA
-3. Humanize — apply `humanizer` skill to remove AI writing patterns
-4. Define target audience segment
-5. Save to `marketing/emails/YYYY-MM-DD-[campaign-name].md`
-6. Present draft. Wait for approval.
+**Apply `content-writer` role + `marketing-strategist` role.**
+
+1. **Define campaign**: Newsletter / product update / nurture sequence / announcement
+2. **Draft**: Subject line (3 variants), preview text, body, CTA
+3. **Humanize** — apply `humanizer` skill to remove AI writing patterns
+4. **Segmentation**: Target audience segment
+5. **Save to `marketing/emails/YYYY-MM-DD-[campaign-name].md`**
+6. Present draft. **Wait for user approval.**
 
 #### trend-research
 
-1. Scan X/Twitter, Hacker News, Reddit, Google Trends, industry newsletters
-2. Identify content opportunities and conversations to join
-3. Save to `marketing/research/YYYY-MM-DD-trends.md`
-4. Update content calendar with new ideas
+**Apply `marketing-strategist` role.**
+
+1. **Scan sources**: X/Twitter (niche hashtags, competitor accounts), Hacker News (trending), Reddit (subreddits), Google Trends, industry newsletters
+2. **Identify opportunities**: Content ideas, conversations to join, emerging topics
+3. **Save to `marketing/research/YYYY-MM-DD-trends.md`**
+4. **Update content calendar** with new content ideas
 
 #### analytics
 
-1. Review metrics against KPIs in MARKETING.md
-2. Analyze what is working and what is not
-3. Recommend channel, content, or schedule adjustments
-4. Save to `marketing/reports/YYYY-MM-DD-analytics.md`
-5. Update MARKETING.md if strategy adjustments needed
+**Apply `marketing-strategist` role.**
+
+1. **Review metrics** against KPIs in MARKETING.md
+2. **Analyze**: What's working? What's not? Why?
+3. **Recommend adjustments**: Channel mix, content topics, posting schedule
+4. **Save to `marketing/reports/YYYY-MM-DD-analytics.md`**
+5. **Update MARKETING.md** if strategy adjustments needed
 
 #### content-repurpose
 
-1. Select source (blog post, feature release, case study)
-2. Adapt to other formats (X thread, LinkedIn post, email snippet)
-3. Humanize adapted content
-4. Save variants to `marketing/posts/`
+**Apply `content-designer` role.**
+
+1. **Select source**: Blog post, feature release, case study, documentation
+2. **Adapt**: Blog → X thread, LinkedIn post, email snippet, social graphics, short video script
+3. **Save variants to `marketing/posts/`**
 
 #### community
 
-1. Identify relevant threads and discussions
-2. Draft helpful, value-first, non-promotional responses
-3. Save to `marketing/community/YYYY-MM-DD-engagement.md`
+**Apply `marketing-strategist` role.**
+
+1. **Identify targets**: Relevant threads, questions, discussions on X/Twitter, Reddit, HN, forums
+2. **Draft responses**: Helpful, value-first, non-promotional
+3. **Save to `marketing/community/YYYY-MM-DD-engagement.md`**
 
 #### strategy-review
 
-1. Review MARKETING.md against actual results
-2. Assess goal progress, channel effectiveness, content performance
-3. Adjust strategy, pillars, channel priorities, resource allocation
-4. Update `marketing/MARKETING.md` and `marketing/content-calendar.md`
+**Apply `marketing-strategist` role + `product-manager` role.**
+
+1. **Review MARKETING.md** against actual results
+2. **Assess**: Goal progress, channel effectiveness, content performance, ROI
+3. **Adjust**: Strategy, content pillars, channel priorities, tactics, resource allocation
+4. **Update** `marketing/MARKETING.md` and `marketing/content-calendar.md`
 
 ### 4. Update Tracking
 
 After every operation:
 
 1. Update `marketing/content-calendar.md` — mark completed, add new items
-2. If strategy implications — update `marketing/MARKETING.md`
+2. If strategy implications → update `marketing/MARKETING.md`
 
-### 5. Report
+### 5. Summary
 
-Summarize:
+```
+## Marketing Operation Summary
 
-- Operation performed
-- Materials created (file paths)
-- Status (draft / published / scheduled)
-- Next scheduled task from content calendar
-- Follow-ups if any
+- **Operation**: [social-post / blog-post / email / trend-research / analytics / etc.]
+- **Roles applied**: [list]
+- **Materials created**:
+  - [file path]: [description]
+- **Status**: [draft ready / published / scheduled]
+- **Next scheduled task**: [from content calendar]
+- **Follow-ups**: [if any]
+```
+
+## Directory Structure
+
+```
+marketing/
+├── MARKETING.md              # Strategy document (single source of truth)
+├── content-calendar.md       # Recurring task schedule and tracking
+├── posts/                    # Social media posts
+│   └── YYYY-MM-DD-[platform]-[topic].md
+├── emails/                   # Email campaigns
+│   └── YYYY-MM-DD-[campaign-name].md
+├── research/                 # Trend research and analysis
+│   └── YYYY-MM-DD-trends.md
+├── reports/                  # Analytics reports
+│   └── YYYY-MM-DD-analytics.md
+└── community/                # Community engagement plans
+    └── YYYY-MM-DD-engagement.md
+```
 
 ## Integration
 
-- **Skills**: `marketing-operations` (setup template, channel playbooks), `content-creation` (AI content tools, quality gates), `humanizer` (AI writing pattern removal)
-- **Rules**: `humanize-content` (enforces humanizer pass on all marketing content)
-- **Sub-workflows**: `blog-post`, `seo-review`, `docs`
-- **Follow-up**: `pre-commit`, `create-pr`
+- **Roles**: `marketing-strategist` role (strategy, analysis), `product-manager` role (product context, ICP), `content-designer` role (social posts, copy), `content-writer` role (blog, email), `seo-engineer` role (SEO optimization)
+- **Skills**: `marketing-operations` skill (setup template, channel playbooks), `content-creation` skill (AI content tools), `humanizer` skill (AI writing pattern removal)
+- **Rules**: `humanize-content` (auto-enforces humanizer pass on all content)
+- **follow-up skills**: `blog-post` skill (blog content), `seo-review` skill (SEO audit), `docs` skill (documentation)
+- **Follow-up**: `pre-commit` skill, `create-pr` skill

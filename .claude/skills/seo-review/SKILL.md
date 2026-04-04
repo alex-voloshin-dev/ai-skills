@@ -1,8 +1,7 @@
 ---
 name: seo-review
 description: SEO review workflow — technical SEO audit, meta tags, structured data validation, Core Web Vitals, crawlability, indexability, AI search readiness. Applies SEO Engineer role. Use standalone or as part of feature/docs workflows.
-allowed-tools: Read, Grep, Glob, Bash
-argument-hint: [URL or page path]
+argument-hint: "URL or page path"
 ---
 
 # SEO Review

@@ -25,11 +25,18 @@ sync_dir() {
     rel="${src_file#"$src"/}"
     mkdir -p "$(dirname "$dst/$rel")"
     cp -f "$src_file" "$dst/$rel"
-  done < <(find "$src" -type f)
+  done < <(find "$src" -type f \
+    ! -path '*/__pycache__/*' \
+    ! -name 'settings.local.json' \
+    ! -name '*.pyc' \
+    ! -name '*.pyo')
 
   while IFS= read -r dst_file; do
     rel="${dst_file#"$dst"/}"
     if [ ! -f "$src/$rel" ]; then
+      case "$dst_file" in
+        *.sqlite|*.sqlite-shm|*.sqlite-wal|*.log) continue ;;
+      esac
       rm -f "$dst_file"
     fi
   done < <(find "$dst" -type f)

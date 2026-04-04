@@ -104,7 +104,9 @@ The installers:
 
 ## Parity Enforcement
 
-`review/parity-matrix.md` is the authoritative record of cross-package alignment. It tracks:
+See [PARITY.md](PARITY.md) for the full parity model, current status, intentional gaps, and the process for adding new capabilities.
+
+`review/parity-matrix.md` is the authoritative change log of cross-package alignment. It tracks:
 - Current parity status per capability area (roles, skills, rules, workflows, templates)
 - Change log entries for parity-impacting additions
 - Review rules that must be followed for any change

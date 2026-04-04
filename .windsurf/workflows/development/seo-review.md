@@ -2,11 +2,12 @@
 description: SEO review workflow — technical SEO audit, meta tags, structured data validation, Core Web Vitals, crawlability, indexability, AI search readiness. Applies SEO Engineer role. Use standalone or as part of feature/docs workflows.
 ---
 
+
 # SEO Review
 
-Systematic SEO audit for public-facing pages. Checks crawlability, indexability, on-page SEO, structured data, Core Web Vitals, and AI search readiness. Applies `@seo-engineer` for all steps.
+Systematic SEO audit for public-facing pages. Checks crawlability, indexability, on-page SEO, structured data, Core Web Vitals, and AI search readiness. Applies `seo-engineer` role for all steps.
 
-Works standalone or as a sub-workflow called by `/docs`, `/feature-dev`, or `/bugfix`.
+Works standalone or as a follow-up skill called by `docs` skill, `feature-dev` skill, or `bugfix` skill.
 
 ## 1. Define Scope
 
@@ -19,16 +20,16 @@ Ask the user (or extract from parent workflow):
 
 ## 2. Apply Roles
 
-Apply `@seo-engineer` as primary role.
+Apply `seo-engineer` role as primary role.
 
 If implementation changes are needed, delegate to:
 
 | Change Type | Delegate To |
 |---|---|
-| Frontend code (meta tags, JSON-LD, components) | `@frontend-engineer` |
-| Content / copy improvements | `@content-writer` |
-| Server config (redirects, headers, robots.txt) | `@devops-engineer` |
-| Architecture changes (URL structure, routing) | `@solution-architect` |
+| Frontend code (meta tags, JSON-LD, components) | `frontend-engineer` role |
+| Content / copy improvements | `content-writer` role |
+| Server config (redirects, headers, robots.txt) | `devops-engineer` role |
+| Architecture changes (URL structure, routing) | `solution-architect` role |
 
 ## 3. Baseline Audit
 
@@ -135,13 +136,13 @@ Wait for user to review and approve which fixes to implement.
 
 For approved fixes:
 
-1. **Metadata changes** (title, description, OG tags) — implement directly or delegate to `@frontend-engineer`
-2. **Structured data** (JSON-LD) — implement directly or delegate to `@frontend-engineer`
-3. **Content changes** — delegate to `@content-writer`
-4. **Server config** (redirects, headers) — delegate to `@devops-engineer`
-5. **Performance fixes** (image optimization, lazy loading, critical CSS) — delegate to `@frontend-engineer`
+1. **Metadata changes** (title, description, OG tags) — implement directly or delegate to `frontend-engineer` role
+2. **Structured data** (JSON-LD) — implement directly or delegate to `frontend-engineer` role
+3. **Content changes** — delegate to `content-writer` role
+4. **Server config** (redirects, headers) — delegate to `devops-engineer` role
+5. **Performance fixes** (image optimization, lazy loading, critical CSS) — delegate to `frontend-engineer` role
 
-Follow `@seo-engineer` standards for all changes. No black-hat techniques.
+Follow `seo-engineer` role standards for all changes. No black-hat techniques.
 
 ## 6. Verify
 
@@ -171,5 +172,5 @@ Re-run relevant checks from Step 3 for changed pages:
 
 ## Integration
 
-- **Roles**: `@seo-engineer` (primary), `@frontend-engineer` (implementation), `@content-writer` (content fixes)
-- **Called by**: `/feature-dev` (SEO-relevant features), `/docs` (public content)
+- **Roles**: `seo-engineer` role (primary), `frontend-engineer` role (implementation), `content-writer` role (content fixes)
+- **Called by**: `feature-dev` skill (SEO-relevant features), `docs` skill (public content)

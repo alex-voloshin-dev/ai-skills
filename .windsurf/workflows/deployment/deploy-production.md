@@ -2,6 +2,7 @@
 description: Deploy to production workflow — final checks, approval gate, deploy, verify, rollback plan. Uses the `deploy-to-production` skill. Requires explicit APPROVE before any production mutation.
 ---
 
+
 # Deploy to Production
 
 Production deployment with mandatory approval gates, verification, and rollback plan. Every step that mutates production requires explicit user APPROVE.
@@ -14,16 +15,16 @@ Production deployment with mandatory approval gates, verification, and rollback 
 
 Confirm that staging deployment was successful:
 
-- [ ] `/deploy-staging` completed successfully
+- [ ] `deploy-staging` skill completed successfully
 - [ ] QA testing passed on staging
 - [ ] No critical bugs found in staging
 - [ ] Performance acceptable on staging
 
-If staging was not verified — **STOP**. Run `/deploy-staging` first.
+If staging was not verified — **STOP**. Run `deploy-staging` skill first.
 
 ### 1b. Release Readiness
 
-- [ ] Version tagged (`/release` completed)
+- [ ] Version tagged (`release` skill completed)
 - [ ] Changelog updated
 - [ ] All tests pass on the release branch
 - [ ] Database migrations tested (forward and rollback)
@@ -37,18 +38,18 @@ If staging was not verified — **STOP**. Run `/deploy-staging` first.
 |---|---|
 | **Breaking changes** | Yes/No — migration guide ready? |
 | **Database migrations** | Yes/No — reversible? |
-| **Infrastructure changes** | Yes/No — `/infra-change` completed? |
+| **Infrastructure changes** | Yes/No — `infra-change` skill completed? |
 | **Third-party dependencies** | Yes/No — API compatibility verified? |
 | **Traffic impact** | Low/Medium/High |
 | **Rollback complexity** | Simple (revert image) / Complex (DB migration) |
 
-If Risk = HIGH, apply `@sre-engineer` for SLO impact assessment.
+If Risk = HIGH, apply `sre-engineer` role for SLO impact assessment.
 
 ## 2. Prepare Deployment
 
 ### 2a. Identify Deployment Method
 
-Same as `/deploy-staging` Step 1c — but with production configuration.
+Same as `deploy-staging` skill Step 1c — but with production configuration.
 
 ### 2b. Backup Current State
 
@@ -197,6 +198,6 @@ After rollback:
 
 ## Integration
 
-- **Preceded by**: `/deploy-staging` (staging verification), `/release` (version tag)
-- **Roles**: `@devops-engineer`, `@sre-engineer`, `@devops-architect` (deployment strategy design)
+- **Preceded by**: `deploy-staging` skill (staging verification), `release` skill (version tag)
+- **Roles**: `devops-engineer` role, `sre-engineer` role, `devops-architect` role (deployment strategy design)
 - **Skills**: `deploy-to-production` skill

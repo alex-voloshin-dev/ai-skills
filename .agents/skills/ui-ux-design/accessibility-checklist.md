@@ -1,6 +1,6 @@
 # Accessibility Audit Checklist (WCAG 2.2 AA)
 
-Comprehensive accessibility checklist for UI/UX design and implementation. Use alongside the `ui-ux-design` skill and UI/UX design guidance. Based on WCAG 2.2 Level AA success criteria.
+Comprehensive accessibility checklist for UI/UX design and implementation. Use alongside `ui-ux-designer` role and `ui-ux-design` skill. Based on WCAG 2.2 Level AA success criteria.
 
 ## Perceivable
 

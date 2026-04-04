@@ -1,52 +1,116 @@
 ---
 name: context-engineering
-description: Context engineering knowledge base for designing context stacks, memory, retrieval, orchestration, and AI system reliability in a Codex-compatible way.
-user-invocable: false
+description: Context engineering knowledge base — context stack architecture (8-layer model), memory engineering (taxonomy, CRUD, conflict resolution, compression), agent harness patterns (init/continuation, state blobs, token budgeting, caching, failure modes), RAG pipeline design (chunking, packing, degradation signals), multi-agent orchestration (boundaries, payload schemas, fan-out patterns), production AI checklists (8 checklists), reference implementation templates (grounding envelope, untrusted wrapper, tool error envelope), privacy and compliance for AI systems. Use when designing AI agent systems, reviewing context quality, building RAG pipelines, implementing memory, planning multi-agent architectures, or preparing AI systems for production.
+user-invocable: true
+codex-roles:
+  - software-engineer
+  - devops-engineer
+  - prompt-engineer
+  - solution-architect
+  - product-manager
+  - sre-engineer
 ---
 
 # Context Engineering
 
-Use this skill when designing or reviewing how context is assembled for AI systems.
+Context engineering is the discipline of **systematically selecting, structuring, and delivering the smallest possible set of high-signal tokens** that make a task plausibly solvable for an LLM — reliably, safely, and cost-effectively.
 
-## Use Cases
+This skill provides actionable patterns, checklists, and templates for the full context pipeline — from first principles through production readiness.
 
-- Context stack design
-- Retrieval and RAG planning
-- Memory design
-- Multi-step orchestration
-- AI system reliability reviews
+## When to Use
 
-## Core Principle
+- Designing context pipelines for AI agents (what enters the LLM context window, in what order)
+- Reviewing context quality and token efficiency of existing systems
+- Building RAG systems (retrieval pipeline, chunking, packing, grounding)
+- Implementing memory (session, working, long-term, organizational, tool-output)
+- Designing agent harness (init/continuation prompts, state management, token budgets, caching)
+- Multi-agent orchestration (context boundaries, payload schemas, fan-out merge)
+- Production readiness assessment for AI systems (8-checklist gate)
+- Privacy and compliance for AI features (multi-tenant isolation, consent, data residency)
 
-Deliver the smallest high-signal context that makes the task solvable and safe.
+## When NOT to Use
 
-## Layers
+- Prompt technique selection and template patterns → use `prompt-engineering` skill
+- Security audit of individual prompts → use `prompt-engineering` skill → `security-checklist.md`
+- Non-AI software engineering tasks → use `software-engineer` role + stack-specific role
+- Infrastructure and deployment → use `devops-engineer` role
 
-Think in layers:
+## Context Engineering vs Prompt Engineering
 
-1. System policy
-2. Developer instructions
-3. Tool contracts
-4. Runtime state
-5. Retrieved knowledge
-6. Memory
-7. Examples
-8. Output contract
+These are **complementary** disciplines:
 
-## Repository Mapping
+- **Prompt engineering** = designing the instruction text (technique selection, template patterns, formatting, few-shot)
+- **Context engineering** = designing the full context PIPELINE (what enters the window, in what order, how it's managed across turns, how it degrades gracefully)
 
-- Root and scoped `AGENTS.md` -> developer instructions and runtime context
-- `.agents/skills/*` -> reusable task workflows and knowledge
-- Project files and retrieved docs -> knowledge context
-- Structured outputs or explicit response formats -> output contract
+Context engineering is the **system**; prompt engineering is one **layer** within it.
 
-## Companion Resources
+## Key Concepts
 
-- `context-stack-model.md`
-- `memory-engineering.md`
-- `agent-harness-patterns.md`
-- `rag-engineering.md`
-- `multi-agent-patterns.md`
-- `production-checklists.md`
-- `reference-templates.md`
-- `privacy-compliance-ai.md`
+### First Principles
+
+1. **Attention is finite** — curate, don't stuff. "More context" is not monotonically better
+2. **Position effects** — critical info at beginning and end ("lost-in-the-middle"). Models use tokens near the start and end more effectively than those buried in the middle
+3. **High-signal tokens > high-volume tokens** — compact, discriminative context beats verbose dumps
+4. **Separation of concerns** — policy, knowledge, examples, output contract in distinct layers. Enables independent swap, A/B testing, failure analysis
+5. **Context is a pipeline** — produced by a system (retrieval, ranking, summarization, memory, policy filters, schema enforcement), not concatenated strings
+
+### The Context Stack (8-Layer Architecture)
+
+Ordered layers, top = highest priority. Higher layers override lower on conflict.
+
+| Layer | What Goes Here | Design Notes |
+|---|---|---|
+| 1. System policy & safety | Non-negotiable constraints, content policies, refusal rules | First in window — highest attention. Cacheable |
+| 2. Developer instructions | Role definitions, hard rules, reasoning protocols, conventions | Maps to: Codex package rules, role overlays, and `AGENTS.md` guidance |
+| 3. Tool contracts | Schemas, descriptions, permissions, failure modes, retry policies | Tool descriptions ARE prompts — optimize them |
+| 4. Runtime state | Current project context, AGENTS.md, active file, task state, structured state blob | Maps to: Codex AGENTS.md files |
+| 5. Knowledge context (RAG) | Retrieved documents, search results, file contents | Must be wrapped as untrusted data with grounding envelopes |
+| 6. Memory | Session, working, long-term, organizational, tool-output | Must be scoped, filtered, and conflict-resolved |
+| 7. Examples (few-shot) | Minimal, high-leverage exemplars aligned to output contract | Dynamic selection preferred; skip if schema suffices |
+| 8. Output contract | JSON Schema, format instructions, constraints, error handling | End of context — recency bias helps compliance |
+
+**Rule**: keep **policy/instructions** (Layers 1-2) separate from **knowledge** (Layer 5). Mixing them is a root cause of prompt injection and "obedience confusion."
+
+→ Full reference: `context-stack-model.md`
+
+### Cacheable Prefix Design
+
+Layers 1-3 rarely change → group all static content at the beginning of the prompt to enable KV cache reuse. Append dynamic content (Layer 4-8) at the end. Never interleave static and dynamic blocks.
+
+Track `cache_prefix_ratio = cached_tokens / total_input_tokens` (target > 0.3).
+
+### Token Budget Allocation
+
+Treat context window as a finite resource with explicit budget per layer:
+
+| Allocation | Suggested % | Notes |
+|---|---|---|
+| System + rules + tools (L1-3) | 15-25% | Stable, cacheable prefix |
+| Runtime state (L4) | 5-10% | Structured state blob |
+| Knowledge / RAG (L5) | 30-40% | Dynamic, highest signal variance |
+| Memory (L6) | 10-15% | Filtered, relevance-ranked |
+| Examples (L7) | 0-10% | Only when needed |
+| Output contract (L8) | 5-10% | Schema + error handling |
+
+Overflow strategy: truncate lowest-priority layers first (L7 → L6 → L5).
+
+## Resource Files
+
+| File | Contents | Guide §§ |
+|---|---|---|
+| `context-stack-model.md` | 8-layer architecture, layer design patterns, position effects, mapping to Codex assets | §3 |
+| `memory-engineering.md` | Memory taxonomy, CRUD lifecycle, conflict handling, compression strategies | §6 |
+| `agent-harness-patterns.md` | Init/continuation, state blobs, token budgets, caching, failure modes, streaming | §7 |
+| `rag-engineering.md` | Pipeline blueprint (7 stages), chunking, packing, degradation signals | §5 |
+| `multi-agent-patterns.md` | Context boundaries, payload schemas, return contracts, fan-out, contamination | §7.6, §14 |
+| `production-checklists.md` | All 8 production readiness checklists | §11 |
+| `reference-templates.md` | Grounding envelope, untrusted wrapper, structured output, tool error envelope | §12 |
+| `privacy-compliance-ai.md` | Multi-tenant isolation, data controls, consent, regional compliance | §9 |
+
+## Integration
+
+- **Follows rules**: `prompt-engineer` role (prompt-level techniques, security, eval-first quality)
+- **Used by workflows**: `ai-assets` skill (context engineering validation), `feature-dev` skill (AI features), `feature-plan` skill (AI work packages), `code-review` skill (context quality review)
+- **Companion skill**: `prompt-engineering` skill (technique selection, template patterns, eval, security checklist)
+- **Collaborates with roles**: `solution-architect` role (AI system design), `product-manager` role (agent contracts), `sre-engineer` role (context observability), `software-engineer` role (implementation)
+- **Primary source**: `guides/context_engineering_guide.md`

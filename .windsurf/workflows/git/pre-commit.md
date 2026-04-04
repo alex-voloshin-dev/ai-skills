@@ -2,6 +2,7 @@
 description: Pre-commit quality gate — lint, format, test, validate before committing. Runs automated checks and fixes issues. Use before git commit to ensure code quality.
 ---
 
+
 # Pre-Commit
 
 Automated quality gate before committing code. Runs linting, formatting, tests, and validation checks. Fixes auto-fixable issues and reports blockers.
@@ -129,6 +130,6 @@ Follow Conventional Commits format.
 
 ## Integration
 
-- **Called by**: `/feature-dev`, `/bugfix` (before commit)
-- **Calls**: `/run-tests`
-- **Followed by**: `/create-pr`
+- **Called by**: `feature-dev` skill, `bugfix` skill (before commit)
+- **Calls**: `run-tests` skill
+- **Followed by**: `create-pr` skill

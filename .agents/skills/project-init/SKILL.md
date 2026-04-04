@@ -1,112 +1,256 @@
 ---
 name: project-init
-description: Initialize Codex project context for an existing repository by generating root and scoped AGENTS.md files plus supporting ARCHITECTURE.md and TESTING.md documentation.
+description: Initialize AI context for an existing project — deep scan the codebase, detect tech stack, identify subprojects and major modules, generate root `AGENTS.md`, `ARCHITECTURE.md`, `TESTING.md`, and directory-scoped `AGENTS.md` files for subprojects and significant directories. Works with monorepos, polyglot projects, and large codebases via iterative scanning.
 context: fork
+argument-hint: "project path or description"
+codex-roles:
+  - system-architect
+  - qa-engineer
+  - cloud-architect
+  - devops-architect
 ---
 
 # Project Init
 
-Deep-scan an existing repository and generate Codex-ready context files.
+Deep-scan an existing project and generate AI context files (`AGENTS.md`, `ARCHITECTURE.md`, `TESTING.md`) for the root and all significant subprojects. After completion, the runtime has the context it needs: tech stack, conventions, structure, setup, testing, security.
 
-## Outputs
+## 1. Initial Reconnaissance
 
-- Root `AGENTS.md`
-- Scoped `AGENTS.md` files for significant directories
-- `ARCHITECTURE.md`
-- `TESTING.md`
+### 1a. Root Structure Scan
 
-## 1. Reconnaissance
+```
+// turbo
+ls -la  # or Get-ChildItem on Windows
+```
 
-Scan:
+Identify stack signals:
 
-- Root structure
-- Build and dependency files
-- Test infrastructure
-- Existing docs
-- Significant service or package boundaries
+| Signal | Indicates |
+|---|---|
+| `package.json`, `tsconfig.json` | Node.js / TypeScript |
+| `pom.xml`, `build.gradle` | Java / Spring |
+| `pyproject.toml`, `requirements.txt` | Python |
+| `go.mod` | Go |
+| `*.csproj`, `*.sln` | .NET |
+| `Cargo.toml` | Rust |
+| `Dockerfile`, `docker-compose.yml` | Containerized |
+| `terraform/`, `*.tf` | Infrastructure as Code |
+| `helm/`, `k8s/`, `charts/` | Kubernetes |
+| Multiple `package.json` / `pom.xml` | Monorepo |
+| `nx.json`, `turbo.json`, `pnpm-workspace.yaml`, `lerna.json` | Monorepo tooling |
+| `content/blog/`, `posts/`, `.mdx` files with frontmatter | Blog / file-based content |
+| `llms.txt` | AI search optimization |
 
-Read existing `AGENTS.md`, `ARCHITECTURE.md`, and `TESTING.md` before creating anything new.
+### 1b. Detect Project Boundaries
 
-## 2. Detect Project Boundaries
+Identify **project boundaries** — directories that are independent units:
+- **Monorepo**: `apps/`, `packages/`, `services/`, `libs/` with own config files
+- **Single project**: One root config, directories are modules (`src/`, `app/`, `internal/`)
 
-Identify:
+Build a **project map**:
 
-- Monorepo services and packages
-- Shared libraries
-- Infrastructure directories
-- Content or documentation areas with special conventions
+```
+Project Root
+├── [subproject-1] (type: service, stack: Java Spring Boot)
+├── [subproject-2] (type: frontend, stack: Next.js + TypeScript)
+├── [subproject-3] (type: infra, stack: Terraform)
+└── [shared-lib]   (type: library, stack: TypeScript)
+```
 
-Create a compact project map before drafting files.
+### 1c. Check for Existing Context Files
 
-## 3. Generate Root `AGENTS.md`
+```
+// turbo
+find . -name "AGENTS.md" -o -name "ARCHITECTURE.md" -o -name "TESTING.md" -o -name "FEATURES.md" | head -20
+```
 
-Use `.codex/templates/root-agents.template.md` as the starting point.
+If files exist — read them, note gaps. Create missing files, update outdated ones (with user confirmation).
 
-The root file should include:
+## 2. Deep Scan — Iterative
 
-- Product purpose
-- Service map
-- Mandatory engineering rules
-- Repository structure
-- Codex operating guidance
+Process one boundary at a time. **Scan limits**: max 10 boundaries, 20 files per boundary, 3 levels deep. For 100+ file boundaries, summarize from directory listing and configs only.
 
-## 4. Generate `ARCHITECTURE.md`
+### 2a. Per-Boundary Scan Sequence
 
-Document the current system:
+For each subproject or the root project:
 
-- Services and responsibilities
-- Runtime stack
-- Data flow
-- Deployment shape
-- External integrations
+1. **Config files first** — `package.json`, `pom.xml`, `pyproject.toml`, `go.mod`, `*.csproj`, `tsconfig.json`, `.eslintrc`, `Dockerfile`
+2. **Entry points** — `main.ts`, `App.tsx`, `main.py`, `Main.java`, `main.go`, `Program.cs`
+3. **Directory structure** — list 2–3 levels deep to understand module organization
+4. **Key patterns** — read 1–2 representative files from each major directory to understand conventions:
+   - Naming patterns (files, classes, functions)
+   - Import style and module organization
+   - Error handling patterns
+   - Testing patterns (find test files)
+5. **CI/CD** — `.github/workflows/`, `Jenkinsfile`, `.gitlab-ci.yml`, `cloudbuild.yaml`
+6. **Docs** — `README.md`, `docs/`, `CONTRIBUTING.md`
+7. **Content** — two patterns to detect:
+   - **Static content files** — `static-content/`, `data/` dirs with TS/JS exports. Map content file → sections → consuming pages
+   - **File-based content (blog/docs)** — `content/blog/`, `posts/`, MDX/MD directories. Read 1-2 sample files to extract: frontmatter format (all fields, types, required/optional), file naming convention, cover image path pattern, tags/categories, discovery assets (`llms.txt`, sitemap config, RSS feed)
+8. **UI conventions** — grep for icon libs (`lucide`, `solar`, `phosphor`), animation libs (`framer-motion`, `gsap`), component libs (`shadcn`, `radix`, `mui`), icon registries
+9. **AI tooling** — `.codeiumignore`, `.cursorignore`, `.gitignore` — paths AI tools cannot access
 
-Prefer concise diagrams and concrete facts over aspirational prose.
+### 2b. Identify Significant Directories
 
-## 5. Generate `TESTING.md`
+Identify directories warranting their own scoped `AGENTS.md`. **Criteria** (any one): 10+ files with distinct responsibility, clear architectural layer, different conventions than parent, public API surface, generated code, infrastructure code.
 
-Document:
+**Common significant directories:**
 
-- Test types
-- Commands
-- Required infrastructure
-- Service-specific test entry points
-- Any known preconditions for local verification
+| Stack | Significant Directories |
+|---|---|
+| Java Spring Boot | `controller/`, `service/`, `repository/`, `model/`, `config/`, `exception/` |
+| Next.js / React | `app/`, `components/`, `lib/`, `hooks/`, `api/`, `middleware/` |
+| FastAPI / Python | `routers/`, `services/`, `models/`, `schemas/`, `dependencies/` |
+| Go | `cmd/`, `internal/`, `pkg/`, `handler/`, `store/`, `middleware/` |
+| .NET | `Controllers/`, `Services/`, `Models/`, `Data/`, `Middleware/` |
 
-## 6. Generate Scoped `AGENTS.md`
+## 3. Generate Root AGENTS.md
 
-Create scoped files only where a directory has its own conventions or responsibilities.
+Use the matching stack-specific template from `.codex/templates/` as a starting point. If no stack matches, use `.codex/templates/universal-agents.template.md`. Fill in all sections based on deep scan results from Step 2.
 
-Good candidates:
+**Critical rules:**
+- State the **tech stack explicitly** — this drives Codex role selection and overlay activation
+- Include **real setup commands** — extracted from config files and CI, copy-pastable
+- Link to `ARCHITECTURE.md` and `TESTING.md` in the Architecture reference and Testing Instructions sections
+- **Map content architecture** (if applicable) — which content files drive which pages. Prevents repeated `code_search` during content edits
+- **Document UI conventions** (if applicable) — icon set + variant + registry, animation library, component library
+- **Document blog conventions** (if applicable) — frontmatter format, file naming, discovery assets. Enables `blog-post` skill workflow
+- Keep **concise** — avoid repeating what scoped AGENTS.md files will cover
 
-- Service roots
-- `src` subtrees with strong conventions
-- Infrastructure directories
-- Content or docs directories with distinct workflows
+## 4. Generate ARCHITECTURE.md
 
-Use `.codex/templates/service-agents.template.md`.
+**Apply `system-architect` role** for this step. The system architect owns the ARCHITECTURE.md file — creation, updates, and reviews.
 
-## 7. Review Before Writing
+Use `templates/architecture.template.md` as the starting point. Fill in all 11 sections based on the deep scan results from Step 2.
 
-Present:
+**Rules:**
+- Mermaid/ASCII diagrams for all visual elements
+- Document what exists now, not aspirations. Include versions
+- Focus on relationships and data flows
+- **Monorepos**: Root ARCHITECTURE.md (system-wide) + per-subproject for each service with own build config. Skip doc-only, config-only, type-only dirs
 
-- Files to create or update
-- Project map
-- Detected stacks
-- Significant directories selected for scoped guidance
+## 5. Generate TESTING.md
 
-If the user has asked for autonomous execution, proceed unless there is a genuine risk of mis-scoping critical files.
+**Apply `qa-engineer` role** for this step. The QA engineer owns the TESTING.md file — creation, updates, and reviews.
 
-## 8. Verify
+Use `templates/testing.template.md` as the starting point. Fill in all sections based on the deep scan results from Step 2.
 
-After writing:
+### 5a. Root TESTING.md
 
-- Confirm all created files exist
-- Confirm scoped `AGENTS.md` files are not redundant with the root file
-- Confirm `AGENTS.md` references line up with `.agents` and `.codex`
-- Confirm no file contains Claude-specific runtime assumptions
+Create `TESTING.md` at the project root using `templates/testing.template.md` (root template section). Fill in all placeholders based on deep scan results from Step 2. All sections in the template are required — remove only those marked with `<!-- Remove ... -->` comments.
+
+**Key data sources**: test config files → test types and commands; CI pipeline → pipeline stages; directory listing → test organization; `.env.example` → credential structure.
+
+### 5b. Per-Service TESTING.md (Monorepos)
+
+For each subproject/service identified in Step 1b, create a scoped `TESTING.md` using `templates/testing.template.md` (per-service template section at the bottom of the file).
+
+**Rules:**
+- Include actual commands — copy-pastable, tested
+- Reference root `.env` for credentials (`test_` prefixed vars), do not duplicate
+- List key test scenarios for critical paths (auth, payments, data mutations)
+- Keep service-specific — do not repeat root TESTING.md content
+
+### 5c. Single-Project (Non-Monorepo)
+
+For single-project repos, create only root `TESTING.md` (no per-service files). Include all service-level detail directly in the root file.
+
+## 6. Generate Scoped AGENTS.md Files
+
+For each significant directory identified in Step 2b, create a scoped `AGENTS.md`:
+
+```markdown
+# AGENTS.md
+
+## Purpose
+[1 sentence: what this directory contains and its role in the architecture]
+
+## Conventions
+[Directory-specific patterns, naming, file organization]
+
+## Key Files
+[Important files with brief descriptions]
+
+## Patterns
+[Code patterns used in this directory — how to add new items]
+
+## Testing
+[How to test code in this directory specifically]
+
+## Do NOT
+[Directory-specific anti-patterns and constraints]
+```
+
+**Rules for scoped AGENTS.md:**
+- **Never repeat root AGENTS.md content** — reference it if needed
+- **Be directory-specific** — only include information relevant to THIS directory
+- **Include "how to add new X"** — the most common operation in each directory
+- **Keep it short** — 20–50 lines. Developers read these frequently
+- **State constraints** — what should NOT be in this directory
+
+### Example
+
+**`src/controllers/AGENTS.md`** — Purpose, naming convention (`{Resource}Controller.java`), injection rules (constructor, never repositories directly), validation (`@Valid`), "Adding a New Controller" steps.
+
+## 7. Review and Confirm
+
+Present a summary of all files to be created:
+
+```
+## Project Init Summary
+
+### Files to create:
+- [ ] AGENTS.md (root) — [X lines]
+- [ ] ARCHITECTURE.md (root) — [X lines]
+- [ ] TESTING.md (root) — [X lines]
+- [ ] [service-1]/TESTING.md — [X lines] (monorepo only)
+- [ ] [service-2]/TESTING.md — [X lines] (monorepo only)
+- [ ] src/controllers/AGENTS.md — [X lines]
+- [ ] src/services/AGENTS.md — [X lines]
+- [ ] ...
+
+### Project map:
+[project boundary diagram from Step 1b]
+
+### Tech stack detected:
+[list of technologies, frameworks, tools]
+```
+
+**Wait for user APPROVE before writing files.** User may skip directories, add undetected ones, or adjust content.
+
+## 8. Write Files
+
+After approval, create all files. For each file:
+1. Write the content
+2. Verify it was created successfully
+3. Report any issues
+
+If updating existing files — show the diff and request confirmation.
+
+## 9. Verify
+
+After all files are created:
+
+```
+// turbo
+find . -name "AGENTS.md" -o -name "ARCHITECTURE.md" -o -name "TESTING.md" | sort
+```
+
+Verify:
+- [ ] Root `AGENTS.md` exists and contains correct tech stack
+- [ ] Root `AGENTS.md` links to `TESTING.md` in Testing Instructions section
+- [ ] Root and per-subproject `ARCHITECTURE.md` files exist
+- [ ] Root `TESTING.md` exists with all test types, commands, infrastructure
+- [ ] Per-service `TESTING.md` files exist for each subproject (monorepos)
+- [ ] All significant directories have scoped `AGENTS.md`
+- [ ] No redundancy between root and scoped files
+- [ ] All test commands are accurate and copy-pastable
+- [ ] No secrets, PII, or hardcoded credentials in any file (especially `.env` test values)
 
 ## Integration
 
-- Templates: `.codex/templates/root-agents.template.md`, `.codex/templates/service-agents.template.md`
-- Companion docs: `ARCHITECTURE.md`, `TESTING.md`
-- Enables: `feature-plan`, `feature-dev`, `bugfix`, `run-tests`
+- **Precedes**: All other workflows — run this first on a new project
+- **Templates**: `.codex/templates/*-agents.template.md`, `.codex/templates/architecture.template.md`, `.codex/templates/testing.template.md`
+- **Roles**: `system-architect` role (ARCHITECTURE.md creation/review), `qa-engineer` role (TESTING.md creation/review), `cloud-architect` role (cloud infrastructure context), `devops-architect` role (CI/CD architecture context)
+- **Skills**: `testing-procedures` skill (test strategy, coverage targets)
+- **Enables**: `feature-plan` skill, `feature-dev` skill, `bugfix` skill, `test-local` skill, `run-tests` skill

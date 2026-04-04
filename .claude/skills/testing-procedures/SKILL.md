@@ -71,5 +71,5 @@ Projects should have a `TESTING.md` at the root (and per-service in monorepos) d
 - **Follows rules**: `Agent(qa-engineer)` (test strategy, automation, local test infra), `Agent(software-engineer)` (code quality)
 - **Used by workflows**: `/test-local` (full local QA cycle), `/run-tests` (lightweight execution), `/project-init` (TESTING.md generation), `/feature-dev`, `/bugfix`, `/pre-commit`
 - **Companion resources**: `test-writing-guide.md`
-- **Template**: `templates/testing.template.md` (root + per-service TESTING.md templates)
+- **Template**: `../../templates/testing.template.md` (root + per-service TESTING.md templates)
 - **Project context**: `TESTING.md` (root + per-service)

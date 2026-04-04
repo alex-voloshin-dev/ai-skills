@@ -4,7 +4,7 @@ Windsurf hook: log-actions
 Events: post_write_code, post_run_command, post_read_code, post_mcp_tool_use
 Exit code 0 = always allow.
 
-Logs Cascade tool activity to a local audit log file for traceability.
+Logs Windsurf tool activity to a local audit log file for traceability.
 Log file: .windsurf/agent-actions.log.
 """
 

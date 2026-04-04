@@ -1,10 +1,11 @@
 ---
-description: Run tests workflow — execute test suite, analyze failures, auto-fix obvious issues, re-run. Sub-workflow for /feature-dev, /bugfix, /pre-commit. Uses the `testing-procedures` skill.
+description: Run tests workflow — execute test suite, analyze failures, auto-fix obvious issues, re-run. Follow-up skill for `feature-dev`, `bugfix`, and `pre-commit`. Uses the `testing-procedures` skill.
 ---
+
 
 # Run Tests
 
-Execute the project's test suite, analyze failures, attempt fixes, and re-run. Designed as a reusable sub-workflow called by `/feature-dev`, `/bugfix`, and `/pre-commit`.
+Execute the project's test suite, analyze failures, attempt fixes, and re-run. Designed as a reusable follow-up skill called by `feature-dev` skill, `bugfix` skill, and `pre-commit` skill.
 
 Uses `testing-procedures` skill for test writing patterns and coverage targets.
 
@@ -52,7 +53,7 @@ If tests fail, for each failure:
 
 For auto-fixable failures:
 
-1. Apply the appropriate stack-specific role (`@frontend-engineer`, `@java-engineer`, `@python-engineer`, etc.)
+1. Apply the appropriate stack-specific role (`frontend-engineer` role, `java-engineer` role, `python-engineer` role, etc.)
 2. Apply the minimal fix — do not refactor unrelated code
 3. Re-run the failing test(s) specifically:
 
@@ -112,6 +113,6 @@ Compare against `testing-procedures` skill targets:
 
 ## Integration
 
-- **Called by**: `/feature-dev`, `/bugfix`, `/pre-commit`
+- **Called by**: `feature-dev` skill, `bugfix` skill, `pre-commit` skill
 - **Skills**: `testing-procedures` skill
-- **Roles**: `@qa-engineer` (test strategy), stack-specific role (implementation)
+- **Roles**: `qa-engineer` role (test strategy), stack-specific role (implementation)

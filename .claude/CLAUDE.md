@@ -22,15 +22,22 @@ This directory is the copy-ready Claude Code runtime package for the shared `ai-
 
 - keep Claude Code assets versioned independently from application repositories
 - preserve semantic parity with the sibling Codex package
-- remain directly copyable into a user project without normalization
+- remain directly installable into `~/.claude/` for global Claude Code runtime use
 
 ## Maintenance Rules
 
 - keep all asset contents in English
-- preserve agent parity with `../.codex/roles/`
-- preserve skill parity with `../.agents/skills/`
+- keep runtime-facing references valid after install under `~/.claude/`
 - keep hooks and `settings.json` aligned
-- remove repository-specific installer assumptions from shared assets
+- remove repository-specific installer assumptions from runtime-facing assets
+
+### Multi-package parity (ai-assets repository only)
+
+These rules apply only when editing this package within the `ai-assets` source repository
+(where `.codex/` and `.agents/` sibling directories exist). Skip them in standalone installs.
+
+- when editing the source repository, preserve agent parity with `../.codex/roles/`
+- when editing the source repository, preserve skill parity with `../.agents/skills/`
 
 ## Package Conventions
 
@@ -48,6 +55,7 @@ When updating Claude assets, verify:
 
 - frontmatter is valid where required
 - references resolve within the Claude package
-- hooks and settings point to Claude runtime paths
+- docs and templates reference installed Claude runtime paths
+- hooks and settings resolve to installed scripts after installer patching
 - no installer or project-specific commands remain
-- parity-impacting changes are reflected in `../review/parity-matrix.md`
+- (ai-assets repo only) parity-impacting changes are reflected in `../review/parity-matrix.md`

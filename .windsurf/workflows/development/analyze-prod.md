@@ -2,6 +2,7 @@
 description: Analyze production environment — collect Kubernetes pod status, managed database health, logs, metrics, networking, and diagnose issues. Supports GCP, Azure, and AWS via the `cloud-platforms` skill. Applies SRE or DevOps roles. Use standalone or as part of production incident investigation.
 ---
 
+
 # Analyze Production Environment
 
 Systematic analysis of the production environment. Collects cluster status, pod health, database metrics, logs, and diagnoses issues. Works standalone or as an entry point for production bugfixing.
@@ -28,16 +29,16 @@ Select and apply the role based on the problem type:
 
 | Problem Type | Primary Role | Rationale |
 |---|---|---|
-| Pod crashes, restarts, health check failures | `@sre-engineer` | Reliability, K8s troubleshooting, SLO impact |
-| High latency, error rate spikes, SLO burn | `@sre-engineer` | Observability, SLI/SLO analysis |
-| Managed DB issues (connections, replication, CPU) | `@sre-engineer` | Database reliability, capacity |
-| Networking, ingress, DNS, connectivity | `@sre-engineer` + `@devops-engineer` | Network diagnostics + infra config |
-| Deployment failures, rollback needed | `@devops-engineer` | CI/CD, Helm, K8s deployment |
-| Terraform/infra drift, resource config | `@devops-engineer` | IaC, cloud resource management |
-| Application errors visible in logs | Stack-specific role | `@java-engineer`, `@python-engineer`, `@frontend-engineer` |
-| General / unclear | `@sre-engineer` | SRE debugging methodology as default for prod |
+| Pod crashes, restarts, health check failures | `sre-engineer` role | Reliability, K8s troubleshooting, SLO impact |
+| High latency, error rate spikes, SLO burn | `sre-engineer` role | Observability, SLI/SLO analysis |
+| Managed DB issues (connections, replication, CPU) | `sre-engineer` role | Database reliability, capacity |
+| Networking, ingress, DNS, connectivity | `sre-engineer` role + `devops-engineer` role | Network diagnostics + infra config |
+| Deployment failures, rollback needed | `devops-engineer` role | CI/CD, Helm, K8s deployment |
+| Terraform/infra drift, resource config | `devops-engineer` role | IaC, cloud resource management |
+| Application errors visible in logs | Stack-specific role | `java-engineer` role, `python-engineer` role, `frontend-engineer` role |
+| General / unclear | `sre-engineer` role | SRE debugging methodology as default for prod |
 
-Announce the applied role(s) to the user. If this is a P1/P2 incident, always apply `@sre-engineer`.
+Announce the applied role(s) to the user. If this is a P1/P2 incident, always apply `sre-engineer` role.
 
 ## 3. Establish Context
 
@@ -161,7 +162,7 @@ Using the applied role's expertise:
 
 1. **Correlate** the user's problem with collected data
 2. **Identify root cause** using the role's debugging methodology
-3. **Assess SLO impact** (if `@sre-engineer` active): error budget consumed, burn rate
+3. **Assess SLO impact** (if `sre-engineer` role active): error budget consumed, burn rate
 
 <common_prod_issues>
 - **Pod CrashLoopBackOff**: OOM (check limits), app startup failure (check logs), missing config/secret, failed dependency (DB not reachable)
@@ -210,8 +211,8 @@ Structure the diagnosis:
 Based on the diagnosis:
 
 - **Immediate mitigation** (rollback, restart, scale): Present the exact command. Wait for user approval. Execute and verify
-- **Application code fix**: Transition to stack-specific role. Fix code, test locally (optionally `/analyze-local`), then deploy through normal CI/CD
-- **Infrastructure fix** (Terraform, Helm, K8s config): Apply with `@devops-engineer` patterns via PR, never direct apply
+- **Application code fix**: Transition to stack-specific role. Fix code, test locally (optionally `analyze-local` skill), then deploy through normal CI/CD
+- **Infrastructure fix** (Terraform, Helm, K8s config): Apply with `devops-engineer` role patterns via PR, never direct apply
 - **Root cause unclear**: Propose additional diagnostics (increase log verbosity, tracing, profiling, query analysis)
 
 After any fix, re-run relevant diagnostic commands from Step 4 to verify resolution.
@@ -231,6 +232,6 @@ Present the completed analysis:
 
 ## Integration
 
-- **Called by**: `/bugfix` (production environment diagnostics)
-- **Roles**: `@sre-engineer`, `@devops-engineer`
+- **Called by**: `bugfix` skill (production environment diagnostics)
+- **Roles**: `sre-engineer` role, `devops-engineer` role
 - **Skills**: `cloud-platforms` skill (platform-specific CLI commands, managed service diagnostics)

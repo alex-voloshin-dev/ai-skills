@@ -1,6 +1,6 @@
 ---
 trigger: model_decision
-description: Failure recovery for tool loops, context loss, invalid arguments, and goal drift during Cascade sessions.
+description: Failure recovery for tool loops, context loss, invalid arguments, and goal drift during Windsurf sessions.
 ---
 
 # Failure Recovery

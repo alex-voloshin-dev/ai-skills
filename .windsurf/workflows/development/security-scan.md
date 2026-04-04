@@ -2,6 +2,7 @@
 description: Security scan workflow — dependency audit, OWASP checklist, secrets scan, vulnerability report. Applies software-engineer role with security focus. Use standalone or as part of code review.
 ---
 
+
 # Security Scan
 
 Automated security audit for the project. Checks dependencies for known vulnerabilities, scans for hardcoded secrets, and reviews code against OWASP guidelines.
@@ -139,6 +140,6 @@ Use `code-review` skill's `security-checklist.md` for detailed checks.
 
 ## Integration
 
-- **Called by**: `/code-review` (security layer), `/pre-commit` (optional)
-- **Roles**: `@software-engineer` (security focus), `@devops-engineer` (infra scan), `@devops-architect` (supply chain security, GHAS, SBOM/SLSA)
+- **Called by**: `code-review` skill (security layer), `pre-commit` skill (optional)
+- **Roles**: `software-engineer` role (security focus), `devops-engineer` role (infra scan), `devops-architect` role (supply chain security, GHAS, SBOM/SLSA)
 - **Skills**: `code-review` skill (security checklist)

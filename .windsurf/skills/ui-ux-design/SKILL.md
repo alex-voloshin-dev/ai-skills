@@ -1,6 +1,7 @@
 ---
 name: ui-ux-design
 description: UI/UX design systems, Figma workflows, accessibility checklists, browser-based visual audit with automated screenshots, component specification patterns, and design-to-code handoff procedures. Use when designing interfaces, creating design systems, auditing accessibility, reviewing existing UI via browser screenshots, specifying components, or preparing design handoff for developers.
+user-invocable: true
 ---
 
 # UI/UX Design
@@ -20,9 +21,9 @@ Systematic UI/UX design skill with design system creation guides, Figma workflow
 ## When NOT to Use
 
 - Writing page content or copy (use `content-creation` skill)
-- Implementing frontend code (use the `frontend-engineer` perspective)
-- Conducting SEO audits (use `/seo-review` workflow)
-- Writing technical documentation (use `/docs` workflow)
+- Implementing frontend code (use `frontend-engineer` role)
+- Conducting SEO audits (use `seo-review` skill workflow)
+- Writing technical documentation (use `docs` skill workflow)
 
 ## Design System Creation
 
@@ -145,6 +146,6 @@ When handing off designs to developers, provide:
 
 ## Integration
 
-- **Follows rules**: `ui-ux-designer` guidance for design principles, accessibility, and design systems
-- **Used by workflows**: `/ui-ux-design` (primary), `/feature-dev` (UI features)
+- **Follows rules**: `ui-ux-designer` role (design principles, accessibility, design systems)
+- **Used by workflows**: `ui-ux-design` skill (primary), `feature-dev` skill (UI features)
 - **Companion resources**: `design-system-checklist.md`, `figma-workflow.md`, `accessibility-checklist.md`, `visual-audit-checklist.md`

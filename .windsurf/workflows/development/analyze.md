@@ -2,6 +2,7 @@
 description: Deep analysis workflow for codebases, architectures, systems, products, markets, or research topics. Use when the user asks to analyze, investigate, assess, evaluate, compare, or research something in a structured way.
 ---
 
+
 # Analyze
 
 Perform structured analysis with explicit scope, evidence, and conclusions.

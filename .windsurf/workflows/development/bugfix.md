@@ -2,9 +2,10 @@
 description: End-to-end bugfix workflow — analyze environment (local Docker or cloud production), collect evidence, prepare bug report, plan fix, apply appropriate engineer role, implement and verify the fix.
 ---
 
+
 # Bugfix
 
-End-to-end workflow for investigating, diagnosing, and fixing bugs. Orchestrates environment analysis (`/analyze-local` or `/analyze-prod`), evidence collection, bug report preparation, fix planning, and implementation by the appropriate engineering role.
+End-to-end workflow for investigating, diagnosing, and fixing bugs. Orchestrates environment analysis (`analyze-local` skill or `analyze-prod` skill), evidence collection, bug report preparation, fix planning, and implementation by the appropriate engineering role.
 
 ## 1. Receive Bug Report
 
@@ -21,21 +22,21 @@ If the user provides partial information, extract what you can and fill gaps dur
 
 ## 2. Analyze Environment
 
-Based on the environment, delegate to the appropriate analysis sub-workflow:
+Based on the environment, delegate to the appropriate analysis follow-up skill:
 
-| Environment | Sub-workflow | When to use |
+| Environment | follow-up skill | When to use |
 |---|---|---|
-| Local Docker / Docker Compose | `/analyze-local` | Bug observed in local dev environment |
-| Cloud production (GKE/AKS/EKS, managed DB) | `/analyze-prod` | Bug observed in production or staging |
+| Local Docker / Docker Compose | `analyze-local` skill | Bug observed in local dev environment |
+| Cloud production (GKE/AKS/EKS, managed DB) | `analyze-prod` skill | Bug observed in production or staging |
 | Code-only (no infra) | Skip to Step 3 | Bug is in application logic, no environment analysis needed |
 
-Run the sub-workflow. It will:
-- Apply the appropriate diagnostic role (`@sre-engineer` or `@devops-engineer`)
+Run the follow-up skill. It will:
+- Apply the appropriate diagnostic role (`sre-engineer` role or `devops-engineer` role)
 - Collect environment snapshot (container/pod status, logs, metrics, networking)
 - Identify infrastructure-level issues
 - Present diagnosis
 
-**If the sub-workflow resolves the issue** (e.g., container restart, config fix) — skip to Step 8.
+**If the follow-up skill resolves the issue** (e.g., container restart, config fix) — skip to Step 8.
 
 **If the root cause is in application code** — continue to Step 3 with the collected evidence.
 
@@ -51,13 +52,13 @@ Determine the affected service's tech stack and apply the appropriate engineerin
 
 | Stack Signal | Role |
 |---|---|
-| Next.js, React, TypeScript, `.tsx` files | `@frontend-engineer` |
-| Spring Boot, Java, `.java` files | `@java-engineer` |
-| FastAPI, Python, `.py` files | `@python-engineer` |
-| Terraform, Dockerfile, Helm, CI/CD | `@devops-engineer` |
-| ML model, training pipeline, inference | `@ml-engineer` |
+| Next.js, React, TypeScript, `.tsx` files | `frontend-engineer` role |
+| Spring Boot, Java, `.java` files | `java-engineer` role |
+| FastAPI, Python, `.py` files | `python-engineer` role |
+| Terraform, Dockerfile, Helm, CI/CD | `devops-engineer` role |
+| ML model, training pipeline, inference | `ml-engineer` role |
 | Multiple stacks affected | Apply all relevant roles |
-| Unknown / general | `@software-engineer` |
+| Unknown / general | `software-engineer` role |
 
 Announce the applied role(s) to the user.
 
@@ -131,9 +132,9 @@ Wait for user confirmation before proceeding to fix.
 Create an ordered fix plan following the applied role's guidelines:
 
 1. **Root cause fix** — address the actual cause, not symptoms
-2. **Minimal change** — smallest change that fixes the bug without side effects
+2. **Complete fix** — fix everything described in the bug report. Do not leave cosmetic issues, lint warnings, or minor problems unfixed. Do not create follow-up tickets for things you can fix now
 3. **Regression test** — test that would have caught this bug
-4. **Related fixes** — any adjacent issues discovered during investigation
+4. **Related fixes** — any adjacent issues discovered during investigation. Fix them in the same changeset — do not increase tech debt
 
 Present the plan:
 
@@ -175,37 +176,59 @@ Execute the approved plan step by step.
 
 **Rules:**
 - Fix the root cause, not the symptom
-- Minimal, focused changes — do not refactor unrelated code
+- Fix EVERYTHING reported in the bug — do not leave non-blocking or cosmetic issues unfixed
+- Fix all lint errors, style violations, and warnings introduced or exposed by the change
 - Follow existing code patterns and conventions
-- No new warnings or linter errors
+- No new warnings or linter errors — and fix pre-existing ones in the affected files if trivial
+- Do not defer fixes to "follow-up" tasks — complete the fix in this changeset
+- Do not increase tech debt — if you touch it, leave it better than you found it
 - If the fix is more complex than expected — stop and discuss with the user
+- If you need more information about the environment, run specialized follow-up skills (`analyze-local` skill or `analyze-prod` skill) to collect it
 
-## 8. Verify the Fix
+## 8. Self-Review the Fix
+
+Before declaring the bug fixed, perform a thorough self-review. Do NOT skip this step.
+
+**Code review checklist:**
+- [ ] Re-read every changed file diff — verify correctness and completeness
+- [ ] Every item from the bug report or user description is addressed — nothing left unfixed
+- [ ] No cosmetic issues, lint warnings, or style violations remain in changed files
+- [ ] No TODO, FIXME, or "will fix later" comments introduced
+- [ ] No tech debt created — the code is clean and production-ready
+- [ ] Run linter on all changed files — zero warnings
+- [ ] Run formatter on all changed files — zero diffs
+
+If the self-review reveals any remaining issues — fix them before proceeding. Do not declare the bug fixed with known remaining problems.
+
+## 9. Verify the Fix
 
 Verify the bug is resolved in the appropriate environment:
 
 **For local bugs:**
 - Run the reproduction steps — confirm the bug no longer occurs
 - Run the full test suite — all tests pass (new + existing)
-- If Docker-based: rebuild and verify with `/analyze-local` (optional)
+- If Docker-based: rebuild and verify with `analyze-local` skill (optional)
+- If you need more data, run specialized follow-up skills for `analyze-local` skill to collect environment state
 
 **For production bugs:**
 - Verify the fix locally first
 - Deploy through normal CI/CD pipeline (do NOT hotfix production directly)
-- After deploy: re-run relevant checks from `/analyze-prod` to confirm resolution
+- After deploy: re-run relevant checks from `analyze-prod` skill to confirm resolution
 - Monitor error rates and SLIs for regression
 
 **Verification checklist:**
 - [ ] Original bug no longer reproduces
+- [ ] ALL items from the bug report are fixed — not just the primary symptom
 - [ ] Regression test passes
 - [ ] Full test suite passes (no new failures)
-- [ ] No new warnings or linter errors
+- [ ] Linter passes with zero warnings on changed files
 - [ ] No unrelated files modified
 - [ ] Code follows project conventions and role guidelines
+- [ ] No deferred work — everything is done in this changeset
 
-If any check fails — fix and re-verify.
+If any check fails — fix and re-verify. Do NOT declare the bug fixed until every checkbox passes.
 
-## 9. Summary
+## 10. Summary
 
 Present the completed bugfix:
 
@@ -216,11 +239,13 @@ Present the completed bugfix:
 - **Root cause**: technical explanation
 - **Fix**: what was changed (files, brief description)
 - **Tests added**: count and description
+- **Self-review**: passed — all items verified
 - **Verification**: how it was confirmed fixed
+- **Remaining issues**: NONE (if any remain, go back and fix them before reporting)
 - **Prevention**: recommendations to avoid similar bugs (e.g., add validation, improve error handling, add monitoring)
 
 ## Integration
 
-- **Sub-workflows**: `/analyze-local`, `/analyze-prod` (environment diagnostics)
-- **Follow-up**: `/run-tests` (verify fix), `/pre-commit` (quality gate), `/create-pr` (submit fix)
-- **Skills**: `code-review` skill (review fix), `testing-procedures` skill (test strategy)
+- **follow-up skills**: `analyze-local` skill, `analyze-prod` skill (environment diagnostics — launch as specialized skills when more data is needed)
+- **Follow-up**: `run-tests` skill (verify fix), `pre-commit` skill (quality gate), `create-pr` skill (submit fix)
+- **Skills**: `code-review` skill (review fix), `testing-procedures` skill (test strategy), `worktree-isolation` skill (branch isolation)

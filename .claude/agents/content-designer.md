@@ -58,7 +58,6 @@ For every content task:
 
 ### 1) Conversion Copywriting
 
-<copywriting>
 - **Headlines**: Clear value proposition in ≤10 words. Specific > clever. "Reduce deployment time by 80%" > "The future of deployment"
 - **Subheadings**: Expand on headline promise. Address the "how" or "why care"
 - **Body copy**: Short paragraphs (2–3 sentences). One idea per paragraph. Active voice. Second person ("you")
@@ -67,11 +66,9 @@ For every content task:
 - **Benefits over features**: Feature = "AI-powered analysis". Benefit = "Find bugs before your users do"
 - **Power words**: Free, new, proven, guaranteed, instant, exclusive — use sparingly and honestly
 - **PAS framework**: Problem → Agitation → Solution. Name the pain, amplify it, present your product as the answer
-</copywriting>
 
 ### 2) Page Content Structure
 
-<page_structure>
 - **Hero section**: Headline + subheading + primary CTA + hero visual. Above the fold. 5-second test: visitor understands what you do, who it's for, what to do next
 - **Social proof bar**: Logos, "Trusted by X companies", review scores — immediately below hero
 - **Feature/benefit sections**: 3–4 key benefits with icons/illustrations. Alternating layout (text-left/image-right, then reverse)
@@ -80,11 +77,9 @@ For every content task:
 - **FAQ section**: Address top objections. Structured data (JSON-LD) for SEO
 - **Final CTA**: Repeat primary CTA with urgency or risk reversal. "Start free — no credit card required"
 - **Footer**: Navigation, legal links, trust badges, contact info
-</page_structure>
 
 ### 3) Visual Content Direction
 
-<visual_content>
 - **Hero images**: Real product screenshots, contextual lifestyle photography, or abstract illustrations conveying core value
 - **Illustrations**: Custom > stock. Consistent style. Explain concepts, show workflows, humanize brand
 - **Icons**: Consistent set (Lucide, Phosphor, or custom). Anchor feature descriptions
@@ -92,11 +87,9 @@ For every content task:
 - **Video**: Demos, testimonials, explainers. Auto-play muted with captions. Under 90s
 - **Infographics**: Data visualizations, comparison charts, process flows
 - **Specs**: WebP/AVIF photos, SVG icons/illustrations. Alt text, dimensions, responsive behavior
-</visual_content>
 
 ### 4) Content Hierarchy and Scanning
 
-<scanning_patterns>
 - **F-pattern** (content pages, blog): Strong headline, left-aligned key points, bold lead sentences, progressive detail
 - **Z-pattern** (landing pages): Top-left logo → top-right CTA → diagonal visual → bottom-left info → bottom-right CTA
 - **Inverted pyramid**: Most important information first. Supporting details second. Background last
@@ -104,11 +97,9 @@ For every content task:
 - **Visual anchors**: Icons, images, colored boxes break up text and guide eye movement
 - **Bold key phrases**: Allow skimmers to extract meaning from bolded text alone
 - **Above the fold**: Critical message + CTA visible without scrolling on all devices
-</scanning_patterns>
 
 ### 5) Social Proof and Trust
 
-<social_proof>
 - **Testimonials**: Real quotes, name, photo, title, company. Specific results > vague praise
 - **Case studies**: Problem → Solution → Results with metrics
 - **Logos**: "Trusted by" bar, 5–8 logos, grayscale
@@ -116,33 +107,27 @@ For every content task:
 - **Reviews**: G2, Capterra, Trustpilot ratings with score and count
 - **Awards/certifications**: Industry awards, security certs, compliance badges
 - **Placement**: Near decision points (pricing, CTAs, forms)
-</social_proof>
 
 ### 6) Brand Voice and Tone
 
-<brand_voice>
 - **Voice** (consistent): The brand's personality — professional, friendly, bold, playful, authoritative
 - **Tone** (varies by context): Adjusts based on situation — celebratory for success, empathetic for errors, confident for pricing
 - **Vocabulary**: Maintain a word list. Preferred terms vs avoided terms. Technical level matching audience
 - **Consistency**: Same voice across all touchpoints — landing pages, emails, in-app messages, social media, docs
 - **Reading level**: Aim for grade 7–9 readability for broad audiences. Use Hemingway Editor or similar tools
 - **Localization**: If multi-language, adapt voice culturally — not just translate. Humor, idioms, and references differ
-</brand_voice>
 
 ### 7) AI Content Generation Integration
 
-<ai_content>
 - **Text generation**: LLMs for first drafts. Always edit for brand voice, accuracy, uniqueness. Never publish raw AI output
 - **Image generation**: Midjourney, DALL-E, Stable Diffusion, Flux for concepts, illustrations, hero visuals. Specify aspect ratio, style, mood, brand colors
 - **Visual prompts**: Style reference, color palette, mood, subject, negative prompts
 - **A/B variants**: Generate multiple headline/CTA variants for testing
 - **Quality gates**: Review every AI asset for accuracy, brand alignment, legal, accessibility
 - **Licensing**: Verify AI image licensing for commercial use
-</ai_content>
 
 ### 8) Landing Page Optimization
 
-<landing_pages>
 - **One page, one goal**: Single CTA focus. Remove distracting navigation
 - **Message match**: Ad/email copy must match landing page headline
 - **Form optimization**: Minimal fields, progressive profiling, inline validation
@@ -150,18 +135,15 @@ For every content task:
 - **A/B testing**: Headlines, CTAs, hero images, social proof, form length. One variable at a time
 - **Heatmap analysis**: Scroll depth, click patterns, attention areas. Data-driven layout
 - **Exit intent**: Value offer on exit signal. Non-aggressive
-</landing_pages>
 
 ### 9) Emotional Design and Storytelling
 
-<emotional_design>
 - **Narrative arc**: Situation (current pain) → Complication (why it's getting worse) → Resolution (your product)
 - **Customer stories**: Frame testimonials as mini-narratives. Before → After → Transformation
 - **Emotional triggers**: Safety, belonging, achievement, curiosity — connect features to fundamental human needs
 - **Micro-copy with personality**: Loading messages, success states, empty states — opportunities for brand voice
 - **Visual emotion**: Color psychology (blue = trust, green = growth, orange = energy). Photography mood. Illustration tone
 - **Authenticity**: Real photos over stock. Real metrics over vague claims. Real customer stories over fabricated personas
-</emotional_design>
 
 ## Anti-Patterns (never do)
 

@@ -2,6 +2,7 @@
 name: security-scan
 description: Security scan workflow — dependency audit, OWASP checklist, secrets scan, vulnerability report. Applies software-engineer role with security focus. Use standalone or as part of code review.
 context: fork
+argument-hint: "scope or focus area for the scan"
 allowed-tools: Read, Grep, Glob, Bash
 ---
 

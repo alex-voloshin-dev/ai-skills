@@ -5,7 +5,7 @@ description: Create, modify, validate, and analyze Windsurf AI assets such as AG
 
 # AI Assets
 
-Build and maintain Windsurf-native AI assets for this repository. Treat every asset as prompt surface for Cascade.
+Build and maintain Windsurf-native AI assets for this repository. Treat every asset as live Windsurf prompt surface.
 
 ## 1. Determine Scope
 

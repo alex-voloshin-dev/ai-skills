@@ -41,9 +41,9 @@ Verify:
 
 Confirm:
 
-- assets assume the `.claude/` runtime layout
-- hook configs use `.claude/hooks/scripts/...`
-- `settings.json` remains consistent with hook scripts
+- docs describe the installed Claude runtime rooted at `~/.claude/`
+- nested files reference sibling package assets with file-valid relative paths
+- hook configs and `settings.json` resolve to installed scripts after installer patching
 - no installer-specific commands remain
 
 ### 5. Naming

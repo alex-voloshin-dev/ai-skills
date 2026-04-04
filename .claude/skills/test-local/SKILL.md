@@ -2,6 +2,7 @@
 name: test-local
 description: Local dev testing workflow — verify test environment, provision infrastructure (Docker, Testcontainers), run multi-level test suite (unit → integration → E2E), coverage analysis, quality gate. Applies QA Engineer role. Use for full local QA cycle before commit or PR.
 context: fork
+argument-hint: "service name or test scope"
 ---
 
 # Test Local

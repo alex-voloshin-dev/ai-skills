@@ -1,6 +1,6 @@
 # MARKETING.md Template
 
-Complete template for marketing strategy initialization. Used by the `/marketing` workflow (Phase 1: Init) to create the `marketing/MARKETING.md` file — the single source of truth for all marketing activities.
+Complete template for marketing strategy initialization. Used by the `marketing` skill workflow (Phase 1: Init) to create the `marketing/MARKETING.md` file — the single source of truth for all marketing activities.
 
 ## How to Use
 
@@ -167,7 +167,7 @@ Complete template for marketing strategy initialization. Used by the `/marketing
 
 | Platform | Handle | URL | Status |
 |---|---|---|---|
-| X/Twitter | [@handle] | [URL] | [active / needs creation] |
+| X/Twitter | [`handle` skill] | [URL] | [active / needs creation] |
 | LinkedIn | [page name] | [URL] | [active / needs creation] |
 | Reddit | [u/username] | [URL] | [active / needs creation] |
 | [Other] | [handle] | [URL] | [status] |

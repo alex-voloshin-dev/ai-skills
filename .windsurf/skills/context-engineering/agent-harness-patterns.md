@@ -223,7 +223,7 @@ Production agents fail in predictable ways. Detect early, mitigate automatically
 | **Goal drift** | Agent deviates from original goal | Plan-step embedding diverges from goal embedding | Re-anchor goal + prune irrelevant plan steps |
 | **Hallucinated tool args** | Invented parameters not in state/evidence | Schema validation fails; args not grounded | Reject + retry with explicit grounding instruction |
 | **Injection escape** | Untrusted content changes behavior | Behavior diff vs baseline; unexpected policy violations | Tighten wrappers + post-call assertions |
-| **Cascade failure** | Subagent error poisons orchestrator state | Error flag not handled; repeated downstream failures | Circuit breaker + error propagation policy |
+| **Worker failure** | Subagent error poisons orchestrator state | Error flag not handled; repeated downstream failures | Circuit breaker + error propagation policy |
 | **Cost runaway** | Token consumption spiraling across turns | Per-turn cost exceeds threshold; cumulative budget exhausted | Per-turn cost limits + budget remaining in state |
 
 ### Implementation

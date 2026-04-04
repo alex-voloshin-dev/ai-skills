@@ -1,3 +1,7 @@
+---
+description: Commit message format (Conventional Commits), branch naming, PR standards, and commit hygiene for all git operations.
+---
+
 # Git Conventions
 
 Standards for commit messages, branching, and pull requests. Follow these conventions in all git operations.

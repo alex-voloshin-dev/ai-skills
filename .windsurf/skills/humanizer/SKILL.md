@@ -1,6 +1,7 @@
 ---
 name: humanizer
 description: Remove signs of AI-generated writing from text. Use when editing, reviewing, or producing any public-facing text — blog posts, social media, UI copy, emails, landing pages, documentation. Detects and fixes AI patterns including inflated symbolism, promotional language, vague attributions, em dash overuse, rule of three, AI vocabulary, negative parallelisms, sycophantic tone, and filler phrases.
+user-invocable: true
 ---
 
 # Humanizer
@@ -85,7 +86,7 @@ When humanizing text, provide:
 
 ## Integration
 
-- **Guardrail**: All public-facing content must pass a humanizer review before finalization
-- **Used by workflows**: `/blog-post`, `/marketing`, `/docs` (public-facing content)
+- **Rule**: `humanize-content` rule auto-activates this skill for all public-facing content
+- **Used by workflows**: `blog-post` skill (step 4.5), `marketing` skill (all content operations), `docs` skill (public-facing content)
 - **Used by skill**: `content-creation` (Gate 7: Humanization)
 - **Companion resource**: `ai-writing-patterns.md` (full pattern catalog with examples)

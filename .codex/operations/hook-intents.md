@@ -1,15 +1,13 @@
 # Hook Intents
 
-This file captures the operational intent of `.claude/hooks/scripts`.
+This file captures the operational intent of the current Claude hook scripts and their visible Codex equivalents.
 
 | Claude hook script | Intent | Codex equivalent |
 |---|---|---|
-| `block-dangerous-commands.py` | Stop obviously risky shell actions | hard rules in `AGENTS.md` and explicit approval flow |
-| `block-secrets-in-code.py` | Prevent secret leaks during edits | security rules in `AGENTS.md`, review checklists, and `security-scan` |
-| `block-sensitive-files.py` | Avoid reading sensitive files casually | read only what is needed and follow repo security boundaries |
-| `detect-tool-loops.py` | detect repeated failing tool usage | failure recovery rules in `.codex/rules/failure-recovery.md` |
-| `log-actions.py` | create an audit trail of tool activity | explicit commentary updates and optional local verification scripts |
-| `normalize-tool-results.py` | keep tool outputs clean before reuse | summarize tool output before turning it into prompts or assets |
+| `block-dangerous-commands.py` | Stop obviously risky shell actions before execution | hard rules in `AGENTS.md`, explicit approval flow, and visible command scrutiny |
+| `block-secrets-in-code.py` | Prevent secret leakage during edits | security rules in `AGENTS.md`, asset validation, and `security-scan` |
+| `block-sensitive-files.py` | Prevent casual reads of credentials and secret material | read only what is needed and keep sensitive-path boundaries explicit |
+| `log-actions.py` | Create an audit trail of tool activity | concise commentary updates and explicit verification summaries |
 
 ## Content Guardrails
 
@@ -19,5 +17,5 @@ This file captures the operational intent of `.claude/hooks/scripts`.
 
 ## Codex Rule
 
-If a hook intent is safety-critical, express it in `AGENTS.md`, skills, or validation scripts.
+If a hook intent is safety-critical, express it in `AGENTS.md`, skills, rules, or validation checklists.
 Do not assume a hidden hook runtime exists.

@@ -40,11 +40,16 @@ SECRET_PATTERNS = [
     ("Generic Secret", re.compile(r"(?i)(secret|token|password|passwd|pwd)\s*[=:]\s*['\"]?[A-Za-z0-9_\-!@#$%^&*]{8,}")),
     ("Private Key Block", re.compile(r"-----BEGIN\s+(RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----")),
     ("GitHub Token", re.compile(r"gh[pousr]_[A-Za-z0-9_]{36,}")),
+    ("GitHub Fine-Grained PAT", re.compile(r"github_pat_[A-Za-z0-9_]{22,}")),
     ("Google API Key", re.compile(r"AIza[0-9A-Za-z_\-]{35}")),
     ("Slack Token", re.compile(r"xox[bporas]-[0-9a-zA-Z\-]+")),
     ("JWT Token", re.compile(r"eyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+")),
     ("Connection String", re.compile(r"(?i)(mongodb|postgres|mysql|redis|amqp|mssql)://[^\s'\"]{10,}")),
     ("Bearer Token", re.compile(r"(?i)bearer\s+[A-Za-z0-9_\-\.]{20,}")),
+    ("Stripe Key", re.compile(r"[sr]k_live_[A-Za-z0-9]{20,}")),
+    ("GitLab Token", re.compile(r"glpat-[A-Za-z0-9_\-]{20,}")),
+    ("npm Token", re.compile(r"npm_[A-Za-z0-9]{36,}")),
+    ("Encrypted Private Key", re.compile(r"-----BEGIN ENCRYPTED PRIVATE KEY-----")),
 ]
 
 SKIP_EXTENSIONS = {

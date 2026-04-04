@@ -1,10 +1,11 @@
 ---
-description: Initialize AI context for an existing project — deep scan the codebase, detect tech stack, identify subprojects and major modules, generate root AGENTS.md, ARCHITECTURE.md, TESTING.md, and directory-scoped AGENTS.md files for subprojects and significant directories. Works with monorepos, polyglot projects, and large codebases via iterative scanning.
+description: Initialize AI context for an existing project — deep scan the codebase, detect tech stack, identify subprojects and major modules, generate root `AGENTS.md`, `ARCHITECTURE.md`, `TESTING.md`, and directory-scoped `AGENTS.md` files for subprojects and significant directories. Works with monorepos, polyglot projects, and large codebases via iterative scanning.
 ---
+
 
 # Project Init
 
-Deep-scan an existing project and generate AI context files (`AGENTS.md`, `ARCHITECTURE.md`, `TESTING.md`) for the root and all significant subprojects. After completion, Claude has the context it needs: tech stack, conventions, structure, setup, testing, security.
+Deep-scan an existing project and generate AI context files (`AGENTS.md`, `ARCHITECTURE.md`, `TESTING.md`) for the root and all significant subprojects. After completion, the runtime has the context it needs: tech stack, conventions, structure, setup, testing, security.
 
 ## 1. Initial Reconnaissance
 
@@ -98,20 +99,20 @@ Identify directories warranting their own scoped `AGENTS.md`. **Criteria** (any 
 
 ## 3. Generate Root AGENTS.md
 
-Use the matching stack-specific template from `templates/agentsmd/` as a starting point. If no stack matches, use `templates/agentsmd/universal.agentmd.template.md`. Fill in all sections based on deep scan results from Step 2.
+Use the matching stack-specific template from `templates/` as a starting point. If no stack matches, use `templates/universal-agents.template.md`. Fill in all sections based on deep scan results from Step 2.
 
 **Critical rules:**
-- State the **tech stack explicitly** — this drives Cascade's role activation via (agent)
+- State the **tech stack explicitly** — this drives Windsurf role selection and workflow routing
 - Include **real setup commands** — extracted from config files and CI, copy-pastable
 - Link to `ARCHITECTURE.md` and `TESTING.md` in the Architecture reference and Testing Instructions sections
 - **Map content architecture** (if applicable) — which content files drive which pages. Prevents repeated `code_search` during content edits
 - **Document UI conventions** (if applicable) — icon set + variant + registry, animation library, component library
-- **Document blog conventions** (if applicable) — frontmatter format, file naming, discovery assets. Enables `/blog-post` workflow
+- **Document blog conventions** (if applicable) — frontmatter format, file naming, discovery assets. Enables `blog-post` skill workflow
 - Keep **concise** — avoid repeating what scoped AGENTS.md files will cover
 
 ## 4. Generate ARCHITECTURE.md
 
-**Apply `@system-architect` role** for this step. The system architect owns the ARCHITECTURE.md file — creation, updates, and reviews.
+**Apply `system-architect` role** for this step. The system architect owns the ARCHITECTURE.md file — creation, updates, and reviews.
 
 Use `templates/architecture.template.md` as the starting point. Fill in all 11 sections based on the deep scan results from Step 2.
 
@@ -123,7 +124,7 @@ Use `templates/architecture.template.md` as the starting point. Fill in all 11 s
 
 ## 5. Generate TESTING.md
 
-**Apply `@qa-engineer` role** for this step. The QA engineer owns the TESTING.md file — creation, updates, and reviews.
+**Apply `qa-engineer` role** for this step. The QA engineer owns the TESTING.md file — creation, updates, and reviews.
 
 Use `templates/testing.template.md` as the starting point. Fill in all sections based on the deep scan results from Step 2.
 
@@ -242,7 +243,7 @@ Verify:
 ## Integration
 
 - **Precedes**: All other workflows — run this first on a new project
-- **Templates**: `templates/agentsmd/*.agentmd.template.md`, `templates/architecture.template.md`, `templates/testing.template.md`
-- **Roles**: `@system-architect` (ARCHITECTURE.md creation/review), `@qa-engineer` (TESTING.md creation/review), `@cloud-architect` (cloud infrastructure context), `@devops-architect` (CI/CD architecture context)
+- **Templates**: `templates/*-agents.template.md`, `templates/architecture.template.md`, `templates/testing.template.md`
+- **Roles**: `system-architect` role (ARCHITECTURE.md creation/review), `qa-engineer` role (TESTING.md creation/review), `cloud-architect` role (cloud infrastructure context), `devops-architect` role (CI/CD architecture context)
 - **Skills**: `testing-procedures` skill (test strategy, coverage targets)
-- **Enables**: `/feature-plan`, `/feature-dev`, `/bugfix`, `/test-local`, `/run-tests`
+- **Enables**: `feature-plan` skill, `feature-dev` skill, `bugfix` skill, `test-local` skill, `run-tests` skill

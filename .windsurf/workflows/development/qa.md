@@ -2,6 +2,7 @@
 description: Quality assurance workflow for validating features, writing or improving tests, reporting bugs, and checking coverage or acceptance criteria.
 ---
 
+
 # QA
 
 Use this workflow for verification and test quality work.

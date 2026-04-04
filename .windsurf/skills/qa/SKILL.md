@@ -1,6 +1,8 @@
 ---
 name: qa
 description: Quality assurance workflow for validating features, writing or improving tests, reporting bugs, and checking coverage or acceptance criteria.
+context: fork
+argument-hint: [feature description, bug report, or test target]
 ---
 
 # QA
