@@ -248,4 +248,4 @@ Present the completed bugfix:
 
 - **follow-up skills**: `analyze-local` skill, `analyze-prod` skill (environment diagnostics — launch as specialized skills when more data is needed)
 - **Follow-up**: `run-tests` skill (verify fix), `pre-commit` skill (quality gate), `create-pr` skill (submit fix)
-- **Skills**: `code-review` skill (review fix), `testing-procedures` skill (test strategy), `worktree-isolation` skill (branch isolation)
+- **Skills**: `code-review` skill (review fix), `test-strategy` skill (test strategy), `worktree-isolation` skill (branch isolation)

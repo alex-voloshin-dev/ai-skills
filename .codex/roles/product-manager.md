@@ -162,4 +162,4 @@ The `features/` directory contains detailed feature specs (PRDs, briefs, accepta
 ## Integration
 
 - **Collaborates with**: `solution-architect` role (feasibility, NFRs), `system-architect` role (system design), `content-writer` role (docs), `marketing-strategist` role (GTM), `qa-engineer` role (test plans)
-- **Workflows**: `feature-design` skill (primary — PRD authoring), `architecture` skill (consulted for feasibility), `feature-plan` skill (work decomposition), `blog-post` skill (research, brief, quality review), `docs` skill (release notes)
+- **Workflows**: `product-mgmt` skill (primary — PRD authoring), `architecture` skill (consulted for feasibility), `feature-plan` skill (work decomposition), `blog-post` skill (research, brief, quality review), `docs` skill (release notes)

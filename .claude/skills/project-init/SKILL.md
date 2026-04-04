@@ -247,5 +247,5 @@ Verify:
 - **Precedes**: All other workflows — run this first on a new project
 - **Templates**: `../../templates/*.claude.template.md`, `../../templates/architecture.template.md`, `../../templates/testing.template.md`
 - **Roles**: `Agent(system-architect)` (ARCHITECTURE.md creation/review), `Agent(qa-engineer)` (TESTING.md creation/review), `Agent(cloud-architect)` (cloud infrastructure context), `Agent(devops-architect)` (CI/CD architecture context)
-- **Skills**: `testing-procedures` skill (test strategy, coverage targets)
+- **Skills**: `test-strategy` skill (test strategy, coverage targets)
 - **Enables**: `/feature-plan`, `/feature-dev`, `/bugfix`, `/test-local`, `/run-tests`

@@ -1,5 +1,5 @@
 ---
-name: deploy-to-production
+name: deployment-procedures
 description: Production deployment procedures with rollback plans, health checks, and verification steps. Use when deploying to production, planning rollback strategies, or verifying production health after deployment.
 user-invocable: false
 codex-roles:

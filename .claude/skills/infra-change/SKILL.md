@@ -11,6 +11,14 @@ Safe infrastructure change workflow for Terraform, Helm, and Kubernetes. Every m
 
 **⚠️ SAFETY: No `apply`, `upgrade`, `delete`, or `scale` command runs without explicit user APPROVE.**
 
+## 0. Gather Context
+
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
+- Infrastructure tools in use (Terraform, Helm, kubectl, Pulumi)
+- Cloud platform (GCP, Azure, AWS)
+- Environment structure (dev, staging, production)
+- State backend and workspace conventions
+
 ## 1. Define the Change
 
 Ask the user (or extract from parent workflow context):

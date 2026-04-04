@@ -1,14 +1,24 @@
 ---
-name: feature-design
-description: Feature design workflow — transform raw feature inputs (ideas, research, stakeholder requests, competitive analysis) into a structured PRD or feature brief. Applies `product-manager` role. Produces PRD, user stories, acceptance criteria, success metrics, and updates `FEATURES.md`. First step in the planning chain, preceding `architecture` skill and `feature-plan` skill.
+name: product-mgmt
+description: Feature design workflow — transform raw feature inputs (ideas, research, stakeholder requests, competitive analysis) into a structured PRD or feature brief. Applies product-manager role. Produces PRD, user stories, acceptance criteria, success metrics, and updates FEATURES.md. First step in the planning chain, precedes /architecture and /feature-plan.
 argument-hint: [feature idea or requirement]
 ---
 
 # Feature Design
 
-Transform raw feature inputs into structured product documentation. This is the **product design phase** — no code, architecture, or engineering decisions are made here. Output feeds into `architecture` skill for technical design and `feature-plan` skill for implementation planning.
+Transform raw feature inputs into structured product documentation. This is the **product design phase** — no code, architecture, or engineering decisions are made here. Output feeds into `/architecture` for technical design and `/feature-plan` for implementation planning.
 
-**Apply `product-manager` role for all steps below.**
+**Apply `Agent(product-manager)` role for all steps below.**
+
+## 0. Gather Context
+
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
+- Product description and domain
+- Existing features and modules (to avoid duplication and understand scope)
+- Tech stack constraints (affects feasibility assessment)
+- Team structure (affects user story assignment)
+
+If the project has a `FEATURES.md`, read it for the current feature registry.
 
 ## 1. Receive Feature Inputs
 
@@ -47,7 +57,7 @@ If evidence is weak — flag this as a risk. Do not fabricate data.
 
 ### 2b. Target Users
 
-Apply JTBD and ICP frameworks from `product-manager` role:
+Apply JTBD and ICP frameworks from `Agent(product-manager)`:
 
 - **Job-to-be-Done**: When [situation], I want to [motivation], so I can [outcome]
 - **ICP segments**: Which customer profiles benefit most. Include triggers, buying signals, objections
@@ -235,16 +245,16 @@ Guide the next step based on feature complexity:
 
 | Complexity | Next Step |
 |---|---|
-| **Small** (brief) | Run `feature-plan` skill directly — architecture is implicit |
-| **Medium** (PRD) | Run `architecture` skill for technical design, then `feature-plan` skill |
-| **Large** (PRD + spikes) | Execute spikes first, then `architecture` skill → `feature-plan` skill |
-| **AI/Agent** (PRD + contract) | Run `architecture` skill with agent contract as input → `feature-plan` skill |
+| **Small** (brief) | Run `/feature-plan` directly — architecture is implicit |
+| **Medium** (PRD) | Run `/architecture` for technical design, then `/feature-plan` |
+| **Large** (PRD + spikes) | Execute spikes first, then `/architecture` → `/feature-plan` |
+| **AI/Agent** (PRD + contract) | Run `/architecture` with agent contract as input → `/feature-plan` |
 
 ## Integration
 
 - **Input**: Raw feature resources (ideas, research, feedback, stakeholder requests)
-- **Followed by**: `architecture` skill (technical design), `feature-plan` skill (work decomposition)
-- **Roles**: `product-manager` role (primary — owns PRD), `solution-architect` role (consulted for feasibility)
+- **Followed by**: `/architecture` (technical design), `/feature-plan` (work decomposition)
+- **Roles**: `Agent(product-manager)` (primary — owns PRD), `Agent(solution-architect)` (consulted for feasibility)
 - **Skills**: `context-engineering` skill (context pipeline design, RAG, memory, agent harness — for AI/Agent features, Step 6)
 - **Updates**: `FEATURES.md`, `features/` directory
-- **Enables**: Full planning chain: `feature-design` skill → `architecture` skill → `feature-plan` skill → `feature-dev` skill
+- **Enables**: Full planning chain: `/product-mgmt` → `/architecture` → `/feature-plan` → `/feature-dev`

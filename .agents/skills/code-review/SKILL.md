@@ -2,8 +2,6 @@
 name: code-review
 description: Structured code review with security, performance, and architecture checklists. Use when reviewing pull requests, code changes, or conducting architecture reviews. Provides actionable checklists for consistent review quality.
 user-invocable: true
-codex-roles:
-  - software-engineer
 ---
 
 # Code Review
@@ -19,11 +17,18 @@ Systematic code review skill with layered checklists. Produces consistent, actio
 
 ## When NOT to Use
 
-- Writing new code (use `feature-dev` skill or `bugfix` skill instead)
+- Writing new code (use `/feature-dev` or `/bugfix` instead)
 - Validating AI asset files (use `asset-validation` skill)
-- Running automated checks before commit (use `pre-commit` skill)
+- Running automated checks before commit (use `/pre-commit`)
 
 ## Review Process
+
+### 0. Gather Context
+
+Read `AGENTS.md` at the project root to identify:
+- Tech stack (determines which language-specific patterns to check)
+- Code conventions (naming, structure, formatting rules)
+- Architecture patterns in use (helps evaluate structural decisions)
 
 ### 1. Understand the Change
 
@@ -73,6 +78,6 @@ Structure review comments as:
 
 ## Integration
 
-- **Follows rules**: `software-engineer` role (architecture, code quality)
-- **Used by workflows**: `code-review` skill, `create-pr` skill
+- **Follows rules**: `Agent(software-engineer)` (architecture, code quality)
+- **Used by workflows**: `/code-review`, `/create-pr`
 - **Companion checklists**: `review-checklist.md`, `security-checklist.md`

@@ -32,8 +32,8 @@ These skills rely on Claude Code's native multi-agent spawning capability, which
 
 | Skill | Reason |
 |---|---|
-| `multi-agent-orchestration` | Shared protocols for Claude Code's Agent tool with named subagent spawning. Codex and Windsurf lack runtime multi-agent primitives. |
-| `multi-agent-bugfix-audit` | Multi-agent coordinated bugfix workflow using Claude Code's parallel Agent spawning. No equivalent runtime primitive exists. |
+| `team-protocols` | Shared protocols for Claude Code's Agent tool with named subagent spawning. Codex and Windsurf lack runtime multi-agent primitives. |
+| `team-bugfix` | Multi-agent coordinated bugfix workflow using Claude Code's parallel Agent spawning. No equivalent runtime primitive exists. |
 
 ### Rules and Guardrails
 

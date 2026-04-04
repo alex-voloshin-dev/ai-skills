@@ -1,5 +1,5 @@
 ---
-name: multi-agent-bugfix-audit
+name: team-bugfix
 description: Fix issues from a code review or deep audit document using a coordinated multi-agent team — developer(s), reviewer, QA, lead orchestrator with mandatory DEVELOP → REVIEW → QA pipeline
 context: fork
 argument-hint: [path to audit/code-review document]
@@ -9,13 +9,17 @@ argument-hint: [path to audit/code-review document]
 
 Fix issues described in an audit or code review document using a coordinated agent team.
 
-Read and apply all protocols from `@multi-agent-orchestration`:
+Read and apply all protocols from `@team-protocols`:
 - Execution model (mandatory subagent spawning)
 - Agent and file conflict prevention
 - Developer protocol (from `developer-protocol.md`)
 - Reviewer protocol (from `reviewer-protocol.md`)
 - Lead orchestration protocol (from `lead-protocol.md`)
 - Role selection table (from `role-selection-table.md`)
+
+## Gather Context
+
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify project structure (monorepo vs polyrepo), subprojects, and tech stacks. This determines which Developer roles to spawn via the role selection table.
 
 ## Input
 

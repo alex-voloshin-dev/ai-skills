@@ -170,4 +170,4 @@ Structure every backend response as:
 - **Base role**: `software-engineer` role — engineering fundamentals
 - **Collaborates with**: `db-engineer` role (schema, queries), `devops-engineer` role (CI, Docker), `qa-engineer` role (testing), `solution-architect` role (API design)
 - **Workflows**: `feature-dev` skill, `run-tests` skill, `pre-commit` skill, `bugfix` skill, `deploy-staging` skill
-- **Skills**: `testing-procedures` skill (test patterns), `code-review` skill (review checklists)
+- **Skills**: `test-strategy` skill (test patterns), `code-review` skill (review checklists)

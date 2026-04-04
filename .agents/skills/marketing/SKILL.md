@@ -3,12 +3,6 @@ name: marketing
 description: Marketing workflow — initialize marketing strategy with MARKETING.md, define channels and tactics, execute recurring marketing operations (social media, blog posts, email campaigns, trend research, analytics). Orchestrates marketing-strategist, product-manager, content-designer, content-writer, and seo-engineer roles. Owns marketing/ directory.
 context: fork
 argument-hint: "init | channel/task to execute"
-codex-roles:
-  - product-manager
-  - marketing-strategist
-  - content-designer
-  - content-writer
-  - seo-engineer
 ---
 
 # Marketing
@@ -32,7 +26,9 @@ If `marketing/MARKETING.md` does not exist → start with `init` regardless.
 
 ### 1. Gather Project Context
 
-**Apply `product-manager` role + `marketing-strategist` role.**
+**Apply `Agent(product-manager)` + `Agent(marketing-strategist)`.**
+
+Read `AGENTS.md` at the project root for product description, domain, and team structure before defining marketing strategy.
 
 1. **Read project files**:
    - `AGENTS.md` — tech stack, project purpose
@@ -87,7 +83,7 @@ Record all answers. Ask clarifying questions if answers are vague.
 
 ### 3. Define Strategy
 
-**Apply `marketing-strategist` role.**
+**Apply `Agent(marketing-strategist)`.**
 
 Based on project context + user answers, produce:
 
@@ -119,13 +115,13 @@ Create `marketing/content-calendar.md` with the recurring task schedule. Recomme
 
 | Frequency | Task | Channel | Role |
 |---|---|---|---|
-| Daily | Social media post | X/Twitter, LinkedIn | `content-designer` role |
-| Daily | Community engagement | X/Twitter, Reddit, forums | `marketing-strategist` role |
-| 2-3x/week | Blog post | Blog | `blog-post` skill |
-| Weekly | Trend research | X/Twitter, HN, Reddit, Google Trends | `marketing-strategist` role |
-| Weekly | Analytics review | GA4, social analytics | `marketing-strategist` role |
-| Bi-weekly | Email newsletter | Email list | `content-writer` role |
-| Monthly | Strategy review and adjustment | — | `marketing-strategist` role + `product-manager` role |
+| Daily | Social media post | X/Twitter, LinkedIn | `Agent(content-designer)` |
+| Daily | Community engagement | X/Twitter, Reddit, forums | `Agent(marketing-strategist)` |
+| 2-3x/week | Blog post | Blog | `/blog-post` |
+| Weekly | Trend research | X/Twitter, HN, Reddit, Google Trends | `Agent(marketing-strategist)` |
+| Weekly | Analytics review | GA4, social analytics | `Agent(marketing-strategist)` |
+| Bi-weekly | Email newsletter | Email list | `Agent(content-writer)` |
+| Monthly | Strategy review and adjustment | — | `Agent(marketing-strategist)` + `Agent(product-manager)` |
 
 ### 6. Present and Approve
 
@@ -148,7 +144,7 @@ Ask the user which marketing operation to perform:
 | Operation | Description | Typical Frequency |
 |---|---|---|
 | **social-post** | Draft social media post(s) for one or more platforms | Daily |
-| **blog-post** | Write a blog post (delegates to `blog-post` skill) | 2-3x/week |
+| **blog-post** | Write a blog post (delegates to `/blog-post`) | 2-3x/week |
 | **email** | Draft email campaign or newsletter | Bi-weekly |
 | **trend-research** | Research trends and content opportunities | Weekly |
 | **analytics** | Review marketing metrics and adjust tactics | Weekly |
@@ -166,7 +162,7 @@ Ask the user which marketing operation to perform:
 
 #### social-post
 
-**Apply `content-designer` role + `marketing-strategist` role.**
+**Apply `Agent(content-designer)` + `Agent(marketing-strategist)`.**
 
 1. **Determine topic**: Content calendar, trending topic, product update, or user request
 2. **Research** (if trend-based): Search X/Twitter, HN, Reddit for current conversations
@@ -174,29 +170,29 @@ Ask the user which marketing operation to perform:
    - **X/Twitter**: ≤280 chars, hook first line, 1-3 hashtags, thread if longer
    - **LinkedIn**: Professional tone, 1-3 paragraphs, personal angle, 3-5 hashtags
    - **Reddit**: Community tone, value-first, no self-promotion, context-aware
-4. **Humanize** — apply `humanizer` skill to remove AI writing patterns from the draft
+4. **Humanize** — apply `@humanizer` skill to remove AI writing patterns from the draft
 5. **Visual direction**: Suggest image/graphic if appropriate
 6. **Save to `marketing/posts/YYYY-MM-DD-[platform]-[topic].md`**
 7. Present draft. **Wait for user approval.**
 
 #### blog-post
 
-Delegate to `blog-post` skill workflow. Pass context from `marketing/MARKETING.md` (ICP, content pillars, voice).
+Delegate to `/blog-post` workflow. Pass context from `marketing/MARKETING.md` (ICP, content pillars, voice).
 
 #### email
 
-**Apply `content-writer` role + `marketing-strategist` role.**
+**Apply `Agent(content-writer)` + `Agent(marketing-strategist)`.**
 
 1. **Define campaign**: Newsletter / product update / nurture sequence / announcement
 2. **Draft**: Subject line (3 variants), preview text, body, CTA
-3. **Humanize** — apply `humanizer` skill to remove AI writing patterns
+3. **Humanize** — apply `@humanizer` skill to remove AI writing patterns
 4. **Segmentation**: Target audience segment
 5. **Save to `marketing/emails/YYYY-MM-DD-[campaign-name].md`**
 6. Present draft. **Wait for user approval.**
 
 #### trend-research
 
-**Apply `marketing-strategist` role.**
+**Apply `Agent(marketing-strategist)`.**
 
 1. **Scan sources**: X/Twitter (niche hashtags, competitor accounts), Hacker News (trending), Reddit (subreddits), Google Trends, industry newsletters
 2. **Identify opportunities**: Content ideas, conversations to join, emerging topics
@@ -205,7 +201,7 @@ Delegate to `blog-post` skill workflow. Pass context from `marketing/MARKETING.m
 
 #### analytics
 
-**Apply `marketing-strategist` role.**
+**Apply `Agent(marketing-strategist)`.**
 
 1. **Review metrics** against KPIs in MARKETING.md
 2. **Analyze**: What's working? What's not? Why?
@@ -215,7 +211,7 @@ Delegate to `blog-post` skill workflow. Pass context from `marketing/MARKETING.m
 
 #### content-repurpose
 
-**Apply `content-designer` role.**
+**Apply `Agent(content-designer)`.**
 
 1. **Select source**: Blog post, feature release, case study, documentation
 2. **Adapt**: Blog → X thread, LinkedIn post, email snippet, social graphics, short video script
@@ -223,7 +219,7 @@ Delegate to `blog-post` skill workflow. Pass context from `marketing/MARKETING.m
 
 #### community
 
-**Apply `marketing-strategist` role.**
+**Apply `Agent(marketing-strategist)`.**
 
 1. **Identify targets**: Relevant threads, questions, discussions on X/Twitter, Reddit, HN, forums
 2. **Draft responses**: Helpful, value-first, non-promotional
@@ -231,7 +227,7 @@ Delegate to `blog-post` skill workflow. Pass context from `marketing/MARKETING.m
 
 #### strategy-review
 
-**Apply `marketing-strategist` role + `product-manager` role.**
+**Apply `Agent(marketing-strategist)` + `Agent(product-manager)`.**
 
 1. **Review MARKETING.md** against actual results
 2. **Assess**: Goal progress, channel effectiveness, content performance, ROI
@@ -279,8 +275,8 @@ marketing/
 
 ## Integration
 
-- **Roles**: `marketing-strategist` role (strategy, analysis), `product-manager` role (product context, ICP), `content-designer` role (social posts, copy), `content-writer` role (blog, email), `seo-engineer` role (SEO optimization)
-- **Skills**: `marketing-operations` skill (setup template, channel playbooks), `content-creation` skill (AI content tools), `humanizer` skill (AI writing pattern removal)
+- **Roles**: `Agent(marketing-strategist)` (strategy, analysis), `Agent(product-manager)` (product context, ICP), `Agent(content-designer)` (social posts, copy), `Agent(content-writer)` (blog, email), `Agent(seo-engineer)` (SEO optimization)
+- **Skills**: `marketing-operations` skill (setup template, channel playbooks), `content-creation` skill (AI content tools), `@humanizer` (AI writing pattern removal)
 - **Rules**: `humanize-content` (auto-enforces humanizer pass on all content)
-- **follow-up skills**: `blog-post` skill (blog content), `seo-review` skill (SEO audit), `docs` skill (documentation)
-- **Follow-up**: `pre-commit` skill, `create-pr` skill
+- **Sub-workflows**: `/blog-post` (blog content), `/seo-review` (SEO audit), `/docs` (documentation)
+- **Follow-up**: `/pre-commit`, `/create-pr`

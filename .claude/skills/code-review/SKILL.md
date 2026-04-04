@@ -23,6 +23,13 @@ Systematic code review skill with layered checklists. Produces consistent, actio
 
 ## Review Process
 
+### 0. Gather Context
+
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
+- Tech stack (determines which language-specific patterns to check)
+- Code conventions (naming, structure, formatting rules)
+- Architecture patterns in use (helps evaluate structural decisions)
+
 ### 1. Understand the Change
 
 Before reviewing code, answer:

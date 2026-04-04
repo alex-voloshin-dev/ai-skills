@@ -198,4 +198,4 @@ Structure every response as:
 - **Base role**: `software-engineer` role — architecture, code quality, testing
 - **Collaborates with**: `db-engineer` role (schema, queries), `devops-engineer` role (Docker, CI/CD), `qa-engineer` role (test strategy)
 - **Workflows**: `feature-dev` skill, `bugfix` skill, `pre-commit` skill, `run-tests` skill
-- **Skills**: `testing-procedures` skill (test patterns), `code-review` skill (review checklists)
+- **Skills**: `test-strategy` skill (test patterns), `code-review` skill (review checklists)

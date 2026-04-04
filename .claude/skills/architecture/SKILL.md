@@ -248,7 +248,7 @@ Guide the next steps based on scope:
 
 ## Integration
 
-- **Input from**: `/feature-design` (PRD output), `/feature-plan` (architecture questions during planning), direct analysis requests
+- **Input from**: `/product-mgmt` (PRD output), `/feature-plan` (architecture questions during planning), direct analysis requests
 - **Followed by**: `/feature-plan` (work decomposition), `/feature-dev` (implementation)
 - **Roles**: `Agent(solution-architect)` (feature design, ADRs, API contracts), `Agent(system-architect)` (system analysis, ARCHITECTURE.md, component boundaries), `Agent(cloud-architect)` (cloud platform design, landing zones, networking, cost), `Agent(devops-architect)` (CI/CD architecture, deployment strategies, platform engineering)
 - **Templates**: `../../templates/architecture.template.md` (ARCHITECTURE.md structure)

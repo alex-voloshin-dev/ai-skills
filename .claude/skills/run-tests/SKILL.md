@@ -1,13 +1,13 @@
 ---
 name: run-tests
-description: Run tests workflow — execute test suite, analyze failures, auto-fix obvious issues, re-run. Sub-workflow for /feature-dev, /bugfix, /pre-commit. Uses the `testing-procedures` skill.
+description: Run tests workflow — execute test suite, analyze failures, auto-fix obvious issues, re-run. Sub-workflow for /feature-dev, /bugfix, /pre-commit. Uses the `test-strategy` skill.
 ---
 
 # Run Tests
 
 Execute the project's test suite, analyze failures, attempt fixes, and re-run. Designed as a reusable sub-workflow called by `/feature-dev`, `/bugfix`, and `/pre-commit`.
 
-Uses `testing-procedures` skill for test writing patterns and coverage targets.
+Uses `test-strategy` skill for test writing patterns and coverage targets.
 
 ## 1. Detect Test Stack
 
@@ -80,7 +80,7 @@ Run coverage report:
 | Go | `go test -coverprofile=coverage.out ./... && go tool cover -func=coverage.out` |
 | JUnit | `mvn jacoco:report` |
 
-Compare against `testing-procedures` skill targets:
+Compare against `test-strategy` skill targets:
 - Line coverage ≥ 80% (hard minimum 60%)
 - Branch coverage ≥ 75% (hard minimum 50%)
 - New code coverage ≥ 90%
@@ -114,5 +114,5 @@ Compare against `testing-procedures` skill targets:
 ## Integration
 
 - **Called by**: `/feature-dev`, `/bugfix`, `/pre-commit`
-- **Skills**: `testing-procedures` skill
+- **Skills**: `test-strategy` skill
 - **Roles**: `Agent(qa-engineer)` (test strategy), stack-specific role (implementation)

@@ -132,4 +132,4 @@ This is a **Layer 2 specialization role** extending `Agent(software-engineer)` (
 - **Complements**: `Agent(solution-architect)` (feature-level design, ADRs), `Agent(system-architect)` (system-level ARCHITECTURE.md), `Agent(devops-engineer)` (infrastructure implementation), `Agent(sre-engineer)` (reliability, SLOs)
 - **Delegates to**: `Agent(devops-engineer)` (Terraform, Docker, K8s implementation), `Agent(db-engineer)` (database design)
 - **Workflows**: `/architecture` (primary — cloud architecture design), `/infra-change` (implementation handoff), `/feature-plan` (architecture input)
-- **Skills**: `deploy-to-production` skill (rollback, health checks)
+- **Skills**: `deployment-procedures` skill (rollback, health checks)

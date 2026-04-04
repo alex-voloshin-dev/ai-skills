@@ -9,6 +9,10 @@ argument-hint: [topic, question, or area to analyze]
 
 Perform structured analysis with explicit scope, evidence, and conclusions.
 
+## 0. Gather Context
+
+Read `AGENTS.md` at the project root to understand the project's domain, tech stack, and business context. This shapes framework selection and analysis scope.
+
 ## 1. Classify the Request
 
 Identify:

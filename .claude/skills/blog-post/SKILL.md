@@ -9,6 +9,15 @@ argument-hint: [topic or content brief]
 
 End-to-end workflow for creating and updating blog posts. Orchestrates multi-role collaboration: `Agent(product-manager)` (research, brief, quality gate), `Agent(content-writer)` (authoring), `Agent(seo-engineer)` (optimization). Includes a review loop until the post meets quality standards.
 
+## 0. Gather Context
+
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
+- Product description and domain (shapes blog topic framing)
+- Blog conventions (directory, naming, frontmatter format)
+- Brand voice and audience
+
+If `marketing/MARKETING.md` exists, read it for positioning and content strategy.
+
 ## 1. Define Scope
 
 Ask the user (or extract from context):

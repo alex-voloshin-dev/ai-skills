@@ -217,7 +217,7 @@ After all tests pass, run coverage analysis:
 | Go | `go test -coverprofile=coverage.out ./... && go tool cover -func=coverage.out` |
 | Maven | `mvn jacoco:report` |
 
-Compare against `testing-procedures` skill targets:
+Compare against `test-strategy` skill targets:
 
 | Metric | Target | Hard Minimum | Status |
 |---|---|---|---|
@@ -305,7 +305,7 @@ Testcontainers handles its own cleanup automatically — verify no orphaned cont
 ## Integration
 
 - **Roles**: `qa-engineer` role (primary), stack-specific roles (test fixes), `devops-engineer` role (infra issues)
-- **Skills**: `testing-procedures` skill (test patterns, coverage targets)
+- **Skills**: `test-strategy` skill (test patterns, coverage targets)
 - **follow-up skills**: `run-tests` skill (test execution and auto-fix for failures)
 - **Called by**: `feature-dev` skill (pre-commit testing), `bugfix` skill (verify fix)
 - **Follow-up**: `pre-commit` skill (quality gate), `create-pr` skill (submit changes)

@@ -7,7 +7,16 @@ argument-hint: [topic or content brief]
 
 # Blog Post
 
-End-to-end workflow for creating and updating blog posts. Orchestrates multi-role collaboration: `product-manager` role (research, brief, quality gate), `content-writer` role (authoring), `seo-engineer` role (optimization). Includes a review loop until the post meets quality standards.
+End-to-end workflow for creating and updating blog posts. Orchestrates multi-role collaboration: `Agent(product-manager)` (research, brief, quality gate), `Agent(content-writer)` (authoring), `Agent(seo-engineer)` (optimization). Includes a review loop until the post meets quality standards.
+
+## 0. Gather Context
+
+Read `AGENTS.md` at the project root to identify:
+- Product description and domain (shapes blog topic framing)
+- Blog conventions (directory, naming, frontmatter format)
+- Brand voice and audience
+
+If `marketing/MARKETING.md` exists, read it for positioning and content strategy.
 
 ## 1. Define Scope
 
@@ -23,7 +32,7 @@ If updating an existing post — read it first, note what needs to change.
 
 ## 2. Research and Content Brief
 
-**Apply `product-manager` role.**
+**Apply `Agent(product-manager)`.**
 
 ### 2a. Topic Research
 
@@ -51,7 +60,7 @@ Present the brief to the user. **Wait for user approval before proceeding.** Adj
 
 ## 3. Write Draft
 
-**Apply `content-writer` role.** Use `content-creation` skill — Blog Post pattern from `page-content-patterns.md`.
+**Apply `Agent(content-writer)`.** Use `content-creation` skill — Blog Post pattern from `page-content-patterns.md`.
 
 ### 3a. Create the Post File
 
@@ -80,9 +89,9 @@ For each visual need identified in the brief:
 
 ## 4. Humanize Content
 
-**Apply `humanizer` skill.** This step is mandatory for all blog content.
+**Apply `@humanizer` skill.** This step is mandatory for all blog content.
 
-1. **Scan the draft** for AI writing patterns (see `humanizer` skill pattern catalog)
+1. **Scan the draft** for AI writing patterns (see `@humanizer` pattern catalog)
 2. **Rewrite** problematic sections — remove AI-isms, add natural voice
 3. **Anti-AI audit** — ask "What makes this obviously AI generated?", list remaining tells, revise
 4. **Verify** the humanized text preserves accuracy, maintains the approved outline, and sounds natural when read aloud
@@ -91,7 +100,7 @@ Do NOT skip this step. The `humanize-content` rule enforces this for all public-
 
 ## 5. SEO Optimization
 
-**Apply `seo-engineer` role.**
+**Apply `Agent(seo-engineer)`.**
 
 Run an SEO pass on the draft:
 
@@ -128,7 +137,7 @@ Run an SEO pass on the draft:
 
 ## 6. Quality Review
 
-**Apply `product-manager` role.**
+**Apply `Agent(product-manager)`.**
 
 Review the complete post against the original brief:
 
@@ -196,7 +205,7 @@ Based on user intent:
 - **Topic**: [one-sentence summary]
 - **Target keyword**: [primary keyword]
 - **Word count**: [count]
-- **Roles applied**: `product-manager` role → `content-writer` role → `humanizer` skill → `seo-engineer` role → `product-manager` role
+- **Roles applied**: Agent(product-manager) → Agent(content-writer) → @humanizer → Agent(seo-engineer) → Agent(product-manager)
 - **Review rounds**: [number of iterations]
 - **Cross-links added**: [count — list of linked posts]
 - **Discovery assets**: [llms.txt updated: yes/no, sitemap: auto/manual]
@@ -216,8 +225,8 @@ When creating a multi-part series:
 
 ## Integration
 
-- **Roles**: `product-manager` role (research, brief, review), `content-writer` role (authoring), `seo-engineer` role (optimization)
-- **Skills**: `content-creation` skill (Blog Post pattern, AI generation tools, content brief template), `humanizer` skill (AI writing pattern removal — step 4)
+- **Roles**: `Agent(product-manager)` (research, brief, review), `Agent(content-writer)` (authoring), `Agent(seo-engineer)` (optimization)
+- **Skills**: `content-creation` skill (Blog Post pattern, AI generation tools, content brief template), `@humanizer` (AI writing pattern removal — step 4)
 - **Rules**: `humanize-content` (auto-enforces humanizer pass on all public-facing text)
-- **Follow-up**: `seo-review` skill (deep SEO audit if needed), `pre-commit` skill, `create-pr` skill
-- **Related**: `docs` skill (technical documentation), `ui-ux-design` skill (visual design for blog assets)
+- **Follow-up**: `/seo-review` (deep SEO audit if needed), `/pre-commit`, `/create-pr`
+- **Related**: `/docs` (technical documentation), `/ui-ux-design` (visual design for blog assets)

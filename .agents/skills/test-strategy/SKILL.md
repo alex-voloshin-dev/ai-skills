@@ -1,5 +1,5 @@
 ---
-name: testing-procedures
+name: test-strategy
 description: Test strategy design, test writing guide, and coverage targets. Use when writing tests, designing test plans, setting up test infrastructure, or evaluating test quality. Provides patterns for unit, integration, E2E, and API testing.
 user-invocable: false
 codex-roles:

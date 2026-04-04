@@ -1,6 +1,6 @@
 ---
 name: run-tests
-description: Run tests workflow — execute test suite, analyze failures, auto-fix obvious issues, re-run. Follow-up skill for `feature-dev`, `bugfix`, and `pre-commit`. Uses the `testing-procedures` skill.
+description: Run tests workflow — execute test suite, analyze failures, auto-fix obvious issues, re-run. Follow-up skill for `feature-dev`, `bugfix`, and `pre-commit`. Uses the `test-strategy` skill.
 codex-roles:
   - frontend-engineer
   - java-engineer
@@ -12,7 +12,7 @@ codex-roles:
 
 Execute the project's test suite, analyze failures, attempt fixes, and re-run. Designed as a reusable follow-up skill called by `feature-dev` skill, `bugfix` skill, and `pre-commit` skill.
 
-Uses `testing-procedures` skill for test writing patterns and coverage targets.
+Uses `test-strategy` skill for test writing patterns and coverage targets.
 
 ## 1. Detect Test Stack
 
@@ -85,7 +85,7 @@ Run coverage report:
 | Go | `go test -coverprofile=coverage.out ./... && go tool cover -func=coverage.out` |
 | JUnit | `mvn jacoco:report` |
 
-Compare against `testing-procedures` skill targets:
+Compare against `test-strategy` skill targets:
 - Line coverage ≥ 80% (hard minimum 60%)
 - Branch coverage ≥ 75% (hard minimum 50%)
 - New code coverage ≥ 90%
@@ -119,5 +119,5 @@ Compare against `testing-procedures` skill targets:
 ## Integration
 
 - **Called by**: `feature-dev` skill, `bugfix` skill, `pre-commit` skill
-- **Skills**: `testing-procedures` skill
+- **Skills**: `test-strategy` skill
 - **Roles**: `qa-engineer` role (test strategy), stack-specific role (implementation)

@@ -1,11 +1,8 @@
 ---
 name: deploy-production
-description: Deploy to production workflow — final checks, approval gate, deploy, verify, rollback plan. Uses the `deploy-to-production` skill. Requires explicit APPROVE before any production mutation.
+description: Deploy to production workflow — final checks, approval gate, deploy, verify, rollback plan. Uses the `deployment-procedures` skill. Requires explicit APPROVE before any production mutation.
+disable-model-invocation: true
 argument-hint: [service-name] [version]
-codex-roles:
-  - sre-engineer
-  - devops-engineer
-  - devops-architect
 ---
 
 # Deploy to Production
@@ -14,22 +11,32 @@ Production deployment with mandatory approval gates, verification, and rollback 
 
 **⚠️ SAFETY: No production mutation runs without explicit user APPROVE.**
 
+## 0. Gather Context
+
+Read `AGENTS.md` at the project root to identify:
+- Cloud platform (GCP, Azure, AWS)
+- Deployment method (Kubernetes, Helm, Docker Compose, serverless)
+- Production environment configuration (namespace, cluster, region)
+- CI/CD pipeline (GitHub Actions, GitLab CI, Jenkins)
+
+This determines which deployment commands and health checks apply.
+
 ## 1. Pre-Deployment Checklist
 
 ### 1a. Staging Verification
 
 Confirm that staging deployment was successful:
 
-- [ ] `deploy-staging` skill completed successfully
+- [ ] `/deploy-staging` completed successfully
 - [ ] QA testing passed on staging
 - [ ] No critical bugs found in staging
 - [ ] Performance acceptable on staging
 
-If staging was not verified — **STOP**. Run `deploy-staging` skill first.
+If staging was not verified — **STOP**. Run `/deploy-staging` first.
 
 ### 1b. Release Readiness
 
-- [ ] Version tagged (`release` skill completed)
+- [ ] Version tagged (`/release` completed)
 - [ ] Changelog updated
 - [ ] All tests pass on the release branch
 - [ ] Database migrations tested (forward and rollback)
@@ -43,18 +50,18 @@ If staging was not verified — **STOP**. Run `deploy-staging` skill first.
 |---|---|
 | **Breaking changes** | Yes/No — migration guide ready? |
 | **Database migrations** | Yes/No — reversible? |
-| **Infrastructure changes** | Yes/No — `infra-change` skill completed? |
+| **Infrastructure changes** | Yes/No — `/infra-change` completed? |
 | **Third-party dependencies** | Yes/No — API compatibility verified? |
 | **Traffic impact** | Low/Medium/High |
 | **Rollback complexity** | Simple (revert image) / Complex (DB migration) |
 
-If Risk = HIGH, apply `sre-engineer` role for SLO impact assessment.
+If Risk = HIGH, apply `Agent(sre-engineer)` for SLO impact assessment.
 
 ## 2. Prepare Deployment
 
 ### 2a. Identify Deployment Method
 
-Same as `deploy-staging` skill Step 1c — but with production configuration.
+Same as `/deploy-staging` Step 1c — but with production configuration.
 
 ### 2b. Backup Current State
 
@@ -203,6 +210,6 @@ After rollback:
 
 ## Integration
 
-- **Preceded by**: `deploy-staging` skill (staging verification), `release` skill (version tag)
-- **Roles**: `devops-engineer` role, `sre-engineer` role, `devops-architect` role (deployment strategy design)
-- **Skills**: `deploy-to-production` skill
+- **Preceded by**: `/deploy-staging` (staging verification), `/release` (version tag)
+- **Roles**: `Agent(devops-engineer)`, `Agent(sre-engineer)`, `Agent(devops-architect)` (deployment strategy design)
+- **Skills**: `deployment-procedures` skill

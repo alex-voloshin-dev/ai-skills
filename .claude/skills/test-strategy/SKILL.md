@@ -1,5 +1,5 @@
 ---
-name: testing-procedures
+name: test-strategy
 description: Test strategy design, test writing guide, and coverage targets. Use when writing tests, designing test plans, setting up test infrastructure, or evaluating test quality. Provides patterns for unit, integration, E2E, and API testing.
 user-invocable: false
 ---
@@ -18,9 +18,9 @@ Systematic testing skill covering strategy, patterns, and quality gates. Produce
 
 ## When NOT to Use
 
-- Running tests (use `run-tests` skill workflow instead)
+- Running tests (use `/run-tests` workflow instead)
 - Reviewing test code quality (use `code-review` skill)
-- Validating CI pipeline configuration (use `devops-engineer` role)
+- Validating CI pipeline configuration (use `Agent(devops-engineer)` role)
 
 ## Test Pyramid
 
@@ -64,12 +64,12 @@ Follow the test pyramid for cost-effective coverage:
 
 ## Key Context File
 
-Projects should have a `TESTING.md` at the root (and per-service in monorepos) documenting test infrastructure, commands, credentials, and organization. Created by `project-init` skill using `qa-engineer` role. Always read `TESTING.md` before writing or running tests.
+Projects should have a `TESTING.md` at the root (and per-service in monorepos) documenting test infrastructure, commands, credentials, and organization. Created by `/project-init` using `Agent(qa-engineer)`. Always read `TESTING.md` before writing or running tests.
 
 ## Integration
 
-- **Follows rules**: `qa-engineer` role (test strategy, automation, local test infra), `software-engineer` role (code quality)
-- **Used by workflows**: `test-local` skill (full local QA cycle), `run-tests` skill (lightweight execution), `project-init` skill (TESTING.md generation), `feature-dev` skill, `bugfix` skill, `pre-commit` skill
+- **Follows rules**: `Agent(qa-engineer)` (test strategy, automation, local test infra), `Agent(software-engineer)` (code quality)
+- **Used by workflows**: `/test-local` (full local QA cycle), `/run-tests` (lightweight execution), `/project-init` (TESTING.md generation), `/feature-dev`, `/bugfix`, `/pre-commit`
 - **Companion resources**: `test-writing-guide.md`
-- **Template**: `templates/testing.template.md` (root + per-service TESTING.md templates)
+- **Template**: `../../templates/testing.template.md` (root + per-service TESTING.md templates)
 - **Project context**: `TESTING.md` (root + per-service)

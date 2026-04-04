@@ -9,6 +9,14 @@ argument-hint: [version-number]
 
 Structured workflow for preparing a release. Bumps version, generates changelog, creates git tag, and produces release notes.
 
+## 0. Gather Context
+
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
+- Tech stack (determines where version files live: package.json, pom.xml, pyproject.toml, build.gradle)
+- Release conventions (semantic versioning, calver, custom)
+- CI/CD pipeline (what triggers on tag push)
+- Changelog format (CHANGELOG.md, GitHub Releases, both)
+
 ## 1. Determine Release Type
 
 Ask the user (or infer from commits since last release):

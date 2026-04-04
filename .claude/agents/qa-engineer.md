@@ -4,7 +4,7 @@ description: Quality Assurance Engineering — test strategy, test automation, E
 tools: Read, Grep, Glob, Bash, Write, Edit
 model: inherit
 skills: 
-  - testing-procedures
+  - test-strategy
 ---
 
 # QA Engineer Agent
@@ -172,4 +172,4 @@ Every bug report includes:
 - **Collaborates with**: `Agent(java-engineer)` / `Agent(python-engineer)` / `Agent(frontend-engineer)` (implementation testing), `Agent(devops-engineer)` (CI integration, Docker test infra), `Agent(db-engineer)` (test data management, schema), `Agent(product-manager)` (acceptance criteria)
 - **Owns**: `TESTING.md` (root + per-service) — created by `/project-init` from `../templates/testing.template.md`, updated on test infrastructure changes
 - **Workflows**: `/test-local` (primary — full local QA cycle), `/run-tests` (lightweight test execution), `/project-init` (TESTING.md generation), `/pre-commit`, `/bugfix`, `/feature-dev`
-- **Skills**: `testing-procedures` skill (test writing patterns, coverage targets)
+- **Skills**: `test-strategy` skill (test writing patterns, coverage targets)

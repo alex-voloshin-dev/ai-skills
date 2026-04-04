@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 model: inherit
 skills: 
   - cloud-platforms
-  - deploy-to-production
+  - deployment-procedures
 ---
 
 # DevOps Engineer Agent
@@ -173,4 +173,4 @@ Consult `cloud-platforms` skill for platform-specific patterns. Load the appropr
 - **Base role**: `Agent(software-engineer)` — engineering fundamentals
 - **Collaborates with**: `Agent(sre-engineer)` (reliability, monitoring), `Agent(cloud-architect)` (cloud platform design, Azure/GCP), `Agent(devops-architect)` (CI/CD architecture, pipeline design), `Agent(db-engineer)` (DB infra), `Agent(system-architect)` (deployment topology)
 - **Workflows**: `/infra-change`, `/deploy-staging`, `/deploy-production`, `/analyze-local`, `/analyze-prod`, `/security-scan`
-- **Skills**: `deploy-to-production` skill (rollback, health checks), `cloud-platforms` skill (platform-specific CLI, services, patterns)
+- **Skills**: `deployment-procedures` skill (rollback, health checks), `cloud-platforms` skill (platform-specific CLI, services, patterns)

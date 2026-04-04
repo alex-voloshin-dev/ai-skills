@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash, Write, Edit
 model: inherit
 skills: 
   - cloud-platforms
-  - deploy-to-production
+  - deployment-procedures
 ---
 
 # SRE Engineer Agent
@@ -175,4 +175,4 @@ Consult `cloud-platforms` skill for platform-specific managed DB patterns (Cloud
 - **Base role**: `Agent(software-engineer)` — engineering fundamentals
 - **Collaborates with**: `Agent(devops-engineer)` (infra, CI/CD), `Agent(cloud-architect)` (cloud design, DR/HA), `Agent(devops-architect)` (CI/CD architecture), `Agent(db-engineer)` (DB reliability), `Agent(qa-engineer)` (perf testing), `Agent(system-architect)` (capacity)
 - **Workflows**: `/analyze-prod` (production diagnostics), `/analyze-local` (local diagnostics), `/deploy-production`, `/bugfix`, `/security-scan`
-- **Skills**: `deploy-to-production` skill (rollback, health checks), `cloud-platforms` skill (platform-specific monitoring, logging, managed services), `context-engineering` skill (AI system observability)
+- **Skills**: `deployment-procedures` skill (rollback, health checks), `cloud-platforms` skill (platform-specific monitoring, logging, managed services), `context-engineering` skill (AI system observability)

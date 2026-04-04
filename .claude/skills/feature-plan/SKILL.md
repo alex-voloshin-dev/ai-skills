@@ -226,7 +226,7 @@ After approval, guide execution:
 ## Integration
 
 - **Input**: PRD, ARD, design doc, or user request
-- **Preceded by**: `/feature-design` (produces PRD), `/architecture` (produces ARD, design docs, API contracts, engineering estimates)
+- **Preceded by**: `/product-mgmt` (produces PRD), `/architecture` (produces ARD, design docs, API contracts, engineering estimates)
 - **Followed by**: `/feature-dev` (implementation per work package)
 - **Roles**: `Agent(product-manager)` (requirements), `Agent(solution-architect)` / `Agent(system-architect)` (architecture), `Agent(cloud-architect)` (cloud platform), `Agent(devops-architect)` (CI/CD architecture), stack-specific roles (work packages)
 - **Skills**: `context-engineering` skill (context pipeline design, RAG, memory, agent harness — for AI/LLM feature work packages)

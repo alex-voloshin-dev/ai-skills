@@ -1,12 +1,21 @@
 ---
 name: release
 description: Release workflow — version bump, changelog generation, git tag, release notes. Use when preparing a new version for deployment.
+disable-model-invocation: true
 argument-hint: [version-number]
 ---
 
 # Release
 
 Structured workflow for preparing a release. Bumps version, generates changelog, creates git tag, and produces release notes.
+
+## 0. Gather Context
+
+Read `AGENTS.md` at the project root to identify:
+- Tech stack (determines where version files live: package.json, pom.xml, pyproject.toml, build.gradle)
+- Release conventions (semantic versioning, calver, custom)
+- CI/CD pipeline (what triggers on tag push)
+- Changelog format (CHANGELOG.md, GitHub Releases, both)
 
 ## 1. Determine Release Type
 
@@ -116,11 +125,11 @@ Suggest post-release actions:
 - Push tag: `git push origin vX.Y.Z`
 - Push branch: `git push`
 - Create GitHub Release with release notes
-- Deploy to staging: `deploy-staging` skill
-- Deploy to production: `deploy-production` skill
+- Deploy to staging: `/deploy-staging`
+- Deploy to production: `/deploy-production`
 - Announce release to team
 
 ## Integration
 
-- **Preceded by**: `code-review` skill (all PRs merged)
-- **Followed by**: `deploy-staging` skill, `deploy-production` skill
+- **Preceded by**: `/code-review` (all PRs merged)
+- **Followed by**: `/deploy-staging`, `/deploy-production`

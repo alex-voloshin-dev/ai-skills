@@ -1,6 +1,6 @@
 ---
 name: deploy-production
-description: Deploy to production workflow — final checks, approval gate, deploy, verify, rollback plan. Uses the `deploy-to-production` skill. Requires explicit APPROVE before any production mutation.
+description: Deploy to production workflow — final checks, approval gate, deploy, verify, rollback plan. Uses the `deployment-procedures` skill. Requires explicit APPROVE before any production mutation.
 disable-model-invocation: true
 argument-hint: [service-name] [version]
 ---
@@ -10,6 +10,16 @@ argument-hint: [service-name] [version]
 Production deployment with mandatory approval gates, verification, and rollback plan. Every step that mutates production requires explicit user APPROVE.
 
 **⚠️ SAFETY: No production mutation runs without explicit user APPROVE.**
+
+## 0. Gather Context
+
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
+- Cloud platform (GCP, Azure, AWS)
+- Deployment method (Kubernetes, Helm, Docker Compose, serverless)
+- Production environment configuration (namespace, cluster, region)
+- CI/CD pipeline (GitHub Actions, GitLab CI, Jenkins)
+
+This determines which deployment commands and health checks apply.
 
 ## 1. Pre-Deployment Checklist
 
@@ -202,4 +212,4 @@ After rollback:
 
 - **Preceded by**: `/deploy-staging` (staging verification), `/release` (version tag)
 - **Roles**: `Agent(devops-engineer)`, `Agent(sre-engineer)`, `Agent(devops-architect)` (deployment strategy design)
-- **Skills**: `deploy-to-production` skill
+- **Skills**: `deployment-procedures` skill

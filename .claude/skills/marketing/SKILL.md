@@ -28,6 +28,8 @@ If `marketing/MARKETING.md` does not exist → start with `init` regardless.
 
 **Apply `Agent(product-manager)` + `Agent(marketing-strategist)`.**
 
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root for product description, domain, and team structure before defining marketing strategy.
+
 1. **Read project files**:
    - `CLAUDE.md` — tech stack, project purpose
    - `README.md` — product description

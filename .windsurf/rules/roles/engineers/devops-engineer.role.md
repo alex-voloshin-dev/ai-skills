@@ -168,4 +168,4 @@ Consult `cloud-platforms` skill for platform-specific patterns. Load the appropr
 - **Base role**: `@software-engineer` — engineering fundamentals
 - **Collaborates with**: `@sre-engineer` (reliability, monitoring), `@cloud-architect` (cloud platform design, Azure/GCP), `@devops-architect` (CI/CD architecture, pipeline design), `@db-engineer` (DB infra), `@system-architect` (deployment topology)
 - **Workflows**: `/infra-change`, `/deploy-staging`, `/deploy-production`, `/analyze-local`, `/analyze-prod`, `/security-scan`
-- **Skills**: `deploy-to-production` skill (rollback, health checks), `cloud-platforms` skill (platform-specific CLI, services, patterns)
+- **Skills**: `deployment-procedures` skill (rollback, health checks), `cloud-platforms` skill (platform-specific CLI, services, patterns)

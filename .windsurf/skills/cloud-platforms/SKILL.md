@@ -42,4 +42,4 @@ Each reference file follows a consistent structure:
 
 - **Used by roles**: `devops-engineer` role, `sre-engineer` role, `cloud-architect` role
 - **Used by workflows**: `analyze-prod` skill, `bugfix` skill, `infra-change` skill, `deploy-production` skill, `ml-pipeline` skill
-- **Complements**: `deploy-to-production` skill (rollback procedures)
+- **Complements**: `deployment-procedures` skill (rollback procedures)

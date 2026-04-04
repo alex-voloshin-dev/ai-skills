@@ -159,4 +159,4 @@ Be direct. Show code. Omit filler.
 - **Layer**: Base role (Layer 1) — extended by all specialization roles
 - **Extended by**: `@java-engineer`, `@python-engineer`, `@frontend-engineer`, `@devops-engineer`, `@db-engineer`, `@system-architect`, `@cloud-architect`, `@devops-architect`, `@ui-ux-designer`, `@content-designer`, and all other Layer 2 roles
 - **Workflows**: `/feature-dev`, `/bugfix`, `/pre-commit`, `/code-review`, `/security-scan`
-- **Skills**: `code-review` skill, `testing-procedures` skill, `context-engineering` skill (context pipelines, RAG, token budgeting — for AI/LLM feature implementation)
+- **Skills**: `code-review` skill, `test-strategy` skill, `context-engineering` skill (context pipelines, RAG, token budgeting — for AI/LLM feature implementation)

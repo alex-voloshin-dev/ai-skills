@@ -122,4 +122,4 @@ This is a **Layer 2 specialization role** extending `software-engineer` role (La
 - **Complements**: `solution-architect` role (feature-level design, ADRs), `system-architect` role (system-level ARCHITECTURE.md), `devops-engineer` role (infrastructure implementation), `sre-engineer` role (reliability, SLOs)
 - **Delegates to**: `devops-engineer` role (Terraform, Docker, K8s implementation), `db-engineer` role (database design)
 - **Workflows**: `architecture` skill (primary — cloud architecture design), `infra-change` skill (implementation handoff), `feature-plan` skill (architecture input)
-- **Skills**: `deploy-to-production` skill (rollback, health checks)
+- **Skills**: `deployment-procedures` skill (rollback, health checks)

@@ -199,4 +199,4 @@ Present the completed work:
 
 - **Precedes**: `run-tests` skill, `pre-commit` skill, `create-pr` skill
 - **Planning**: `feature-plan` skill (produces the implementation plan this workflow executes)
-- **Skills**: `testing-procedures` skill (test strategy), `code-review` skill (review standards), `context-engineering` skill (context pipelines, RAG, agent harness, production checklists — for AI/LLM features), `worktree-isolation` skill (branch isolation via git worktree)
+- **Skills**: `test-strategy` skill (test strategy), `code-review` skill (review standards), `context-engineering` skill (context pipelines, RAG, agent harness, production checklists — for AI/LLM features), `worktree-isolation` skill (branch isolation via git worktree)

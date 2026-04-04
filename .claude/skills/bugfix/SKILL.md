@@ -250,4 +250,4 @@ Present the completed bugfix:
 
 - **Sub-workflows**: `/analyze-local`, `/analyze-prod` (environment diagnostics — launch as sub-agents when more data is needed)
 - **Follow-up**: `/run-tests` (verify fix), `/pre-commit` (quality gate), `/create-pr` (submit fix)
-- **Skills**: `code-review` skill (review fix), `testing-procedures` skill (test strategy), `worktree-isolation` skill (branch isolation)
+- **Skills**: `code-review` skill (review fix), `test-strategy` skill (test strategy), `worktree-isolation` skill (branch isolation)

@@ -1,19 +1,23 @@
 ---
 name: infra-change
 description: Infrastructure change workflow — Terraform plan/apply, Helm diff/upgrade, Kubernetes manifest changes with mandatory approval gates. Applies DevOps role. Safe-by-default with plan review before any mutation.
+disable-model-invocation: true
 argument-hint: [description of infrastructure change]
-codex-roles:
-  - devops-engineer
-  - sre-engineer
-  - cloud-architect
-  - devops-architect
 ---
 
 # Infrastructure Change
 
-Safe infrastructure change workflow for Terraform, Helm, and Kubernetes. Every mutation requires explicit user approval after reviewing the plan/diff. Applies `devops-engineer` role for all steps.
+Safe infrastructure change workflow for Terraform, Helm, and Kubernetes. Every mutation requires explicit user approval after reviewing the plan/diff. Applies `Agent(devops-engineer)` for all steps.
 
 **⚠️ SAFETY: No `apply`, `upgrade`, `delete`, or `scale` command runs without explicit user APPROVE.**
+
+## 0. Gather Context
+
+Read `AGENTS.md` at the project root to identify:
+- Infrastructure tools in use (Terraform, Helm, kubectl, Pulumi)
+- Cloud platform (GCP, Azure, AWS)
+- Environment structure (dev, staging, production)
+- State backend and workspace conventions
 
 ## 1. Define the Change
 
@@ -33,7 +37,7 @@ Affected: [list resources/services]
 
 ## 2. Apply Roles
 
-Apply `devops-engineer` role. For production changes, also apply `sre-engineer` role for SLO impact assessment. For cloud infrastructure design (landing zones, networking topology, IAM), consult `cloud-architect` role. For CI/CD pipeline architecture changes, consult `devops-architect` role.
+Apply `Agent(devops-engineer)`. For production changes, also apply `Agent(sre-engineer)` for SLO impact assessment. For cloud infrastructure design (landing zones, networking topology, IAM), consult `Agent(cloud-architect)`. For CI/CD pipeline architecture changes, consult `Agent(devops-architect)`.
 
 ## 3. Review Current State
 
@@ -73,7 +77,7 @@ kubectl get pods -n <namespace> -o wide
 
 ## 4. Implement Changes
 
-Make the infrastructure code changes following `devops-engineer` role standards:
+Make the infrastructure code changes following `Agent(devops-engineer)` standards:
 
 **For Terraform:**
 - Modify `.tf` files as needed
@@ -236,6 +240,6 @@ kubectl rollout undo deployment/<name> -n <namespace>
 
 ## Integration
 
-- **Roles**: `devops-engineer` role (primary), `sre-engineer` role (review), `cloud-architect` role (cloud design review), `devops-architect` role (CI/CD pipeline architecture)
-- **Preceded by**: `feature-plan` skill (infra work stream), `architecture` skill (cloud architecture design)
-- **Followed by**: `deploy-staging` skill, `deploy-production` skill
+- **Roles**: `Agent(devops-engineer)` (primary), `Agent(sre-engineer)` (review), `Agent(cloud-architect)` (cloud design review), `Agent(devops-architect)` (CI/CD pipeline architecture)
+- **Preceded by**: `/feature-plan` (infra work stream), `/architecture` (cloud architecture design)
+- **Followed by**: `/deploy-staging`, `/deploy-production`

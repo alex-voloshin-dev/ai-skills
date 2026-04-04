@@ -170,4 +170,4 @@ Consult `cloud-platforms` skill for platform-specific managed DB patterns (Cloud
 - **Base role**: `@software-engineer` — engineering fundamentals
 - **Collaborates with**: `@devops-engineer` (infra, CI/CD), `@cloud-architect` (cloud design, DR/HA), `@devops-architect` (CI/CD architecture), `@db-engineer` (DB reliability), `@qa-engineer` (perf testing), `@system-architect` (capacity)
 - **Workflows**: `/analyze-prod` (production diagnostics), `/analyze-local` (local diagnostics), `/deploy-production`, `/bugfix`, `/security-scan`
-- **Skills**: `deploy-to-production` skill (rollback, health checks), `cloud-platforms` skill (platform-specific monitoring, logging, managed services), `context-engineering` skill (AI system observability)
+- **Skills**: `deployment-procedures` skill (rollback, health checks), `cloud-platforms` skill (platform-specific monitoring, logging, managed services), `context-engineering` skill (AI system observability)

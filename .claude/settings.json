@@ -28,7 +28,23 @@
       "Bash(cd * && pytest*)",
       "Bash(pytest*)",
       "Bash(cd * && pip *)",
-      "Bash(pip *)"
+      "Bash(pip *)",
+      "Edit(/.claude/skills/deploy-production/**)",
+      "Edit(/.claude/skills/infra-change/**)",
+      "Edit(/.claude/skills/create-pr/**)",
+      "Edit(/.claude/skills/release/**)",
+      "Edit(/.claude/skills/product-mgmt/**)",
+      "Edit(/.claude/skills/code-review/**)",
+      "Edit(/.claude/skills/analyze/**)",
+      "Edit(/.claude/skills/analyze-local/**)",
+      "Edit(/.claude/skills/blog-post/**)",
+      "Edit(/.claude/skills/marketing/**)",
+      "Edit(/.claude/skills/team-bugfix/**)",
+      "Bash([ -f \"$pkg/skills/$skill/SKILL.md\" ])",
+      "Bash(cp .claude/skills/__TRACKED_VAR__/SKILL.md __TRACKED_VAR__/skills/__TRACKED_VAR__/SKILL.md)",
+      "WebSearch",
+      "Bash(sed -i 's/Read project'\\\\''s `CLAUDE\\\\.md`/Read project'\\\\''s `AGENTS.md`/g' __TRACKED_VAR__/skills/blog-post/SKILL.md)",
+      "Bash(sed -i 's/`CLAUDE\\\\.md` — tech stack, project purpose/`AGENTS.md` — tech stack, project purpose/g' __TRACKED_VAR__/skills/marketing/SKILL.md)"
     ]
   },
   "hooks": {

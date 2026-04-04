@@ -85,8 +85,8 @@ has no equivalent elsewhere. These are tracked here rather than treated as parit
 
 | Skill | Reason |
 |---|---|
-| `multi-agent-orchestration` | Relies on Claude Code's native `Agent` tool for spawning named subagents with parallel execution. Codex and Windsurf have no equivalent runtime primitive. |
-| `multi-agent-bugfix-audit` | Multi-agent coordinated bugfix workflow using Claude Code's parallel Agent spawning with developer/reviewer/QA pipeline. No equivalent in other runtimes. |
+| `team-protocols` | Relies on Claude Code's native `Agent` tool for spawning named subagents with parallel execution. Codex and Windsurf have no equivalent runtime primitive. |
+| `team-bugfix` | Multi-agent coordinated bugfix workflow using Claude Code's parallel Agent spawning with developer/reviewer/QA pipeline. No equivalent in other runtimes. |
 
 ### Codex-specific assets
 

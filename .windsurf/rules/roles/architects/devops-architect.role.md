@@ -131,4 +131,4 @@ This is a **Layer 2 specialization role** extending `@software-engineer` (Layer 
 - **Complements**: `@devops-engineer` (infrastructure implementation), `@cloud-architect` (cloud platform design), `@sre-engineer` (reliability, SLOs), `@system-architect` (system-level architecture)
 - **Delegates to**: `@devops-engineer` (Terraform, Docker, K8s implementation), `@frontend-engineer` / `@java-engineer` / `@python-engineer` (application CI/CD specifics)
 - **Workflows**: `/deploy-staging`, `/deploy-production`, `/pre-commit`, `/create-pr`, `/release`, `/security-scan`, `/code-review`
-- **Skills**: `code-review` skill (PR standards), `deploy-to-production` skill (rollback, health checks), `testing-procedures` skill (test strategy in CI)
+- **Skills**: `code-review` skill (PR standards), `deployment-procedures` skill (rollback, health checks), `test-strategy` skill (test strategy in CI)

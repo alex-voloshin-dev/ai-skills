@@ -3,18 +3,16 @@ name: analyze-local
 description: Analyze local Docker environment — collect container status, logs, networking, resource usage, and diagnose issues. Applies SRE or DevOps roles for investigation. Use standalone or as part of local environment bugfixing.
 context: fork
 argument-hint: "container name, symptom, or issue description"
-codex-roles:
-  - sre-engineer
-  - devops-engineer
-  - java-engineer
-  - python-engineer
-  - frontend-engineer
-  - software-engineer
+allowed-tools: Read, Grep, Glob, Bash
 ---
 
 # Analyze Local Docker Environment
 
 Systematic analysis of the local Docker environment. Collects container status, logs, networking, resource usage, and diagnoses issues. Works standalone or as an entry point for local bugfixing.
+
+## 0. Gather Context
+
+Read `AGENTS.md` at the project root to identify expected services, tech stack, and local development setup (docker-compose files, service dependencies).
 
 ## 1. Clarify the Goal
 
@@ -32,13 +30,13 @@ Select and apply the role based on the problem type:
 
 | Problem Type | Primary Role | Rationale |
 |---|---|---|
-| Container crashes, restarts, health checks | `sre-engineer` role | Reliability, observability, troubleshooting |
-| Networking, DNS, port conflicts, connectivity | `sre-engineer` role | K8s/Docker networking diagnostics |
-| Dockerfile, image builds, compose config | `devops-engineer` role | Container orchestration, Docker expertise |
-| CI/CD pipeline failures in local env | `devops-engineer` role | Build and deploy pipeline expertise |
-| Resource exhaustion (CPU, memory, disk) | `sre-engineer` role | Capacity, resource management |
-| Application errors visible in logs | Stack-specific role | `java-engineer` role, `python-engineer` role, `frontend-engineer` role based on service stack |
-| General / unclear | `software-engineer` role | Broad debugging methodology |
+| Container crashes, restarts, health checks | `Agent(sre-engineer)` | Reliability, observability, troubleshooting |
+| Networking, DNS, port conflicts, connectivity | `Agent(sre-engineer)` | K8s/Docker networking diagnostics |
+| Dockerfile, image builds, compose config | `Agent(devops-engineer)` | Container orchestration, Docker expertise |
+| CI/CD pipeline failures in local env | `Agent(devops-engineer)` | Build and deploy pipeline expertise |
+| Resource exhaustion (CPU, memory, disk) | `Agent(sre-engineer)` | Capacity, resource management |
+| Application errors visible in logs | Stack-specific role | `Agent(java-engineer)`, `Agent(python-engineer)`, `Agent(frontend-engineer)` based on service stack |
+| General / unclear | `Agent(software-engineer)` | Broad debugging methodology |
 
 Announce the applied role to the user. If multiple problem types are present, apply multiple roles.
 
@@ -189,7 +187,7 @@ Based on the diagnosis:
 
 - **If fix is straightforward** (restart, config change, env var): Propose the fix and apply after user approval
 - **If fix requires code changes**: Transition to the appropriate stack-specific role and apply the bugfix following the role's debugging methodology
-- **If fix requires infrastructure changes** (Dockerfile, compose, networking): Apply with `devops-engineer` role patterns
+- **If fix requires infrastructure changes** (Dockerfile, compose, networking): Apply with `Agent(devops-engineer)` patterns
 - **If root cause is unclear**: Propose additional diagnostic steps (increase log verbosity, attach to container, profile resource usage)
 
 After applying any fix, re-run the relevant diagnostic commands from Step 3 to verify the fix resolved the issue.
@@ -207,5 +205,5 @@ Present the completed analysis:
 
 ## Integration
 
-- **Called by**: `bugfix` skill (environment diagnostics step)
-- **Roles**: `devops-engineer` role, `sre-engineer` role
+- **Called by**: `/bugfix` (environment diagnostics step)
+- **Roles**: `Agent(devops-engineer)`, `Agent(sre-engineer)`

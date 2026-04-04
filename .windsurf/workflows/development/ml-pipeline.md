@@ -279,4 +279,4 @@ Present the completed ML pipeline run:
 - **follow-up skills**: `analyze-prod` skill (production data access, Steps 6a–6b)
 - **Followed by**: `feature-plan` skill (Step 9), then `feature-dev` skill (implementation)
 - **Roles**: `product-manager` role (task formulation), `ml-engineer` role (analysis, modeling), `sre-engineer` role (data extraction)
-- **Skills**: `testing-procedures` skill (validation plan), `context-engineering` skill (context pipeline design, RAG, memory engineering, agent harness — for LLM/prompt recommendations), `prompt-engineering` skill (technique selection, eval strategy)
+- **Skills**: `test-strategy` skill (validation plan), `context-engineering` skill (context pipeline design, RAG, memory engineering, agent harness — for LLM/prompt recommendations), `prompt-engineering` skill (technique selection, eval strategy)

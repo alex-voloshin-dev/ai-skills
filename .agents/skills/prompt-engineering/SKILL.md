@@ -30,7 +30,7 @@ Comprehensive prompt engineering knowledge base. Provides actionable patterns, c
 
 - Implementing backend/frontend code (use `software-engineer` role + stack-specific role)
 - Infrastructure and deployment (use `devops-engineer` role)
-- Writing code tests (use `qa-engineer` role + `testing-procedures` skill)
+- Writing code tests (use `qa-engineer` role + `test-strategy` skill)
 - Content writing (use `content-writer` role)
 - Context pipeline design, memory engineering, agent harness, RAG architecture, multi-agent orchestration, production AI checklists → use `context-engineering` skill
 

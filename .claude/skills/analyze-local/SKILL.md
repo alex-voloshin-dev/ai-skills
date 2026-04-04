@@ -10,6 +10,10 @@ allowed-tools: Read, Grep, Glob, Bash
 
 Systematic analysis of the local Docker environment. Collects container status, logs, networking, resource usage, and diagnoses issues. Works standalone or as an entry point for local bugfixing.
 
+## 0. Gather Context
+
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify expected services, tech stack, and local development setup (docker-compose files, service dependencies).
+
 ## 1. Clarify the Goal
 
 Ask the user:

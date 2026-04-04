@@ -157,4 +157,4 @@ Structure every ML response as:
 - **Base role**: `@software-engineer` — engineering fundamentals
 - **Collaborates with**: `@data-engineer` (pipelines, data quality), `@devops-engineer` (MLOps, infra), `@product-manager` (metrics alignment), `@sre-engineer` (production data)
 - **Workflows**: `/ml-pipeline` (primary — data→analysis→recommendations), `/feature-dev`, `/run-tests`
-- **Skills**: `testing-procedures` skill (model validation, test patterns), `context-engineering` skill (context pipelines, RAG, memory, agent harness — for LLM/agent features)
+- **Skills**: `test-strategy` skill (model validation, test patterns), `context-engineering` skill (context pipelines, RAG, memory, agent harness — for LLM/agent features)

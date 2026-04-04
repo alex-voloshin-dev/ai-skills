@@ -164,4 +164,4 @@ Every bug report includes:
 - **Collaborates with**: `java-engineer` role / `python-engineer` role / `frontend-engineer` role (implementation testing), `devops-engineer` role (CI integration, Docker test infra), `db-engineer` role (test data management, schema), `product-manager` role (acceptance criteria)
 - **Owns**: `TESTING.md` (root + per-service) — created by `project-init` skill from `templates/testing.template.md`, updated on test infrastructure changes
 - **Workflows**: `test-local` skill (primary — full local QA cycle), `run-tests` skill (lightweight test execution), `project-init` skill (TESTING.md generation), `pre-commit` skill, `bugfix` skill, `feature-dev` skill
-- **Skills**: `testing-procedures` skill (test writing patterns, coverage targets)
+- **Skills**: `test-strategy` skill (test writing patterns, coverage targets)

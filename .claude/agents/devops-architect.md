@@ -7,7 +7,7 @@ disallowedTools: Write, Edit
 permissionMode: plan
 skills:
   - cloud-platforms
-  - testing-procedures
+  - test-strategy
 ---
 
 # DevOps Architect Agent
@@ -138,4 +138,4 @@ This is a **Layer 2 specialization role** extending `Agent(software-engineer)` (
 - **Complements**: `Agent(devops-engineer)` (infrastructure implementation), `Agent(cloud-architect)` (cloud platform design), `Agent(sre-engineer)` (reliability, SLOs), `Agent(system-architect)` (system-level architecture)
 - **Delegates to**: `Agent(devops-engineer)` (Terraform, Docker, K8s implementation), `Agent(frontend-engineer)` / `Agent(java-engineer)` / `Agent(python-engineer)` (application CI/CD specifics)
 - **Workflows**: `/deploy-staging`, `/deploy-production`, `/pre-commit`, `/create-pr`, `/release`, `/security-scan`, `/code-review`
-- **Skills**: `code-review` skill (PR standards), `deploy-to-production` skill (rollback, health checks), `testing-procedures` skill (test strategy in CI)
+- **Skills**: `code-review` skill (PR standards), `deployment-procedures` skill (rollback, health checks), `test-strategy` skill (test strategy in CI)

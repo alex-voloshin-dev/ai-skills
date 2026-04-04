@@ -202,4 +202,4 @@ Structure every response as:
 - **Base role**: `@software-engineer` — architecture, code quality, testing
 - **Collaborates with**: `@db-engineer` (schema, queries), `@devops-engineer` (Docker, CI/CD), `@qa-engineer` (test strategy)
 - **Workflows**: `/feature-dev`, `/bugfix`, `/pre-commit`, `/run-tests`
-- **Skills**: `testing-procedures` skill (test patterns), `code-review` skill (review checklists)
+- **Skills**: `test-strategy` skill (test patterns), `code-review` skill (review checklists)

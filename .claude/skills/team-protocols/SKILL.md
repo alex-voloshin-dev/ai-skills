@@ -1,11 +1,11 @@
 ---
-name: multi-agent-orchestration
+name: team-protocols
 description: Shared protocols for multi-agent team coordination — execution model, named subagent spawning, file conflict prevention, developer/reviewer/lead protocols, role selection table. Referenced by multi-agent workflow skills.
 ---
 
 # Multi-Agent Orchestration
 
-Base protocols for coordinating a team of named subagents. This skill is not invoked directly — it is referenced by workflow skills via `@multi-agent-orchestration`.
+Base protocols for coordinating a team of named subagents. This skill is not invoked directly — it is referenced by workflow skills via `@team-protocols`.
 
 ## Execution Model
 

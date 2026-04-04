@@ -8,6 +8,13 @@ disable-model-invocation: true
 
 Structured workflow for creating a well-documented pull request. Collects changes, generates description, applies quality checklist.
 
+## 0. Gather Context
+
+Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
+- Git conventions (commit message format, branch naming)
+- PR template or description conventions
+- Required reviewers or review process
+
 ## 1. Verify Branch State
 
 ```

@@ -81,5 +81,5 @@ Summarize:
 
 ## Integration
 
-- Companion skills: `testing-procedures`, `run-tests`, `test-local`
+- Companion skills: `test-strategy`, `run-tests`, `test-local`
 - Common follow-up: `bugfix`, `feature-dev`, `pre-commit`

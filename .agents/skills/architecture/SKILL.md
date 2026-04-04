@@ -253,7 +253,7 @@ Guide the next steps based on scope:
 
 ## Integration
 
-- **Input from**: `feature-design` skill (PRD output), `feature-plan` skill (architecture questions during planning), direct analysis requests
+- **Input from**: `product-mgmt` skill (PRD output), `feature-plan` skill (architecture questions during planning), direct analysis requests
 - **Followed by**: `feature-plan` skill (work decomposition), `feature-dev` skill (implementation)
 - **Roles**: `solution-architect` role (feature design, ADRs, API contracts), `system-architect` role (system analysis, ARCHITECTURE.md, component boundaries), `cloud-architect` role (cloud platform design, landing zones, networking, cost), `devops-architect` role (CI/CD architecture, deployment strategies, platform engineering)
 - **Templates**: `templates/architecture.template.md` (ARCHITECTURE.md structure)

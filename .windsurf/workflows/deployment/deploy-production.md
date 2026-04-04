@@ -1,5 +1,5 @@
 ---
-description: Deploy to production workflow — final checks, approval gate, deploy, verify, rollback plan. Uses the `deploy-to-production` skill. Requires explicit APPROVE before any production mutation.
+description: Deploy to production workflow — final checks, approval gate, deploy, verify, rollback plan. Uses the `deployment-procedures` skill. Requires explicit APPROVE before any production mutation.
 ---
 
 
@@ -200,4 +200,4 @@ After rollback:
 
 - **Preceded by**: `deploy-staging` skill (staging verification), `release` skill (version tag)
 - **Roles**: `devops-engineer` role, `sre-engineer` role, `devops-architect` role (deployment strategy design)
-- **Skills**: `deploy-to-production` skill
+- **Skills**: `deployment-procedures` skill
