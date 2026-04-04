@@ -44,7 +44,8 @@
       "Bash(cp .claude/skills/__TRACKED_VAR__/SKILL.md __TRACKED_VAR__/skills/__TRACKED_VAR__/SKILL.md)",
       "WebSearch",
       "Bash(sed -i 's/Read project'\\\\''s `CLAUDE\\\\.md`/Read project'\\\\''s `AGENTS.md`/g' __TRACKED_VAR__/skills/blog-post/SKILL.md)",
-      "Bash(sed -i 's/`CLAUDE\\\\.md` — tech stack, project purpose/`AGENTS.md` — tech stack, project purpose/g' __TRACKED_VAR__/skills/marketing/SKILL.md)"
+      "Bash(sed -i 's/`CLAUDE\\\\.md` — tech stack, project purpose/`AGENTS.md` — tech stack, project purpose/g' __TRACKED_VAR__/skills/marketing/SKILL.md)",
+      "Edit(/.claude/skills/team-dev/**)"
     ]
   },
   "hooks": {

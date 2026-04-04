@@ -34,6 +34,7 @@ These skills rely on Claude Code's native multi-agent spawning capability, which
 |---|---|
 | `team-protocols` | Shared protocols for Claude Code's Agent tool with named subagent spawning. Codex and Windsurf lack runtime multi-agent primitives. |
 | `team-bugfix` | Multi-agent coordinated bugfix workflow using Claude Code's parallel Agent spawning. No equivalent runtime primitive exists. |
+| `team-dev` | Multi-agent coordinated feature development workflow using Claude Code's parallel Agent spawning with developer/reviewer/QA pipeline. No equivalent runtime primitive exists. |
 
 ### Rules and Guardrails
 
@@ -57,6 +58,20 @@ These skills rely on Claude Code's native multi-agent spawning capability, which
 - Windsurf stores template and checklist material as supporting resources inside relevant skills instead of a separate top-level primitive
 
 ## Change Log
+
+### 2026-04-04: team-dev skill + team-bugfix analyze-local integration
+
+Added `team-dev` as a new Claude-only multi-agent feature development skill. This is the
+team-coordinated version of `feature-dev`, using the same DEVELOP → REVIEW → QA pipeline
+as `team-bugfix` but applied to feature implementation from PRD/design docs.
+
+Added optional local environment analysis (`@analyze-local` via env-analyzer subagent) to
+`team-bugfix` for bugs involving Docker/container/local dev environment issues.
+
+| Asset | Claude | Codex | Windsurf |
+|---|---|---|---|
+| `team-dev` | `.claude/skills/team-dev/` | N/A (Claude-only) | N/A (Claude-only) |
+| `team-bugfix` update | `.claude/skills/team-bugfix/` | N/A (Claude-only) | N/A (Claude-only) |
 
 ### 2026-04-04: social-media-manager generalization
 

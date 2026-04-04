@@ -21,9 +21,31 @@ Read and apply all protocols from `@team-protocols`:
 
 Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify project structure (monorepo vs polyrepo), subprojects, and tech stacks. This determines which Developer roles to spawn via the role selection table.
 
+## Optional: Local Environment Analysis
+
+If the bug involves local development environment issues (container crashes, networking, Docker problems, service health), or if the user explicitly requests environment analysis — spawn an environment analyzer before starting the fix pipeline:
+
+`name: "env-analyzer"`, `subagent_type: "sre-engineer"`.
+
+The env-analyzer:
+- Runs the `@analyze-local` skill procedure: collects Docker container status, logs, networking, resource usage
+- Produces a structured diagnosis with root cause analysis and affected services
+- Sends findings to the Lead as context for task assignment
+
+**When to activate:**
+- User mentions Docker, containers, local env, or service health issues
+- Audit document references environment-level failures (not just code bugs)
+- User explicitly asks for environment analysis (e.g., "check the local env first")
+
+**When to skip:**
+- Pure code-level bugs with no environment component
+- User explicitly says to skip environment analysis
+
+The Lead incorporates env-analyzer findings into the task list before starting the DEVELOP → REVIEW → QA pipeline. The env-analyzer does NOT participate in the pipeline itself — it runs once at the start and provides context only.
+
 ## Input
 
-Read the audit document provided as the argument. Extract the list of tasks/issues to fix. Each task will go through the full pipeline below.
+Read the audit document provided as the argument. Extract the list of tasks/issues to fix. If the env-analyzer produced findings, merge them into the task list. Each task will go through the full pipeline below.
 
 ## Mandatory Pipeline
 

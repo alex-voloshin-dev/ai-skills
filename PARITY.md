@@ -56,9 +56,9 @@ Full parity. Every role exists across all three packages.
 | Designers (2) | content-designer, ui-ux-designer |
 | Other (4) | content-writer, marketing-strategist, product-manager, prompt-engineer |
 
-### Skills: 40 / 38 / 38
+### Skills: 41 / 38 / 38
 
-38 skills in full parity. 2 skills are intentionally Claude-only (see Intentional Gaps below).
+38 skills in full parity. 3 skills are intentionally Claude-only (see Intentional Gaps below).
 
 ### Rules: 7 / 8 / 7
 
@@ -87,6 +87,7 @@ has no equivalent elsewhere. These are tracked here rather than treated as parit
 |---|---|
 | `team-protocols` | Relies on Claude Code's native `Agent` tool for spawning named subagents with parallel execution. Codex and Windsurf have no equivalent runtime primitive. |
 | `team-bugfix` | Multi-agent coordinated bugfix workflow using Claude Code's parallel Agent spawning with developer/reviewer/QA pipeline. No equivalent in other runtimes. |
+| `team-dev` | Multi-agent coordinated feature development workflow using Claude Code's parallel Agent spawning with developer/reviewer/QA pipeline. No equivalent in other runtimes. |
 
 ### Codex-specific assets
 

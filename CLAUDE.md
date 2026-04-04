@@ -9,7 +9,7 @@ ai-assets/
 ├── .agents/skills/          # 38 skills (shared between Codex and Windsurf)
 ├── .claude/                  # Claude Code runtime package
 │   ├── agents/              # 22 sub-agent definitions
-│   ├── skills/              # 40 skills (38 shared + 2 Claude-only)
+│   ├── skills/              # 41 skills (38 shared + 3 Claude-only)
 │   ├── rules/               # 7 guardrail rules
 │   ├── hooks/scripts/       # 4 Python enforcement scripts
 │   ├── hooks/configs/       # hook wiring fragments
