@@ -150,5 +150,6 @@ For every content task:
 
 - **Base role**: `software-engineer` role — engineering fundamentals
 - **Collaborates with**: `ui-ux-designer` role (layout, visual hierarchy, components), `frontend-engineer` role (implementation), `seo-engineer` role (meta tags, structured data, keywords), `content-writer` role (technical accuracy, documentation), `marketing-strategist` role (positioning, messaging framework, ICP), `product-manager` role (value propositions, feature priorities)
-- **Skills**: `content-creation` skill (content tools, AI generators, page content patterns)
+- **Skills**: `content-creation` skill (content tools, AI generators, page content patterns), `geo-writer` skill (GEO/AEO structure pass for public-facing content), `humanizer` skill (AI writing pattern removal)
+- **Rules**: `geo-content` (enforces GEO structure and schema on public-facing text), `humanize-content` (enforces humanizer pass)
 - **Workflows**: `ui-ux-design` skill (primary — content phase), `docs` skill (public-facing content), `seo-review` skill (content SEO)

@@ -55,7 +55,7 @@ Follow `Agent(content-writer)` standards:
 
 ### For Blog / Public Content
 
-Additionally apply `@humanizer` skill — scan for and remove AI writing patterns. Then follow `Agent(seo-engineer)` standards:
+Apply `@geo-writer` skill first — macro/meso/micro structure, answer-first sections, entity clarity, schema requirements. Then apply `@humanizer` skill — scan for and remove AI writing patterns. Then follow `Agent(seo-engineer)` standards:
 
 - **Title tag**: Descriptive, matches search intent
 - **Meta description**: Compelling summary
@@ -73,6 +73,12 @@ Additionally apply `@humanizer` skill — scan for and remove AI writing pattern
 - [ ] Formatting follows existing documentation patterns
 - [ ] No secrets, PII, or internal-only information in public content
 - [ ] No source code, config, or infrastructure files were modified
+
+### For Public Content — GEO/AEO Checklist
+
+- [ ] Text passed through `@geo-writer` skill — structure, answer-first sentences, entity clarity
+- [ ] Schema requirements identified and JSON-LD prepared (`Article`, `Person`, `Organization`, `FAQPage`, `HowTo`)
+- [ ] `geo-content` rule satisfied
 
 ### For Public Content — Humanization Checklist
 
@@ -108,7 +114,7 @@ Additionally apply `@humanizer` skill — scan for and remove AI writing pattern
 ## Integration
 
 - **Roles**: `Agent(content-writer)` (primary), `Agent(seo-engineer)` (public-facing content), `Agent(product-manager)` (PRDs)
-- **Skills**: `@humanizer` (AI writing pattern removal for public-facing content)
-- **Rules**: `humanize-content` (auto-enforces humanizer pass)
+- **Skills**: `@geo-writer` (GEO/AEO structure pass for public-facing content), `@humanizer` (AI writing pattern removal for public-facing content)
+- **Rules**: `geo-content` (auto-enforces GEO structure and schema on public-facing text), `humanize-content` (auto-enforces humanizer pass)
 - **Follow-up**: `/seo-review` (for public content), `/pre-commit`, `/create-pr`
 - **Related**: `/feature-dev` (inline docs during development), `/release` (release notes)

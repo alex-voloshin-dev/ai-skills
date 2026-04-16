@@ -147,5 +147,6 @@ For every marketing task:
 
 - **Base role**: `@software-engineer` — engineering context for technical marketing
 - **Collaborates with**: `@product-manager` (positioning, ICP), `@seo-engineer` (SEO execution), `@content-writer` (blog, email content), `@content-designer` (social posts, conversion copy)
-- **Skills**: `marketing-operations` skill (setup template, channel playbooks, recurring tasks), `content-creation` skill (AI content tools)
+- **Skills**: `marketing-operations` skill (setup template, channel playbooks, recurring tasks), `content-creation` skill (AI content tools), `@geo-writer` (GEO/AEO structure pass for blog, email, landing page content), `@humanizer` (AI writing pattern removal)
+- **Rules**: `geo-content` (enforces GEO structure and schema on public-facing text), `humanize-content` (enforces humanizer pass)
 - **Workflows**: `/marketing` (primary — strategy init + recurring ops), `/blog-post` (blog content), `/seo-review` (SEO audit), `/docs` (marketing content), `/feature-plan` (marketing work stream)

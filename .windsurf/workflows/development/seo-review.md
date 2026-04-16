@@ -102,6 +102,20 @@ For each target page:
 - `llms.txt` present (optional, experimental — not a ranking factor)
 - Pages indexed and snippet-eligible (prerequisite for AI features)
 
+### 3h. GEO/AEO Audit
+
+Apply `geo-writer` skill to audit extractability for AI engines (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews):
+
+- **Schema coverage** — `Article` or `BlogPosting` + `Person` with `sameAs` + `Organization` on blog pages; `FAQPage` where FAQ present; `HowTo` for tutorials; `Product` / `Review` on commercial pages. JSON-LD must mirror visible text (no marketing-only prose in schema).
+- **Answer-first structure** — each H2/H3 opens with a self-contained 30-60 word answer. No buried ledes.
+- **Macro/meso/micro chunking** — single H1, 5-9 H2 sections phrased as questions or topics, paragraphs 40-80 words, bold anchors every section.
+- **Entity clarity** — canonical brand terms used verbatim, no pronoun drift, entity mentions in first 100 words.
+- **High-leverage formats** — FAQ blocks (4-8 Q&A), comparison tables (2+ entities), HowTo steps (3-8 numbered actions) where natural.
+- **Freshness signals** — `dateModified` present and recent; `datePublished` set; content updated within the pillar's freshness window.
+- **Citation-ready** — stats/claims attributed to named sources with outbound links where appropriate.
+
+The `geo-content` rule enforces these for public-facing text. Use `pre-publish-checklist.md` from `geo-writer` skill for the full checklist.
+
 ## 4. Present Findings
 
 Compile audit results:
@@ -173,4 +187,6 @@ Re-run relevant checks from Step 3 for changed pages:
 ## Integration
 
 - **Roles**: `seo-engineer` role (primary), `frontend-engineer` role (implementation), `content-writer` role (content fixes)
+- **Skills**: `geo-writer` skill (GEO/AEO audit — step 3h), `humanizer` skill (applied when content fixes are needed)
+- **Rules**: `geo-content` (enforces GEO structure and schema on public-facing text), `humanize-content` (enforces humanizer pass)
 - **Called by**: `feature-dev` skill (SEO-relevant features), `docs` skill (public content)

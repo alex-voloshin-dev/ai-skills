@@ -45,7 +45,21 @@
       "WebSearch",
       "Bash(sed -i 's/Read project'\\\\''s `CLAUDE\\\\.md`/Read project'\\\\''s `AGENTS.md`/g' __TRACKED_VAR__/skills/blog-post/SKILL.md)",
       "Bash(sed -i 's/`CLAUDE\\\\.md` — tech stack, project purpose/`AGENTS.md` — tech stack, project purpose/g' __TRACKED_VAR__/skills/marketing/SKILL.md)",
-      "Edit(/.claude/skills/team-dev/**)"
+      "Edit(/.claude/skills/team-dev/**)",
+      "Edit(/.claude/skills/ml-pipeline/**)",
+      "Edit(/.claude/skills/geo-writer/**)",
+      "Bash(cp C:/Users/avav2/dev/code/ai-assets/.claude/skills/geo-writer/SKILL.md C:/Users/avav2/dev/code/ai-assets/.agents/skills/geo-writer/SKILL.md)",
+      "Bash(cp C:/Users/avav2/dev/code/ai-assets/.claude/skills/geo-writer/geo-writing-guide.md C:/Users/avav2/dev/code/ai-assets/.agents/skills/geo-writer/geo-writing-guide.md)",
+      "Bash(cp C:/Users/avav2/dev/code/ai-assets/.claude/skills/geo-writer/pre-publish-checklist.md C:/Users/avav2/dev/code/ai-assets/.agents/skills/geo-writer/pre-publish-checklist.md)",
+      "Bash(cp C:/Users/avav2/dev/code/ai-assets/.claude/skills/geo-writer/SKILL.md C:/Users/avav2/dev/code/ai-assets/.windsurf/skills/geo-writer/SKILL.md)",
+      "Bash(cp C:/Users/avav2/dev/code/ai-assets/.claude/skills/geo-writer/geo-writing-guide.md C:/Users/avav2/dev/code/ai-assets/.windsurf/skills/geo-writer/geo-writing-guide.md)",
+      "Edit(/.claude/skills/content-creation/**)",
+      "Edit(/.claude/skills/docs/**)",
+      "Edit(/.claude/skills/seo-review/**)",
+      "Edit(/.claude/skills/marketing-operations/**)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\avav2\\dev\\code\\ai-assets\\.claude\\skills"
     ]
   },
   "hooks": {

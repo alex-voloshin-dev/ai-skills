@@ -59,6 +59,28 @@ These skills rely on Claude Code's native multi-agent spawning capability, which
 
 ## Change Log
 
+### 2026-04-15: geo-writer skill + geo-content guardrail
+
+Added `geo-writer` skill and `geo-content` guardrail across all three packages. Optimizes public-facing text for Generative Engine Optimization (GEO) and Answer Engine Optimization (AEO) so content is cited by AI engines (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews).
+
+| Asset | Claude | Codex | Windsurf |
+|---|---|---|---|
+| Skill | `.claude/skills/geo-writer/` | `.agents/skills/geo-writer/` | `.windsurf/skills/geo-writer/` |
+| Full reference | `geo-writing-guide.md` (resource) | `geo-writing-guide.md` (resource) | `geo-writing-guide.md` (resource) |
+| Checklist | `pre-publish-checklist.md` (resource) | `pre-publish-checklist.md` (resource) | `pre-publish-checklist.md` (resource) |
+| Guardrail rule | `.claude/rules/geo-content.md` | `.codex/rules/geo-content.md` | `.windsurf/rules/geo-content.md` |
+| blog-post | step 4 added (GEO pass), humanizer renumbered to 4.5, structured data upgraded, decision gate updated | step 4 added, step 4.5, structured data, decision gate | workflow step 4 added, step 4.5, structured data, decision gate |
+| content-creation | Gate 7 (GEO/AEO Structure) added, humanization renumbered to Gate 8 | Gate 7 added, Gate 8 | Gate 7 added, Gate 8 |
+| docs | GEO/AEO checklist added for public content | GEO checklist added | GEO checklist added |
+| marketing | GEO note on email ops, social excluded | GEO note on email ops | GEO note on email ops |
+| seo-review | step 3h (GEO/AEO Audit) added | step 3h added | step 3h added, workflow step 3h added |
+| marketing-operations | Integration section updated | Integration section updated | Integration section updated |
+| Agents/roles updated | content-writer, content-designer, seo-engineer, marketing-strategist | content-writer, content-designer, seo-engineer, marketing-strategist | content-writer, content-designer, seo-engineer, marketing-strategist |
+| Windsurf workflow | N/A | N/A | `.windsurf/workflows/marketing/geo-writer.md` |
+| humanize-content rule | Pairing section added | Pairing section added | Pairing section added |
+
+Canonical name: `geo-writer` (skill), `geo-content` (rule/guardrail).
+
 ### 2026-04-04: team-dev skill + team-bugfix analyze-local integration
 
 Added `team-dev` as a new Claude-only multi-agent feature development skill. This is the

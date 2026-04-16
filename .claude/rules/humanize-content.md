@@ -44,3 +44,7 @@ This rule does NOT apply to:
 - Rule of three, negative parallelisms, false ranges
 - Generic positive conclusions: the future looks bright, exciting times ahead
 - Filler: in order to, due to the fact that, it is important to note
+
+## Pairing
+
+Pairs with `geo-content` rule for public-facing content intended to be cited by AI engines. Run `@geo-writer` structure pass before `@humanizer` voice pass.

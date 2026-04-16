@@ -87,7 +87,21 @@ For each visual need identified in the brief:
 - Note image placement relative to content
 - If cover image needed — describe desired style, mood, composition
 
-## 4. Humanize Content
+## 4. GEO/AEO Structure Pass
+
+**Apply `@geo-writer` skill.** This step is mandatory for all blog content.
+
+1. **Macro structure** — single literal H1, 5-9 H2 sections each phrased as a standalone question or declarative topic, TL;DR at the end
+2. **Meso chunking** — paragraphs 40-80 words (cap 120), sections 120-180 words, one idea per paragraph, a statistic or named source every 150-200 words
+3. **Micro emphasis** — bold 3-5 most quotable phrases per section, bullet lists for 3+ items, tables for 2+ entity comparisons
+4. **Answer-first check** — the first sentence of every H2/H3 fully answers the implied question in 30-60 words
+5. **Entity clarity** — no pronoun drift across sections, canonical brand terms used verbatim (from `marketing/MARKETING.md`)
+6. **High-leverage formats** — include FAQ block (4-8 Q&A), comparison table, or HowTo steps where natural
+7. **Schema block** — prepare `Article` + `Person` + `FAQPage` JSON-LD (covered in Step 5 SEO pass)
+
+The `geo-content` rule enforces this for all public-facing text intended to be cited by AI engines.
+
+## 4.5. Humanize Content
 
 **Apply `@humanizer` skill.** This step is mandatory for all blog content.
 
@@ -96,7 +110,7 @@ For each visual need identified in the brief:
 3. **Anti-AI audit** — ask "What makes this obviously AI generated?", list remaining tells, revise
 4. **Verify** the humanized text preserves accuracy, maintains the approved outline, and sounds natural when read aloud
 
-Do NOT skip this step. The `humanize-content` rule enforces this for all public-facing text.
+GEO and humanizer are complementary: GEO optimizes structure for extraction, humanizer optimizes voice. Run GEO first, humanizer second. The `humanize-content` rule enforces the humanizer pass for all public-facing text.
 
 ## 5. SEO Optimization
 
@@ -123,10 +137,13 @@ Run an SEO pass on the draft:
 - [ ] Anchor text is descriptive (not "click here" or "read more")
 - [ ] Links are contextually relevant (not forced)
 
-### 4c. Structured Data
+### 4c. Structured Data (GEO mandatory)
 
-- Add `BlogPosting` JSON-LD schema (or verify the framework handles it automatically)
-- Verify: `headline`, `author`, `datePublished`, `description`, `image`
+- Add `Article` or `BlogPosting` JSON-LD + `Person` for author (with `sameAs` links) + `Organization`
+- Add `FAQPage` JSON-LD if the post contains a FAQ block (questions must match body phrasing verbatim, no duplicate marketing prose)
+- Add `HowTo` JSON-LD for tutorials with 3-8 steps
+- Verify: `headline`, `author.sameAs`, `datePublished`, `dateModified`, `description`, `image`
+- Validate in Google Rich Results Test and schema.org/validator before merge
 
 ### 4d. Discovery Assets
 
@@ -162,8 +179,9 @@ Review the complete post against the original brief:
 |---|---|
 | All checks pass | Proceed to Step 7 |
 | Content issues (gaps, accuracy, tone) | Route to **Step 3** with specific feedback |
-| AI-sounding text detected | Route to **Step 4** with specific patterns to fix |
-| SEO issues (meta, links, structured data) | Route to **Step 5** with specific feedback |
+| Structure issues (buried lede, walls of text, missing answer-first sections) | Route to **Step 4** (GEO pass) |
+| AI-sounding text detected | Route to **Step 4.5** (humanizer) with specific patterns to fix |
+| SEO / schema issues (meta, links, structured data) | Route to **Step 5** with specific feedback |
 | Brief was wrong (topic shifted, audience changed) | Route to **Step 2** to revise brief |
 
 **Present review findings to the user.** If issues found — list them explicitly with the routing decision. Repeat the loop until the review passes.
@@ -226,7 +244,7 @@ When creating a multi-part series:
 ## Integration
 
 - **Roles**: `Agent(product-manager)` (research, brief, review), `Agent(content-writer)` (authoring), `Agent(seo-engineer)` (optimization)
-- **Skills**: `content-creation` skill (Blog Post pattern, AI generation tools, content brief template), `@humanizer` (AI writing pattern removal — step 4)
-- **Rules**: `humanize-content` (auto-enforces humanizer pass on all public-facing text)
+- **Skills**: `content-creation` skill (Blog Post pattern, AI generation tools, content brief template), `@geo-writer` (GEO/AEO structure pass — step 4), `@humanizer` (AI voice pattern removal — step 4.5)
+- **Rules**: `geo-content` (auto-enforces GEO structure and schema on public-facing text), `humanize-content` (auto-enforces humanizer pass)
 - **Follow-up**: `/seo-review` (deep SEO audit if needed), `/pre-commit`, `/create-pr`
 - **Related**: `/docs` (technical documentation), `/ui-ux-design` (visual design for blog assets)

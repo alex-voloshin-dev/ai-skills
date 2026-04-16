@@ -2,7 +2,7 @@
 name: deploy-production
 description: Deploy to production workflow — final checks, approval gate, deploy, verify, rollback plan. Uses the `deployment-procedures` skill. Requires explicit APPROVE before any production mutation.
 disable-model-invocation: true
-argument-hint: [service-name] [version]
+argument-hint: "[service-name] [version]"
 ---
 
 # Deploy to Production

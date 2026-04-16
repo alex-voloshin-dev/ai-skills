@@ -166,7 +166,7 @@ Ask the user which marketing operation to perform:
    - **X/Twitter**: ≤280 chars, hook first line, 1-3 hashtags, thread if longer
    - **LinkedIn**: Professional tone, 1-3 paragraphs, personal angle, 3-5 hashtags
    - **Reddit**: Community tone, value-first, no self-promotion, context-aware
-4. **Humanize** — apply `humanizer` skill to remove AI writing patterns from the draft
+4. **Humanize** — apply `humanizer` skill to remove AI writing patterns from the draft (GEO does not apply to social posts — `social-media-manager` owns platform-specific optimization)
 5. **Visual direction**: Suggest image/graphic if appropriate
 6. **Save to `marketing/posts/YYYY-MM-DD-[platform]-[topic].md`**
 7. Present draft. **Wait for user approval.**
@@ -181,7 +181,7 @@ Delegate to `blog-post` skill workflow. Pass context from `marketing/MARKETING.m
 
 1. **Define campaign**: Newsletter / product update / nurture sequence / announcement
 2. **Draft**: Subject line (3 variants), preview text, body, CTA
-3. **Humanize** — apply `humanizer` skill to remove AI writing patterns
+3. **GEO pass then humanize** — apply `geo-writer` skill for structure and extractability, then `humanizer` skill to remove AI writing patterns
 4. **Segmentation**: Target audience segment
 5. **Save to `marketing/emails/YYYY-MM-DD-[campaign-name].md`**
 6. Present draft. **Wait for user approval.**
@@ -272,7 +272,7 @@ marketing/
 ## Integration
 
 - **Roles**: `marketing-strategist` role (strategy, analysis), `product-manager` role (product context, ICP), `content-designer` role (social posts, copy), `content-writer` role (blog, email), `seo-engineer` role (SEO optimization)
-- **Skills**: `marketing-operations` skill (setup template, channel playbooks), `content-creation` skill (AI content tools), `humanizer` skill (AI writing pattern removal)
-- **Rules**: `humanize-content` (auto-enforces humanizer pass on all content)
+- **Skills**: `marketing-operations` skill (setup template, channel playbooks), `content-creation` skill (AI content tools), `geo-writer` skill (GEO/AEO structure pass for blog, email, and landing page content — runs alongside humanizer), `humanizer` skill (AI writing pattern removal)
+- **Rules**: `geo-content` (auto-enforces GEO structure and schema on public-facing text), `humanize-content` (auto-enforces humanizer pass on all content)
 - **follow-up skills**: `blog-post` skill (blog content), `seo-review` skill (SEO audit), `docs` skill (documentation)
 - **Follow-up**: `pre-commit` skill, `create-pr` skill

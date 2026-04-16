@@ -144,4 +144,6 @@ For every content task:
 
 - **Base role**: `software-engineer` role — code quality context for technical writing
 - **Collaborates with**: `seo-engineer` role (SEO for docs), `product-manager` role (requirements), `solution-architect` role (architecture context), `marketing-strategist` role (marketing copy), `content-designer` role (page content strategy), `ui-ux-designer` role (UI microcopy context)
+- **Skills**: `geo-writer` skill (GEO/AEO structure pass for public-facing content), `humanizer` skill (AI writing pattern removal)
+- **Rules**: `geo-content` (enforces GEO structure and schema on public-facing text), `humanize-content` (enforces humanizer pass)
 - **Workflows**: `docs` skill (primary), `blog-post` skill (blog content authoring), `feature-dev` skill (inline documentation), `release` skill (release notes), `ui-ux-design` skill (UI microcopy)

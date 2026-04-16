@@ -154,4 +154,6 @@ For every content task:
 
 - **Base role**: `Agent(software-engineer)` — code quality context for technical writing
 - **Collaborates with**: `Agent(seo-engineer)` (SEO for docs), `Agent(product-manager)` (requirements), `Agent(solution-architect)` (architecture context), `Agent(marketing-strategist)` (marketing copy), `Agent(content-designer)` (page content strategy), `Agent(ui-ux-designer)` (UI microcopy context)
+- **Skills**: `@geo-writer` (GEO/AEO structure pass for public-facing content), `@humanizer` (AI writing pattern removal)
+- **Rules**: `geo-content` (enforces GEO structure and schema on public-facing text), `humanize-content` (enforces humanizer pass)
 - **Workflows**: `/docs` (primary), `/blog-post` (blog content authoring), `/feature-dev` (inline documentation), `/release` (release notes), `/ui-ux-design` (UI microcopy)

@@ -175,4 +175,6 @@ AI-powered search (Google AI Overviews, ChatGPT, Perplexity) relies on:
 
 - **Base role**: `Agent(software-engineer)` — engineering fundamentals
 - **Collaborates with**: `Agent(frontend-engineer)` (Core Web Vitals, meta tags), `Agent(content-writer)` (SEO content), `Agent(marketing-strategist)` (SEO strategy), `Agent(content-designer)` (page content SEO), `Agent(ui-ux-designer)` (performance-aware design)
+- **Skills**: `@geo-writer` (GEO/AEO structure and schema — required for all public-facing pages), `@humanizer` (AI writing pattern removal when editing content)
+- **Rules**: `geo-content` (enforces GEO structure and schema on public-facing text), `humanize-content` (enforces humanizer pass)
 - **Workflows**: `/seo-review` (primary), `/blog-post` (SEO optimization pass), `/docs` (public content), `/feature-dev`, `/ui-ux-design` (SEO for public pages)

@@ -84,6 +84,6 @@ Each piece of content should map to exactly one pillar. Track pillar distributio
 
 ## Integration
 
-- **Follows rules**: `marketing-strategist` role (strategy, positioning, demand gen), `content-designer` role (copywriting, social posts), `content-writer` role (blog, email content)
+- **Follows rules**: `marketing-strategist` role (strategy, positioning, demand gen), `content-designer` role (copywriting, social posts), `content-writer` role (blog, email content), `geo-content` rule (GEO/AEO structure for blog and landing page playbooks), `humanize-content` rule (humanizer pass for all content)
 - **Used by workflows**: `marketing` skill (primary), `blog-post` skill (marketing context), `docs` skill (public-facing content)
-- **Companion skills**: `content-creation` skill (AI content tools, image generation, content briefs)
+- **Companion skills**: `content-creation` skill (AI content tools, image generation, content briefs), `geo-writer` skill (GEO/AEO structure pass — applies to blog and landing page playbooks, not social), `humanizer` skill (AI writing pattern removal)

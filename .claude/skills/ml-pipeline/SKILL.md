@@ -1,6 +1,6 @@
 ---
 name: ml-pipeline
-description: ML pipeline orchestrator — single entry point for ML-related tasks. Coordinates ML Engineer (analysis, modeling, recommendations), SRE Engineer (production data extraction), and Product Manager (task formulation). Domain context from CLAUDE.md. MVP flow: define data requirements → extract from prod → analyze → model → recommend → feature plan.
+description: "ML pipeline orchestrator — single entry point for ML-related tasks. Coordinates ML Engineer (analysis, modeling, recommendations), SRE Engineer (production data extraction), and Product Manager (task formulation). Domain context from CLAUDE.md. MVP flow: define data requirements → extract from prod → analyze → model → recommend → feature plan."
 context: fork
 argument-hint: [analysis goal or dataset description]
 ---

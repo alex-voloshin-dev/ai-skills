@@ -119,7 +119,16 @@ Every piece of content must pass these gates before publication:
 - [ ] License compliance for stock assets
 - [ ] No dark patterns in copy
 
-### Gate 7: Humanization (mandatory)
+### Gate 7: GEO/AEO Structure (mandatory for public-facing content)
+- [ ] Text passed through `@geo-writer` skill — macro/meso/micro structure applied
+- [ ] Single literal H1; H2 sections phrased as standalone questions or topics
+- [ ] Answer-first sentences in every section (30-60 words, self-contained)
+- [ ] Entity consistency — canonical brand terms used verbatim, no pronoun drift
+- [ ] High-leverage formats included where natural (FAQ, comparison table, HowTo steps)
+- [ ] Schema requirements identified (`Article`, `Person`, `Organization`, `FAQPage`, `HowTo` as applicable)
+- [ ] `geo-content` rule satisfied
+
+### Gate 8: Humanization (mandatory)
 - [ ] Text scanned for AI writing patterns using `@humanizer` skill
 - [ ] No AI vocabulary words (delve, foster, landscape, tapestry, underscore, vibrant, pivotal)
 - [ ] No promotional inflation (nestled, groundbreaking, stunning, renowned)
@@ -133,7 +142,7 @@ See `content-tools-guide.md` for detailed AI prompting workflows and `page-conte
 
 ## Integration
 
-- **Follows rules**: `Agent(content-designer)` (content strategy, conversion copy), `Agent(ui-ux-designer)` (visual direction), `humanize-content` rule (enforces AI pattern removal)
+- **Follows rules**: `Agent(content-designer)` (content strategy, conversion copy), `Agent(ui-ux-designer)` (visual direction), `geo-content` rule (enforces GEO/AEO structure for public-facing content), `humanize-content` rule (enforces AI pattern removal)
 - **Used by workflows**: `/blog-post` (blog authoring), `/ui-ux-design` (content phase), `/docs` (public-facing content)
-- **Skills**: `@humanizer` (Gate 7 — AI writing pattern removal)
+- **Skills**: `@geo-writer` (Gate 7 — GEO/AEO structure pass), `@humanizer` (Gate 8 — AI writing pattern removal)
 - **Companion resources**: `content-tools-guide.md`, `page-content-patterns.md`, `seo-content-sync-checklist.md`

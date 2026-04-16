@@ -63,7 +63,7 @@ Follow `content-writer` role standards:
 
 ### For Blog / Public Content
 
-Additionally apply `humanizer` skill — scan for and remove AI writing patterns. Then follow `seo-engineer` role standards:
+Apply `geo-writer` skill first — macro/meso/micro structure, answer-first sections, entity clarity, schema requirements. Then apply `humanizer` skill — scan for and remove AI writing patterns. Then follow `seo-engineer` role standards:
 
 - **Title tag**: Descriptive, matches search intent
 - **Meta description**: Compelling summary
@@ -81,6 +81,12 @@ Additionally apply `humanizer` skill — scan for and remove AI writing patterns
 - [ ] Formatting follows existing documentation patterns
 - [ ] No secrets, PII, or internal-only information in public content
 - [ ] No source code, config, or infrastructure files were modified
+
+### For Public Content — GEO/AEO Checklist
+
+- [ ] Text passed through `geo-writer` skill — structure, answer-first sentences, entity clarity
+- [ ] Schema requirements identified and JSON-LD prepared (`Article`, `Person`, `Organization`, `FAQPage`, `HowTo`)
+- [ ] `geo-content` rule satisfied
 
 ### For Public Content — Humanization Checklist
 
@@ -116,7 +122,7 @@ Additionally apply `humanizer` skill — scan for and remove AI writing patterns
 ## Integration
 
 - **Roles**: `content-writer` role (primary), `seo-engineer` role (public-facing content), `product-manager` role (PRDs)
-- **Skills**: `humanizer` skill (AI writing pattern removal for public-facing content)
-- **Rules**: `humanize-content` (auto-enforces humanizer pass)
+- **Skills**: `geo-writer` skill (GEO/AEO structure pass for public-facing content), `humanizer` skill (AI writing pattern removal for public-facing content)
+- **Rules**: `geo-content` (auto-enforces GEO structure and schema on public-facing text), `humanize-content` (auto-enforces humanizer pass)
 - **Follow-up**: `seo-review` skill (for public content), `pre-commit` skill, `create-pr` skill
 - **Related**: `feature-dev` skill (inline docs during development), `release` skill (release notes)
