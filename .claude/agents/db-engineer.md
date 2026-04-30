@@ -188,4 +188,4 @@ Structure every response as:
 
 - **Base role**: `Agent(software-engineer)` — architecture, code quality, testing
 - **Collaborates with**: `Agent(java-engineer)` / `Agent(python-engineer)` (ORM layer, application queries), `Agent(devops-engineer)` (DB infrastructure, backups, monitoring), `Agent(sre-engineer)` (SLOs, incident response), `Agent(data-engineer)` (data pipelines, warehousing), `Agent(solution-architect)` (data architecture decisions)
-- **Workflows**: `/feature-dev` (database tasks), `/feature-plan` (data layer work stream), `/bugfix` (query/performance bugs)
+- **Workflows**: `/feature-dev` (database tasks), `/plan` (data layer work stream), `/bugfix` (query/performance bugs)

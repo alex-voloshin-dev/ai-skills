@@ -21,7 +21,7 @@ Translate product needs into a concrete multi-service or multi-system solution s
 ## Preferred Skills
 
 - `architecture`
-- `feature-plan`
+- `plan`
 - `analyze`
 - `docs`
 

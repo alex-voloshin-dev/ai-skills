@@ -59,6 +59,29 @@ These skills rely on Claude Code's native multi-agent spawning capability, which
 
 ## Change Log
 
+### 2026-04-19: product-mgmt → product, feature-plan → plan, multi-reviewer loops
+
+Renamed planning skills and added mandatory multi-reviewer feedback loops:
+
+- `product-mgmt` → `product` (all three packages and Windsurf workflow). Added Step 8 "Multi-Reviewer Feedback Loop" with `product-manager`, `marketing-strategist`, `content-writer`, `seo-engineer` as reviewers. Existing steps 8–9 renumbered to 9–10.
+- `feature-plan` → `plan` (all three packages and Windsurf workflow). Added Step 7 "Multi-Reviewer Feedback Loop" with `product-manager`, `solution-architect`, `system-architect` as reviewers. Existing steps 7–8 renumbered to 8–9.
+
+Loop semantics: reviewers produce findings reports (Critical/Major/Minor + verdict), deliverable author applies all actionable findings, cycle re-runs until every reviewer returns `approved`. Max 5 cycles, user arbitration on divergence. Claude uses parallel `Agent` subagent spawning; Codex/Windsurf apply roles sequentially per-reviewer pass.
+
+Updated all inbound cross-references (`/product-mgmt` → `/product`, `/feature-plan` → `/plan`, and skill-style references in `.agents/`, `.codex/`, `.windsurf/`) across agents, roles, skills, workflows, and `.claude/settings.json` permissions.
+
+| Asset | Claude | Codex | Windsurf |
+|---|---|---|---|
+| Skill directory (was product-mgmt) | `.claude/skills/product/` | `.agents/skills/product/` | `.windsurf/skills/product/` |
+| Skill directory (was feature-plan) | `.claude/skills/plan/` | `.agents/skills/plan/` | `.windsurf/skills/plan/` |
+| Workflow (was product-mgmt) | N/A (skill is user-invocable) | N/A | `.windsurf/workflows/planning/product.md` |
+| Workflow (was feature-plan) | N/A (skill is user-invocable) | N/A | `.windsurf/workflows/planning/plan.md` |
+| Multi-reviewer step | Step 8 (product), Step 7 (plan) — `Agent` subagent spawn | Step 8 / Step 7 — sequential role application | Step 8 / Step 7 — sequential role application |
+| Cross-reference updates | agents (5), skills (architecture, context-engineering, feature-dev, infra-change, ml-pipeline, project-init, team-dev) | roles (5), skills mirror | rules/roles (5), skills + workflows mirror |
+| `.claude/settings.json` | permissions entry renamed product-mgmt → product, plan permission added | — | — |
+
+Canonical names: `product` (was `product-mgmt`), `plan` (was `feature-plan`).
+
 ### 2026-04-15: geo-writer skill + geo-content guardrail
 
 Added `geo-writer` skill and `geo-content` guardrail across all three packages. Optimizes public-facing text for Generative Engine Optimization (GEO) and Answer Engine Optimization (AEO) so content is cited by AI engines (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews).

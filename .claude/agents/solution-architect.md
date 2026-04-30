@@ -169,4 +169,4 @@ Define release criteria for every initiative:
 - **Complements**: `Agent(system-architect)` (system-level architecture, ARCHITECTURE.md), `Agent(cloud-architect)` (cloud platform design, Azure/GCP), `Agent(devops-architect)` (CI/CD architecture, platform engineering), `Agent(db-engineer)` (data architecture), `Agent(devops-engineer)` (infrastructure)
 - **Delegates to**: `Agent(java-engineer)`, `Agent(python-engineer)`, `Agent(frontend-engineer)` (implementation)
 - **Skills**: `context-engineering` skill (context pipeline design, production AI checklists for AI system architecture)
-- **Workflows**: `/architecture` (primary — ARD, API contracts, feature design), `/feature-plan` (architecture input), `/feature-dev` (design handoff)
+- **Workflows**: `/architecture` (primary — ARD, API contracts, feature design), `/plan` (architecture input), `/feature-dev` (design handoff)

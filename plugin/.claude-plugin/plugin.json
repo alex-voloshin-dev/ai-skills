@@ -1,0 +1,122 @@
+{
+  "name": "ai-assets",
+  "version": "0.1.0",
+  "description": "Reusable team-of-agents plugin for the full SDLC — feature design, development, bugfix, environment analysis — with built-in RALF iteration loop, layered memory, and systematic eval. Project-agnostic: operations live in plugin, project context lives in target repo (CLAUDE.md / AGENTS.md).",
+  "author": {
+    "name": "Alex Voloshin",
+    "email": "avav25@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/alex-voloshin/ai-assets",
+  "repository": "https://github.com/alex-voloshin/ai-assets",
+  "keywords": [
+    "sdlc",
+    "agent-team",
+    "feature-design",
+    "ralf",
+    "eval",
+    "memory",
+    "subagents",
+    "code-review",
+    "bugfix",
+    "security-audit",
+    "refactor",
+    "migration",
+    "spike",
+    "docs",
+    "context-engineering",
+    "guardrails",
+    "hooks",
+    "skills",
+    "prd",
+    "architecture",
+    "qa",
+    "devops",
+    "sre",
+    "frontend",
+    "backend",
+    "ml",
+    "marketing",
+    "seo",
+    "geo",
+    "ai-search",
+    "humanizer",
+    "team-of-agents",
+    "orchestration"
+  ],
+  "dependencies": [],
+  "userConfig": {
+    "session_token_soft_cap": {
+      "type": "number",
+      "title": "Session token soft warn",
+      "description": "Cumulative session token count at which the plugin warns the user.",
+      "default": 1000000
+    },
+    "session_token_hard_cap": {
+      "type": "number",
+      "title": "Session token hard pause",
+      "description": "Cumulative session token count at which the plugin pauses and asks for confirmation.",
+      "default": 1500000
+    },
+    "ralph_default_max_iter": {
+      "type": "number",
+      "title": "RALF default max iterations (per workflow)",
+      "description": "Default --max-iterations cap for /ralph (per D12).",
+      "default": 10
+    },
+    "ralph_default_token_budget": {
+      "type": "number",
+      "title": "RALF default token budget (per workflow)",
+      "description": "Default --token-budget cap for /ralph (per D12).",
+      "default": 200000
+    },
+    "ralph_default_time_cap_minutes": {
+      "type": "number",
+      "title": "RALF default wall-time cap, minutes (per workflow)",
+      "description": "Default --time-cap for /ralph (per D12).",
+      "default": 120
+    },
+    "ralph_session_max_iter": {
+      "type": "number",
+      "title": "RALF session-aggregate max iterations",
+      "description": "Total RALF iterations across ALL workflows in one session (Round 6 HIGH-3). Prevents runaway when chaining /feature-design then /develop in one session.",
+      "default": 20
+    },
+    "ralph_session_token_budget": {
+      "type": "number",
+      "title": "RALF session-aggregate token budget",
+      "description": "Total RALF token spend across all workflows in one session (Round 6 HIGH-3).",
+      "default": 400000
+    },
+    "ralph_session_time_cap_minutes": {
+      "type": "number",
+      "title": "RALF session-aggregate wall-time cap, minutes",
+      "description": "Total RALF wall-time across all workflows in one session (Round 6 HIGH-3).",
+      "default": 180
+    },
+    "subagent_learnings_enabled": {
+      "type": "boolean",
+      "title": "Capture subagent outputs as learnings",
+      "description": "Opt-in: enables subagent-stop-learnings hook to capture non-trivial outputs for memory-curator review.",
+      "default": false
+    },
+    "user_global_memory_enabled": {
+      "type": "boolean",
+      "title": "Allow writes to user-global memory (L5)",
+      "description": "Opt-in: allows /learnings-write to persist patterns to ~/.claude/ai-assets/learnings.md across all projects.",
+      "default": false
+    },
+    "env_watch_enabled": {
+      "type": "boolean",
+      "title": "Enable Docker compose health monitor",
+      "description": "Opt-in: starts a background monitor watching docker-compose services if a compose file is detected at session start. Emits one JSON line per service-state change to stdout. Honors SIGTERM cleanly. Exits silently when no compose file or docker CLI is present.",
+      "default": false
+    },
+    "env_watch_interval": {
+      "type": "number",
+      "title": "Docker compose health monitor poll interval (seconds)",
+      "description": "How often the env-watch monitor polls `docker compose ps` for state changes. Minimum 5s. Only used when env_watch_enabled is true.",
+      "default": 15
+    }
+  }
+}

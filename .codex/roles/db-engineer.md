@@ -182,4 +182,4 @@ Structure every response as:
 
 - **Base role**: `software-engineer` role — architecture, code quality, testing
 - **Collaborates with**: `java-engineer` role / `python-engineer` role (ORM layer, application queries), `devops-engineer` role (DB infrastructure, backups, monitoring), `sre-engineer` role (SLOs, incident response), `data-engineer` role (data pipelines, warehousing), `solution-architect` role (data architecture decisions)
-- **Workflows**: `feature-dev` skill (database tasks), `feature-plan` skill (data layer work stream), `bugfix` skill (query/performance bugs)
+- **Workflows**: `feature-dev` skill (database tasks), `plan` skill (data layer work stream), `bugfix` skill (query/performance bugs)

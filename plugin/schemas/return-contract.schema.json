@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alex-voloshin/ai-assets/plugin/schemas/return-contract.schema.json",
+  "title": "Subagent Return Contract",
+  "description": "G7 typed return value from subagent → orchestrator. Embedded in subagent's final message. Validated by subagent-stop-learnings.py hook (B8). Replaces free-form HANDOFF text from team-protocols. On validation failure: log to errors.log, fail-open, surface diagnostic to orchestrator (per Round 6 HIGH-4).",
+  "type": "object",
+  "required": ["trace_id", "status", "tokens_used", "result"],
+  "additionalProperties": false,
+  "properties": {
+    "trace_id": {
+      "type": "string",
+      "description": "MUST match the trace_id from the spawn payload that triggered this subagent. Enables span tracing."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "needs_clarification", "failed", "partial"],
+      "description": "Terminal state. ok = goal achieved, work complete. needs_clarification = subagent halted awaiting user input. failed = work could not be completed. partial = some deliverables done, others blocked."
+    },
+    "tokens_used": {
+      "type": "object",
+      "required": ["input", "output"],
+      "additionalProperties": false,
+      "properties": {
+        "input": { "type": "integer", "minimum": 0 },
+        "output": { "type": "integer", "minimum": 0 }
+      },
+      "description": "Actual token spend. Reported back to session token meter for aggregate tracking."
+    },
+    "tool_calls": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Count of tool invocations. Compared against budget.max_tool_calls."
+    },
+    "result": {
+      "type": "object",
+      "required": ["summary"],
+      "additionalProperties": true,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 2000,
+          "description": "One paragraph summary of what was done."
+        },
+        "files_changed": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Repo-relative paths of created/modified files."
+        },
+        "diff_size_lines": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total lines added + removed across all files_changed."
+        }
+      },
+      "description": "Structured deliverable description. Schema is open: workflow-specific fields allowed under additionalProperties."
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["artefact_id"],
+        "properties": {
+          "artefact_id": { "type": "string", "description": "Path or ID of the artefact" },
+          "quote": { "type": "string", "description": "Direct quote from the artefact supporting the claim" },
+          "span": { "type": "string", "description": "Line range or span identifier within the artefact" }
+        }
+      },
+      "description": "Citations supporting result.summary claims. Required for faithfulness rubric (G5) — every non-trivial claim should trace back to a specific artefact."
+    },
+    "risks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Self-identified risks the orchestrator should flag to user. Examples: low_test_coverage, external_dependency_unverified, possible_prompt_injection_detected."
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Suggestions for the next subagent in the pipeline. Example: 'reviewer: focus on error path coverage'."
+    },
+    "needs_clarification": {
+      "type": ["string", "null"],
+      "description": "If status=needs_clarification, the question to ask the user. Otherwise null."
+    }
+  },
+  "if": {
+    "properties": { "status": { "const": "needs_clarification" } }
+  },
+  "then": {
+    "required": ["needs_clarification"],
+    "properties": {
+      "needs_clarification": { "type": "string", "minLength": 10 }
+    }
+  }
+}

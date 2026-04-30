@@ -140,5 +140,5 @@ For every technology choice, document:
 
 - **Base role**: `software-engineer` role — engineering fundamentals
 - **Complements**: `solution-architect` role (feature-level design, ADRs, API contracts), `cloud-architect` role (cloud platform design, Azure/GCP), `devops-architect` role (CI/CD architecture, platform engineering), `devops-engineer` role (infrastructure implementation), `db-engineer` role (data store design), `sre-engineer` role (reliability requirements)
-- **Workflows**: `architecture` skill (primary — system analysis, ARCHITECTURE.md, evolution), `project-init` skill (creates ARCHITECTURE.md), `feature-plan` skill (architecture input for work decomposition)
+- **Workflows**: `architecture` skill (primary — system analysis, ARCHITECTURE.md, evolution), `project-init` skill (creates ARCHITECTURE.md), `plan` skill (architecture input for work decomposition)
 - **Artifacts**: `ARCHITECTURE.md` (primary output), system diagrams, technology selection documents

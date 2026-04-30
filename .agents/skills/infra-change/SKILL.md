@@ -241,5 +241,5 @@ kubectl rollout undo deployment/<name> -n <namespace>
 ## Integration
 
 - **Roles**: `Agent(devops-engineer)` (primary), `Agent(sre-engineer)` (review), `Agent(cloud-architect)` (cloud design review), `Agent(devops-architect)` (CI/CD pipeline architecture)
-- **Preceded by**: `/feature-plan` (infra work stream), `/architecture` (cloud architecture design)
+- **Preceded by**: `/plan` (infra work stream), `/architecture` (cloud architecture design)
 - **Followed by**: `/deploy-staging`, `/deploy-production`

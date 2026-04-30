@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alex-voloshin/ai-assets/plugin/schemas/spawn-payload.schema.json",
+  "title": "Subagent Spawn Payload",
+  "description": "G7 typed payload for orchestrator → subagent delegation. Embedded in the Agent tool prompt. Validated by subagent-start-budget.py hook (B8). Replaces free-form HANDOFF text from team-protocols. See 01-WORKFLOW-SPECS.md Common Patterns + Round 6 HIGH-2 (memory-curator operational contract example).",
+  "type": "object",
+  "required": [
+    "trace_id",
+    "subagent_role",
+    "goal",
+    "constraints",
+    "allowed_tools",
+    "budget"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "trace_id": {
+      "type": "string",
+      "pattern": "^(wf|hook|eval|ralf)-[0-9a-zA-Z-]+-(spawn|step)-[0-9]+$",
+      "description": "Globally unique spawn ID. Format: <origin>-<run-id>-<kind>-<seq>. Used for span tracing across spawn chains.",
+      "examples": ["wf-20260426-abc123-spawn-001", "hook-precompact-xyz-step-42"]
+    },
+    "subagent_role": {
+      "type": "string",
+      "description": "Role name from role-selection-table.md. MUST match a plugin-shipped agent name in plugin/agents/ OR a built-in Claude Code agent (Explore, Plan, general-purpose).",
+      "examples": ["python-engineer", "security-engineer", "feature-design-lead", "memory-curator", "eval-judge", "qa-engineer", "frontend-engineer", "solution-architect"]
+    },
+    "required": {
+      "type": "boolean",
+      "description": "If true and the spawned agent fails, the entire workflow fails. If false, orchestrator continues without this subagent's output.",
+      "default": true
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 1000,
+      "description": "One-sentence objective for the subagent. Imperative voice. Concrete deliverable."
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 5 },
+      "minItems": 0,
+      "maxItems": 20,
+      "description": "Hard rules the subagent must follow. Inherited from project (CLAUDE.md), parent skill, and orchestrator decisions."
+    },
+    "state_slice": {
+      "type": "object",
+      "description": "Per-role context slice from /context-load --for <role>. Reduces per-agent setup tokens vs full project dump.",
+      "additionalProperties": true,
+      "properties": {
+        "active_files": { "type": "array", "items": { "type": "string" } },
+        "current_branch": { "type": "string" },
+        "related_artefacts": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "allowed_tools": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Tool names the subagent may use. Subset of agent's frontmatter `tools` (intersection — orchestrator may further narrow). Matches Claude Code tool names: Read, Grep, Glob, Bash, Write, Edit, Task, etc."
+    },
+    "budget": {
+      "type": "object",
+      "required": [
+        "max_input_tokens",
+        "max_output_tokens",
+        "max_tool_calls",
+        "max_turns",
+        "timeout_ms"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "max_input_tokens": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 200000,
+          "description": "Per-spawn input token cap. Enforced by subagent-start-budget.py hook against session token meter."
+        },
+        "max_output_tokens": {
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 8192,
+          "description": "Per-spawn output token cap. Per-role recommended values in plan §2.2 (300-2500 depending on role type)."
+        },
+        "max_tool_calls": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Hard cap on tool invocations within this subagent run."
+        },
+        "max_turns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Hard cap on agent turns. Most subagents converge in 1-5; higher caps for /develop, /feature-design lead."
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 30000,
+          "maximum": 3600000,
+          "description": "Wall-clock timeout. 30s minimum, 1 hour maximum."
+        },
+        "retry_budget": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "default": 1,
+          "description": "Number of retries allowed if subagent returns status:failed."
+        }
+      }
+    },
+    "untrusted_inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "wrapped"],
+        "properties": {
+          "source": { "type": "string", "description": "Provenance label: L2:<file>, L4:<path>, tool:<Tool>:<call_id>, subagent:<role>:<spawn_id>" },
+          "wrapped": { "type": "boolean", "description": "Whether content is already wrapped per untrusted-content-wrapping rule (G1). Should always be true unless explicitly trusted." }
+        }
+      },
+      "description": "Manifest of untrusted inputs included in state_slice. Per untrusted-content-wrapping rule, all L0/L2/L4 reads + tool outputs >200 tokens MUST be wrapped before injection."
+    }
+  }
+}

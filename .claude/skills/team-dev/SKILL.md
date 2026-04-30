@@ -40,7 +40,7 @@ Gather all input documentation provided by the user:
 <plan_policy>
 An implementation plan is MANDATORY. Never start the pipeline without an approved plan.
 
-**If a plan already exists** (from documentation, PRD, ARD, or `/feature-plan` output):
+**If a plan already exists** (from documentation, PRD, ARD, or `/plan` output):
 - Use it as-is. Do NOT rewrite, reorder, or simplify it
 - Present the loaded plan to the user for confirmation before proceeding
 
@@ -161,7 +161,7 @@ Present the completed work:
 
 ## Integration
 
-- **Planning**: `/feature-plan` (produces the implementation plan this workflow executes)
+- **Planning**: `/plan` (produces the implementation plan this workflow executes)
 - **Precedes**: `/run-tests`, `/pre-commit`, `/create-pr`
 - **Protocols**: `@team-protocols` (execution model, agent coordination)
 - **Skills**: `test-strategy` skill, `code-review` skill, `context-engineering` skill, `worktree-isolation` skill

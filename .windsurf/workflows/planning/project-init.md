@@ -246,4 +246,4 @@ Verify:
 - **Templates**: `templates/*-agents.template.md`, `templates/architecture.template.md`, `templates/testing.template.md`
 - **Roles**: `system-architect` role (ARCHITECTURE.md creation/review), `qa-engineer` role (TESTING.md creation/review), `cloud-architect` role (cloud infrastructure context), `devops-architect` role (CI/CD architecture context)
 - **Skills**: `test-strategy` skill (test strategy, coverage targets)
-- **Enables**: `feature-plan` skill, `feature-dev` skill, `bugfix` skill, `test-local` skill, `run-tests` skill
+- **Enables**: `plan` skill, `feature-dev` skill, `bugfix` skill, `test-local` skill, `run-tests` skill

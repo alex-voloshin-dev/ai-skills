@@ -71,7 +71,7 @@ Map how the new feature fits into the existing architecture. Identify:
 <plan_policy>
 An implementation plan is MANDATORY. Never start coding without an approved plan.
 
-**If a plan already exists** (from documentation, PRD, ARD, or `/feature-plan` output):
+**If a plan already exists** (from documentation, PRD, ARD, or `/plan` output):
 - Use it as-is. Do NOT rewrite, reorder, or simplify it
 - Follow it STRICTLY — step by step, in the exact order specified
 - Present the loaded plan to the user for confirmation before proceeding
@@ -185,5 +185,5 @@ Present the completed work:
 ## Integration
 
 - **Precedes**: `/run-tests`, `/pre-commit`, `/create-pr`
-- **Planning**: `/feature-plan` (produces the implementation plan this workflow executes)
+- **Planning**: `/plan` (produces the implementation plan this workflow executes)
 - **Skills**: `test-strategy` skill (test strategy), `code-review` skill (review standards), `context-engineering` skill (context pipelines, RAG, agent harness, production checklists — for AI/LLM features), `worktree-isolation` skill (branch isolation via git worktree)

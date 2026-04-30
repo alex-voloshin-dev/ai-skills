@@ -145,4 +145,4 @@ For every marketing task:
 - **Collaborates with**: `product-manager` role (positioning, ICP), `seo-engineer` role (SEO execution), `content-writer` role (blog, email content), `content-designer` role (social posts, conversion copy)
 - **Skills**: `marketing-operations` skill (setup template, channel playbooks, recurring tasks), `content-creation` skill (AI content tools), `geo-writer` skill (GEO/AEO structure pass for blog, email, landing page content), `humanizer` skill (AI writing pattern removal)
 - **Rules**: `geo-content` (enforces GEO structure and schema on public-facing text), `humanize-content` (enforces humanizer pass)
-- **Workflows**: `marketing` skill (primary — strategy init + recurring ops), `blog-post` skill (blog content), `seo-review` skill (SEO audit), `docs` skill (marketing content), `feature-plan` skill (marketing work stream)
+- **Workflows**: `marketing` skill (primary — strategy init + recurring ops), `blog-post` skill (blog content), `seo-review` skill (SEO audit), `docs` skill (marketing content), `plan` skill (marketing work stream)

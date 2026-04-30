@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alex-voloshin/ai-assets/plugin/memory/templates/eval-baseline.schema.json",
+  "title": "Eval Baseline",
+  "description": "Per-skill scorecard captured by /eval --baseline. Stored at plugin/eval/baselines/<skill>/<release-tag>.json (plugin-shipped baselines) AND at .ai-assets-memory/.committed/eval-baselines/<release-tag>.json (project-specific baselines). Used for regression detection per 02-EVAL-FRAMEWORK.md.",
+  "type": "object",
+  "required": ["skill", "release_tag", "captured_at", "tier", "cases", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "skill": {
+      "type": "string",
+      "description": "Skill name being baselined (matches plugin/skills/<name>/ dir)."
+    },
+    "release_tag": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+(-[a-z]+\\.[0-9]+)?$",
+      "description": "Plugin version tag (semver) at which this baseline was captured."
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp."
+    },
+    "tier": {
+      "type": "integer",
+      "enum": [2, 3],
+      "description": "Eval tier producing this baseline. Tier 1 (linters) doesn't produce baselines (binary pass/fail)."
+    },
+    "judge_model": {
+      "type": "string",
+      "enum": ["haiku", "sonnet", "opus"],
+      "description": "Judge model used. Cascades from rubric default; Sonnet override raises per-skill budget per 02-EVAL-FRAMEWORK.md §6."
+    },
+    "judge_calibration_spearman": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1,
+      "description": "Spearman correlation from /plugin-doctor --calibrate-judge against known-good + known-bad samples. Threshold ≥0.7."
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["case_id", "score_overall", "scores_per_dimension", "tokens_used"],
+        "properties": {
+          "case_id": { "type": "string", "description": "Eval case ID matching plugin/eval/cases/<skill>/<id>.json" },
+          "score_overall": { "type": "number", "minimum": 0, "maximum": 5 },
+          "scores_per_dimension": {
+            "type": "object",
+            "additionalProperties": { "type": "number", "minimum": 0, "maximum": 5 },
+            "description": "Map of dimension name (from rubric) to score 0-5."
+          },
+          "tokens_used": {
+            "type": "object",
+            "required": ["executor", "judge"],
+            "properties": {
+              "executor": { "type": "integer", "minimum": 0 },
+              "judge": { "type": "integer", "minimum": 0 },
+              "blind_comparator": { "type": "integer", "minimum": 0, "description": "Optional — present if blind-comparator ran for this case" }
+            }
+          },
+          "blind_comparator_lift": {
+            "type": "number",
+            "description": "Optional — overall_lift = score_with_skill - score_without_skill. Per 02-EVAL-FRAMEWORK.md §7."
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["avg_score", "min_score", "tokens_total", "pass"],
+      "properties": {
+        "avg_score": { "type": "number", "minimum": 0, "maximum": 5 },
+        "min_score": { "type": "number", "minimum": 0, "maximum": 5 },
+        "tokens_total": { "type": "integer", "minimum": 0 },
+        "pass": { "type": "boolean", "description": "True if avg_score ≥4.0 AND no individual case <3.0 AND no faithfulness claim-grounding <3 (per 02-EVAL-FRAMEWORK.md §6 release gate)" },
+        "fail_reason": { "type": ["string", "null"], "description": "If pass=false, brief reason" }
+      }
+    },
+    "regression_vs_prior_baseline": {
+      "type": ["object", "null"],
+      "properties": {
+        "prior_release_tag": { "type": "string" },
+        "score_delta": { "type": "number", "description": "current avg_score - prior avg_score. Negative = regression." },
+        "tokens_delta_pct": { "type": "number", "description": "% change in tokens_total. Positive = more expensive." },
+        "regression_detected": { "type": "boolean", "description": "True if score_delta < -0.5 OR tokens_delta_pct > 20" }
+      }
+    }
+  }
+}

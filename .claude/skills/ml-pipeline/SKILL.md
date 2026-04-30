@@ -253,7 +253,7 @@ Present recommendations to the user. Wait for approval before proceeding.
 
 ## 9. Generate Feature Plan
 
-After user approves the recommendations, invoke `/feature-plan` with the following input:
+After user approves the recommendations, invoke `/plan` with the following input:
 
 **Feature specification** (auto-generated from Step 8):
 - **Goal**: Implement ML-recommended changes to [parameters/prompts/models]
@@ -261,7 +261,7 @@ After user approves the recommendations, invoke `/feature-plan` with the followi
 - **Acceptance criteria**: Metrics improve by the predicted amounts (with tolerance)
 - **Constraints**: Include validation plan (A/B test, monitoring) as non-functional requirements
 
-`/feature-plan` will decompose the work into role-scoped work packages and produce an implementation plan.
+`/plan` will decompose the work into role-scoped work packages and produce an implementation plan.
 
 ## 10. Summary
 
@@ -279,6 +279,6 @@ Present the completed ML pipeline run:
 ## Integration
 
 - **Sub-workflows**: `/analyze-prod` (production data access, Steps 6a–6b)
-- **Followed by**: `/feature-plan` (Step 9), then `/feature-dev` (implementation)
+- **Followed by**: `/plan` (Step 9), then `/feature-dev` (implementation)
 - **Roles**: `Agent(product-manager)` (task formulation), `Agent(ml-engineer)` (analysis, modeling), `Agent(sre-engineer)` (data extraction)
 - **Skills**: `test-strategy` skill (validation plan), `context-engineering` skill (context pipeline design, RAG, memory engineering, agent harness — for LLM/prompt recommendations), `prompt-engineering` skill (technique selection, eval strategy)

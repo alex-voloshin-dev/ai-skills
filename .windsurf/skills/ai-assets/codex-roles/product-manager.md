@@ -20,8 +20,8 @@ Turn business goals into prioritized feature definitions, acceptance criteria, a
 
 ## Preferred Skills
 
-- `product-mgmt`
-- `feature-plan`
+- `product`
+- `plan`
 - `architecture`
 - `docs`
 

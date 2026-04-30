@@ -1,0 +1,25 @@
+# Allowlist for .ai-assets-memory/.committed/ writes
+# Format: one glob pattern per line; lines starting with # are comments
+# Read by pre-tool-use-committed-write.py hook (B8) per Round 8 CRIT-1
+# Project extensions go in .ai-assets-memory/.committed/.allowlist-extensions.txt
+# (which is itself allowlisted — bootstrap problem solved)
+
+# Top-level docs
+README.md
+conventions.md
+pii-patterns.txt
+.allowlist-extensions.txt
+
+# Architecture decisions (ADRs)
+architecture-decisions/*.md
+
+# Eval baselines (per release tag)
+eval-baselines/*.json
+
+# Spike decisions (per Q4 — always-ask before write)
+decisions/*.md
+decisions/**/*.md
+
+# Release notes
+releases/*/changes.md
+releases/**/*.md

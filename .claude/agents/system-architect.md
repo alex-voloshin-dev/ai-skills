@@ -148,5 +148,5 @@ For every technology choice, document:
 
 - **Base role**: `Agent(software-engineer)` — engineering fundamentals
 - **Complements**: `Agent(solution-architect)` (feature-level design, ADRs, API contracts), `Agent(cloud-architect)` (cloud platform design, Azure/GCP), `Agent(devops-architect)` (CI/CD architecture, platform engineering), `Agent(devops-engineer)` (infrastructure implementation), `Agent(db-engineer)` (data store design), `Agent(sre-engineer)` (reliability requirements)
-- **Workflows**: `/architecture` (primary — system analysis, ARCHITECTURE.md, evolution), `/project-init` (creates ARCHITECTURE.md), `/feature-plan` (architecture input for work decomposition)
+- **Workflows**: `/architecture` (primary — system analysis, ARCHITECTURE.md, evolution), `/project-init` (creates ARCHITECTURE.md), `/plan` (architecture input for work decomposition)
 - **Artifacts**: `ARCHITECTURE.md` (primary output), system diagrams, technology selection documents

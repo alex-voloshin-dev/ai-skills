@@ -1,0 +1,25 @@
+# PII pattern definitions for ai-assets plugin
+# Format: NAME | REGEX
+# Read by _lib.py apply_pii_filter() (B8) and session-start-context.py (B8)
+# Project extensions: .ai-assets-memory/.committed/pii-patterns.txt
+# Per 03-MEMORY-ARCHITECTURE.md §7
+
+EMAIL | \b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b
+SSN | \b\d{3}-\d{2}-\d{4}\b
+AWS_ACCESS_KEY | \bAKIA[0-9A-Z]{16}\b
+AWS_SECRET_KEY | (?i)aws_secret_access_key[\s]*[=:][\s]*['"]?[A-Za-z0-9/+=]{40}['"]?
+AZURE_CONN | DefaultEndpointsProtocol=https;AccountName=[A-Za-z0-9]+;AccountKey=[A-Za-z0-9/+=]{88}
+GCP_SERVICE_ACCOUNT | "type":\s*"service_account"
+STRIPE_LIVE_KEY | \bsk_live_[A-Za-z0-9]{20,}\b
+STRIPE_TEST_KEY | \bsk_test_[A-Za-z0-9]{20,}\b
+GITHUB_PAT | \bghp_[A-Za-z0-9]{36,255}\b
+GITHUB_FINE_GRAINED | \bgithub_pat_[A-Za-z0-9_]{82}\b
+GITLAB_PAT | \bglpat-[A-Za-z0-9_-]{20}\b
+SLACK_BOT_TOKEN | \bxoxb-[0-9]+-[0-9]+-[A-Za-z0-9]+\b
+SLACK_USER_TOKEN | \bxoxp-[0-9]+-[0-9]+-[0-9]+-[A-Fa-f0-9]+\b
+JWT_SHAPE | \bey[A-Za-z0-9_-]{10,}\.ey[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b
+PRIVATE_KEY_PEM | -----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----
+SSH_PUBLIC_KEY | \bssh-(rsa|ed25519|dss|ecdsa) [A-Za-z0-9+/=]{60,}
+GENERIC_API_KEY | (?i)(api[_-]?key|apikey|access[_-]?token|auth[_-]?token)[\s]*[=:][\s]*['"]?[\w/+=-]{32,}['"]?
+GENERIC_PASSWORD | (?i)(password|passwd|pwd)[\s]*[=:][\s]*['"]?[^'"\s]{8,}['"]?
+URL_WITH_CREDS | https?://[^:]+:[^@]+@[^\s]+

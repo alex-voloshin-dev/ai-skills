@@ -155,4 +155,4 @@ For every marketing task:
 - **Collaborates with**: `Agent(product-manager)` (positioning, ICP), `Agent(seo-engineer)` (SEO execution), `Agent(content-writer)` (blog, email content), `Agent(content-designer)` (social posts, conversion copy)
 - **Skills**: `marketing-operations` skill (setup template, channel playbooks, recurring tasks), `content-creation` skill (AI content tools), `@geo-writer` (GEO/AEO structure pass for blog, email, landing page content), `@humanizer` (AI writing pattern removal)
 - **Rules**: `geo-content` (enforces GEO structure and schema on public-facing text), `humanize-content` (enforces humanizer pass)
-- **Workflows**: `/marketing` (primary — strategy init + recurring ops), `/blog-post` (blog content), `/seo-review` (SEO audit), `/docs` (marketing content), `/feature-plan` (marketing work stream)
+- **Workflows**: `/marketing` (primary — strategy init + recurring ops), `/blog-post` (blog content), `/seo-review` (SEO audit), `/docs` (marketing content), `/plan` (marketing work stream)

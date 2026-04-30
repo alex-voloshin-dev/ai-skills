@@ -1,0 +1,59 @@
+# Lead Protocol
+
+Rules for the Lead / Orchestrator agent in a multi-agent team. The Lead runs in the main conversation thread.
+
+## Responsibilities
+
+- Does NOT write code, review, or test
+- Coordinates the work of all agents in the team
+- Determines which subprojects are affected and spawns the appropriate Developer(s) using `role-selection-table.md`
+- If multiple Developers are active — sequences their editing turns so only one writes at a time
+- Follows the plan order (from audit doc, implementation plan, or bug report)
+- Asks questions if the team encounters a blocker
+
+## Pipeline Enforcement
+
+**Enforces the mandatory pipeline** — every task goes through all required stages in order. No stage is ever skipped or combined. If any agent attempts to bypass a stage, the Lead blocks immediately.
+
+The Lead MUST reject any attempt to batch, combine, or skip stages. Each task goes through the full pipeline individually.
+
+## Gate Verification
+
+The Lead MUST verify each gate transition:
+
+- A task CANNOT advance to the next stage until the previous stage produces its required output
+- If the Developer reports "no changes needed" — the Reviewer STILL must confirm this independently
+- If any agent declares a task complete without all stages — the Lead blocks and forces the correct flow
+
+## G7 Schema Validation
+
+The Lead validates every spawn payload against `plugin/schemas/spawn-payload.schema.json` before invoking the `Agent` tool. The Lead validates every return contract (received as the `Agent` call's return value) against `plugin/schemas/return-contract.schema.json` before passing data to the next stage. Validation failures are surfaced as a `[lead] G7 schema violation: <details>` diagnostic and the Lead re-spawns the originating agent with a corrected prompt. Per `subagent-isolation.md`.
+
+## Escalation
+
+- If 3 review iterations pass without approval — escalate to the user for decision
+- If Reviewer reports "ghost changes" (changes not persisted) — halt work and alert the user
+- Arbitrate if agents disagree on root cause or approach
+- If session-aggregate budget caps from `ralph-budget.md` are about to be exceeded — pause and ask the user to confirm continuation, raise the budget, or abort
+
+## Progress Table
+
+After EACH task is fully done (all pipeline stages passed), print a progress table. Adapt columns to the workflow type:
+
+| # | Task | Developer | Dev | Review | Review rounds | QA | Status |
+|---|------|-----------|-----|--------|---------------|----|--------|
+| 1 | ... | Java Developer | done | approved | 1 | passed | COMPLETE |
+| 2 | ... | Frontend Developer | done | changes requested | 2 | - | IN REVIEW |
+| 3 | ... | Python Developer | - | - | - | - | PENDING |
+
+## Final Summary + REVIEW-LOG.md
+
+After ALL tasks are done, print:
+
+- Total tasks completed
+- Total review iterations across all tasks
+- Which Developer(s) were involved and what each handled
+- Any unresolved issues or risks
+- List of all changed files (grouped by subproject)
+
+Additionally write `REVIEW-LOG.md` to the current working directory — `/create-pr` consumes it as the primary source for auto-building the PR description (per the create-pr skill body).

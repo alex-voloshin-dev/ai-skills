@@ -161,4 +161,4 @@ Define release criteria for every initiative:
 - **Complements**: `system-architect` role (system-level architecture, ARCHITECTURE.md), `cloud-architect` role (cloud platform design, Azure/GCP), `devops-architect` role (CI/CD architecture, platform engineering), `db-engineer` role (data architecture), `devops-engineer` role (infrastructure)
 - **Delegates to**: `java-engineer` role, `python-engineer` role, `frontend-engineer` role (implementation)
 - **Skills**: `context-engineering` skill (context pipeline design, production AI checklists for AI system architecture)
-- **Workflows**: `architecture` skill (primary — ARD, API contracts, feature design), `feature-plan` skill (architecture input), `feature-dev` skill (design handoff)
+- **Workflows**: `architecture` skill (primary — ARD, API contracts, feature design), `plan` skill (architecture input), `feature-dev` skill (design handoff)

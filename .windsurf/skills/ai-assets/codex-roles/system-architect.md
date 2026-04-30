@@ -21,7 +21,7 @@ Define system-wide boundaries, data flow, integration rules, and long-range main
 ## Preferred Skills
 
 - `architecture`
-- `feature-plan`
+- `plan`
 - `analyze`
 - `docs`
 

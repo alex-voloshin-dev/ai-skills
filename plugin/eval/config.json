@@ -1,0 +1,54 @@
+{
+  "tiers": {
+    "tier_1_linters": {
+      "tokens_soft": 0,
+      "tokens_hard": 0,
+      "rationale": "Pure Python lints, no LLM calls. No budget needed."
+    },
+    "tier_2_smoke": {
+      "tokens_soft": 50000,
+      "tokens_hard": 150000,
+      "scope": "10 sampled skills × 20 prompts each = ~60K tokens with Haiku",
+      "rationale": "Sample-based smoke per critique R1 fix. Full coverage would need 600K+ tokens (impractical for nightly CI)."
+    },
+    "tier_3_per_skill": {
+      "tokens_soft": 30000,
+      "tokens_hard": 100000,
+      "rationale": "Per-skill behavioral eval: executor (Sonnet) + judge (Haiku) + blind-comparator. Sonnet judge override raises ceiling to 60K soft / 150K hard."
+    },
+    "tier_3_full_suite": {
+      "tokens_soft": 500000,
+      "tokens_hard": 1500000,
+      "rationale": "/eval --all release-gate run. Sanity ceiling on Max-subscription rate-limit consumption per single command."
+    }
+  },
+
+  "judge_models": {
+    "default": "haiku",
+    "override_to_sonnet_when": [
+      "rubric calibration Spearman < 0.7",
+      "rubric explicitly marked judge_model: sonnet in case JSON",
+      "subjective rubrics (faithfulness, security-soundness)"
+    ]
+  },
+
+  "ralf_session_aggregate": {
+    "$comment": "Round 6 HIGH-3 fix. Eval framework respects userConfig session-aggregate caps when running RALF inside an eval case.",
+    "respects_user_config": true,
+    "user_config_keys": ["ralph_session_max_iter", "ralph_session_token_budget", "ralph_session_time_cap_minutes"]
+  },
+
+  "blind_comparator": {
+    "$comment": "Round 3 Q3 fix. Mechanism is instruction-based suppression in isolated subagent (NOT skills: [] in frontmatter).",
+    "primary_mechanism": "instruction_based_suppression",
+    "fallback_mechanism": "plugin_disable_in_separate_session",
+    "suppression_compliance_probe": true
+  },
+
+  "calibration": {
+    "$comment": "Round 4 N5 + Round 6 HIGH-1 + Round 14 HIGH-A: alpha.16 ships the full 102-sample target (3 good + 3 bad per rubric × 17 rubrics).",
+    "samples_per_rubric_target": 6,
+    "samples_per_rubric_current": 6,
+    "spearman_threshold": 0.7
+  }
+}

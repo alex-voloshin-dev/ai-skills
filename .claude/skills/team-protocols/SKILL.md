@@ -11,14 +11,38 @@ Base protocols for coordinating a team of named subagents. This skill is not inv
 
 You are the Lead. You run in the main conversation thread and coordinate the team.
 
-**You MUST spawn each agent role as a NAMED subagent using the Agent tool.** Do NOT execute agent work inline in the main thread. Each agent must be a separate, named subagent instance so the user can inspect each agent's context independently.
+**Invariant**: every agent role MUST run as a NAMED subagent with its own isolated context. The Lead (main thread) never executes agent work inline. Isolated contexts let the user inspect each agent independently and enforce the pipeline gates structurally, not only procedurally.
 
-- Spawn agents with explicit `name` parameter: e.g. `name: "developer-java"`, `name: "reviewer"`, `name: "qa"`
-- Use the `subagent_type` parameter matching the skill from the role selection table
-- Use `SendMessage` to communicate between agents — never simulate agent responses in the main thread
-- The main thread (you, the Lead) only orchestrates, tracks progress, and prints status tables
+### Spawn Primitives
 
-**If you skip creating named subagents and instead do the work inline — that is a violation of this protocol.**
+Named subagents are spawned via the `Agent` tool. `Agent` is the required primitive — it creates the isolated named context. `TeamCreate` / `SendMessage` / `TaskOutput` / `TaskStop` / `TeamDelete` are an optional persistence layer around `Agent`; when present, they provide a shared task list and a cheaper multi-turn message channel. When absent, `Agent` alone with `run_in_background: true` still satisfies the named-context invariant.
+
+**Detection logic** — run before spawning anything:
+
+1. If `Agent` is unavailable → HALT. Tell the user the harness is missing the sub-agent primitive and name `/feature-dev` (or `/bugfix`) as the single-agent alternative. Do NOT fall back to inline sequential execution — inline execution breaks the named-context invariant and the gate enforcement this skill relies on, even when stage order is preserved on paper.
+2. If `Agent` is available and `TeamCreate` + `SendMessage` are also available → use the **Persistent Team** path below.
+3. If `Agent` is available but team tools are not → use the **Standalone Agents** path below.
+
+**Persistent Team path** (preferred — cheaper multi-turn iterations, shared task list):
+
+1. Call `TeamCreate({team_name, description})` once. This creates the empty team container; it does NOT accept a members list
+2. For each required role, spawn the member via `Agent({team_name: <team>, name: <role>, subagent_type: <type from role-selection-table.md>, run_in_background: true, prompt: <role brief>})`. Typical roles: `developer-<stack>`, `reviewer`, `qa`
+3. Drive every agent hop via `SendMessage({to: <name>, ...})`. Messages arrive back automatically
+4. Use `TaskOutput` / `TaskStop` to monitor or stop members. Use `TeamDelete` when the workflow ends
+
+**Standalone Agents path** (fallback when team tools missing):
+
+1. For each role, spawn via `Agent({name: <role>, subagent_type: <type>, run_in_background: true, prompt: <role brief>})` — NO `team_name`
+2. Reach each agent via `SendMessage({to: <name>, ...})` (this tool usually still works peer-to-peer)
+3. If `SendMessage` is also unavailable — fall back to re-spawning the role per hop via foreground `Agent` calls, and carry forward the prior context explicitly in the prompt each time
+
+### Communication Rules
+
+- Every agent reply must come from the actual named subagent (via `SendMessage` return or `Agent` tool result). Never simulate an agent's response in the main thread
+- The Lead only orchestrates, tracks progress, prints status tables, and enforces gates
+- If a HANDOFF message is missing fields required by the receiving agent's protocol — reject it and request the correctly formatted HANDOFF before the receiver starts work
+
+**If you skip named subagents and execute the work inline — that is a violation of this protocol.**
 
 ## Agent and File Conflict Prevention
 

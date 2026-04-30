@@ -172,4 +172,4 @@ The `features/` directory contains detailed feature specs (PRDs, briefs, accepta
 ## Integration
 
 - **Collaborates with**: `Agent(solution-architect)` (feasibility, NFRs), `Agent(system-architect)` (system design), `Agent(content-writer)` (docs), `Agent(marketing-strategist)` (GTM), `Agent(qa-engineer)` (test plans)
-- **Workflows**: `/product-mgmt` (primary — PRD authoring), `/architecture` (consulted for feasibility), `/feature-plan` (work decomposition), `/blog-post` (research, brief, quality review), `/docs` (release notes)
+- **Workflows**: `/product` (primary — PRD authoring), `/architecture` (consulted for feasibility), `/plan` (work decomposition), `/blog-post` (research, brief, quality review), `/docs` (release notes)

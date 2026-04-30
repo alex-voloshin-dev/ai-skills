@@ -231,5 +231,5 @@ kubectl rollout undo deployment/<name> -n <namespace>
 ## Integration
 
 - **Roles**: `devops-engineer` role (primary), `sre-engineer` role (review), `cloud-architect` role (cloud design review), `devops-architect` role (CI/CD pipeline architecture)
-- **Preceded by**: `feature-plan` skill (infra work stream), `architecture` skill (cloud architecture design)
+- **Preceded by**: `plan` skill (infra work stream), `architecture` skill (cloud architecture design)
 - **Followed by**: `deploy-staging` skill, `deploy-production` skill

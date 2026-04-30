@@ -5,7 +5,7 @@ description: Architecture workflow — produce architectural documentation (ARD,
 
 # Architecture
 
-Produce architecture deliverables from a feature PRD, module/service analysis request, or architectural initiative. This workflow creates documentation — no code is written here. Output feeds into `feature-plan` skill and `feature-dev` skill for implementation.
+Produce architecture deliverables from a feature PRD, module/service analysis request, or architectural initiative. This workflow creates documentation — no code is written here. Output feeds into `plan` skill and `feature-dev` skill for implementation.
 
 ## 1. Receive Input and Classify Scope
 
@@ -202,7 +202,7 @@ If any check fails — fix the deliverable before presenting.
 
 ## 6. Engineering Estimates
 
-For feature design scope, produce estimates to feed `feature-plan` skill:
+For feature design scope, produce estimates to feed `plan` skill:
 
 | Component | Task | Complexity | Role |
 |---|---|---|---|
@@ -217,7 +217,7 @@ Skip this step for pure analysis scope.
 
 ## 7. Present Deliverables
 
-Compile and present: scope summary, deliverables table (document/type/status), key decisions with rationale, risk table (risk/impact/mitigation), and next steps (stakeholder review → `feature-plan` skill → `feature-dev` skill).
+Compile and present: scope summary, deliverables table (document/type/status), key decisions with rationale, risk table (risk/impact/mitigation), and next steps (stakeholder review → `plan` skill → `feature-dev` skill).
 
 Wait for user review. The user may request changes, additional analysis, or approve.
 
@@ -240,14 +240,14 @@ If the project has no established `docs/` structure — propose one and confirm 
 
 Guide the next steps based on scope:
 
-- **Feature Design** → Run `feature-plan` skill with the produced ARD and design docs as input
-- **Architecture Analysis** → Share findings with stakeholders. If action items identified — create tickets or run `feature-plan` skill for each initiative
-- **Architecture Evolution** → Run `feature-plan` skill for each migration phase
+- **Feature Design** → Run `plan` skill with the produced ARD and design docs as input
+- **Architecture Analysis** → Share findings with stakeholders. If action items identified — create tickets or run `plan` skill for each initiative
+- **Architecture Evolution** → Run `plan` skill for each migration phase
 
 ## Integration
 
-- **Input from**: `product-mgmt` skill (PRD output), `feature-plan` skill (architecture questions during planning), direct analysis requests
-- **Followed by**: `feature-plan` skill (work decomposition), `feature-dev` skill (implementation)
+- **Input from**: `product` skill (PRD output), `plan` skill (architecture questions during planning), direct analysis requests
+- **Followed by**: `plan` skill (work decomposition), `feature-dev` skill (implementation)
 - **Roles**: `solution-architect` role (feature design, ADRs, API contracts), `system-architect` role (system analysis, ARCHITECTURE.md, component boundaries), `cloud-architect` role (cloud platform design, landing zones, networking, cost), `devops-architect` role (CI/CD architecture, deployment strategies, platform engineering)
 - **Templates**: `templates/architecture.template.md` (ARCHITECTURE.md structure)
 - **Skills**: `context-engineering` skill (for AI/agent system architecture)

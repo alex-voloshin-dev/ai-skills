@@ -33,7 +33,8 @@
       "Edit(/.claude/skills/infra-change/**)",
       "Edit(/.claude/skills/create-pr/**)",
       "Edit(/.claude/skills/release/**)",
-      "Edit(/.claude/skills/product-mgmt/**)",
+      "Edit(/.claude/skills/product/**)",
+      "Edit(/.claude/skills/plan/**)",
       "Edit(/.claude/skills/code-review/**)",
       "Edit(/.claude/skills/analyze/**)",
       "Edit(/.claude/skills/analyze-local/**)",
@@ -56,7 +57,12 @@
       "Edit(/.claude/skills/content-creation/**)",
       "Edit(/.claude/skills/docs/**)",
       "Edit(/.claude/skills/seo-review/**)",
-      "Edit(/.claude/skills/marketing-operations/**)"
+      "Edit(/.claude/skills/marketing-operations/**)",
+      "Edit(/.claude/skills/team-protocols/**)",
+      "Edit(/.claude/skills/product/**)",
+      "Edit(/.claude/skills/plan/**)",
+      "Bash(grep -rE '/product\\\\b|/plan\\\\b|\\\\`product\\\\` skill|\\\\`plan\\\\` skill' --include='*.md' .claude .agents .windsurf .codex)",
+      "Bash(python3 -c ' *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\avav2\\dev\\code\\ai-assets\\.claude\\skills"

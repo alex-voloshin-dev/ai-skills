@@ -1,0 +1,7 @@
+[
+  {
+    "name": "env-watch",
+    "command": "python ${CLAUDE_PLUGIN_ROOT}/monitors/env-watch.py",
+    "description": "Cross-platform docker-compose health monitor (Python). Watches service state and surfaces changes as Claude notifications (one JSON line per change to stdout). Opt-in via userConfig.env_watch_enabled (default false); polling interval via userConfig.env_watch_interval (default 15s, min 5s). Exits silently when disabled, when no docker-compose file is in cwd, or when the docker CLI is unavailable. Honors SIGINT (all platforms) and SIGTERM (POSIX). Replaces the legacy bash-only env-watch.sh which is kept as a deprecated shim."
+  }
+]
