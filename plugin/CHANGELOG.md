@@ -28,6 +28,29 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.1.1] — 2026-04-29 — Hotfix: rebut "tmux/iTerm2 not available" Path B fallback rationalisation
+
+User on Windows host invoked `/ai-assets:develop`, model attempted Path B, then said "Path B (Agent Teams) requires tmux/iTerm2 which isn't available on this Windows host — going Path A (sequential subagents)". WRONG.
+
+Per [Anthropic agent-teams docs](https://docs.claude.com/en/docs/claude-code/agent-teams), Agent Teams supports two display modes:
+
+- **`in-process`** — all teammates in one terminal, **Shift+↓** to cycle. **Works in any terminal, NO extra setup, NO tmux, NO iTerm2 required.** Default fallback.
+- **`tmux`** (split panes) — optional enhancement when tmux/iTerm2 available.
+
+The model conflated the two modes and downgraded to Path A based on a non-blocker (display-mode preference). This is a NEW rationalisation not covered by alpha.27 rebuttals.
+
+### Fixed — added explicit tmux rebuttal in 4 skills
+
+`team-protocols/SKILL.md`, `develop/SKILL.md`, `team-bugfix/SKILL.md`, `feature-design/SKILL.md` all now list:
+
+- "tmux/iTerm2 not available" — INVALID, Path B has `in-process` display mode that works on every terminal (including Windows without WSL)
+- "Windows host" / "no Unix tools" — INVALID, Agent Teams is platform-independent in `in-process` mode
+- "split-pane mode unavailable" — INVALID, that's an optional enhancement; in-process always works
+
+And the team-creation prompt template in all 3 orchestration skills now explicitly says: **"Use teammate-mode `in-process` by default. Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux/iTerm2 is available and they prefer it. If unsure: `in-process` is the safe choice."**
+
+The hard rule clarified: **display-mode unavailability is NEVER a valid Path A trigger**. The ONLY valid Path A trigger remains a true team-creation API failure (typically `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var unset).
+
 ## [0.1.0] — 2026-04-29 — First stable release
 
 After 17 alpha iterations and 4 review rounds (Round 13 / 14 / 15 / 16), the plugin is structurally feature-complete and architecturally sound. Round 16 (final pre-release validation) returned PASS with `21/0/0` validator + manual review across all 9 dimensions (per-component, connections, style, semantic content, security, docs ↔ implementation, docs ↔ vendor, best practices, Six Thinking Hats). User confirmed live smoke test of `/develop` orchestrating DEV→REVIEW→QA pipeline with plugin-namespaced subagents.

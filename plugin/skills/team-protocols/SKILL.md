@@ -116,21 +116,35 @@ Whichever path is active, the Lead NEVER does Developer/Reviewer/QA work inline 
 
 **Path B is the preferred path. Falling back to Path A is acceptable ONLY when Path B technically fails (no silent fallback for any other reason).**
 
-Observed alpha.26/27 failure mode: model attempted Path B, then rationalised "the pipeline is sequential anyway, Path A gives cleaner visibility" and silently switched. This is wrong. Path B's value is user-facing UX, not parallelism:
+Observed failure modes (do NOT repeat any of these):
 
-- **Visual team panel** at the bottom of the terminal — user sees all teammates at once
-- **Shift+↓ to switch context** into any teammate's transcript
-- **Direct messaging** — user can intervene with any teammate via Enter
+- **alpha.26/27 — pipeline-shape rationale**: model attempted Path B, then rationalised "the pipeline is sequential anyway, Path A gives cleaner visibility" and silently switched. WRONG.
+- **alpha.30 — tmux rationale**: model on Windows host claimed "Path B requires tmux/iTerm2 which isn't available" and fell back to Path A. WRONG. Per [Anthropic agent-teams docs](https://docs.claude.com/en/docs/claude-code/agent-teams), Agent Teams supports two display modes:
+  - **`in-process`** — all teammates in one terminal, **Shift+↓** to cycle through. **Works in any terminal, NO extra setup, NO tmux, NO iTerm2 required.** This is the default fallback.
+  - **`tmux`** (split panes) — optional enhancement when tmux or iTerm2 is available. Each teammate gets its own pane.
+
+  When tmux/iTerm2 is unavailable (e.g., Windows host without WSL), Path B still works in `in-process` display mode. The Lead MUST pass `teammate-mode in-process` in the team-creation prompt and proceed. Do NOT downgrade to Path A.
+
+Path B's value is user-facing UX, not parallelism:
+
+- **Visual team panel** in the terminal — user sees all teammates at once (works in in-process mode too — the panel is below the prompt input)
+- **Shift+↓ to switch context** into any teammate's transcript (works in in-process mode)
+- **Direct messaging** — user can intervene with any teammate via Enter (works in in-process mode)
 - **Dedicated transcript per role** — reachable from the panel, not just disk
 - **Shared task list** with `dependsOn` graph — pipeline visible as a tracked artifact
 
-These benefits apply EVEN when work is sequential. **Invalid reasons to choose Path A** (do NOT use these as fallback rationale):
+These benefits apply EVEN when work is sequential AND when tmux is unavailable. **Invalid reasons to choose Path A** (do NOT use these as fallback rationale):
 
 - "the pipeline is sequential, Path B's parallelism doesn't help" — INVALID, Path B's value is UX
 - "Path A gives cleaner visibility" — INVALID, Path B's panel gives strictly more
 - "fewer tools to manage" — INVALID
+- "tmux/iTerm2 not available on this host" — INVALID, Path B has `in-process` display mode that works on every terminal including Windows without WSL
+- "split-pane mode unavailable" — INVALID, that's an optional enhancement; in-process mode always works
+- "Windows host" / "no Unix tools" — INVALID, Agent Teams is platform-independent in `in-process` mode
 
-The ONLY valid Path A trigger is a hard technical block detected during Path B Step 1 (team-create returns "Agent Teams not enabled" or equivalent). In that case, fall back silently and continue — do not re-ask the user.
+The ONLY valid Path A trigger is a hard technical block detected during Path B Step 1 (team-create natural language returns "Agent Teams not enabled" / "experimental flag not set" / equivalent — typically because `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var is unset). In that case, fall back silently and continue — do not re-ask the user.
+
+Display-mode unavailability is NEVER a valid Path A trigger. Always default to `teammate-mode in-process` if tmux/iTerm2 is uncertain.
 
 ## Spawn Pattern (concrete, executable)
 

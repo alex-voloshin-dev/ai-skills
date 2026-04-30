@@ -4,9 +4,9 @@ A reusable team-of-agents plugin for the full software development lifecycle. Dr
 
 **Project-agnostic by design.** Operations live in this plugin; project-specific context (brand, conventions, terminology) lives in the target repo's `CLAUDE.md` / `AGENTS.md` / `marketing/MARKETING.md` and is read at runtime.
 
-## Status — v0.1.0 (released 2026-04-29)
+## Status — v0.1.1 (released 2026-04-29)
 
-First stable release after 17 alpha iterations (alpha.13 → alpha.29) and 4 full review rounds (Round 13/14/15/16). All Phase 2 batches per `../plugin-design/04-MIGRATION-CHECKLIST.md` are complete: B1-B13 + Rounds 11/12 cross-phase review passes. Both v0.1.0 release gates closed: local validator passes (21 checks, 0 fail, 0 warn), live smoke test confirmed `/develop` orchestrates DEV→REVIEW→QA pipeline with plugin-namespaced subagents (`ai-assets:java-engineer`, `ai-assets:software-engineer`, `ai-assets:qa-engineer`) in both Path A (Subagents) and Path B (Agent Teams) modes.
+First stable release after 17 alpha iterations (alpha.13 → alpha.29) and 4 full review rounds (Round 13/14/15/16). All Phase 2 batches per `../plugin-design/04-MIGRATION-CHECKLIST.md` are complete: B1-B13 + Rounds 11/12 cross-phase review passes. Both v0.1.1 release gates closed: local validator passes (21 checks, 0 fail, 0 warn), live smoke test confirmed `/develop` orchestrates DEV→REVIEW→QA pipeline with plugin-namespaced subagents (`ai-assets:java-engineer`, `ai-assets:software-engineer`, `ai-assets:qa-engineer`) in both Path A (Subagents) and Path B (Agent Teams) modes.
 
 | Component | Implemented | v0.1 target | Pending |
 |---|---|---|---|
@@ -72,7 +72,7 @@ The repo's `.claude-plugin/marketplace.json` already declares the registry. **Lo
 
 `/ralph` (power-user RALF entry) · `/eval` (skill/agent evaluator) · `/plugin-doctor` (self-diagnostic) · `/memory-init` · `/memory-recall` · `/learnings-write` · `/context-load` · `/subagent-spawn` · `/plugin-skill-create`
 
-## What's inside today (v0.1.0)
+## What's inside today (v0.1.1)
 
 - **52 skills** — 20 KEEP + 13 REFACTOR + 17 NEW + 2 MERGE; covers the full SDLC plus marketing + content
 - **26 specialized agents** — cloud architect, security engineer, all major language engineers, content/marketing roles, 4 orchestrators

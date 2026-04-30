@@ -67,9 +67,9 @@ Per `@team-protocols` "Two Paths" section: this skill supports Path A (Subagents
 
 **Detection is implicit, not explicit.** No Bash env-var check. Go to Path B Step 1 (team creation) directly; if it fails technically ("Agent Teams not enabled" or equivalent), silently fall back to Path A and continue.
 
-**Invalid reasons to downgrade Path B → Path A** (do NOT use these): "design waves are mostly sequential", "Path A is simpler". Path B's value is UX even for sequential work. The ONLY valid Path A trigger is a hard technical block at Path B Step 1.
+**Invalid reasons to downgrade Path B → Path A** (do NOT use these): "design waves are mostly sequential", "Path A is simpler", "tmux/iTerm2 not available", "Windows host". Path B's value is UX even for sequential work — and Agent Teams supports `in-process` display mode that works in any terminal (Windows included) with NO extra setup. tmux is needed ONLY for optional split-pane display. The ONLY valid Path A trigger is a hard technical block at Path B Step 1 (team-creation natural language returns "Agent Teams not enabled" or equivalent — typically `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var unset).
 
-**No silent fallback for non-technical reasons.** Either Path B Step 1 actually fails → silent Path A fallback, OR Path B works → stay on Path B.
+**No silent fallback for non-technical reasons.** Either Path B Step 1 actually fails → silent Path A fallback, OR Path B works → stay on Path B (defaulting to `teammate-mode in-process` if tmux/iTerm2 uncertain).
 
 ## Pipeline (Path A — Subagents, default)
 
@@ -136,7 +136,7 @@ Wave 3 (sequential cross-check):
 - "sysarch-review" (ai-assets:system-architect) — architecture-review.md
 - "judge" (ai-assets:eval-judge) — scores against feature-design.md rubric → REVIEW-LOG.md
 
-Use teammate-mode in-process if no tmux/iTerm2 is available.
+Use **teammate-mode `in-process`** by default (works in any terminal including Windows without WSL — no tmux/iTerm2 required). Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available and they prefer it. If unsure: `in-process` is the safe choice.
 ```
 
 ### Step 2 — populate the shared task list with wave gates

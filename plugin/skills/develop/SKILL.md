@@ -90,10 +90,12 @@ Per `@team-protocols` "Two Paths" section: this skill supports Path A (Subagents
 - "the pipeline is sequential, Path B's parallelism doesn't help" — INVALID, Path B's primary value is user UX, not parallelism
 - "Path A gives cleaner visibility" — INVALID, Path B's panel gives strictly MORE visibility
 - "fewer tools to manage" — INVALID
+- "tmux/iTerm2 not available on this host" — INVALID, Path B has `in-process` display mode that works on every terminal (including Windows without WSL). Per Anthropic agent-teams docs: in-process mode requires no extra setup. tmux is needed ONLY for optional split-pane display.
+- "Windows host" / "no Unix tools" — INVALID, Agent Teams is platform-independent in `in-process` mode
 
-The ONLY valid Path A trigger is a hard technical block detected at Path B Step 1.
+The ONLY valid Path A trigger is a hard technical block detected at Path B Step 1 (team-creation natural language returns "Agent Teams not enabled" or equivalent — typically `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var unset). Display-mode unavailability is NEVER a valid Path A trigger.
 
-**No silent fallback for non-technical reasons.** Either Path B Step 1 actually fails technically → silent Path A fallback, OR Path B works → stay on Path B.
+**No silent fallback for non-technical reasons.** Either Path B Step 1 actually fails technically → silent Path A fallback, OR Path B works → stay on Path B (defaulting to `teammate-mode in-process` if tmux/iTerm2 uncertain).
 
 ## Mandatory Pipeline — DEV → REVIEW → QA (both paths)
 
@@ -160,7 +162,7 @@ Create an agent team named "<feature-slug>-team" with the following teammates, a
 
 Do NOT require plan approval from the developer teammate (the Lead already resolved the plan above — execution starts immediately). Use the shared task list to coordinate work packages — three tasks per WP (DEV, REVIEW, QA) linked via `dependsOn` so REVIEW unblocks when DEV completes and QA unblocks when REVIEW completes with verdict 'approved'.
 
-Use teammate-mode in-process if no tmux/iTerm2 is available, otherwise tmux split-pane.
+Use **teammate-mode `in-process`** by default (works in any terminal including Windows without WSL — no tmux/iTerm2 required). Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available and they prefer it. If unsure: `in-process` is the safe choice.
 ```
 
 ### Step 2 — populate the shared task list
