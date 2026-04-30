@@ -71,47 +71,27 @@ Per `@team-protocols` "Two Paths" section: this skill supports Path A (Subagents
 
 **No silent fallback for non-technical reasons.** Either Path B Step 1 actually fails → silent Path A fallback, OR Path B works → stay on Path B (defaulting to `teammate-mode in-process` if tmux/iTerm2 uncertain).
 
-## Pipeline (Path A — Subagents, default)
+## Step 0 — ATTEMPT Path B FIRST (literal, mandatory)
 
-```
-┌─ Context load: /context-load --for <role> for each Wave-1/2 agent
-│  (shrinks per-agent input vs full project dump)
-│
-├─ WAVE 1 (parallel, independent drafts; 50K tokens each):
-│  ├─ product-manager          → PRD.md
-│  ├─ marketing-strategist     → MARKET-ANALYSIS.md (skip if not public-facing)
-│  └─ system-architect         → ARCHITECTURE.md
-│
-├─ Gate: all wave-1 files exist & parseable (lead checks)
-│
-├─ WAVE 2 (parallel, domain reviews; reads wave-1 outputs):
-│  ├─ ui-ux-designer (reads ARCHITECTURE + PRD)     → UX-FLOW.md + wireframes
-│  ├─ db-engineer (reads ARCHITECTURE + PRD)        → DATA-MODEL.md
-│  ├─ security-engineer (reads all wave-1)          → security section in RISKS.md
-│  └─ qa-engineer (reads PRD + ARCHITECTURE)        → acceptance criteria review
-│
-├─ Gate: all wave-2 files exist & complete (lead checks)
-│
-├─ WAVE 3 (sequential, cross-check + eval):
-│  ├─ product-manager-reviewer (fresh subagent, reads all w1+w2)  → feedback.md
-│  ├─ system-architect (reviewer role, reads all)                 → architecture-review.md
-│  └─ eval-judge (scores against feature-design.md rubric)        → REVIEW-LOG.md
-│
-├─ Gate: rubric score ≥ 4.0 AND all dimensions ≥ 3 → proceed; else → RALF
-│
-├─ RALF (if rubric not met):
-│  │  Oracle: judge:feature-design.md (min_score 4.0)
-│  │  Kill-on: regex:RUBRIC_FAILED_3X (three consecutive failures, same issue)
-│  │  Caps: 5 iter / 250K tokens / 60 min (overridable in userConfig)
-│  │  On failure: re-prompt Wave 2 agents with reviewer feedback
-│  └─ (loop back to WAVE 3)
-│
-└─ Lead writes IMPLEMENTATION-PLAN.md (maps PRD requirements → work packages → engineer roles)
-   Memory write: L4 designs/<feature-id>.md (summary + decisions)
-   Final report: TodoList check + token totals + handoff hint to `/develop`
-```
+Before reading the Path A section below, you MUST attempt Path B Step 1 (jump straight to "Path B — Agent Teams" further down). Do NOT pre-emptively pick Path A based on:
 
-## Pipeline (Path B — Agent Teams, when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
+- absence of CLAUDE.md / git repo
+- single-stack project
+- "small" or "simple" feature
+- Windows host
+- "no tmux available"
+- pipeline being mostly sequential
+- the fact that Path A appears earlier in this document
+
+The ONLY way to land on Path A is: try Path B Step 1's natural-language team-creation, get back a literal "Agent Teams not enabled" / "experimental flag not set" / equivalent technical error, THEN fall back. Announcing "going Path A because empty project / Windows / no git" is a violation of this protocol.
+
+When you announce the chosen path to the user, the FIRST sentence MUST be either:
+- "Attempting Path B (Agent Teams) team-create..." (then either Path B works, or you receive the technical error and fall back)
+- (after fallback) "Agent Teams API returned: <verbatim error>. Falling back to Path A."
+
+Saying "I'll proceed via Path A" without the above sequence is forbidden.
+
+## Pipeline (Path B — Agent Teams, PREFERRED — try this FIRST)
 
 Per `@team-protocols` "Dual-Path Detection → Path B" section. The Lead drives via natural language; each role-teammate is a full Claude Code session.
 
@@ -153,6 +133,46 @@ Wave-2 tasks `dependsOn` all wave-1 tasks. Wave-3 tasks `dependsOn` all wave-2 t
 ### Step 4 — finalize + cleanup
 
 After rubric passes: Lead writes IMPLEMENTATION-PLAN.md in main thread (not a teammate task), records L4 memory write, then asks: "Clean up the team."
+
+## Pipeline (Path A — Subagents fallback, only if Path B Step 1 returned a technical error)
+
+```
+┌─ Context load: /context-load --for <role> for each Wave-1/2 agent
+│  (shrinks per-agent input vs full project dump)
+│
+├─ WAVE 1 (parallel, independent drafts; 50K tokens each):
+│  ├─ product-manager          → PRD.md
+│  ├─ marketing-strategist     → MARKET-ANALYSIS.md (skip if not public-facing)
+│  └─ system-architect         → ARCHITECTURE.md
+│
+├─ Gate: all wave-1 files exist & parseable (lead checks)
+│
+├─ WAVE 2 (parallel, domain reviews; reads wave-1 outputs):
+│  ├─ ui-ux-designer (reads ARCHITECTURE + PRD)     → UX-FLOW.md + wireframes
+│  ├─ db-engineer (reads ARCHITECTURE + PRD)        → DATA-MODEL.md
+│  ├─ security-engineer (reads all wave-1)          → security section in RISKS.md
+│  └─ qa-engineer (reads PRD + ARCHITECTURE)        → acceptance criteria review
+│
+├─ Gate: all wave-2 files exist & complete (lead checks)
+│
+├─ WAVE 3 (sequential, cross-check + eval):
+│  ├─ product-manager-reviewer (fresh subagent, reads all w1+w2)  → feedback.md
+│  ├─ system-architect (reviewer role, reads all)                 → architecture-review.md
+│  └─ eval-judge (scores against feature-design.md rubric)        → REVIEW-LOG.md
+│
+├─ Gate: rubric score ≥ 4.0 AND all dimensions ≥ 3 → proceed; else → RALF
+│
+├─ RALF (if rubric not met):
+│  │  Oracle: judge:feature-design.md (min_score 4.0)
+│  │  Kill-on: regex:RUBRIC_FAILED_3X (three consecutive failures, same issue)
+│  │  Caps: 5 iter / 250K tokens / 60 min (overridable in userConfig)
+│  │  On failure: re-prompt Wave 2 agents with reviewer feedback
+│  └─ (loop back to WAVE 3)
+│
+└─ Lead writes IMPLEMENTATION-PLAN.md (maps PRD requirements → work packages → engineer roles)
+   Memory write: L4 designs/<feature-id>.md (summary + decisions)
+   Final report: TodoList check + token totals + handoff hint to `/develop`
+```
 
 ## G7 spawn payloads
 

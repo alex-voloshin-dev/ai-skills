@@ -28,6 +28,57 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.1.2] — 2026-04-30 — Structural: Path B reordered before Path A + Step 0 mandatory attempt
+
+Two new dogfood sessions (Python/FastAPI + Next.js on Windows host with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` set + flag visible to claude process) BOTH spawned correct `ai-assets:*` subagents but went **Path A** without ever attempting Path B. Session log analysis:
+
+```
+Python session L28: "Empty project — no CLAUDE.md or ARCHITECTURE.md.
+                    I'll build the plan from scratch and proceed via
+                    Path A (Agent subagents)."
+Nextjs session L42: "Plan resolved. Presenting and proceeding immediately"
+                    [then Path A directly]
+```
+
+Neither session even MENTIONED Path B detection. The model defaulted to Path A based on textual order in the skill body — Path A appeared first, so Path A was chosen. The "Path B preferred" prose at line 85 was overridden by the Path A header at line 104 which literally said `## Path A — Subagents (default, sequential)`.
+
+### Root cause
+
+Two structural problems in alpha.29:
+
+1. **Header contradicted prose**: Path A header said "(default, sequential)" while prose 20 lines earlier said "Path B is the default preference". Headers > prose for model attention.
+2. **Textual order signaled priority**: Path A appeared at line 104, Path B at line 150. The model reads top-down and picks the first option presented.
+
+### Fixed — added Step 0 + reordered sections in 3 orchestration skills
+
+`develop/SKILL.md`, `team-bugfix/SKILL.md`, `feature-design/SKILL.md` all now have:
+
+**New "## Step 0 — ATTEMPT Path B FIRST (literal, mandatory)" section** before any path content. Lists invalid skip-Path-B reasons (empty project / single-stack / Windows / no tmux / sequential pipeline / textual order) and mandates the announcement-first-sentence pattern: either "Attempting Path B (Agent Teams) team-create..." or (after technical failure) "Agent Teams API returned: <error>. Falling back to Path A."
+
+**Path B section now appears BEFORE Path A** in the document. Renamed:
+- `## Path A — Subagents (default, sequential)` → `## Path A — Subagents fallback (only if Path B Step 1 returned a technical error)`
+- `## Path B — Agent Teams (when CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1)` → `## Path B — Agent Teams (PREFERRED — try this FIRST)`
+
+The Path A header now actively SIGNALS its fallback status, removing the contradiction with the prose preference.
+
+### Behavioral expectation post-fix
+
+In a fresh Claude Code session on Windows with flag set:
+
+```
+Attempting Path B (Agent Teams) team-create...
+[team panel appears with Shift+↓ navigation, in-process display mode]
+```
+
+OR (if flag actually unset):
+
+```
+Agent Teams API returned: <verbatim error>. Falling back to Path A.
+[then proceeds with Agent({...}) sequential calls as before]
+```
+
+Saying "I'll proceed via Path A because <empty project / single-stack / no tmux>" is now an explicit protocol violation called out by name in the skill body.
+
 ## [0.1.1] — 2026-04-29 — Hotfix: rebut "tmux/iTerm2 not available" Path B fallback rationalisation
 
 User on Windows host invoked `/ai-assets:develop`, model attempted Path B, then said "Path B (Agent Teams) requires tmux/iTerm2 which isn't available on this Windows host — going Path A (sequential subagents)". WRONG.

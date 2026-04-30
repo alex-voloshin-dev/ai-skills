@@ -82,7 +82,69 @@ Every spawn MUST include the structured G7 spawn payload per `plugin/schemas/spa
 
 The Lead validates incoming HANDOFF messages against return-contract schema before passing to next stage. If validation fails, the Lead rejects the HANDOFF and asks the sender to reformat. Per `subagent-isolation.md` rule.
 
-## Path A — Subagents (default, sequential) — per-task spawn loop
+## Step 0 — ATTEMPT Path B FIRST (literal, mandatory)
+
+Before reading the Path A section below, you MUST attempt Path B Step 1 (jump straight to "Path B — Agent Teams" further down). Do NOT pre-emptively pick Path A based on:
+
+- absence of CLAUDE.md / git repo
+- single-stack project
+- "small" or "simple" feature
+- Windows host
+- "no tmux available"
+- pipeline being mostly sequential
+- the fact that Path A appears earlier in this document
+
+The ONLY way to land on Path A is: try Path B Step 1's natural-language team-creation, get back a literal "Agent Teams not enabled" / "experimental flag not set" / equivalent technical error, THEN fall back. Announcing "going Path A because empty project / Windows / no git" is a violation of this protocol.
+
+When you announce the chosen path to the user, the FIRST sentence MUST be either:
+- "Attempting Path B (Agent Teams) team-create..." (then either Path B works, or you receive the technical error and fall back)
+- (after fallback) "Agent Teams API returned: <verbatim error>. Falling back to Path A."
+
+Saying "I'll proceed via Path A" without the above sequence is forbidden.
+
+## Path B — Agent Teams (PREFERRED — try this FIRST)
+
+Per `@team-protocols` "Dual-Path Detection → Path B" section. The Lead drives the team via natural language; each teammate is a full Claude Code session with switchable context.
+
+### Step 1 — create the team
+
+```text
+Create an agent team named "<audit-slug>-bugfix-team" with the following teammates, all using subagent definitions from the ai-assets plugin:
+
+- "developer" (ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>) — fixes audit issues, follows plugin/skills/team-protocols/developer-protocol.md, gets isolation: worktree
+- "reviewer" (ai-assets:software-engineer) — independent code review, read-only (disallow Write/Edit), follows reviewer-protocol.md
+- "qa" (ai-assets:qa-engineer) — higher-level tests + SRE smoke, follows the QA section of the develop skill
+
+Require plan approval for the developer teammate before any code changes. Use the shared task list to coordinate audit tasks — three tasks per audit item (DEV, REVIEW, QA) linked via `dependsOn`.
+
+Use **teammate-mode `in-process`** by default (works in any terminal including Windows without WSL — no tmux/iTerm2 required). Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available and they prefer it. If unsure: `in-process` is the safe choice.
+```
+
+### Step 2 — populate the shared task list
+
+For each audit issue, create three tasks with the dependency graph:
+
+```text
+Task: "<audit-id> DEV — <issue-summary>"  → assigned to developer, depends on prior issue's QA (if sequential audit ordering required) or none (for parallel-safe issues)
+Task: "<audit-id> REVIEW"                 → assigned to reviewer, depends on "<audit-id> DEV"
+Task: "<audit-id> QA"                     → assigned to qa, depends on "<audit-id> REVIEW"
+```
+
+If `/env-analyze` produced findings, add a context-only task at the start (assigned to no one, just visible to the team) carrying the diagnostic summary.
+
+### Step 3 — drive and monitor
+
+- Teammates self-claim next unblocked task. The Lead does NOT manually assign — dependency graph + claiming protocol handles it.
+- User uses **Shift+↓** to cycle, **Enter** to read transcript / send direct message, **Ctrl+T** to view shared task list.
+- On reviewer `changes_requested` → Lead inserts a follow-up DEV task and re-points REVIEW + QA dependencies to it. Loop until reviewer approves.
+- On QA `fail` → same pattern, insert follow-up DEV task.
+- Lead surfaces progress to user after each issue completes the pipeline.
+
+### Step 4 — final cleanup
+
+After all audit tasks complete: run final verification in main thread (build/test), emit summary, then ask: "Clean up the team."
+
+## Path A — Subagents fallback (only if Path B Step 1 returned a technical error) — per-task spawn loop
 
 For each task from the audit plan, the Lead does this exactly:
 
@@ -125,48 +187,6 @@ Agent({
 Loop on `fail` back to Step 1, until `pass`.
 
 The Lead progress table includes: #, Task, Developer subagent_type, Dev, Review, Review rounds, QA, Status. Final summary includes: total tasks, review iterations, subagent_types used, unresolved issues, all changed files grouped by subproject, and the spawn ledger (count of `Agent` invocations per role).
-
-## Path B — Agent Teams (when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
-
-Per `@team-protocols` "Dual-Path Detection → Path B" section. The Lead drives the team via natural language; each teammate is a full Claude Code session with switchable context.
-
-### Step 1 — create the team
-
-```text
-Create an agent team named "<audit-slug>-bugfix-team" with the following teammates, all using subagent definitions from the ai-assets plugin:
-
-- "developer" (ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>) — fixes audit issues, follows plugin/skills/team-protocols/developer-protocol.md, gets isolation: worktree
-- "reviewer" (ai-assets:software-engineer) — independent code review, read-only (disallow Write/Edit), follows reviewer-protocol.md
-- "qa" (ai-assets:qa-engineer) — higher-level tests + SRE smoke, follows the QA section of the develop skill
-
-Require plan approval for the developer teammate before any code changes. Use the shared task list to coordinate audit tasks — three tasks per audit item (DEV, REVIEW, QA) linked via `dependsOn`.
-
-Use **teammate-mode `in-process`** by default (works in any terminal including Windows without WSL — no tmux/iTerm2 required). Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available and they prefer it. If unsure: `in-process` is the safe choice.
-```
-
-### Step 2 — populate the shared task list
-
-For each audit issue, create three tasks with the dependency graph:
-
-```text
-Task: "<audit-id> DEV — <issue-summary>"  → assigned to developer, depends on prior issue's QA (if sequential audit ordering required) or none (for parallel-safe issues)
-Task: "<audit-id> REVIEW"                 → assigned to reviewer, depends on "<audit-id> DEV"
-Task: "<audit-id> QA"                     → assigned to qa, depends on "<audit-id> REVIEW"
-```
-
-If `/env-analyze` produced findings, add a context-only task at the start (assigned to no one, just visible to the team) carrying the diagnostic summary.
-
-### Step 3 — drive and monitor
-
-- Teammates self-claim next unblocked task. The Lead does NOT manually assign — dependency graph + claiming protocol handles it.
-- User uses **Shift+↓** to cycle, **Enter** to read transcript / send direct message, **Ctrl+T** to view shared task list.
-- On reviewer `changes_requested` → Lead inserts a follow-up DEV task and re-points REVIEW + QA dependencies to it. Loop until reviewer approves.
-- On QA `fail` → same pattern, insert follow-up DEV task.
-- Lead surfaces progress to user after each issue completes the pipeline.
-
-### Step 4 — final cleanup
-
-After all audit tasks complete: run final verification in main thread (build/test), emit summary, then ask: "Clean up the team."
 
 ## Integration
 

@@ -101,7 +101,68 @@ The ONLY valid Path A trigger is a hard technical block detected at Path B Step 
 
 Every work package from the approved plan MUST pass through ALL three stages — the gate semantics are the same regardless of execution path. Only the spawn mechanism differs.
 
-## Path A — Subagents (default, sequential)
+## Step 0 — ATTEMPT Path B FIRST (literal, mandatory)
+
+Before reading the Path A section below, you MUST attempt Path B Step 1 (jump straight to "Path B — Agent Teams" further down). Do NOT pre-emptively pick Path A based on:
+
+- absence of CLAUDE.md / git repo
+- single-stack project
+- "small" or "simple" feature
+- Windows host
+- "no tmux available"
+- pipeline being mostly sequential
+- the fact that Path A appears earlier in this document
+
+The ONLY way to land on Path A is: try Path B Step 1's natural-language team-creation, get back a literal "Agent Teams not enabled" / "experimental flag not set" / equivalent technical error, THEN fall back. Announcing "going Path A because empty project / Windows / no git" is a violation of this protocol.
+
+When you announce the chosen path to the user, the FIRST sentence MUST be either:
+- "Attempting Path B (Agent Teams) team-create..." (then either Path B works, or you receive the technical error and fall back)
+- (after fallback) "Agent Teams API returned: <verbatim error>. Falling back to Path A."
+
+Saying "I'll proceed via Path A" without the above sequence is forbidden.
+
+## Path B — Agent Teams (PREFERRED — try this FIRST)
+
+Per `@team-protocols` "Dual-Path Detection → Path B" section. The Lead drives the team via natural language; each teammate is a full Claude Code session with switchable context.
+
+### Step 1 — create the team (literal natural-language prompt to self)
+
+```text
+Create an agent team named "<feature-slug>-team" with the following teammates, all using subagent definitions from the ai-assets plugin so they inherit the right tools and model:
+
+- "developer" (ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>) — implements work packages, follows plugin/skills/team-protocols/developer-protocol.md, gets isolation: worktree
+- "reviewer" (ai-assets:software-engineer) — independent code review, read-only (disallow Write/Edit), follows reviewer-protocol.md
+- "qa" (ai-assets:qa-engineer) — higher-level tests + SRE smoke (health endpoint, error rate, basic SLI sanity), follows the QA section of develop/SKILL.md
+
+Do NOT require plan approval from the developer teammate (the Lead already resolved the plan above — execution starts immediately). Use the shared task list to coordinate work packages — three tasks per WP (DEV, REVIEW, QA) linked via `dependsOn` so REVIEW unblocks when DEV completes and QA unblocks when REVIEW completes with verdict 'approved'.
+
+Use **teammate-mode `in-process`** by default (works in any terminal including Windows without WSL — no tmux/iTerm2 required). Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available and they prefer it. If unsure: `in-process` is the safe choice.
+```
+
+### Step 2 — populate the shared task list
+
+For each WP from the approved plan, create three tasks with the dependency graph:
+
+```text
+Task: "WP-N DEV — <description>"  → assigned to developer teammate, no dependencies (or depends on prior WP's QA)
+Task: "WP-N REVIEW"                → assigned to reviewer teammate, depends on "WP-N DEV"
+Task: "WP-N QA"                    → assigned to qa teammate, depends on "WP-N REVIEW"
+```
+
+### Step 3 — drive and monitor
+
+- Teammates self-claim their next unblocked task. The Lead does NOT manually assign — the dependency graph + claiming protocol handles it.
+- The user uses **Shift+↓** to cycle to any teammate, **Enter** to read their transcript or send a direct message, **Ctrl+T** to view the shared task list.
+- If reviewer's task completes with `verdict: changes_requested` → the Lead inserts a follow-up DEV task ("WP-N DEV r2 — fix issues from review") and re-points the REVIEW + QA dependencies to it. Loop until reviewer approves.
+- If QA's task completes with `qa_verdict: fail` → same pattern, insert follow-up DEV task.
+- The Lead surfaces progress to the user after each WP completes the pipeline (DEV done → REVIEW done with approve → QA done with pass).
+
+### Step 4 — final verification + cleanup
+
+After all WPs complete: the Lead runs the final build/lint/test verification (in main thread, not a teammate task — same as Path A), emits REVIEW-LOG.md, then asks for cleanup: "Clean up the team."
+
+
+## Path A — Subagents fallback (only if Path B Step 1 returned a technical error)
 
 ### Per-WP execution loop (literal — execute these `Agent` calls, do not paraphrase)
 
@@ -147,46 +208,6 @@ Wait for return. If `qa_verdict: fail` — go back to Step 1 with QA's issues at
 
 **Only after all three stages return successfully does the work package count as DONE.** The Lead moves to the next WP.
 
-## Path B — Agent Teams (when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
-
-Per `@team-protocols` "Dual-Path Detection → Path B" section. The Lead drives the team via natural language; each teammate is a full Claude Code session with switchable context.
-
-### Step 1 — create the team (literal natural-language prompt to self)
-
-```text
-Create an agent team named "<feature-slug>-team" with the following teammates, all using subagent definitions from the ai-assets plugin so they inherit the right tools and model:
-
-- "developer" (ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>) — implements work packages, follows plugin/skills/team-protocols/developer-protocol.md, gets isolation: worktree
-- "reviewer" (ai-assets:software-engineer) — independent code review, read-only (disallow Write/Edit), follows reviewer-protocol.md
-- "qa" (ai-assets:qa-engineer) — higher-level tests + SRE smoke (health endpoint, error rate, basic SLI sanity), follows the QA section of develop/SKILL.md
-
-Do NOT require plan approval from the developer teammate (the Lead already resolved the plan above — execution starts immediately). Use the shared task list to coordinate work packages — three tasks per WP (DEV, REVIEW, QA) linked via `dependsOn` so REVIEW unblocks when DEV completes and QA unblocks when REVIEW completes with verdict 'approved'.
-
-Use **teammate-mode `in-process`** by default (works in any terminal including Windows without WSL — no tmux/iTerm2 required). Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available and they prefer it. If unsure: `in-process` is the safe choice.
-```
-
-### Step 2 — populate the shared task list
-
-For each WP from the approved plan, create three tasks with the dependency graph:
-
-```text
-Task: "WP-N DEV — <description>"  → assigned to developer teammate, no dependencies (or depends on prior WP's QA)
-Task: "WP-N REVIEW"                → assigned to reviewer teammate, depends on "WP-N DEV"
-Task: "WP-N QA"                    → assigned to qa teammate, depends on "WP-N REVIEW"
-```
-
-### Step 3 — drive and monitor
-
-- Teammates self-claim their next unblocked task. The Lead does NOT manually assign — the dependency graph + claiming protocol handles it.
-- The user uses **Shift+↓** to cycle to any teammate, **Enter** to read their transcript or send a direct message, **Ctrl+T** to view the shared task list.
-- If reviewer's task completes with `verdict: changes_requested` → the Lead inserts a follow-up DEV task ("WP-N DEV r2 — fix issues from review") and re-points the REVIEW + QA dependencies to it. Loop until reviewer approves.
-- If QA's task completes with `qa_verdict: fail` → same pattern, insert follow-up DEV task.
-- The Lead surfaces progress to the user after each WP completes the pipeline (DEV done → REVIEW done with approve → QA done with pass).
-
-### Step 4 — final verification + cleanup
-
-After all WPs complete: the Lead runs the final build/lint/test verification (in main thread, not a teammate task — same as Path A), emits REVIEW-LOG.md, then asks for cleanup: "Clean up the team."
-
 ### Gate Rules (enforced by the Lead's spawn loop above — both paths)
 
 1. A work package CANNOT enter REVIEW until the Developer's `Agent` call returns a valid contract.
@@ -198,49 +219,4 @@ After all WPs complete: the Lead runs the final build/lint/test verification (in
 
 ### Sequential Code-Modification Gate (per `subagent-isolation.md`)
 
-Code-modifying spawns are **sequential per file** — only one writing agent active at any time. The Lead enforces this structurally by waiting for the previous spawn's return before issuing the next. When multiple Developers are spawned for multi-stack work, each gets `isolation: "worktree"` and they merge serially.
-
-### SRE Smoke Inside QA (P20)
-
-The QA spawn's prompt includes SRE-style smoke check instructions (health endpoint, error rate, basic SLI sanity). SRE smoke is INSIDE QA, not a separate stage.
-
-## G7 Contracts
-
-Every spawn embeds a JSON payload per `plugin/schemas/spawn-payload.schema.json` (in the `prompt` field). Every return embeds a JSON contract per `plugin/schemas/return-contract.schema.json`. The `subagent-start-budget.py` and `subagent-stop-learnings.py` hooks validate both. See `@team-protocols` for full examples.
-
-## RALF Loop on Test Failures
-
-For multi-iteration convergence on stubborn test failures during DEVELOP or QA, this skill MAY run inside `/ralph` per `ralph-budget.md` rule. Defaults: 8 iter / 640K tokens / 90 min. Mandatory `--kill-on oracle-pass` (oracle: full test suite passes via `/run-tests`).
-
-## Verification
-
-After all work packages complete the pipeline, the Lead runs a final verification (in the main thread, not via spawn — this is a meta-check, not Developer work):
-
-1. **Build/compile** — project builds without errors or warnings (Bash)
-2. **Lint** — run the project's linter if configured (Bash)
-3. **Test** — run the full test suite (new + existing) to catch regressions via `/run-tests`
-4. **Acceptance check** — review implementation against documentation's acceptance criteria
-
-## Summary + REVIEW-LOG.md
-
-Present the completed work AND emit `REVIEW-LOG.md` (consumed by `/create-pr` to auto-build the PR description):
-
-- **Feature**: what was implemented
-- **Subprojects**: affected areas and Developer subagent_types used
-- **Work packages**: total completed, total review iterations
-- **Files changed**: list of created and modified files grouped by subproject
-- **Tests**: number of tests added (unit + higher-level), pass status
-- **Acceptance criteria**: status of each criterion (met / partially met / not met)
-- **Notes**: deviations from plan, trade-offs, follow-up items
-- **Spawn ledger**: count of `Agent` invocations per role + total subagent token spend (from return contracts' `tokens_used`)
-
-## Integration
-
-- **Planning**: `/plan` (produces the implementation plan this workflow executes), `/feature-design` (produces full design pack)
-- **Single-agent fallback**: `/feature-dev` (use only when the team-protocols spawn pattern is impractical — almost never)
-- **Precedes**: `/run-tests`, `/pre-commit`, `/create-pr` (consumes REVIEW-LOG.md)
-- **Protocols**: `@team-protocols` (execution model, agent coordination, the spawn pattern this skill executes)
-- **Schemas**: `plugin/schemas/spawn-payload.schema.json` (G7 spawn), `plugin/schemas/return-contract.schema.json` (G7 return)
-- **Skills**: `test-strategy`, `code-review`, `context-engineering`, `worktree-isolation`
-- **Rules**: `subagent-isolation` (G7 + sequential code-mod gate), `ralph-budget`, `untrusted-content-wrapping`, `memory-discipline`
-- **Reference**: [Anthropic Claude Code subagents docs](https://docs.claude.com/en/docs/claude-code/sub-agents)
+Code-modifying spawns are **sequential per file** — only one writing agent active at any time. The Lead enforces this structurally by waiting for the previous spaw
