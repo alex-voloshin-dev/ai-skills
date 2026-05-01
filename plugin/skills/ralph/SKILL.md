@@ -70,8 +70,10 @@ Every run writes to `<repo>/.ai-assets-memory/ralph/<run-id>/`:
 - `config.json` — caps + oracle + kill-on as locked at start
 - `active.lock` — presence = run is in progress
 - `initial-prompt.md` — full init prompt (G10)
-- `iter-NNN/` — one dir per iteration: `prompt.md`, `output.md`, `diff.patch`, `oracle-result.json`
+- `iter-NNN/` — one dir per iteration: `prompt.md`, `output.md`, `diff.patch`, `oracle-result.json`, `tokens.json`
 - `budget.json` — final totals on exit
+
+Per-iteration `tokens.json` (v0.1.6) records `tokens` spent that iteration plus `runaway: true` when a single iteration exceeds 3× the fair share (`token_budget / max_iterations`). Runaway warnings also append to `.ai-assets-memory/ralph-warnings.log`.
 
 ## G10 init vs continuation prompts
 
@@ -97,7 +99,7 @@ Continuation template at `${CLAUDE_PLUGIN_ROOT}/skills/ralph/templates/continuat
 
 ## Integration
 
-- **Hook**: `ralph-stop.py` (Stop event) drives the loop, writes per-iter state, enforces budgets
+- **Hooks**: `ralph-stop.py` (Stop event) drives the loop, writes per-iter state, enforces budgets; `ralph-iter-meter.py` (PostToolUse, v0.1.6) estimates per-iter token spend
 - **Rule**: `ralph-budget.md` (caps, oracle/kill-on contract, failure modes)
 - **Schemas**: `plugin/schemas/spawn-payload.schema.json` if RALF spawns subagents
 - **Templates**: `plugin/skills/ralph/templates/continuation-prompt.md` (G10)

@@ -1,50 +1,75 @@
 # AI Assets Repository
 
-This repository stores reusable AI coding assistant configurations for three runtimes: Claude Code, OpenAI Codex, and Codeium Windsurf. It is not an application — it contains only Markdown, JSON, Python hook scripts, and shell installers.
+This repository ships AI coding assistant configurations in two delivery formats:
+
+1. **`plugin/`** — full Claude Code plugin (v0.2.0+, canonical source of truth for Claude Code).
+2. **`.codex/` + `.windsurf/` + `.agents/`** — copy-ready three-package layout for OpenAI Codex and Codeium Windsurf (.agents/ holds skills shared between Codex and Windsurf).
+
+The legacy `.claude/` package was removed in v0.2.0 — `plugin/` fully replaces it for Claude Code.
 
 ## Quick Reference
 
 ```text
 ai-assets/
-├── .agents/skills/          # 38 skills (shared between Codex and Windsurf)
-├── .claude/                  # Claude Code runtime package
-│   ├── agents/              # 22 sub-agent definitions
-│   ├── skills/              # 41 skills (38 shared + 3 Claude-only)
-│   ├── rules/               # 7 guardrail rules
-│   ├── hooks/scripts/       # 4 Python enforcement scripts
-│   ├── hooks/configs/       # hook wiring fragments
-│   ├── templates/           # 7 CLAUDE.md scaffolds per tech stack
-│   └── settings.json        # global hook wiring
+├── plugin/                  # Claude Code plugin (v0.2.0+)
+│   ├── .claude-plugin/
+│   │   ├── plugin.json      # manifest + 13 userConfig knobs
+│   ├── agents/              # 26 specialized agents
+│   ├── skills/              # 52 skills (31 user-invocable)
+│   ├── rules/               # 12 guardrail rules
+│   ├── hooks/               # 18 hooks across 13 lifecycle events
+│   ├── schemas/             # 2 JSON Schemas (G7 spawn + return)
+│   ├── eval/                # 17 rubrics + 102 calibration samples + Tier 1/2 runners + g1g2 attack-surface
+│   ├── docs/                # 14 user docs (1 getting-started + 10 workflows + 3 concepts)
+│   └── dev/validate.py      # local validator (23 checks)
+├── .agents/skills/          # 38 skills (shared by Codex + Windsurf)
 ├── .codex/                   # Codex runtime package
-│   ├── roles/               # 22 role definitions (mirrors .claude/agents/)
+│   ├── roles/               # 22 role definitions
 │   ├── rules/               # 8 rule files + 2 aliases + 5 role overlays
 │   ├── operations/          # hook-intents, launch-reference, settings-mapping, source-sync, skill-role-mapping
 │   ├── templates/           # 14 AGENTS.md scaffolds (includes parity aliases)
 │   └── checklists/          # review checklists
 ├── .windsurf/                # Windsurf runtime package
-│   ├── rules/roles/         # 22 role files (mirrors .claude/agents/)
+│   ├── rules/roles/         # 22 role files (mirrors .codex/roles/)
 │   ├── skills/              # 38 skills (mirrors .agents/skills/)
 │   ├── workflows/           # 26 user-facing workflow files
-│   ├── hooks/               # same 4 Python scripts + configs
+│   ├── hooks/               # Python scripts + configs
 │   └── hooks.json           # Windsurf-native hook wiring
-├── review/parity-matrix.md  # cross-package alignment tracker
-├── install.sh               # bash installer (Linux/macOS)
-└── install.ps1              # PowerShell installer (Windows)
+├── .claude-plugin/marketplace.json  # marketplace manifest pointing at ./plugin
+├── review/parity-matrix.md  # cross-package alignment tracker (Codex ↔ Windsurf)
+├── plugin-design/           # historical plugin design docs (Phase 1-2 plan + migration checklist)
+├── install.sh               # bash installer (Codex + Windsurf only — Linux/macOS)
+└── install.ps1              # PowerShell installer (Codex + Windsurf only — Windows)
 ```
 
 ## Core Concepts
 
-### Three-Package Parity
+### Two-Vendor Parity (Codex + Windsurf)
 
-Every role, skill, and guardrail must exist in all three runtime packages. Changes must land in the same changeset across Claude, Codex, and Windsurf. The parity matrix (`review/parity-matrix.md`) tracks alignment.
+After v0.2.0, parity is enforced between Codex and Windsurf only — Claude Code lives in `plugin/` and follows its own internal organization (no longer mirrored into a sibling top-level package). Every role, skill, and guardrail in `.codex/` must have a matching entry in `.windsurf/`. The parity matrix (`review/parity-matrix.md`) tracks alignment.
 
 Runtime primitives differ but capability coverage must match:
-- Claude agents = Codex roles = Windsurf roles
-- Claude skills = `.agents/skills/` = Windsurf skills
-- Claude user-invocable skills = Windsurf workflows
-- Claude hooks = Codex operations (documented intent) = Windsurf hooks
+- Codex roles = Windsurf roles
+- `.agents/skills/` = `.windsurf/skills/`
+- Codex operations (documented intent) = Windsurf hooks (scripts + hooks.json)
 
-See [PARITY.md](PARITY.md) for the full parity model, current status, intentional gaps, and the process for adding new capabilities.
+See [PARITY.md](PARITY.md) for the full parity model.
+
+### Claude Code lives in plugin/
+
+For Claude Code, the plugin layout supersedes the old `.claude/` package. To use this repo's Claude Code assets:
+
+```bash
+claude --plugin-dir /path/to/ai-assets/plugin
+```
+
+After editing plugin files in the same Claude Code session, reload without restarting:
+
+```text
+/reload-plugins
+```
+
+All 31 user-invocable skills appear in `/help` under the `ai-assets:` namespace.
 
 ### Skill Format
 
@@ -55,25 +80,24 @@ Skills live in `<package>/skills/<name>/SKILL.md` with YAML frontmatter:
 
 ### Hook Architecture
 
-Four Python scripts in `.claude/hooks/scripts/` (mirrored to `.windsurf/hooks/scripts/`):
-- `block-dangerous-commands.py` — PreToolUse(Bash): blocks destructive shell commands
-- `block-secrets-in-code.py` — PreToolUse(Write|Edit): blocks secrets in code
-- `block-sensitive-files.py` — PreToolUse(Read): blocks reading credential files
-- `log-actions.py` — PostToolUse: structured audit logging
+In the plugin (`plugin/hooks/scripts/`): 18 Python scripts across 13 lifecycle events, all importing the shared `_lib.py`. See `plugin/hooks/README.md`.
+
+In the Codex/Windsurf packages: 4 carried-over Python scripts in `.windsurf/hooks/scripts/` mirror the security/audit hooks. Codex declares the same intent declaratively in `.codex/operations/hook-intents.md`.
 
 Exit code 2 = block, exit code 0 = allow.
 
 ### Installers
 
-`install.sh` and `install.ps1` sync packages to `~/` and rewrite hook command paths to absolute `~/.claude/hooks/scripts/...` paths for global operation.
+`install.sh` and `install.ps1` sync the Codex + Windsurf + shared-skills packages to `~/`. Claude Code is no longer installed via these scripts (v0.2.0+) — use `claude --plugin-dir` instead.
 
 ## Editing Rules
 
 - all asset contents must be in English
 - SKILL.md and rule files have a 12,000 character limit (skill resources have no hard limit but should stay focused)
 - use relative runtime paths, never absolute user paths
-- new roles/skills/guardrails must be added to all three packages simultaneously
-- update `review/parity-matrix.md` for any parity-impacting change
+- new Codex roles/skills/guardrails must be added to Windsurf simultaneously (and vice versa)
+- new plugin assets land in `plugin/` only — there is no longer a `.claude/` mirror to keep in sync
+- update `review/parity-matrix.md` for any Codex ↔ Windsurf parity-impacting change
 - remove project-specific assumptions from shared assets
 - prefer runtime-native representations over forced file mirroring
 - the `@humanizer` skill must be applied to all public-facing content
@@ -82,8 +106,10 @@ Exit code 2 = block, exit code 0 = allow.
 
 | Task | What to do |
 |---|---|
-| Add a new skill | Create `SKILL.md` in `.claude/skills/`, `.agents/skills/`, `.windsurf/skills/`. Add workflow in `.windsurf/workflows/` if user-invocable. Update parity matrix |
-| Add a new role | Create agent in `.claude/agents/`, role in `.codex/roles/`, role in `.windsurf/rules/roles/`. Update parity matrix |
-| Add a new guardrail | Create rule in `.claude/rules/`, `.codex/rules/`, `.windsurf/rules/`. If hook-backed, add Python script + config |
-| Update a hook script | Edit in `.claude/hooks/scripts/`, mirror to `.windsurf/hooks/scripts/`. Update `.codex/operations/hook-intents.md` |
-| Add a template | Create in `.claude/templates/` and `.codex/templates/`. Windsurf embeds templates inside skill resources |
+| Add a Claude Code skill | Create `SKILL.md` in `plugin/skills/<name>/`. Update `plugin/dev/validate.py` `EXPECTED_COUNTS` if needed |
+| Add a Claude Code agent | Create `plugin/agents/<name>.md`. Update `EXPECTED_COUNTS["agents"]` if shipping permanent role |
+| Add a Claude Code hook | Create `plugin/hooks/scripts/<name>.py`, wire into `plugin/hooks/hooks.json`, bump `EXPECTED_COUNTS["hooks"]` |
+| Add a Codex/Windsurf skill | Create `SKILL.md` in `.agents/skills/` and `.windsurf/skills/`. Add workflow in `.windsurf/workflows/` if user-invocable. Update parity matrix |
+| Add a Codex/Windsurf role | Create role in `.codex/roles/`, role in `.windsurf/rules/roles/`. Update parity matrix |
+| Add a Codex/Windsurf guardrail | Create rule in `.codex/rules/`, `.windsurf/rules/`. If hook-backed, add Python script + config in `.windsurf/hooks/` and document intent in `.codex/operations/hook-intents.md` |
+| Add a Codex template | Create in `.codex/templates/`. Windsurf embeds templates inside skill resources |

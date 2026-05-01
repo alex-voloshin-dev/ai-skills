@@ -30,6 +30,16 @@ once per Stop intercept (one per iteration). When any aggregate exceeds its
 cap, terminal status is BUDGET_EXCEEDED with a `session_aggregate_*` reason
 and Stop is allowed.
 
+Per Phase 4 #3 (v0.1.6): the per-workflow token delta is now sourced from
+`ralf_iter_tokens_partial`, populated by the `ralph-iter-meter.py` PostToolUse
+hook over the course of every iteration (chars/4 estimate per tool call).
+ralph-stop reads it on Stop intercept, passes it as workflow_tokens to the
+session-aggregate cap check, then resets it to 0 so the next iteration starts
+clean. Each iteration's token spend is also persisted to
+`.ai-assets-memory/ralph/<run-id>/iter-NNN/tokens.json` for forensics and a
+runaway warning fires when a single iteration exceeds 3x the per-iteration
+fair share (workflow_token_budget / max_iterations).
+
 Per failure-recovery rule: fail-open on internal errors. Per A3: never block
 Stop because of buggy hook.
 """
@@ -114,18 +124,16 @@ def _check_session_caps(
 
     Returns (exceeded, reason_str_or_None, current_meter).
     Side effect: increments ralf_iter_total by 1 and ralf_tokens_total by the
-    workflow_tokens delta (best-effort) and stamps ralf_started_at if unset.
+    workflow_tokens delta and stamps ralf_started_at if unset.
 
-    Note on workflow_tokens (v0.1 limitation): the per-workflow token delta is
-    read from meter['ralf_workflow_tokens_last'], which is currently only
-    populated by the Tier 3 eval runner when a RALF case is executed inside
-    `eval/runner.py`. For interactive RALF (user runs `/ralph` directly),
-    workflow_tokens is 0 and the session-aggregate token cap will only trip
-    once an upstream mechanism (e.g., a future PostToolUse hook that
-    estimates input/output tokens per turn) is wired to populate
-    `ralf_workflow_tokens_last` between iterations. Until then, the
-    iteration cap and time cap remain the effective ceiling for interactive
-    RALF; the token cap is the harder ceiling only inside eval runs.
+    Per Phase 4 #3 (v0.1.6), workflow_tokens is sourced from
+    `ralf_iter_tokens_partial` populated by `ralph-iter-meter.py` PostToolUse
+    hook (chars/4 estimate). For interactive RALF (`/ralph` directly) the
+    session-aggregate token cap now actually fires; previously (v0.1 - 0.1.5)
+    only iteration cap and time cap were effective ceilings interactively.
+    Inside Tier 3 eval runs, `eval/runner.py` continues to populate
+    `ralf_workflow_tokens_last` for back-compat (read by main() before
+    falling back to the iter-meter accumulator).
     """
     session_dir = _session_dir_for(memory_root)
     meter = _lib.read_token_meter(session_dir)
@@ -168,20 +176,6 @@ def _check_session_caps(
     return False, None, new_meter
 
 
-def find_active_ralph(memory_root: pathlib.Path) -> pathlib.Path | None:
-    """Return the first ralph/<run-id>/ dir with an active.lock present."""
-    ralph_root = memory_root / "ralph"
-    if not ralph_root.exists():
-        return None
-    try:
-        for run_dir in ralph_root.iterdir():
-            if (run_dir / "active.lock").exists():
-                return run_dir
-    except OSError:
-        return None
-    return None
-
-
 def load_config(run_dir: pathlib.Path) -> dict:
     """Load RALF run config (--max-iterations, --token-budget, --time-cap, --oracle, --kill-on)."""
     cfg_path = run_dir / "config.json"
@@ -199,6 +193,73 @@ def count_completed_iters(run_dir: pathlib.Path) -> int:
         return len([p for p in run_dir.iterdir() if p.is_dir() and p.name.startswith("iter-")])
     except OSError:
         return 0
+
+
+def write_iter_tokens(
+    run_dir: pathlib.Path,
+    iter_num: int,
+    iter_tokens: int,
+    workflow_token_budget: int,
+    max_iter: int,
+) -> dict:
+    """Persist per-iteration token spend to iter-NNN/tokens.json (Phase 4 #3).
+
+    Returns the written dict so caller can include it in continuation prompt
+    or surface a runaway warning. Layout:
+
+        {
+            "iteration": 7,
+            "tokens": 18342,
+            "workflow_token_budget": 200000,
+            "max_iterations": 10,
+            "fair_share_per_iter": 20000,
+            "runaway": false,
+            "runaway_threshold": 60000,
+            "ts": "2026-04-30T12:34:56Z"
+        }
+
+    runaway = iter_tokens > 3x fair_share_per_iter. The warning is also
+    appended to .ai-assets-memory/ralph-warnings.log so it is durable across
+    iterations (the model may not see the continuation prompt's warning
+    inline).
+    """
+    fair_share = max(1, workflow_token_budget // max(1, max_iter))
+    runaway_threshold = 3 * fair_share
+    runaway = iter_tokens > runaway_threshold
+    record = {
+        "iteration": iter_num,
+        "tokens": iter_tokens,
+        "workflow_token_budget": workflow_token_budget,
+        "max_iterations": max_iter,
+        "fair_share_per_iter": fair_share,
+        "runaway": runaway,
+        "runaway_threshold": runaway_threshold,
+        "ts": _lib.iso_now(),
+    }
+    iter_dir = run_dir / f"iter-{iter_num:03d}"
+    try:
+        iter_dir.mkdir(parents=True, exist_ok=True)
+        (iter_dir / "tokens.json").write_text(
+            json.dumps(record, indent=2),
+            encoding="utf-8",
+        )
+    except OSError:
+        pass
+
+    if runaway:
+        _lib.log_to(
+            "ralph-warnings.log",
+            {
+                "ts": record["ts"],
+                "type": "iter_runaway",
+                "run_id": run_dir.name,
+                "iteration": iter_num,
+                "tokens": iter_tokens,
+                "fair_share": fair_share,
+                "ratio": round(iter_tokens / fair_share, 2),
+            },
+        )
+    return record
 
 
 def write_terminal_status(run_dir: pathlib.Path, status: str, reason: str, iters: int, tokens: int) -> None:
@@ -257,24 +318,54 @@ def main() -> None:
     cwd = pathlib.Path.cwd()
     memory_root = cwd / ".ai-assets-memory"
 
-    run_dir = find_active_ralph(memory_root)
+    run_dir = _lib.find_active_ralph(memory_root)
     if run_dir is None:
         # No active RALF — normal Stop
         _lib.allow()
 
     cfg = load_config(run_dir)
     max_iter = int(cfg.get("max_iterations", 10))
+    workflow_token_budget = int(cfg.get("token_budget", 200000))
     kill_on = cfg.get("kill_on") or "oracle-pass"
 
     iters_done = count_completed_iters(run_dir)
-    meter = _lib.read_token_meter(memory_root / "sessions" / "current") if (memory_root / "sessions" / "current").exists() else {}
+    session_dir = memory_root / "sessions" / "current"
+    meter = _lib.read_token_meter(session_dir) if session_dir.exists() else {}
     ralf_tokens = int(meter.get("ralf_tokens_total", 0))
-    workflow_tokens = int(meter.get("ralf_workflow_tokens_last", 0))
+
+    # Phase 4 #3 (v0.1.6): prefer ralf_iter_tokens_partial (populated each
+    # tool call by ralph-iter-meter PostToolUse hook) over the legacy
+    # ralf_workflow_tokens_last (populated only by eval/runner.py for Tier 3
+    # cases). Either path yields the per-iteration token spend; fall back if
+    # the meter hook hasn't populated partial yet.
+    iter_tokens_partial = int(meter.get("ralf_iter_tokens_partial", 0))
+    workflow_tokens_last = int(meter.get("ralf_workflow_tokens_last", 0))
+    workflow_tokens = iter_tokens_partial if iter_tokens_partial > 0 else workflow_tokens_last
+
+    # Persist per-iter spend to iter-NNN/tokens.json BEFORE caps may fire,
+    # and reset the partial accumulator so the next iteration starts clean.
+    # We log against iters_done because the iter-NNN dir for the iteration
+    # that just completed already exists (created by iter-meter via prompt
+    # write upstream); if iters_done == 0 we have nothing to log.
+    if iters_done > 0 and workflow_tokens > 0:
+        write_iter_tokens(
+            run_dir,
+            iter_num=iters_done,
+            iter_tokens=workflow_tokens,
+            workflow_token_budget=workflow_token_budget,
+            max_iter=max_iter,
+        )
+    if iter_tokens_partial > 0:
+        # Reset accumulator: next iteration's tool calls populate fresh.
+        _lib.update_token_meter(
+            session_dir,
+            {"ralf_iter_tokens_partial": -iter_tokens_partial},
+        )
 
     # HIGH-C (alpha.16): session-aggregate cap check FIRST. Increments meter
-    # by 1 iteration + workflow_tokens delta (best-effort) and short-circuits
-    # if any session-wide cap is exceeded. Per-workflow caps are still
-    # enforced below — the order means session caps win when both fire.
+    # by 1 iteration + workflow_tokens delta and short-circuits if any
+    # session-wide cap is exceeded. Per-workflow caps are still enforced
+    # below — the order means session caps win when both fire.
     session_exceeded, session_reason, _meter_after = _check_session_caps(
         memory_root,
         iters_done_in_workflow=iters_done,
@@ -315,7 +406,7 @@ def main() -> None:
                 )
                 _lib.allow()
         except (ValueError, IndexError):
-            pass  # Malformed signal — treat as "no kill"
+            pass  # Malformed signal -- treat as "no kill"
 
     # Default oracle-pass: assume oracle ran in skill body and wrote SUCCESS marker
     success_marker = run_dir / "SUCCESS"
@@ -329,7 +420,7 @@ def main() -> None:
         )
         _lib.allow()
 
-    # No terminal state — re-inject continuation prompt and block Stop
+    # No terminal state -- re-inject continuation prompt and block Stop
     continuation_prompt_path = run_dir / f"iter-{iters_done + 1:03d}" / "prompt.md"
     try:
         continuation_prompt_path.parent.mkdir(parents=True, exist_ok=True)
@@ -357,7 +448,7 @@ def main() -> None:
         )
         continuation_prompt_path.write_text(continuation, encoding="utf-8")
     except OSError:
-        pass  # Fail open — allow Stop if we can't write continuation
+        pass  # Fail open -- allow Stop if we can't write continuation
 
     # Block Stop with re-injection (continuation prompt was written)
     _lib.block(

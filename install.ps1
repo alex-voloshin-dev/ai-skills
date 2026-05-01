@@ -12,7 +12,13 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $HomeDir = [System.IO.Path]::GetFullPath($HomeDir)
 
 $Mappings = @(
-    @{ Source = ".claude"; Target = Join-Path $HomeDir ".claude" },
+    # v0.2.0: .claude/ legacy package was removed. Claude Code users should
+    # install the plugin from .\plugin\ via:
+    #   claude --plugin-dir "$ScriptDir\plugin"
+    # or after publishing:
+    #   /plugin marketplace add alex-voloshin/ai-assets
+    #   /plugin install ai-assets@ai-assets
+    # See plugin\README.md for full install + usage.
     @{ Source = ".agents"; Target = Join-Path $HomeDir ".agents" },
     @{ Source = ".codex"; Target = Join-Path $HomeDir ".codex" },
     @{ Source = ".windsurf"; Target = Join-Path $HomeDir ".windsurf" }
@@ -87,72 +93,6 @@ function Set-JsonFile {
     [System.IO.File]::WriteAllText($Path, $json + [Environment]::NewLine, [System.Text.UTF8Encoding]::new($false))
 }
 
-function Update-ClaudeHomeSettings {
-    param(
-        [Parameter(Mandatory = $true)][string]$ClaudeHome
-    )
-
-    $settingsPath = Join-Path $ClaudeHome "settings.json"
-    if (-not (Test-Path -LiteralPath $settingsPath)) {
-        return
-    }
-
-    $settings = Get-Content -LiteralPath $settingsPath -Raw | ConvertFrom-Json -Depth 100
-    $scriptDir = (Join-Path $ClaudeHome "hooks\scripts").Replace('\', '/')
-    $commandMap = @{
-        "log-actions.py" = "python3 `"$scriptDir/log-actions.py`""
-        "block-secrets-in-code.py" = "python3 `"$scriptDir/block-secrets-in-code.py`""
-        "block-dangerous-commands.py" = "python3 `"$scriptDir/block-dangerous-commands.py`""
-        "block-sensitive-files.py" = "python3 `"$scriptDir/block-sensitive-files.py`""
-    }
-
-    foreach ($phase in @("PreToolUse", "PostToolUse")) {
-        if (-not ($settings.hooks.PSObject.Properties.Name -contains $phase)) {
-            continue
-        }
-
-        foreach ($rule in $settings.hooks.$phase) {
-            if (-not ($rule.PSObject.Properties.Name -contains "hooks")) {
-                continue
-            }
-
-            foreach ($hook in $rule.hooks) {
-                $command = [string]$hook.command
-                foreach ($key in $commandMap.Keys) {
-                    if ($command -like "*$key*") {
-                        $hook.command = $commandMap[$key]
-                        break
-                    }
-                }
-            }
-        }
-    }
-
-    Set-JsonFile -Path $settingsPath -Data $settings
-
-    foreach ($configName in @("logging-hooks.json", "security-hooks.json")) {
-        $configPath = Join-Path $ClaudeHome "hooks\configs\$configName"
-        if (-not (Test-Path -LiteralPath $configPath)) {
-            continue
-        }
-
-        $config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json -Depth 100
-        foreach ($hookGroup in $config.hooks.PSObject.Properties) {
-            foreach ($hook in $hookGroup.Value) {
-                $command = [string]$hook.command
-                foreach ($key in $commandMap.Keys) {
-                    if ($command -like "*$key*") {
-                        $hook.command = $commandMap[$key]
-                        break
-                    }
-                }
-            }
-        }
-
-        Set-JsonFile -Path $configPath -Data $config
-    }
-}
-
 Write-Host "Installing AI assets into $HomeDir" -ForegroundColor Cyan
 
 foreach ($mapping in $Mappings) {
@@ -161,7 +101,10 @@ foreach ($mapping in $Mappings) {
     Write-Host "[ok] $($mapping.Source) -> $($mapping.Target)" -ForegroundColor Green
 }
 
-Update-ClaudeHomeSettings -ClaudeHome (Join-Path $HomeDir ".claude")
-Write-Host "[ok] patched ~/.claude hook commands for global runtime" -ForegroundColor Green
+Write-Host ""
+Write-Host "Note: Claude Code is no longer installed via this script (v0.2.0+)." -ForegroundColor Yellow
+Write-Host "Use the plugin layout instead:" -ForegroundColor Yellow
+Write-Host "  claude --plugin-dir `"$ScriptDir\plugin`"" -ForegroundColor Yellow
+Write-Host ""
 
 Write-Host "Done." -ForegroundColor Cyan

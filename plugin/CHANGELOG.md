@@ -28,6 +28,180 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.2.0] — 2026-04-30 — Sunset legacy `.claude/` package (Phase 5, BREAKING)
+
+Major release. The repository previously shipped Claude Code assets in two parallel layouts: the legacy three-package mirror (`.claude/` + `.codex/` + `.windsurf/` + shared `.agents/`) and the new plugin format (`plugin/`). v0.2.0 retires the legacy `.claude/` package — the plugin is now the single canonical Claude Code delivery format.
+
+### Breaking changes
+
+- **`.claude/` package removed.** All 143 files under `.claude/` (22 agents + 41 skills + 7 rules + 4 hook scripts + 7 templates + settings.json + supporting files) are deleted. Equivalent (and richer) content lives in `plugin/`: 26 agents, 52 skills, 12 rules, 18 hooks, 17 eval rubrics, 102 calibration samples, etc.
+- **`install.sh` / `install.ps1` no longer install Claude Code.** They sync `.agents/` + `.codex/` + `.windsurf/` only. Claude Code users must switch to `claude --plugin-dir /path/to/ai-assets/plugin` (or `/plugin marketplace add alex-voloshin/ai-assets` after publishing).
+- **Existing `~/.claude/` install needs manual cleanup.** Run (preserve any of your own personal `~/.claude/` content first):
+  ```bash
+  rm -rf ~/.claude/agents ~/.claude/skills ~/.claude/rules ~/.claude/hooks ~/.claude/settings.json
+  ```
+- **Three-vendor parity reduced to two-vendor (Codex ↔ Windsurf).** `review/parity-matrix.md` no longer enforces a Claude Code column; that responsibility moves to `plugin/dev/validate.py` (23 structural checks).
+
+### Changed — root documentation reflects new structure
+
+- **`README.md`** — leads with the two delivery formats (plugin/ for Claude Code, .codex/+.windsurf/+.agents/ for Codex+Windsurf). Documents legacy install cleanup.
+- **`CLAUDE.md`** — "Quick Reference" tree shows `plugin/` first, removes `.claude/`. "Common Tasks" table reorganized into Claude Code (plugin) section and Codex/Windsurf section.
+- **`AGENTS.md`** — Codex-facing instructions now scope parity to Codex ↔ Windsurf only. Notes that `plugin/` should NOT be mirrored into `.codex/` or `.windsurf/`.
+- **`ARCHITECTURE.md`** — Package architecture diagram replaced with two-format layout. Primitive mapping table replaces Claude column with plugin/ paths. Hook architecture documents the 18-hook plugin set + the carry-over 4 in `.windsurf/`.
+- **`PARITY.md`** — entirely rewritten around the two-vendor (Codex ↔ Windsurf) parity model. Adds new "Plugin-only capabilities" section documenting why RALF, depth-guard, eval framework, etc. are intentionally not mirrored.
+- **`review/parity-matrix.md`** — Scope section updated; pre-v0.2.0 changelog entries kept verbatim as historical record.
+
+### Changed — install scripts
+
+- **`install.sh`** — removed `.claude` mapping + `patch_claude_home_settings()` function. Added prominent note about `claude --plugin-dir` for Claude Code.
+- **`install.ps1`** — removed `.claude` mapping + `Update-ClaudeHomeSettings()` function. Added prominent note about `claude --plugin-dir` for Claude Code.
+
+### Migration guide
+
+| If you used | Now do |
+|---|---|
+| `~/.claude/` global install via `install.sh`/`install.ps1` | `claude --plugin-dir /path/to/ai-assets/plugin` |
+| Project-local `.claude/` copied into your project | `cd /your-project && claude --plugin-dir /path/to/ai-assets/plugin` |
+| Claude Code marketplace install | `/plugin marketplace add alex-voloshin/ai-assets && /plugin install ai-assets@ai-assets` (after GitHub publish) |
+| Codex `~/.codex/` install | No change — `install.sh`/`install.ps1` still sync `.codex/` |
+| Windsurf `~/.windsurf/` install | No change — `install.sh`/`install.ps1` still sync `.windsurf/` |
+
+### Verification
+
+- Validator: **23 pass / 0 warn / 0 fail** (hooks=18, userConfig knobs=13, events=13).
+- All 19 hook scripts (18 + `_lib.py`) parse OK.
+- g1g2 structural runner: 6 pass + 1 documented design-tradeoff warning (unchanged).
+- All references to `.claude/` in non-historical docs (CLAUDE.md, AGENTS.md, ARCHITECTURE.md, PARITY.md, install scripts, root README) replaced with plugin/ equivalents. Pre-v0.2.0 changelog entries (parity-matrix, plugin-design/) intentionally kept as historical record.
+- `git status`: 18 files modified + 2 new (ralph-iter-meter, subagent-depth-guard from v0.1.6/v0.1.7) + the entire `.claude/` tree pending user-host `git rm -r .claude` (sandbox cannot perform file deletion).
+
+### Backlog
+
+- v0.2.1: re-publish to GitHub marketplace once the `.claude/` removal commit lands.
+- v0.2.x: optional second sunset wave for `.codex/` + `.windsurf/` if Codex/Windsurf drop is desired later (currently maintained for those runtimes).
+
+## [0.1.7] — 2026-04-30 — Defensive subagent depth-guard (Phase 4 #4)
+
+Feature release on top of 0.1.6. Closes the deferred v0.1 followup from `subagent-isolation.md`: a defensive backstop that enforces the bounded-recursion guarantee even if Anthropic's runtime contract changes or our orchestration accidentally violates it.
+
+### Added — `hooks/scripts/subagent-depth-guard.py` (SubagentStart, hook count 17 → 18)
+
+New SubagentStart hook (runs after `subagent-start-budget.py`):
+
+1. Reads spawn payload, extracts `trace_id` and `parent_trace_id`. Missing `parent_trace_id` (or null) means top-level spawn from main thread.
+2. Reads `.ai-assets-memory/sessions/<sid>/spawn-chain.jsonl` (one JSON line per `start` / `stop` / `rejected` event).
+3. Computes depth by walking the parent chain: `depth = 1` for top-level, `depth = parent_depth + 1` otherwise. If `parent_trace_id` is set but unknown to the chain log, fail-safe to depth=2.
+4. Reads `MAX_DEPTH` from `CLAUDE_USER_CONFIG_subagent_max_depth` (default 3 per `subagent-isolation.md`).
+5. **Blocks the spawn** (exit 2) when `depth > MAX_DEPTH`, with a clear diagnostic naming the trace_id, parent, computed depth, and cap. The rejection is also recorded to `errors.log` and to the chain log (as `event: rejected`) for forensics.
+6. Otherwise appends a `start` event to the chain log and exits 0.
+
+Per failure-recovery + A3: fail-open on internal errors (never block all spawns due to a buggy guard). Anthropic's runtime normally enforces depth=1 max anyway — this is a defensive backstop.
+
+### Added — `userConfig.subagent_max_depth` knob (count 12 → 13)
+
+```json
+{
+  "type": "number",
+  "title": "Max subagent recursion depth",
+  "description": "Phase 4 #4 (v0.1.7): max recursion depth allowed for subagent spawn chains.",
+  "default": 3
+}
+```
+
+### Changed — `schemas/spawn-payload.schema.json` adds optional `parent_trace_id`
+
+```json
+"parent_trace_id": {
+  "type": ["string", "null"],
+  "pattern": "^(wf|hook|eval|ralf)-[0-9a-zA-Z-]+-(spawn|step)-[0-9]+$",
+  "description": "Trace ID of the spawn that initiated this one. Set to the parent's trace_id when a subagent spawns another subagent. Omit or set to null for top-level spawns from the main thread."
+}
+```
+
+Backward compatible: existing payloads without `parent_trace_id` are treated as top-level spawns (depth=1).
+
+### Changed — `hooks/scripts/subagent-stop-learnings.py` records chain closure
+
+On SubagentStop, appends a `stop` event to `spawn-chain.jsonl` with `{trace_id, status, ts}`. Pairs with the `start` events written by the depth-guard so the full lifecycle of every spawn is durable.
+
+### Changed — `skills/subagent-spawn/SKILL.md` documents `parent_trace_id`
+
+- G7 payload template now shows `"parent_trace_id": null` explicitly.
+- New hard rule: orchestrators that spawn from inside another subagent MUST set `parent_trace_id` to the parent's `trace_id`. Missing on a nested spawn defeats depth tracking.
+- Integration section names all three subagent hooks: budget, depth-guard, stop-learnings.
+
+### Changed — `rules/subagent-isolation.md` documents the guard
+
+The existing "If future versions add Task to additional orchestrator agents..." paragraph (a v0.1 deferred followup) is replaced with the actual implementation description: parent_trace_id chain tracking, default cap of 3, fail-open behavior. Added anti-pattern: subagent that spawns without setting `parent_trace_id` defeats depth tracking.
+
+### Changed — `dev/validate.py` expected counts
+
+- `EXPECTED_COUNTS["hooks"]` 17 → 18
+- `EXPECTED_COUNTS["userConfig_knobs"]` 12 → 13
+- Validator: 23 pass / 0 warn / 0 fail (same surface count, structural counts now expect 18 hooks + 13 knobs)
+
+### Verification
+
+- Smoke test, depth=1 (no parent): ALLOW, recorded as `{event:"start", depth:1}`
+- Smoke test, depth=2 (`parent_trace_id` matches a depth-1 entry): ALLOW, recorded as `{event:"start", depth:2}`
+- Smoke test, depth=3 (chained from depth-2): ALLOW, exactly at default cap
+- Smoke test, depth=4 (chained from depth-3): **BLOCK** with rc=2 + diagnostic; recorded as `{event:"rejected", depth:4, max_depth:3}`
+- userConfig override smoke: `CLAUDE_USER_CONFIG_subagent_max_depth=5` → depth=4 now allowed
+- Fail-open smoke: malformed JSON stdin → exit 0 (no block); no `spawn_payload` → exit 0 (no work)
+
+### Backlog
+
+- v0.2.0: bump `subagent_max_depth` validation to schema-level (currently only enforced at hook runtime; schema does not constrain depth in the payload itself).
+- v0.2.0: surface depth-guard rejections as a structured G7 return-contract `failed` status to the parent orchestrator (currently the parent only sees the SubagentStart block via Claude Code's normal hook-block flow).
+- v0.2.0: depth-aware visualization tool that reads `spawn-chain.jsonl` and prints a tree of the spawn lineage for debugging complex orchestrations.
+
+## [0.1.6] — 2026-04-30 — Per-iteration RALF token measurement (Phase 4 #3)
+
+Feature release on top of 0.1.5. Closes the long-standing v0.1 gap where the session-aggregate RALF token cap only fired inside Tier 3 eval runs, never for interactive `/ralph` use. Adds per-iteration token measurement, per-iter `tokens.json` persistence, and a runaway warning when a single iteration exceeds 3× the fair share.
+
+### Added — `hooks/scripts/ralph-iter-meter.py` (PostToolUse, hook count 16 → 17)
+
+New PostToolUse hook (matcher `.*` — runs after every tool call, alongside `log-actions.py`):
+
+1. Detects active RALF via `_lib.find_active_ralph()`. If no run is active, exits 0 immediately (no-op for non-RALF tool use, which is the common case).
+2. Estimates token spend for this tool call: `chars(tool_input) + chars(tool_response) // 4` (Anthropic's published English-text average).
+3. Increments session token meter:
+   - `ralf_iter_tokens_partial` += estimate (consumed + reset by ralph-stop)
+   - `ralf_iter_tokens_running` += estimate (cumulative within workflow, for forensics)
+   - `tokens_in_total`, `tokens_out_total` += per-direction breakdown (whole-session)
+4. Always exits 0 — this is a meter, not a guard. Per failure-recovery rule: fail-open on internal errors.
+
+### Changed — `hooks/scripts/ralph-stop.py` consumes per-iter accumulator
+
+- `find_active_ralph` factored out to `_lib.find_active_ralph()` so both hooks share one implementation (Pattern: avoid drift).
+- Reads `ralf_iter_tokens_partial` as the workflow_tokens delta passed to `_check_session_caps`. Falls back to legacy `ralf_workflow_tokens_last` (still populated by Tier 3 eval runner) when partial is 0.
+- Resets `ralf_iter_tokens_partial` to 0 after consumption so each iteration starts clean.
+- New `write_iter_tokens()` persists per-iteration spend to `.ai-assets-memory/ralph/<run-id>/iter-NNN/tokens.json` with: iteration number, tokens spent, workflow_token_budget, max_iterations, fair_share_per_iter (`workflow_token_budget // max_iterations`), runaway flag, runaway_threshold (`3× fair_share`), timestamp.
+- **Runaway warning** fires when a single iteration exceeds 3× the fair share. Recorded as `runaway: true` in `tokens.json` and durably appended to `.ai-assets-memory/ralph-warnings.log` with `{run_id, iteration, tokens, fair_share, ratio}`.
+
+### Changed — `hooks/scripts/_lib.py` adds two new helpers
+
+- `find_active_ralph(memory_root_path)` — return path to `ralph/<run-id>/` dir with active.lock present, else None. Shared by ralph-stop and ralph-iter-meter.
+- `estimate_tokens_from_chars(*texts)` — total characters // 4 token estimate. Cheap, deterministic. Non-string args coerced to str(); None args contribute 0.
+
+### Changed — wiring + validator
+
+- `hooks/hooks.json` — `ralph-iter-meter.py` added to PostToolUse `.*` matcher (alongside log-actions).
+- `dev/validate.py` `EXPECTED_COUNTS["hooks"]` 16 → 17.
+- Validator: 23 pass / 0 warn / 0 fail (same surface count, hook-count check now expects 17).
+
+### Verification
+
+- Smoke test, Bash tool with active RALF: meter went `partial: 0 → 17` across two tool calls (7+10 tokens for a Bash echo, then +1009 tokens for a 4000-char Read), confirming cumulative behavior.
+- Smoke test, no active.lock: meter unchanged across hook calls, confirming the cheap-precondition no-op.
+- End-to-end ralph-stop with `partial=15000, token_budget=50000, max_iter=5`: wrote `iter-001/tokens.json` (`fair_share=10000, runaway=false`), reset `partial → 0`, incremented `ralf_iter_total` and `ralf_tokens_total`, blocked Stop with continuation prompt for iter 2.
+- End-to-end runaway: `partial=45000` (>3× fair share=30000) → `tokens.json` has `runaway: true, runaway_threshold: 30000` and `ralph-warnings.log` records `{type:"iter_runaway", ratio:4.5}`.
+
+### Backlog
+
+- v0.2.0: surface runaway warnings inline in the next-iteration continuation prompt so the model can see the prior iteration over-spent (currently only durable in `ralph-warnings.log`).
+- v0.2.0: tunable `runaway_multiplier` userConfig knob (currently hard-coded at 3×).
+- v0.2.0: language-aware char/token ratio for code-heavy iterations (currently uses Anthropic's English-text average ~4 chars/token; code may run 3 or 5).
+
 ## [0.1.5] — 2026-04-30 — G1/G2 attack-surface validation (Phase 4 #2)
 
 Feature release on top of 0.1.4. Ships indirect-prompt-injection fixture set + structural validator that confirms G1 untrusted-content envelope wrapping correctly contains attacker-planted instructions, plus an opt-in behavioral mode that round-trips wrapped payloads through the Haiku judge to verify no compliance escape.

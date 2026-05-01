@@ -3,3 +3,4 @@ Thumbs.db
 *.log
 *.tmp
 settings.local.json
+/.ai-assets-memory

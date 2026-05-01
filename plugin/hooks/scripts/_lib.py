@@ -33,6 +33,13 @@ Public API:
 
     iso_now() -> str
         UTC ISO8601 timestamp (e.g., 2026-04-26T14:30:00Z).
+
+    find_active_ralph(memory_root_path: pathlib.Path) -> pathlib.Path | None
+        Return path to ralph/<run-id>/ dir with active.lock, else None.
+        Shared by ralph-stop.py and ralph-iter-meter.py (Phase 4 #3).
+
+    estimate_tokens_from_chars(*texts: str) -> int
+        Cheap chars//4 token approximation for RALF per-iteration metering.
 """
 
 from __future__ import annotations
@@ -299,6 +306,49 @@ def update_token_meter(session_dir: pathlib.Path, delta: dict) -> dict:
     except OSError:
         pass  # Fail open
     return meter
+
+
+# ---------- RALF helpers (Phase 4 #3) ----------
+
+
+def find_active_ralph(memory_root_path: pathlib.Path) -> pathlib.Path | None:
+    """Return the first ralph/<run-id>/ dir with an active.lock present.
+
+    Shared by ralph-stop.py (Stop event) and ralph-iter-meter.py (PostToolUse)
+    so both hooks agree on whether a RALF iteration is currently in progress.
+    Returns None if no .ai-assets-memory/ralph/ exists or no run is active.
+    """
+    ralph_root = memory_root_path / "ralph"
+    if not ralph_root.exists():
+        return None
+    try:
+        for run_dir in ralph_root.iterdir():
+            if (run_dir / "active.lock").exists():
+                return run_dir
+    except OSError:
+        return None
+    return None
+
+
+def estimate_tokens_from_chars(*texts: str) -> int:
+    """Rough token estimate: total characters // 4 across all input strings.
+
+    Per Anthropic published guidance, English text is ~4 chars/token average.
+    This is intentionally conservative -- we want a cheap, deterministic
+    approximation to drive per-iteration RALF budget tracking, not an exact
+    count. Non-string args are coerced to str(). None args contribute 0.
+    """
+    total_chars = 0
+    for t in texts:
+        if t is None:
+            continue
+        if not isinstance(t, str):
+            try:
+                t = str(t)
+            except Exception:
+                continue
+        total_chars += len(t)
+    return total_chars // 4
 
 
 # ---------- Logging ----------

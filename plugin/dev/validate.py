@@ -84,7 +84,7 @@ EXPECTED_COUNTS = {
     "agents": 26,
     "skills": 52,
     "rules": 12,
-    "hooks": 16,                 # excludes _lib.py
+    "hooks": 18,                 # excludes _lib.py (16 + ralph-iter-meter v0.1.6 + subagent-depth-guard v0.1.7)
     "events": 13,
     "rubrics": 17,
     "calibration_samples": 102,  # 6 per rubric × 17
@@ -96,7 +96,7 @@ EXPECTED_COUNTS = {
     "user_docs": 14,
     "schemas": 2,
     "output_styles": 2,
-    "userConfig_knobs": 12,
+    "userConfig_knobs": 13,
 }
 
 

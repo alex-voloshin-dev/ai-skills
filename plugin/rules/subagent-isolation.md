@@ -27,7 +27,16 @@ In plugin v0.1, only `feature-design-lead` agent has `tools: Task` (the spawn pr
 
 Recursion depth is therefore at most 2: main thread → feature-design-lead → spawned domain agents (engineers, designers, etc.). No infinite loop risk.
 
-If future versions add Task to additional orchestrator agents, add a `subagent-depth-guard.py` hook that tracks depth via the `trace_id` chain in the G7 spawn payload and rejects spawn beyond depth 3.
+### Defensive depth guard (Phase 4 #4, v0.1.7)
+
+`subagent-depth-guard.py` (SubagentStart hook) enforces a max-depth cap on every spawn, regardless of which agent has Task. Every G7 spawn payload may declare a `parent_trace_id` pointing at the spawn that initiated it (omit/null for top-level spawns from the main thread). The guard:
+
+1. Reads `.ai-assets-memory/sessions/<sid>/spawn-chain.jsonl` (one line per `start`/`stop`/`rejected` event).
+2. Computes depth by walking the parent chain from the current spawn.
+3. Blocks the spawn (exit 2 + diagnostic) when `depth > userConfig.subagent_max_depth` (default 3).
+4. Records both successful spawns and rejected attempts to the chain log for forensics.
+
+Depth=1 is a top-level spawn from main; depth=2 is one nested level; depth=3 is the documented maximum (`main → feature-design-lead → domain agent → nested`). Anthropic's runtime normally enforces depth=1 max anyway — the guard is a defensive backstop in case orchestration accidentally bypasses that or a future version adds Task to additional agents. Fail-open per `failure-recovery.md`: a buggy guard never blocks all spawns.
 
 ## Runtime Detection of `TeamCreate`
 
@@ -44,6 +53,7 @@ The `team-dev` (renamed to `develop`) and `team-bugfix` skills probe for the tea
 - Inline execution of work that exceeds 3 deliverables or 30 minutes (context overflow risk)
 - Skipping G7 structured spawn payload — every Agent spawn MUST include `trace_id`, `goal`, `constraints`, `state_slice`, `allowed_tools`, `budget`, `untrusted_inputs` per the schema in `plugin/schemas/spawn-payload.schema.json`
 - Trusting subagent return without G7 return-contract validation (see `subagent-stop-learnings.py` hook)
+- Subagent that itself has Task spawning without setting `parent_trace_id` in the child payload — defeats `subagent-depth-guard.py` chain tracking (Phase 4 #4)
 
 ## Pairing
 

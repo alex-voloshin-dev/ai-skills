@@ -20,6 +20,12 @@
       "description": "Globally unique spawn ID. Format: <origin>-<run-id>-<kind>-<seq>. Used for span tracing across spawn chains.",
       "examples": ["wf-20260426-abc123-spawn-001", "hook-precompact-xyz-step-42"]
     },
+    "parent_trace_id": {
+      "type": ["string", "null"],
+      "pattern": "^(wf|hook|eval|ralf)-[0-9a-zA-Z-]+-(spawn|step)-[0-9]+$",
+      "description": "Trace ID of the spawn that initiated this one. Set to the parent's trace_id when a subagent spawns another subagent. Omit or set to null for top-level spawns from the main thread. Used by subagent-depth-guard.py (Phase 4 #4, v0.1.7) to enforce the bounded-recursion guarantee from subagent-isolation.md (max depth = userConfig.subagent_max_depth, default 3).",
+      "examples": [null, "wf-20260426-abc123-spawn-001"]
+    },
     "subagent_role": {
       "type": "string",
       "description": "Role name from role-selection-table.md. MUST match a plugin-shipped agent name in plugin/agents/ OR a built-in Claude Code agent (Explore, Plan, general-purpose).",

@@ -80,6 +80,24 @@ def main() -> None:
             )
             # Fail-open per failure-recovery rule
 
+    # Phase 4 #4 (v0.1.7): record stop event in spawn-chain.jsonl so the
+    # depth-guard hook (subagent-depth-guard.py) sees a complete chain
+    # including closure timestamps. The chain log persists across the session.
+    if isinstance(return_payload, dict) and return_payload.get("trace_id"):
+        try:
+            session_dir = pathlib.Path.cwd() / ".ai-assets-memory" / "sessions" / sid
+            session_dir.mkdir(parents=True, exist_ok=True)
+            chain_path = session_dir / "spawn-chain.jsonl"
+            with chain_path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps({
+                    "event": "stop",
+                    "trace_id": return_payload.get("trace_id"),
+                    "status": return_payload.get("status"),
+                    "ts": _lib.iso_now(),
+                }, separators=(",", ":")) + "\n")
+        except OSError:
+            pass  # Fail open
+
     # Update session token meter from tokens_used
     if isinstance(return_payload, dict):
         tu = return_payload.get("tokens_used") or {}

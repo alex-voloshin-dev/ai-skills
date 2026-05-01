@@ -1,6 +1,6 @@
 {
   "name": "ai-assets",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Reusable team-of-agents plugin for the full SDLC — feature design, development, bugfix, environment analysis — with built-in RALF iteration loop, layered memory, and systematic eval. Project-agnostic: operations live in plugin, project context lives in target repo (CLAUDE.md / AGENTS.md).",
   "author": {
     "name": "Alex Voloshin",
@@ -117,6 +117,12 @@
       "title": "Docker compose health monitor poll interval (seconds)",
       "description": "How often the env-watch monitor polls `docker compose ps` for state changes. Minimum 5s. Only used when env_watch_enabled is true.",
       "default": 15
+    },
+    "subagent_max_depth": {
+      "type": "number",
+      "title": "Max subagent recursion depth",
+      "description": "Phase 4 #4 (v0.1.7): max recursion depth allowed for subagent spawn chains. Enforced by subagent-depth-guard.py hook on SubagentStart. Default 3 per subagent-isolation.md (main thread -> orchestrator -> domain agent -> nested = 1 -> 2 -> 3). Anthropic runtime normally enforces depth=1 max; this is a defensive backstop.",
+      "default": 3
     }
   }
 }
