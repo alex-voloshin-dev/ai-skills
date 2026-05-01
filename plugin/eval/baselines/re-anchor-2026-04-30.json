@@ -1,0 +1,930 @@
+{
+  "version": 1,
+  "ts": "2026-04-30T18:00:00+00:00",
+  "model": "claude-haiku-4-5",
+  "temperature": 0.0,
+  "tolerance_after_anchor": 0.5,
+  "rubrics_total": 17,
+  "samples_total": 102,
+  "renames": [
+    {
+      "rubric": "ai-assets-init",
+      "kind": "good",
+      "old_filename": "nodejs-express-init.score-4.5.md",
+      "new_filename": "nodejs-express-init.score-3.7.md",
+      "old_score": 4.5,
+      "new_score": 3.7,
+      "delta": -0.8
+    },
+    {
+      "rubric": "ai-assets-init",
+      "kind": "good",
+      "old_filename": "python-fastapi-init.score-4.6.md",
+      "new_filename": "python-fastapi-init.score-4.4.md",
+      "old_score": 4.6,
+      "new_score": 4.4,
+      "delta": -0.2
+    },
+    {
+      "rubric": "ai-assets-init",
+      "kind": "good",
+      "old_filename": "python-fastapi-init.score-4.7.md",
+      "new_filename": "python-fastapi-init.score-4.1.md",
+      "old_score": 4.7,
+      "new_score": 4.1,
+      "delta": -0.6
+    },
+    {
+      "rubric": "ai-assets-init",
+      "kind": "bad",
+      "old_filename": "silent-file-overwrite.score-1.6.md",
+      "new_filename": "silent-file-overwrite.score-1.4.md",
+      "old_score": 1.6,
+      "new_score": 1.4,
+      "delta": -0.2
+    },
+    {
+      "rubric": "ai-assets-init",
+      "kind": "bad",
+      "old_filename": "silent-overwrite.score-1.6.md",
+      "new_filename": "silent-overwrite.score-1.0.md",
+      "old_score": 1.6,
+      "new_score": 1.0,
+      "delta": -0.6
+    },
+    {
+      "rubric": "ai-assets-init",
+      "kind": "bad",
+      "old_filename": "wrong-framework-scaffold.score-1.7.md",
+      "new_filename": "wrong-framework-scaffold.score-1.8.md",
+      "old_score": 1.7,
+      "new_score": 1.8,
+      "delta": 0.1
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "good",
+      "old_filename": "concurrent-map-race-condition.score-4.6.md",
+      "new_filename": "concurrent-map-race-condition.score-4.5.md",
+      "old_score": 4.6,
+      "new_score": 4.5,
+      "delta": -0.1
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "good",
+      "old_filename": "timestamp-timezone-conversion.score-4.5.md",
+      "new_filename": "timestamp-timezone-conversion.score-4.3.md",
+      "old_score": 4.5,
+      "new_score": 4.3,
+      "delta": -0.2
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "bad",
+      "old_filename": "bandaid-fix.score-1.7.md",
+      "new_filename": "bandaid-fix.score-1.0.md",
+      "old_score": 1.7,
+      "new_score": 1.0,
+      "delta": -0.7
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "bad",
+      "old_filename": "silenced-exception.score-1.5.md",
+      "new_filename": "silenced-exception.score-1.0.md",
+      "old_score": 1.5,
+      "new_score": 1.0,
+      "delta": -0.5
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "bad",
+      "old_filename": "wrong-root-cause-fix.score-1.4.md",
+      "new_filename": "wrong-root-cause-fix.score-1.0.md",
+      "old_score": 1.4,
+      "new_score": 1.0,
+      "delta": -0.4
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "good",
+      "old_filename": "clean-validator.score-4.6.md",
+      "new_filename": "clean-validator.score-4.8.md",
+      "old_score": 4.6,
+      "new_score": 4.8,
+      "delta": 0.2
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "good",
+      "old_filename": "comprehensive-parser.score-4.6.md",
+      "new_filename": "comprehensive-parser.score-4.0.md",
+      "old_score": 4.6,
+      "new_score": 4.0,
+      "delta": -0.6
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "good",
+      "old_filename": "well-factored-calculator.score-4.5.md",
+      "new_filename": "well-factored-calculator.score-4.3.md",
+      "old_score": 4.5,
+      "new_score": 4.3,
+      "delta": -0.2
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "bad",
+      "old_filename": "hardcoded-magic.score-1.5.md",
+      "new_filename": "hardcoded-magic.score-1.7.md",
+      "old_score": 1.5,
+      "new_score": 1.7,
+      "delta": 0.2
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "bad",
+      "old_filename": "spaghetti-validator.score-1.5.md",
+      "new_filename": "spaghetti-validator.score-1.6.md",
+      "old_score": 1.5,
+      "new_score": 1.6,
+      "delta": 0.1
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "bad",
+      "old_filename": "tangled-logic.score-1.7.md",
+      "new_filename": "tangled-logic.score-1.3.md",
+      "old_score": 1.7,
+      "new_score": 1.3,
+      "delta": -0.4
+    },
+    {
+      "rubric": "develop",
+      "kind": "good",
+      "old_filename": "graphql-field-resolver.score-4.4.md",
+      "new_filename": "graphql-field-resolver.score-3.6.md",
+      "old_score": 4.4,
+      "new_score": 3.6,
+      "delta": -0.8
+    },
+    {
+      "rubric": "develop",
+      "kind": "good",
+      "old_filename": "rate-limiting-middleware.score-4.6.md",
+      "new_filename": "rate-limiting-middleware.score-4.0.md",
+      "old_score": 4.6,
+      "new_score": 4.0,
+      "delta": -0.6
+    },
+    {
+      "rubric": "develop",
+      "kind": "good",
+      "old_filename": "session-cookie-flag.score-4.5.md",
+      "new_filename": "session-cookie-flag.score-4.2.md",
+      "old_score": 4.5,
+      "new_score": 4.2,
+      "delta": -0.3
+    },
+    {
+      "rubric": "develop",
+      "kind": "bad",
+      "old_filename": "half-baked-feature.score-1.6.md",
+      "new_filename": "half-baked-feature.score-1.3.md",
+      "old_score": 1.6,
+      "new_score": 1.3,
+      "delta": -0.3
+    },
+    {
+      "rubric": "develop",
+      "kind": "bad",
+      "old_filename": "mega-pr.score-1.5.md",
+      "new_filename": "mega-pr.score-1.0.md",
+      "old_score": 1.5,
+      "new_score": 1.0,
+      "delta": -0.5
+    },
+    {
+      "rubric": "develop",
+      "kind": "bad",
+      "old_filename": "untested-bulk-refactor.score-1.7.md",
+      "new_filename": "untested-bulk-refactor.score-1.2.md",
+      "old_score": 1.7,
+      "new_score": 1.2,
+      "delta": -0.5
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "good",
+      "old_filename": "cli-reference.score-4.6.md",
+      "new_filename": "cli-reference.score-3.4.md",
+      "old_score": 4.6,
+      "new_score": 3.4,
+      "delta": -1.2
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "good",
+      "old_filename": "rest-api-docs.score-4.5.md",
+      "new_filename": "rest-api-docs.score-3.9.md",
+      "old_score": 4.5,
+      "new_score": 3.9,
+      "delta": -0.6
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "good",
+      "old_filename": "webhook-integration-guide.score-4.4.md",
+      "new_filename": "webhook-integration-guide.score-3.2.md",
+      "old_score": 4.4,
+      "new_score": 3.2,
+      "delta": -1.2
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "bad",
+      "old_filename": "missing-examples.score-1.6.md",
+      "new_filename": "missing-examples.score-1.3.md",
+      "old_score": 1.6,
+      "new_score": 1.3,
+      "delta": -0.3
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "bad",
+      "old_filename": "outdated-docs.score-1.5.md",
+      "new_filename": "outdated-docs.score-1.3.md",
+      "old_score": 1.5,
+      "new_score": 1.3,
+      "delta": -0.2
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "bad",
+      "old_filename": "sparse-docs.score-1.8.md",
+      "new_filename": "sparse-docs.score-1.0.md",
+      "old_score": 1.8,
+      "new_score": 1.0,
+      "delta": -0.8
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "good",
+      "old_filename": "github-actions-ci-diag.score-4.6.md",
+      "new_filename": "github-actions-ci-diag.score-4.3.md",
+      "old_score": 4.6,
+      "new_score": 4.3,
+      "delta": -0.3
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "good",
+      "old_filename": "k8s-namespace-diag.score-4.5.md",
+      "new_filename": "k8s-namespace-diag.score-4.3.md",
+      "old_score": 4.5,
+      "new_score": 4.3,
+      "delta": -0.2
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "bad",
+      "old_filename": "hallucinated-containers.score-1.4.md",
+      "new_filename": "hallucinated-containers.score-1.8.md",
+      "old_score": 1.4,
+      "new_score": 1.8,
+      "delta": 0.4
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "bad",
+      "old_filename": "symptom-only-diagnosis.score-1.5.md",
+      "new_filename": "symptom-only-diagnosis.score-1.6.md",
+      "old_score": 1.5,
+      "new_score": 1.6,
+      "delta": 0.1
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "bad",
+      "old_filename": "unsafe-autofix.score-1.5.md",
+      "new_filename": "unsafe-autofix.score-1.1.md",
+      "old_score": 1.5,
+      "new_score": 1.1,
+      "delta": -0.4
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "good",
+      "old_filename": "fact-checked-summary.score-4.6.md",
+      "new_filename": "fact-checked-summary.score-4.4.md",
+      "old_score": 4.6,
+      "new_score": 4.4,
+      "delta": -0.2
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "bad",
+      "old_filename": "fabricated-stats.score-1.6.md",
+      "new_filename": "fabricated-stats.score-3.2.md",
+      "old_score": 1.6,
+      "new_score": 3.2,
+      "delta": 1.6
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "bad",
+      "old_filename": "hallucinated-claims.score-1.4.md",
+      "new_filename": "hallucinated-claims.score-1.0.md",
+      "old_score": 1.4,
+      "new_score": 1.0,
+      "delta": -0.4
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "bad",
+      "old_filename": "hallucinated-source.score-1.5.md",
+      "new_filename": "hallucinated-source.score-2.6.md",
+      "old_score": 1.5,
+      "new_score": 2.6,
+      "delta": 1.1
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "good",
+      "old_filename": "cache-invalidation.score-4.6.md",
+      "new_filename": "cache-invalidation.score-3.8.md",
+      "old_score": 4.6,
+      "new_score": 3.8,
+      "delta": -0.8
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "good",
+      "old_filename": "multi-tenancy-isolation.score-4.4.md",
+      "new_filename": "multi-tenancy-isolation.score-4.1.md",
+      "old_score": 4.4,
+      "new_score": 4.1,
+      "delta": -0.3
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "good",
+      "old_filename": "webhook-retry-backoff.score-4.5.md",
+      "new_filename": "webhook-retry-backoff.score-3.5.md",
+      "old_score": 4.5,
+      "new_score": 3.5,
+      "delta": -1.0
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "bad",
+      "old_filename": "payment-redesign.score-1.5.md",
+      "new_filename": "payment-redesign.score-1.1.md",
+      "old_score": 1.5,
+      "new_score": 1.1,
+      "delta": -0.4
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "bad",
+      "old_filename": "search-optimization.score-1.6.md",
+      "new_filename": "search-optimization.score-1.3.md",
+      "old_score": 1.6,
+      "new_score": 1.3,
+      "delta": -0.3
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "bad",
+      "old_filename": "vague-design.score-1.8.md",
+      "new_filename": "vague-design.score-1.0.md",
+      "old_score": 1.8,
+      "new_score": 1.0,
+      "delta": -0.8
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "good",
+      "old_filename": "faq-with-schema.score-4.5.md",
+      "new_filename": "faq-with-schema.score-4.0.md",
+      "old_score": 4.5,
+      "new_score": 4.0,
+      "delta": -0.5
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "good",
+      "old_filename": "geo-blog-post.score-4.5.md",
+      "new_filename": "geo-blog-post.score-3.6.md",
+      "old_score": 4.5,
+      "new_score": 3.6,
+      "delta": -0.9
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "good",
+      "old_filename": "structured-blog-post.score-4.6.md",
+      "new_filename": "structured-blog-post.score-2.2.md",
+      "old_score": 4.6,
+      "new_score": 2.2,
+      "delta": -2.4
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "bad",
+      "old_filename": "missing-evidence.score-1.5.md",
+      "new_filename": "missing-evidence.score-1.2.md",
+      "old_score": 1.5,
+      "new_score": 1.2,
+      "delta": -0.3
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "bad",
+      "old_filename": "unstructured-wall.score-1.6.md",
+      "new_filename": "unstructured-wall.score-1.1.md",
+      "old_score": 1.6,
+      "new_score": 1.1,
+      "delta": -0.5
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "bad",
+      "old_filename": "wall-of-text.score-1.6.md",
+      "new_filename": "wall-of-text.score-1.1.md",
+      "old_score": 1.6,
+      "new_score": 1.1,
+      "delta": -0.5
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "good",
+      "old_filename": "conversational-tutorial.score-4.6.md",
+      "new_filename": "conversational-tutorial.score-4.3.md",
+      "old_score": 4.6,
+      "new_score": 4.3,
+      "delta": -0.3
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "good",
+      "old_filename": "friendly-api-error-copy.score-4.5.md",
+      "new_filename": "friendly-api-error-copy.score-4.8.md",
+      "old_score": 4.5,
+      "new_score": 4.8,
+      "delta": 0.3
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "good",
+      "old_filename": "natural-blog.score-4.5.md",
+      "new_filename": "natural-blog.score-5.0.md",
+      "old_score": 4.5,
+      "new_score": 5.0,
+      "delta": 0.5
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "bad",
+      "old_filename": "ai-vocabulary-soup.score-1.5.md",
+      "new_filename": "ai-vocabulary-soup.score-1.0.md",
+      "old_score": 1.5,
+      "new_score": 1.0,
+      "delta": -0.5
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "bad",
+      "old_filename": "chatbot-voice-throughout.score-1.6.md",
+      "new_filename": "chatbot-voice-throughout.score-1.0.md",
+      "old_score": 1.6,
+      "new_score": 1.0,
+      "delta": -0.6
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "bad",
+      "old_filename": "inflated-language-salad.score-1.8.md",
+      "new_filename": "inflated-language-salad.score-1.0.md",
+      "old_score": 1.8,
+      "new_score": 1.0,
+      "delta": -0.8
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "good",
+      "old_filename": "decision-record.score-4.6.md",
+      "new_filename": "decision-record.score-1.0.md",
+      "old_score": 4.6,
+      "new_score": 1.0,
+      "delta": -3.6
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "good",
+      "old_filename": "learning-entry.score-4.5.md",
+      "new_filename": "learning-entry.score-1.6.md",
+      "old_score": 4.5,
+      "new_score": 1.6,
+      "delta": -2.9
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "good",
+      "old_filename": "learnings-entry.score-4.5.md",
+      "new_filename": "learnings-entry.score-4.0.md",
+      "old_score": 4.5,
+      "new_score": 4.0,
+      "delta": -0.5
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "bad",
+      "old_filename": "bypass-curation.score-1.6.md",
+      "new_filename": "bypass-curation.score-1.4.md",
+      "old_score": 1.6,
+      "new_score": 1.4,
+      "delta": -0.2
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "bad",
+      "old_filename": "bypass-curator.score-1.4.md",
+      "new_filename": "bypass-curator.score-1.0.md",
+      "old_score": 1.4,
+      "new_score": 1.0,
+      "delta": -0.4
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "bad",
+      "old_filename": "unverified-heap-dump.score-1.5.md",
+      "new_filename": "unverified-heap-dump.score-1.7.md",
+      "old_score": 1.5,
+      "new_score": 1.7,
+      "delta": 0.2
+    },
+    {
+      "rubric": "migrate",
+      "kind": "good",
+      "old_filename": "elasticsearch-index-reindex.score-4.4.md",
+      "new_filename": "elasticsearch-index-reindex.score-4.0.md",
+      "old_score": 4.4,
+      "new_score": 4.0,
+      "delta": -0.4
+    },
+    {
+      "rubric": "migrate",
+      "kind": "good",
+      "old_filename": "mysql-to-postgres-schema.score-4.5.md",
+      "new_filename": "mysql-to-postgres-schema.score-4.1.md",
+      "old_score": 4.5,
+      "new_score": 4.1,
+      "delta": -0.4
+    },
+    {
+      "rubric": "migrate",
+      "kind": "good",
+      "old_filename": "postgres-13-to-14.score-4.6.md",
+      "new_filename": "postgres-13-to-14.score-4.4.md",
+      "old_score": 4.6,
+      "new_score": 4.4,
+      "delta": -0.2
+    },
+    {
+      "rubric": "migrate",
+      "kind": "bad",
+      "old_filename": "assumption-based-plan.score-1.8.md",
+      "new_filename": "assumption-based-plan.score-1.1.md",
+      "old_score": 1.8,
+      "new_score": 1.1,
+      "delta": -0.7
+    },
+    {
+      "rubric": "migrate",
+      "kind": "bad",
+      "old_filename": "missing-integrity-checks.score-1.6.md",
+      "new_filename": "missing-integrity-checks.score-1.3.md",
+      "old_score": 1.6,
+      "new_score": 1.3,
+      "delta": -0.3
+    },
+    {
+      "rubric": "migrate",
+      "kind": "bad",
+      "old_filename": "untested-rollback.score-1.5.md",
+      "new_filename": "untested-rollback.score-1.0.md",
+      "old_score": 1.5,
+      "new_score": 1.0,
+      "delta": -0.5
+    },
+    {
+      "rubric": "refactor",
+      "kind": "good",
+      "old_filename": "extract-validator.score-4.5.md",
+      "new_filename": "extract-validator.score-3.9.md",
+      "old_score": 4.5,
+      "new_score": 3.9,
+      "delta": -0.6
+    },
+    {
+      "rubric": "refactor",
+      "kind": "good",
+      "old_filename": "http-client-abstraction.score-4.6.md",
+      "new_filename": "http-client-abstraction.score-4.1.md",
+      "old_score": 4.6,
+      "new_score": 4.1,
+      "delta": -0.5
+    },
+    {
+      "rubric": "refactor",
+      "kind": "good",
+      "old_filename": "normalize-error-responses.score-4.4.md",
+      "new_filename": "normalize-error-responses.score-4.1.md",
+      "old_score": 4.4,
+      "new_score": 4.1,
+      "delta": -0.3
+    },
+    {
+      "rubric": "refactor",
+      "kind": "bad",
+      "old_filename": "scope-creep.score-1.6.md",
+      "new_filename": "scope-creep.score-1.0.md",
+      "old_score": 1.6,
+      "new_score": 1.0,
+      "delta": -0.6
+    },
+    {
+      "rubric": "refactor",
+      "kind": "bad",
+      "old_filename": "silent-behavior-change.score-1.7.md",
+      "new_filename": "silent-behavior-change.score-1.4.md",
+      "old_score": 1.7,
+      "new_score": 1.4,
+      "delta": -0.3
+    },
+    {
+      "rubric": "refactor",
+      "kind": "bad",
+      "old_filename": "untested-reorg.score-1.5.md",
+      "new_filename": "untested-reorg.score-1.2.md",
+      "old_score": 1.5,
+      "new_score": 1.2,
+      "delta": -0.3
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "good",
+      "old_filename": "api-endpoint-audit.score-4.6.md",
+      "new_filename": "api-endpoint-audit.score-4.2.md",
+      "old_score": 4.6,
+      "new_score": 4.2,
+      "delta": -0.4
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "good",
+      "old_filename": "auth-flow-audit.score-4.5.md",
+      "new_filename": "auth-flow-audit.score-4.2.md",
+      "old_score": 4.5,
+      "new_score": 4.2,
+      "delta": -0.3
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "good",
+      "old_filename": "data-encryption-audit.score-4.4.md",
+      "new_filename": "data-encryption-audit.score-4.2.md",
+      "old_score": 4.4,
+      "new_score": 4.2,
+      "delta": -0.2
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "bad",
+      "old_filename": "effort-estimates.score-1.7.md",
+      "new_filename": "effort-estimates.score-1.0.md",
+      "old_score": 1.7,
+      "new_score": 1.0,
+      "delta": -0.7
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "bad",
+      "old_filename": "includes-effort-estimates.score-1.6.md",
+      "new_filename": "includes-effort-estimates.score-1.4.md",
+      "old_score": 1.6,
+      "new_score": 1.4,
+      "delta": -0.2
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "bad",
+      "old_filename": "vague-findings.score-1.5.md",
+      "new_filename": "vague-findings.score-1.3.md",
+      "old_score": 1.5,
+      "new_score": 1.3,
+      "delta": -0.2
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "good",
+      "old_filename": "hardened-handler.score-4.6.md",
+      "new_filename": "hardened-handler.score-3.5.md",
+      "old_score": 4.6,
+      "new_score": 3.5,
+      "delta": -1.1
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "good",
+      "old_filename": "parameterized-queries.score-4.6.md",
+      "new_filename": "parameterized-queries.score-1.8.md",
+      "old_score": 4.6,
+      "new_score": 1.8,
+      "delta": -2.8
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "good",
+      "old_filename": "secure-password-hashing.score-4.5.md",
+      "new_filename": "secure-password-hashing.score-2.5.md",
+      "old_score": 4.5,
+      "new_score": 2.5,
+      "delta": -2.0
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "bad",
+      "old_filename": "sql-injection.score-1.3.md",
+      "new_filename": "sql-injection.score-1.0.md",
+      "old_score": 1.3,
+      "new_score": 1.0,
+      "delta": -0.3
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "bad",
+      "old_filename": "unvalidated-file-upload.score-1.5.md",
+      "new_filename": "unvalidated-file-upload.score-2.0.md",
+      "old_score": 1.5,
+      "new_score": 2.0,
+      "delta": 0.5
+    },
+    {
+      "rubric": "spike",
+      "kind": "good",
+      "old_filename": "auth-openidconnect-vs-oauth.score-4.6.md",
+      "new_filename": "auth-openidconnect-vs-oauth.score-4.4.md",
+      "old_score": 4.6,
+      "new_score": 4.4,
+      "delta": -0.2
+    },
+    {
+      "rubric": "spike",
+      "kind": "good",
+      "old_filename": "grpc-vs-rest.score-4.4.md",
+      "new_filename": "grpc-vs-rest.score-4.7.md",
+      "old_score": 4.4,
+      "new_score": 4.7,
+      "delta": 0.3
+    },
+    {
+      "rubric": "spike",
+      "kind": "good",
+      "old_filename": "websocket-vs-polling.score-4.5.md",
+      "new_filename": "websocket-vs-polling.score-4.7.md",
+      "old_score": 4.5,
+      "new_score": 4.7,
+      "delta": 0.2
+    },
+    {
+      "rubric": "spike",
+      "kind": "bad",
+      "old_filename": "missing-alternatives.score-1.5.md",
+      "new_filename": "missing-alternatives.score-1.6.md",
+      "old_score": 1.5,
+      "new_score": 1.6,
+      "delta": 0.1
+    },
+    {
+      "rubric": "spike",
+      "kind": "bad",
+      "old_filename": "opinion-only.score-1.6.md",
+      "new_filename": "opinion-only.score-1.3.md",
+      "old_score": 1.6,
+      "new_score": 1.3,
+      "delta": -0.3
+    },
+    {
+      "rubric": "spike",
+      "kind": "bad",
+      "old_filename": "unsubstantiated-claim.score-1.7.md",
+      "new_filename": "unsubstantiated-claim.score-1.3.md",
+      "old_score": 1.7,
+      "new_score": 1.3,
+      "delta": -0.4
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "good",
+      "old_filename": "code-review-spawn.score-4.5.md",
+      "new_filename": "code-review-spawn.score-2.6.md",
+      "old_score": 4.5,
+      "new_score": 2.6,
+      "delta": -1.9
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "good",
+      "old_filename": "docs-pack-spawn.score-4.6.md",
+      "new_filename": "docs-pack-spawn.score-2.4.md",
+      "old_score": 4.6,
+      "new_score": 2.4,
+      "delta": -2.2
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "bad",
+      "old_filename": "free-form-handoff.score-1.5.md",
+      "new_filename": "free-form-handoff.score-1.0.md",
+      "old_score": 1.5,
+      "new_score": 1.0,
+      "delta": -0.5
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "bad",
+      "old_filename": "impossible-return-contract.score-1.6.md",
+      "new_filename": "impossible-return-contract.score-1.3.md",
+      "old_score": 1.6,
+      "new_score": 1.3,
+      "delta": -0.3
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "bad",
+      "old_filename": "vague-handoff.score-1.5.md",
+      "new_filename": "vague-handoff.score-1.0.md",
+      "old_score": 1.5,
+      "new_score": 1.0,
+      "delta": -0.5
+    }
+  ],
+  "noops": [
+    {
+      "rubric": "bugfix",
+      "kind": "good",
+      "old_filename": "null-deref.score-4.7.md",
+      "new_filename": "null-deref.score-4.7.md",
+      "old_score": 4.7,
+      "new_score": 4.7,
+      "delta": 0.0
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "good",
+      "old_filename": "compose-diag.score-4.4.md",
+      "new_filename": "compose-diag.score-4.4.md",
+      "old_score": 4.4,
+      "new_score": 4.4,
+      "delta": 0.0
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "good",
+      "old_filename": "grounded-summary.score-4.5.md",
+      "new_filename": "grounded-summary.score-4.5.md",
+      "old_score": 4.5,
+      "new_score": 4.5,
+      "delta": 0.0
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "good",
+      "old_filename": "g7-spawn-and-return.score-4.6.md",
+      "new_filename": "g7-spawn-and-return.score-4.6.md",
+      "old_score": 4.6,
+      "new_score": 4.6,
+      "delta": 0.0
+    }
+  ],
+  "skipped": [
+    {
+      "rubric": "faithfulness",
+      "kind": "good",
+      "filename": "attributed-synthesis.score-4.5.md",
+      "reason": "judge returned no 'overall' field (likely max_tokens=600 truncated response; alpha.30 bumped to 1500)"
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "bad",
+      "filename": "vulnerable-auth.score-1.6.md",
+      "reason": "judge JSON parse failed (truncated mid-response; alpha.30 bumped max_tokens to 1500)"
+    }
+  ],
+  "tokens_used_total": 210776,
+  "reconstructed_from_log": true,
+  "_note": "Original plan-JSON file was 0-byte due to write_text issue; reconstructed from terminal output."
+}

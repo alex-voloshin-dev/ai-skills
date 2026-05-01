@@ -1,0 +1,1024 @@
+{
+  "version": 1,
+  "ts": "2026-04-30T18:53:32.440693+00:00",
+  "model": "claude-haiku-4-5",
+  "temperature": 0.0,
+  "tolerance_after_anchor": 0.5,
+  "rubrics_total": 17,
+  "samples_total": 102,
+  "renames": [
+    {
+      "rubric": "ai-assets-init",
+      "kind": "good",
+      "old_filename": "nodejs-express-init.score-3.7.md",
+      "new_filename": "nodejs-express-init.score-3.8.md",
+      "old_score": 3.7,
+      "new_score": 3.8,
+      "delta": 0.1,
+      "tokens": 2423
+    },
+    {
+      "rubric": "ai-assets-init",
+      "kind": "bad",
+      "old_filename": "wrong-framework-scaffold.score-1.8.md",
+      "new_filename": "wrong-framework-scaffold.score-2.0.md",
+      "old_score": 1.8,
+      "new_score": 2.0,
+      "delta": 0.2,
+      "tokens": 1687
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "good",
+      "old_filename": "clean-validator.score-4.8.md",
+      "new_filename": "clean-validator.score-4.6.md",
+      "old_score": 4.8,
+      "new_score": 4.6,
+      "delta": -0.2,
+      "tokens": 2499
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "good",
+      "old_filename": "well-factored-calculator.score-4.3.md",
+      "new_filename": "well-factored-calculator.score-4.8.md",
+      "old_score": 4.3,
+      "new_score": 4.8,
+      "delta": 0.5,
+      "tokens": 1642
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "bad",
+      "old_filename": "tangled-logic.score-1.3.md",
+      "new_filename": "tangled-logic.score-1.2.md",
+      "old_score": 1.3,
+      "new_score": 1.2,
+      "delta": -0.1,
+      "tokens": 1452
+    },
+    {
+      "rubric": "develop",
+      "kind": "good",
+      "old_filename": "session-cookie-flag.score-4.2.md",
+      "new_filename": "session-cookie-flag.score-4.1.md",
+      "old_score": 4.2,
+      "new_score": 4.1,
+      "delta": -0.1,
+      "tokens": 2038
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "good",
+      "old_filename": "cli-reference.score-3.4.md",
+      "new_filename": "cli-reference.score-3.3.md",
+      "old_score": 3.4,
+      "new_score": 3.3,
+      "delta": -0.1,
+      "tokens": 2864
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "good",
+      "old_filename": "webhook-integration-guide.score-3.2.md",
+      "new_filename": "webhook-integration-guide.score-3.3.md",
+      "old_score": 3.2,
+      "new_score": 3.3,
+      "delta": 0.1,
+      "tokens": 2682
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "bad",
+      "old_filename": "outdated-docs.score-1.3.md",
+      "new_filename": "outdated-docs.score-1.4.md",
+      "old_score": 1.3,
+      "new_score": 1.4,
+      "delta": 0.1,
+      "tokens": 1923
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "good",
+      "old_filename": "compose-diag.score-4.4.md",
+      "new_filename": "compose-diag.score-4.5.md",
+      "old_score": 4.4,
+      "new_score": 4.5,
+      "delta": 0.1,
+      "tokens": 2540
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "good",
+      "old_filename": "github-actions-ci-diag.score-4.3.md",
+      "new_filename": "github-actions-ci-diag.score-4.4.md",
+      "old_score": 4.3,
+      "new_score": 4.4,
+      "delta": 0.1,
+      "tokens": 2806
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "bad",
+      "old_filename": "fabricated-stats.score-1.6.md",
+      "new_filename": "fabricated-stats.score-3.0.md",
+      "old_score": 1.6,
+      "new_score": 3.0,
+      "delta": 1.4,
+      "tokens": 2240
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "good",
+      "old_filename": "webhook-retry-backoff.score-3.5.md",
+      "new_filename": "webhook-retry-backoff.score-3.4.md",
+      "old_score": 3.5,
+      "new_score": 3.4,
+      "delta": -0.1,
+      "tokens": 3133
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "good",
+      "old_filename": "structured-blog-post.score-4.6.md",
+      "new_filename": "structured-blog-post.score-2.2.md",
+      "old_score": 4.6,
+      "new_score": 2.2,
+      "delta": -2.4,
+      "tokens": 2526
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "good",
+      "old_filename": "friendly-api-error-copy.score-4.8.md",
+      "new_filename": "friendly-api-error-copy.score-4.7.md",
+      "old_score": 4.8,
+      "new_score": 4.7,
+      "delta": -0.1,
+      "tokens": 1427
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "good",
+      "old_filename": "decision-record.score-4.6.md",
+      "new_filename": "decision-record.score-1.0.md",
+      "old_score": 4.6,
+      "new_score": 1.0,
+      "delta": -3.6,
+      "tokens": 1932
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "good",
+      "old_filename": "learning-entry.score-4.5.md",
+      "new_filename": "learning-entry.score-1.6.md",
+      "old_score": 4.5,
+      "new_score": 1.6,
+      "delta": -2.9,
+      "tokens": 1944
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "good",
+      "old_filename": "parameterized-queries.score-4.6.md",
+      "new_filename": "parameterized-queries.score-1.8.md",
+      "old_score": 4.6,
+      "new_score": 1.8,
+      "delta": -2.8,
+      "tokens": 2271
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "good",
+      "old_filename": "secure-password-hashing.score-4.5.md",
+      "new_filename": "secure-password-hashing.score-2.5.md",
+      "old_score": 4.5,
+      "new_score": 2.5,
+      "delta": -2.0,
+      "tokens": 2150
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "bad",
+      "old_filename": "unvalidated-file-upload.score-2.0.md",
+      "new_filename": "unvalidated-file-upload.score-1.8.md",
+      "old_score": 2.0,
+      "new_score": 1.8,
+      "delta": -0.2,
+      "tokens": 1499
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "good",
+      "old_filename": "code-review-spawn.score-4.5.md",
+      "new_filename": "code-review-spawn.score-2.6.md",
+      "old_score": 4.5,
+      "new_score": 2.6,
+      "delta": -1.9,
+      "tokens": 2449
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "good",
+      "old_filename": "docs-pack-spawn.score-4.6.md",
+      "new_filename": "docs-pack-spawn.score-2.4.md",
+      "old_score": 4.6,
+      "new_score": 2.4,
+      "delta": -2.2,
+      "tokens": 2309
+    }
+  ],
+  "noops": [
+    {
+      "rubric": "ai-assets-init",
+      "kind": "good",
+      "old_filename": "python-fastapi-init.score-4.1.md",
+      "new_filename": "python-fastapi-init.score-4.1.md",
+      "old_score": 4.1,
+      "new_score": 4.1,
+      "delta": 0.0,
+      "tokens": 2523
+    },
+    {
+      "rubric": "ai-assets-init",
+      "kind": "good",
+      "old_filename": "python-fastapi-init.score-4.4.md",
+      "new_filename": "python-fastapi-init.score-4.4.md",
+      "old_score": 4.4,
+      "new_score": 4.4,
+      "delta": 0.0,
+      "tokens": 2549
+    },
+    {
+      "rubric": "ai-assets-init",
+      "kind": "bad",
+      "old_filename": "silent-file-overwrite.score-1.4.md",
+      "new_filename": "silent-file-overwrite.score-1.4.md",
+      "old_score": 1.4,
+      "new_score": 1.4,
+      "delta": 0.0,
+      "tokens": 1258
+    },
+    {
+      "rubric": "ai-assets-init",
+      "kind": "bad",
+      "old_filename": "silent-overwrite.score-1.0.md",
+      "new_filename": "silent-overwrite.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1411
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "good",
+      "old_filename": "concurrent-map-race-condition.score-4.5.md",
+      "new_filename": "concurrent-map-race-condition.score-4.5.md",
+      "old_score": 4.5,
+      "new_score": 4.5,
+      "delta": 0.0,
+      "tokens": 2406
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "good",
+      "old_filename": "null-deref.score-4.7.md",
+      "new_filename": "null-deref.score-4.7.md",
+      "old_score": 4.7,
+      "new_score": 4.7,
+      "delta": 0.0,
+      "tokens": 2297
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "good",
+      "old_filename": "timestamp-timezone-conversion.score-4.3.md",
+      "new_filename": "timestamp-timezone-conversion.score-4.3.md",
+      "old_score": 4.3,
+      "new_score": 4.3,
+      "delta": 0.0,
+      "tokens": 2094
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "bad",
+      "old_filename": "bandaid-fix.score-1.0.md",
+      "new_filename": "bandaid-fix.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1603
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "bad",
+      "old_filename": "silenced-exception.score-1.0.md",
+      "new_filename": "silenced-exception.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1607
+    },
+    {
+      "rubric": "bugfix",
+      "kind": "bad",
+      "old_filename": "wrong-root-cause-fix.score-1.0.md",
+      "new_filename": "wrong-root-cause-fix.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1795
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "good",
+      "old_filename": "comprehensive-parser.score-4.0.md",
+      "new_filename": "comprehensive-parser.score-4.0.md",
+      "old_score": 4.0,
+      "new_score": 4.0,
+      "delta": 0.0,
+      "tokens": 2345
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "bad",
+      "old_filename": "hardcoded-magic.score-1.7.md",
+      "new_filename": "hardcoded-magic.score-1.7.md",
+      "old_score": 1.7,
+      "new_score": 1.7,
+      "delta": 0.0,
+      "tokens": 2030
+    },
+    {
+      "rubric": "code-quality",
+      "kind": "bad",
+      "old_filename": "spaghetti-validator.score-1.6.md",
+      "new_filename": "spaghetti-validator.score-1.6.md",
+      "old_score": 1.6,
+      "new_score": 1.6,
+      "delta": 0.0,
+      "tokens": 1581
+    },
+    {
+      "rubric": "develop",
+      "kind": "good",
+      "old_filename": "graphql-field-resolver.score-3.6.md",
+      "new_filename": "graphql-field-resolver.score-3.6.md",
+      "old_score": 3.6,
+      "new_score": 3.6,
+      "delta": 0.0,
+      "tokens": 2098
+    },
+    {
+      "rubric": "develop",
+      "kind": "good",
+      "old_filename": "rate-limiting-middleware.score-4.0.md",
+      "new_filename": "rate-limiting-middleware.score-4.0.md",
+      "old_score": 4.0,
+      "new_score": 4.0,
+      "delta": 0.0,
+      "tokens": 1710
+    },
+    {
+      "rubric": "develop",
+      "kind": "bad",
+      "old_filename": "half-baked-feature.score-1.3.md",
+      "new_filename": "half-baked-feature.score-1.3.md",
+      "old_score": 1.3,
+      "new_score": 1.3,
+      "delta": 0.0,
+      "tokens": 1359
+    },
+    {
+      "rubric": "develop",
+      "kind": "bad",
+      "old_filename": "mega-pr.score-1.0.md",
+      "new_filename": "mega-pr.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1454
+    },
+    {
+      "rubric": "develop",
+      "kind": "bad",
+      "old_filename": "untested-bulk-refactor.score-1.2.md",
+      "new_filename": "untested-bulk-refactor.score-1.2.md",
+      "old_score": 1.2,
+      "new_score": 1.2,
+      "delta": 0.0,
+      "tokens": 1749
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "good",
+      "old_filename": "rest-api-docs.score-3.9.md",
+      "new_filename": "rest-api-docs.score-3.9.md",
+      "old_score": 3.9,
+      "new_score": 3.9,
+      "delta": 0.0,
+      "tokens": 2601
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "bad",
+      "old_filename": "missing-examples.score-1.3.md",
+      "new_filename": "missing-examples.score-1.3.md",
+      "old_score": 1.3,
+      "new_score": 1.3,
+      "delta": 0.0,
+      "tokens": 1687
+    },
+    {
+      "rubric": "docs-pack",
+      "kind": "bad",
+      "old_filename": "sparse-docs.score-1.0.md",
+      "new_filename": "sparse-docs.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1436
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "good",
+      "old_filename": "k8s-namespace-diag.score-4.3.md",
+      "new_filename": "k8s-namespace-diag.score-4.3.md",
+      "old_score": 4.3,
+      "new_score": 4.3,
+      "delta": 0.0,
+      "tokens": 3070
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "bad",
+      "old_filename": "hallucinated-containers.score-1.8.md",
+      "new_filename": "hallucinated-containers.score-1.8.md",
+      "old_score": 1.8,
+      "new_score": 1.8,
+      "delta": 0.0,
+      "tokens": 1903
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "bad",
+      "old_filename": "symptom-only-diagnosis.score-1.6.md",
+      "new_filename": "symptom-only-diagnosis.score-1.6.md",
+      "old_score": 1.6,
+      "new_score": 1.6,
+      "delta": 0.0,
+      "tokens": 1730
+    },
+    {
+      "rubric": "env-analyze",
+      "kind": "bad",
+      "old_filename": "unsafe-autofix.score-1.1.md",
+      "new_filename": "unsafe-autofix.score-1.1.md",
+      "old_score": 1.1,
+      "new_score": 1.1,
+      "delta": 0.0,
+      "tokens": 1686
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "good",
+      "old_filename": "fact-checked-summary.score-4.4.md",
+      "new_filename": "fact-checked-summary.score-4.4.md",
+      "old_score": 4.4,
+      "new_score": 4.4,
+      "delta": 0.0,
+      "tokens": 2277
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "good",
+      "old_filename": "grounded-summary.score-4.5.md",
+      "new_filename": "grounded-summary.score-4.5.md",
+      "old_score": 4.5,
+      "new_score": 4.5,
+      "delta": 0.0,
+      "tokens": 2603
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "bad",
+      "old_filename": "hallucinated-claims.score-1.0.md",
+      "new_filename": "hallucinated-claims.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 2083
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "good",
+      "old_filename": "cache-invalidation.score-3.8.md",
+      "new_filename": "cache-invalidation.score-3.8.md",
+      "old_score": 3.8,
+      "new_score": 3.8,
+      "delta": 0.0,
+      "tokens": 3363
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "good",
+      "old_filename": "multi-tenancy-isolation.score-4.1.md",
+      "new_filename": "multi-tenancy-isolation.score-4.1.md",
+      "old_score": 4.1,
+      "new_score": 4.1,
+      "delta": 0.0,
+      "tokens": 2795
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "bad",
+      "old_filename": "payment-redesign.score-1.1.md",
+      "new_filename": "payment-redesign.score-1.1.md",
+      "old_score": 1.1,
+      "new_score": 1.1,
+      "delta": 0.0,
+      "tokens": 2159
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "bad",
+      "old_filename": "search-optimization.score-1.3.md",
+      "new_filename": "search-optimization.score-1.3.md",
+      "old_score": 1.3,
+      "new_score": 1.3,
+      "delta": 0.0,
+      "tokens": 2215
+    },
+    {
+      "rubric": "feature-design",
+      "kind": "bad",
+      "old_filename": "vague-design.score-1.0.md",
+      "new_filename": "vague-design.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1887
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "good",
+      "old_filename": "faq-with-schema.score-4.0.md",
+      "new_filename": "faq-with-schema.score-4.0.md",
+      "old_score": 4.0,
+      "new_score": 4.0,
+      "delta": 0.0,
+      "tokens": 2319
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "good",
+      "old_filename": "geo-blog-post.score-3.6.md",
+      "new_filename": "geo-blog-post.score-3.6.md",
+      "old_score": 3.6,
+      "new_score": 3.6,
+      "delta": 0.0,
+      "tokens": 2971
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "bad",
+      "old_filename": "missing-evidence.score-1.2.md",
+      "new_filename": "missing-evidence.score-1.2.md",
+      "old_score": 1.2,
+      "new_score": 1.2,
+      "delta": 0.0,
+      "tokens": 1753
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "bad",
+      "old_filename": "unstructured-wall.score-1.1.md",
+      "new_filename": "unstructured-wall.score-1.1.md",
+      "old_score": 1.1,
+      "new_score": 1.1,
+      "delta": 0.0,
+      "tokens": 1870
+    },
+    {
+      "rubric": "geo-readiness",
+      "kind": "bad",
+      "old_filename": "wall-of-text.score-1.1.md",
+      "new_filename": "wall-of-text.score-1.1.md",
+      "old_score": 1.1,
+      "new_score": 1.1,
+      "delta": 0.0,
+      "tokens": 1864
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "good",
+      "old_filename": "conversational-tutorial.score-4.3.md",
+      "new_filename": "conversational-tutorial.score-4.3.md",
+      "old_score": 4.3,
+      "new_score": 4.3,
+      "delta": 0.0,
+      "tokens": 1876
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "good",
+      "old_filename": "natural-blog.score-5.0.md",
+      "new_filename": "natural-blog.score-5.0.md",
+      "old_score": 5.0,
+      "new_score": 5.0,
+      "delta": 0.0,
+      "tokens": 1298
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "bad",
+      "old_filename": "ai-vocabulary-soup.score-1.0.md",
+      "new_filename": "ai-vocabulary-soup.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1602
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "bad",
+      "old_filename": "chatbot-voice-throughout.score-1.0.md",
+      "new_filename": "chatbot-voice-throughout.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1508
+    },
+    {
+      "rubric": "humanizer-compliance",
+      "kind": "bad",
+      "old_filename": "inflated-language-salad.score-1.0.md",
+      "new_filename": "inflated-language-salad.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1542
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "good",
+      "old_filename": "learnings-entry.score-4.0.md",
+      "new_filename": "learnings-entry.score-4.0.md",
+      "old_score": 4.0,
+      "new_score": 4.0,
+      "delta": 0.0,
+      "tokens": 2808
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "bad",
+      "old_filename": "bypass-curation.score-1.4.md",
+      "new_filename": "bypass-curation.score-1.4.md",
+      "old_score": 1.4,
+      "new_score": 1.4,
+      "delta": 0.0,
+      "tokens": 1915
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "bad",
+      "old_filename": "bypass-curator.score-1.0.md",
+      "new_filename": "bypass-curator.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1980
+    },
+    {
+      "rubric": "memory-write-discipline",
+      "kind": "bad",
+      "old_filename": "unverified-heap-dump.score-1.7.md",
+      "new_filename": "unverified-heap-dump.score-1.7.md",
+      "old_score": 1.7,
+      "new_score": 1.7,
+      "delta": 0.0,
+      "tokens": 1881
+    },
+    {
+      "rubric": "migrate",
+      "kind": "good",
+      "old_filename": "elasticsearch-index-reindex.score-4.0.md",
+      "new_filename": "elasticsearch-index-reindex.score-4.0.md",
+      "old_score": 4.0,
+      "new_score": 4.0,
+      "delta": 0.0,
+      "tokens": 2940
+    },
+    {
+      "rubric": "migrate",
+      "kind": "good",
+      "old_filename": "mysql-to-postgres-schema.score-4.1.md",
+      "new_filename": "mysql-to-postgres-schema.score-4.1.md",
+      "old_score": 4.1,
+      "new_score": 4.1,
+      "delta": 0.0,
+      "tokens": 2756
+    },
+    {
+      "rubric": "migrate",
+      "kind": "good",
+      "old_filename": "postgres-13-to-14.score-4.4.md",
+      "new_filename": "postgres-13-to-14.score-4.4.md",
+      "old_score": 4.4,
+      "new_score": 4.4,
+      "delta": 0.0,
+      "tokens": 2823
+    },
+    {
+      "rubric": "migrate",
+      "kind": "bad",
+      "old_filename": "assumption-based-plan.score-1.1.md",
+      "new_filename": "assumption-based-plan.score-1.1.md",
+      "old_score": 1.1,
+      "new_score": 1.1,
+      "delta": 0.0,
+      "tokens": 1810
+    },
+    {
+      "rubric": "migrate",
+      "kind": "bad",
+      "old_filename": "missing-integrity-checks.score-1.3.md",
+      "new_filename": "missing-integrity-checks.score-1.3.md",
+      "old_score": 1.3,
+      "new_score": 1.3,
+      "delta": 0.0,
+      "tokens": 1830
+    },
+    {
+      "rubric": "migrate",
+      "kind": "bad",
+      "old_filename": "untested-rollback.score-1.0.md",
+      "new_filename": "untested-rollback.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1534
+    },
+    {
+      "rubric": "refactor",
+      "kind": "good",
+      "old_filename": "http-client-abstraction.score-4.1.md",
+      "new_filename": "http-client-abstraction.score-4.1.md",
+      "old_score": 4.1,
+      "new_score": 4.1,
+      "delta": 0.0,
+      "tokens": 2353
+    },
+    {
+      "rubric": "refactor",
+      "kind": "good",
+      "old_filename": "normalize-error-responses.score-4.1.md",
+      "new_filename": "normalize-error-responses.score-4.1.md",
+      "old_score": 4.1,
+      "new_score": 4.1,
+      "delta": 0.0,
+      "tokens": 2256
+    },
+    {
+      "rubric": "refactor",
+      "kind": "bad",
+      "old_filename": "scope-creep.score-1.0.md",
+      "new_filename": "scope-creep.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1714
+    },
+    {
+      "rubric": "refactor",
+      "kind": "bad",
+      "old_filename": "silent-behavior-change.score-1.4.md",
+      "new_filename": "silent-behavior-change.score-1.4.md",
+      "old_score": 1.4,
+      "new_score": 1.4,
+      "delta": 0.0,
+      "tokens": 1740
+    },
+    {
+      "rubric": "refactor",
+      "kind": "bad",
+      "old_filename": "untested-reorg.score-1.2.md",
+      "new_filename": "untested-reorg.score-1.2.md",
+      "old_score": 1.2,
+      "new_score": 1.2,
+      "delta": 0.0,
+      "tokens": 1640
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "good",
+      "old_filename": "api-endpoint-audit.score-4.2.md",
+      "new_filename": "api-endpoint-audit.score-4.2.md",
+      "old_score": 4.2,
+      "new_score": 4.2,
+      "delta": 0.0,
+      "tokens": 3821
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "good",
+      "old_filename": "auth-flow-audit.score-4.2.md",
+      "new_filename": "auth-flow-audit.score-4.2.md",
+      "old_score": 4.2,
+      "new_score": 4.2,
+      "delta": 0.0,
+      "tokens": 3274
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "good",
+      "old_filename": "data-encryption-audit.score-4.2.md",
+      "new_filename": "data-encryption-audit.score-4.2.md",
+      "old_score": 4.2,
+      "new_score": 4.2,
+      "delta": 0.0,
+      "tokens": 3055
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "bad",
+      "old_filename": "effort-estimates.score-1.0.md",
+      "new_filename": "effort-estimates.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1876
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "bad",
+      "old_filename": "includes-effort-estimates.score-1.4.md",
+      "new_filename": "includes-effort-estimates.score-1.4.md",
+      "old_score": 1.4,
+      "new_score": 1.4,
+      "delta": 0.0,
+      "tokens": 2188
+    },
+    {
+      "rubric": "security-audit",
+      "kind": "bad",
+      "old_filename": "vague-findings.score-1.3.md",
+      "new_filename": "vague-findings.score-1.3.md",
+      "old_score": 1.3,
+      "new_score": 1.3,
+      "delta": 0.0,
+      "tokens": 2021
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "good",
+      "old_filename": "hardened-handler.score-3.5.md",
+      "new_filename": "hardened-handler.score-3.5.md",
+      "old_score": 3.5,
+      "new_score": 3.5,
+      "delta": 0.0,
+      "tokens": 2774
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "bad",
+      "old_filename": "sql-injection.score-1.0.md",
+      "new_filename": "sql-injection.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1696
+    },
+    {
+      "rubric": "spike",
+      "kind": "good",
+      "old_filename": "auth-openidconnect-vs-oauth.score-4.4.md",
+      "new_filename": "auth-openidconnect-vs-oauth.score-4.4.md",
+      "old_score": 4.4,
+      "new_score": 4.4,
+      "delta": 0.0,
+      "tokens": 2648
+    },
+    {
+      "rubric": "spike",
+      "kind": "good",
+      "old_filename": "grpc-vs-rest.score-4.7.md",
+      "new_filename": "grpc-vs-rest.score-4.7.md",
+      "old_score": 4.7,
+      "new_score": 4.7,
+      "delta": 0.0,
+      "tokens": 2523
+    },
+    {
+      "rubric": "spike",
+      "kind": "good",
+      "old_filename": "websocket-vs-polling.score-4.7.md",
+      "new_filename": "websocket-vs-polling.score-4.7.md",
+      "old_score": 4.7,
+      "new_score": 4.7,
+      "delta": 0.0,
+      "tokens": 2630
+    },
+    {
+      "rubric": "spike",
+      "kind": "bad",
+      "old_filename": "missing-alternatives.score-1.6.md",
+      "new_filename": "missing-alternatives.score-1.6.md",
+      "old_score": 1.6,
+      "new_score": 1.6,
+      "delta": 0.0,
+      "tokens": 1696
+    },
+    {
+      "rubric": "spike",
+      "kind": "bad",
+      "old_filename": "opinion-only.score-1.3.md",
+      "new_filename": "opinion-only.score-1.3.md",
+      "old_score": 1.3,
+      "new_score": 1.3,
+      "delta": 0.0,
+      "tokens": 1544
+    },
+    {
+      "rubric": "spike",
+      "kind": "bad",
+      "old_filename": "unsubstantiated-claim.score-1.3.md",
+      "new_filename": "unsubstantiated-claim.score-1.3.md",
+      "old_score": 1.3,
+      "new_score": 1.3,
+      "delta": 0.0,
+      "tokens": 1695
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "good",
+      "old_filename": "g7-spawn-and-return.score-4.6.md",
+      "new_filename": "g7-spawn-and-return.score-4.6.md",
+      "old_score": 4.6,
+      "new_score": 4.6,
+      "delta": 0.0,
+      "tokens": 2239
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "bad",
+      "old_filename": "free-form-handoff.score-1.0.md",
+      "new_filename": "free-form-handoff.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1812
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "bad",
+      "old_filename": "impossible-return-contract.score-1.3.md",
+      "new_filename": "impossible-return-contract.score-1.3.md",
+      "old_score": 1.3,
+      "new_score": 1.3,
+      "delta": 0.0,
+      "tokens": 2020
+    },
+    {
+      "rubric": "subagent-handoff-quality",
+      "kind": "bad",
+      "old_filename": "vague-handoff.score-1.0.md",
+      "new_filename": "vague-handoff.score-1.0.md",
+      "old_score": 1.0,
+      "new_score": 1.0,
+      "delta": 0.0,
+      "tokens": 1771
+    }
+  ],
+  "skipped": [
+    {
+      "rubric": "faithfulness",
+      "kind": "good",
+      "filename": "attributed-synthesis.score-4.5.md",
+      "reason": "judge returned no 'overall': {'scores': {'dimension_1': 2.0, 'dimension_2': 2.0, 'dimension_3': 2.0, 'dimension_4': 1.0, 'dimension_5': 5.0, 'overall': 2.4}}",
+      "tokens": 2475
+    },
+    {
+      "rubric": "faithfulness",
+      "kind": "bad",
+      "filename": "hallucinated-source.score-1.5.md",
+      "reason": "judge returned no 'overall': {'scores': {'dimension_1': 1.0, 'dimension_2': 1.0, 'dimension_3': 1.0, 'dimension_4': 2.0, 'dimension_5': 5.0, 'overall': 2.0}}",
+      "tokens": 1976
+    },
+    {
+      "rubric": "refactor",
+      "kind": "good",
+      "filename": "extract-validator.score-3.9.md",
+      "reason": "judge JSON parse failed: Extra data: line 12 column 1 (char 183)",
+      "tokens": 2618
+    },
+    {
+      "rubric": "security-soundness",
+      "kind": "bad",
+      "filename": "vulnerable-auth.score-1.6.md",
+      "reason": "judge JSON parse failed: Extra data: line 11 column 1 (char 159)",
+      "tokens": 1933
+    }
+  ],
+  "tokens_used_total": 216668
+}

@@ -241,25 +241,58 @@ def run_tier_1(plugin_root: pathlib.Path, only_skill: Optional[str] = None) -> l
     return findings
 
 
+def run_tier_2(args) -> int:
+    """Tier 2 — judge-calibration drift smoke. Delegates to tier2.py module."""
+    try:
+        from . import tier2  # type: ignore[import]
+    except (ImportError, ValueError):
+        # Fall back to direct import when runner.py is invoked as a script
+        sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+        import tier2  # type: ignore[import]
+
+    report = tier2.run(
+        plugin_root=PLUGIN_ROOT,
+        seed=args.seed,
+        sample_rubrics=args.sample_rubrics,
+        samples_per_rubric=args.samples_per_rubric,
+        dry_run=args.dry_run,
+        only_rubric=args.rubric,
+    )
+    print(tier2.format_report(report), file=sys.stderr)
+
+    if report.failed_count() > 0:
+        return 1                   # CRITICAL: judge-calibration regression
+    if report.errored_count() > 0:
+        return 2                   # WARNING: API errors / dry-run skips
+    return 0
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(prog="runner.py", description="ai-assets plugin eval harness (v0.1: Tier 1 only)")
+    parser = argparse.ArgumentParser(prog="runner.py", description="ai-assets plugin eval harness")
     parser.add_argument("--tier", choices=["1", "2", "3"], default="1")
-    parser.add_argument("--skill", help="limit to one skill name")
-    parser.add_argument("--all", action="store_true", help="run all skills (Tier 1 only in v0.1)")
+    parser.add_argument("--skill", help="(Tier 1) limit to one skill name")
+    parser.add_argument("--rubric", help="(Tier 2) limit to one rubric name")
+    parser.add_argument("--all", action="store_true", help="run all (alias for tier 1 + tier 2 currently)")
     parser.add_argument("--resume", action="store_true", help="resume Tier 3 run (not implemented in v0.1)")
     parser.add_argument("--baseline", help="capture per-skill baseline (not implemented in v0.1)")
+    parser.add_argument("--seed", type=int, default=42, help="(Tier 2) deterministic sampling seed")
+    parser.add_argument("--sample-rubrics", type=int, default=10, help="(Tier 2) number of rubrics to sample")
+    parser.add_argument("--samples-per-rubric", type=int, default=2, help="(Tier 2) calibration samples per rubric (1 good + 1 bad if 2)")
+    parser.add_argument("--dry-run", action="store_true", help="(Tier 2) skip API calls, print plan only")
     args = parser.parse_args()
 
     if args.baseline:
-        print("ERROR: --baseline not implemented in v0.1; ships in B10+ Phase 3.", file=sys.stderr)
+        print("ERROR: --baseline not implemented in v0.1; ships in Phase 4 #2.", file=sys.stderr)
         return 3
     if args.resume:
-        print("ERROR: --resume not implemented in v0.1.", file=sys.stderr)
+        print("ERROR: --resume not implemented in v0.1 (Tier 3 only).", file=sys.stderr)
         return 3
-    if args.tier in ("2", "3") and not args.all:
-        print(f"ERROR: --tier {args.tier} not implemented in v0.1. Tier 1 (linters) only.", file=sys.stderr)
-        print("       Tier 2 (smoke) and Tier 3 (behavioral) ship after eval-judge wiring.", file=sys.stderr)
+    if args.tier == "3":
+        print("ERROR: --tier 3 not implemented in v0.1. Tier 1 (linters) + Tier 2 (smoke) only.", file=sys.stderr)
         return 3
+
+    if args.tier == "2":
+        return run_tier_2(args)
 
     findings = run_tier_1(PLUGIN_ROOT, only_skill=args.skill)
 
@@ -269,6 +302,15 @@ def main() -> int:
     for f in findings:
         print(f, file=sys.stderr)
     print(f"\nTier 1 summary: {len(crit)} CRITICAL, {len(warn)} WARNING, total {len(findings)} findings.", file=sys.stderr)
+
+    if args.all:
+        print("\n", file=sys.stderr)
+        rc2 = run_tier_2(args)
+        if crit or rc2 == 1:
+            return 1
+        if warn or rc2 == 2:
+            return 2
+        return 0
 
     if crit:
         return 1
