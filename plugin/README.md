@@ -4,9 +4,9 @@ A reusable team-of-agents plugin for the full software development lifecycle. Dr
 
 **Project-agnostic by design.** Operations live in this plugin; project-specific context (brand, conventions, terminology) lives in the target repo's `CLAUDE.md` / `AGENTS.md` / `marketing/MARKETING.md` and is read at runtime.
 
-## Status — v0.1.4 (released 2026-04-29)
+## Status — v0.1.5 (released 2026-04-30)
 
-First stable release after 17 alpha iterations (alpha.13 → alpha.29) + 2 hotfix patches (0.1.1, 0.1.4) and 4 full review rounds (Round 13/14/15/16). All Phase 2 batches per `../plugin-design/04-MIGRATION-CHECKLIST.md` are complete: B1-B13 + Rounds 11/12 cross-phase review passes. Both v0.1.4 release gates closed: local validator passes (21 checks, 0 fail, 0 warn), live smoke tests confirmed `/develop` orchestrates DEV→REVIEW→QA pipeline with plugin-namespaced subagents on **3 stacks** — Java + Spring Boot, Python + FastAPI, Next.js + TypeScript — in both Path A (Subagents) and Path B (Agent Teams) modes on Windows host with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`.
+Phase 4 #2 milestone — G1/G2 attack-surface validation shipped on top of v0.1.4 stable. 17 alpha iterations (alpha.13 → alpha.29) + 4 hotfix/feature patches (0.1.1 → 0.1.5) and 4 full review rounds (Round 13/14/15/16). All Phase 2 batches per `../plugin-design/04-MIGRATION-CHECKLIST.md` are complete: B1-B13 + Rounds 11/12 cross-phase review passes. Both v0.1.4 release gates closed: local validator passes (now **23 checks**, 0 fail, 0 warn after Phase 4 #2 wiring), live smoke tests confirmed `/develop` orchestrates DEV→REVIEW→QA pipeline with plugin-namespaced subagents on **3 stacks** — Java + Spring Boot, Python + FastAPI, Next.js + TypeScript — in both Path A (Subagents) and Path B (Agent Teams) modes on Windows host with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. v0.1.5 adds 6 indirect-prompt-injection fixtures + structural validator confirming G1 envelope wrapping correctly contains injection markers (5 wrap-eligible pass; 1 documents the sub-200-token wrap-skip design tradeoff).
 
 | Component | Implemented | v0.1 target | Pending |
 |---|---|---|---|
@@ -72,13 +72,14 @@ The repo's `.claude-plugin/marketplace.json` already declares the registry. **Lo
 
 `/ralph` (power-user RALF entry) · `/eval` (skill/agent evaluator) · `/plugin-doctor` (self-diagnostic) · `/memory-init` · `/memory-recall` · `/learnings-write` · `/context-load` · `/subagent-spawn` · `/plugin-skill-create`
 
-## What's inside today (v0.1.4)
+## What's inside today (v0.1.5)
 
 - **52 skills** — 20 KEEP + 13 REFACTOR + 17 NEW + 2 MERGE; covers the full SDLC plus marketing + content
 - **26 specialized agents** — cloud architect, security engineer, all major language engineers, content/marketing roles, 4 orchestrators
 - **16 hooks** across 13 lifecycle events — security guardrails, untrusted-content wrapping, session memory flush, RALF loop control, `.committed/` allowlist enforcement
 - **12 rules** — security, memory discipline, RALF budget, untrusted-content wrapping, etc.
 - **17 eval rubrics + 102 calibration samples + Tier 1 linter + Tier 2 judge-calibration smoke** — for systematic regression detection (Tier 2 added in v0.1.4, requires `ANTHROPIC_API_KEY`)
+- **G1/G2 attack-surface validation (v0.1.5)** — 6 indirect-prompt-injection fixtures + structural runner that confirms `<untrusted_content>` envelope wrapping correctly contains attacker-planted instructions across 5 attack vectors (poisoned CLAUDE.md, malicious env logs, poisoned learnings, bash role-switch, poisoned PRD); 1 fixture documents the sub-200-token wrap-skip design tradeoff. Optional behavioral mode round-trips wrapped payloads through Haiku to verify no compliance escape.
 - **2 output styles** — `concise-pr` for PR descriptions, `design-pack` for `/feature-design` artefacts
 - **12-knob declarative config** + 0 external dependencies (fully standalone in v0.1)
 

@@ -27,6 +27,9 @@ Code itself:
      every event is one of the 13 canonical lifecycle events; pure JSON
      (no $schema-comment leftover)
  11. eval/calibration counts per rubric — 3 good + 3 bad
+ 12. eval/g1g2 attack-surface fixtures — exactly 6 fixture dirs
+     (5 wrap-eligible + 1 below-threshold), each with payload.* +
+     meta.json declaring required injection-test keys; runner.py parses
 
 Real validation (manifest schema enforcement, hook ABI conformance) only
 happens when you actually install the plugin into Claude Code via
@@ -690,6 +693,88 @@ def check_eval_runner_present(report: Report) -> None:
     report.add("eval_runner_present", "pass", "eval/runner.py parses")
 
 
+def check_g1g2_fixtures(report: Report) -> None:
+    """Per Phase 4 #2: G1/G2 attack-surface validation.
+
+    Verify the indirect-prompt-injection fixture set is intact:
+      - eval/g1g2/runner.py parses
+      - eval/g1g2/fixtures/ contains exactly 6 fixture directories
+        (5 wrap-eligible: f01..f05; 1 below-threshold: f06)
+      - each fixture has both `payload.*` and `meta.json`
+      - each meta.json declares the required keys (id, vector,
+        attack_type, severity, expected_defense, expected_outcome,
+        injection_markers)
+    """
+    g1g2_root = PLUGIN_ROOT / "eval" / "g1g2"
+    runner = g1g2_root / "runner.py"
+    fixtures_dir = g1g2_root / "fixtures"
+
+    if not runner.exists():
+        report.add("g1g2_runner_present", "fail", "eval/g1g2/runner.py missing")
+        return
+    try:
+        ast.parse(runner.read_text(encoding="utf-8"))
+    except SyntaxError as e:
+        report.add("g1g2_runner_present", "fail", f"runner.py syntax: {e}")
+        return
+    report.add("g1g2_runner_present", "pass", "eval/g1g2/runner.py parses")
+
+    if not fixtures_dir.exists():
+        report.add("g1g2_fixtures", "fail", "eval/g1g2/fixtures/ missing")
+        return
+
+    fixture_dirs = sorted(p for p in fixtures_dir.iterdir() if p.is_dir())
+    expected_n = 6
+    if len(fixture_dirs) != expected_n:
+        report.add(
+            "g1g2_fixtures",
+            "fail",
+            f"expected {expected_n} fixture dirs, got {len(fixture_dirs)}: "
+            f"{[p.name for p in fixture_dirs]}",
+        )
+        return
+
+    required_meta_keys = {
+        "id",
+        "vector",
+        "attack_type",
+        "severity",
+        "expected_defense",
+        "expected_outcome",
+        "injection_markers",
+    }
+    issues = []
+    for fix in fixture_dirs:
+        payloads = list(fix.glob("payload.*"))
+        if not payloads:
+            issues.append(f"{fix.name}: no payload.* file")
+        meta_path = fix / "meta.json"
+        if not meta_path.exists():
+            issues.append(f"{fix.name}: meta.json missing")
+            continue
+        try:
+            meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as e:
+            issues.append(f"{fix.name}: meta.json parse: {e}")
+            continue
+        missing = required_meta_keys - set(meta.keys())
+        if missing:
+            issues.append(f"{fix.name}: meta.json missing keys: {sorted(missing)}")
+        if not isinstance(meta.get("injection_markers"), list) or not meta.get(
+            "injection_markers"
+        ):
+            issues.append(f"{fix.name}: injection_markers must be non-empty list")
+
+    if issues:
+        report.add("g1g2_fixtures", "fail", "; ".join(issues))
+    else:
+        report.add(
+            "g1g2_fixtures",
+            "pass",
+            f"{len(fixture_dirs)} fixtures (5 wrap-eligible + 1 below-threshold) OK",
+        )
+
+
 # ---------- Main ----------
 
 CHECKS = [
@@ -697,7 +782,7 @@ CHECKS = [
     check_python_syntax,
     check_monitor_present,
     check_marketplace,
-    # check_manifest is special — returns the manifest for downstream checks
+    # check_manifest is special - returns the manifest for downstream checks
     check_no_schema_comment,
     check_agent_frontmatter,
     check_skill_frontmatter,
@@ -707,6 +792,7 @@ CHECKS = [
     check_hooks_json_paths,
     check_calibration_per_rubric,
     check_eval_runner_present,
+    check_g1g2_fixtures,
 ]
 
 
