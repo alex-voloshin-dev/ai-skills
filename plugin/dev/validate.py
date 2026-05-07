@@ -629,14 +629,23 @@ def check_hooks_json_paths(report: Report) -> None:
         report.add("hooks_json_paths", "fail", f"parse error: {e}")
         return
 
+    # Commands take the form `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/foo.py`
+    # (interpreter-prefixed) so plugin install does not depend on +x bits surviving
+    # marketplace tarball extraction. Older form `${CLAUDE_PLUGIN_ROOT}/.../foo.py`
+    # is still accepted. Extract the script path via regex either way.
     bad = []
     total = 0
+    path_re = re.compile(r"\$\{CLAUDE_PLUGIN_ROOT\}/(\S+)")
     for event_name, matchers in data.get("hooks", {}).items():
         for matcher in matchers:
             for hk in matcher.get("hooks", []):
                 cmd = hk.get("command", "")
-                rel = cmd.replace("${CLAUDE_PLUGIN_ROOT}/", "")
                 total += 1
+                m = path_re.search(cmd)
+                if not m:
+                    bad.append(f"{event_name} -> no ${{CLAUDE_PLUGIN_ROOT}} ref in {cmd!r}")
+                    continue
+                rel = m.group(1)
                 target = PLUGIN_ROOT / rel
                 if not target.exists():
                     bad.append(f"{event_name} -> {rel}")

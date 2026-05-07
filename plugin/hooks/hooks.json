@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start-context.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start-context.py"
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/instructions-loaded-augment.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/instructions-loaded-augment.py"
           }
         ]
       }
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-dangerous-commands.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-dangerous-commands.py"
           }
         ]
       },
@@ -35,11 +35,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-secrets-in-code.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-secrets-in-code.py"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-tool-use-committed-write.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-tool-use-committed-write.py"
           }
         ]
       },
@@ -48,7 +48,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-sensitive-files.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-sensitive-files.py"
           }
         ]
       }
@@ -59,11 +59,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/log-actions.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/log-actions.py"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/ralph-iter-meter.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/ralph-iter-meter.py"
           }
         ]
       },
@@ -72,11 +72,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/tool-output-wrap.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/tool-output-wrap.py"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/tool-output-normalize.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/tool-output-normalize.py"
           }
         ]
       }
@@ -86,7 +86,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/tool-failure-log.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/tool-failure-log.py"
           }
         ]
       }
@@ -96,7 +96,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/tool-failure-log.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/tool-failure-log.py"
           }
         ]
       }
@@ -106,11 +106,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/subagent-start-budget.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/subagent-start-budget.py"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/subagent-depth-guard.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/subagent-depth-guard.py"
           }
         ]
       }
@@ -120,7 +120,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/subagent-stop-learnings.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/subagent-stop-learnings.py"
           }
         ]
       }
@@ -130,7 +130,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/task-event-log.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/task-event-log.py"
           }
         ]
       }
@@ -140,7 +140,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/task-event-log.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/task-event-log.py"
           }
         ]
       }
@@ -150,7 +150,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/ralph-stop.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/ralph-stop.py"
           }
         ]
       }
@@ -160,7 +160,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-compact-memory-flush.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-compact-memory-flush.py"
           }
         ]
       }
@@ -170,7 +170,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-end-finalize.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-end-finalize.py"
           }
         ]
       }

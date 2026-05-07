@@ -28,6 +28,19 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.3.3] — 2026-05-07 — Hooks invoke scripts via `python3` (cross-platform install fix)
+
+Patch release. Fixes a `Permission denied` failure on plugin install that prevented Claude Code from completing `SessionStart` and other hook events.
+
+### Fixed — hooks no longer depend on the executable bit
+
+- **`plugin/hooks/hooks.json`** — all 18 `command` entries now invoke their script via `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/<name>.py` instead of executing the `.py` file directly. The repo source files are stored without `+x` (`-rw-r--r--`), and the marketplace tarball-extract path preserves that mode in `~/.claude/plugins/cache/...`. Direct invocation therefore failed with `/bin/sh: ...: Permission denied` on every hook fire (`SessionStart`, `Stop`, `PreToolUse`, etc.). Going through the interpreter bypasses the executable-bit requirement entirely and removes the shebang-dependency, which also makes the plugin work uniformly on Windows where executable bits do not exist.
+- **`plugin/dev/validate.py`** — `check_hooks_json_paths` updated to extract the script path via regex (`\$\{CLAUDE_PLUGIN_ROOT\}/(\S+)`) so it accepts both interpreter-prefixed (`python3 ${CLAUDE_PLUGIN_ROOT}/...`) and bare-path commands. Old form continues to validate; new form is now the convention.
+
+### Why this matters
+
+Before this fix, a fresh `/plugin install ai-assets` on Linux/macOS produced visible startup errors (e.g. `SessionStart:startup hook error -> ralph-stop.py: Permission denied`) and silently disabled all guardrail / context-injection / RALF-iteration hooks. The plugin appeared installed but ran without its hook layer. Hooks now fire reliably regardless of how the marketplace transport lays the files down.
+
 ## [0.3.2] — 2026-05-07 — `/bugfix` becomes multi-agent (design inversion fix)
 
 Patch release. Closes a long-standing design inversion: `/bugfix` was documented as the canonical bugfix workflow but ran single-session inline, while the multi-agent pipeline was hidden behind `/team-bugfix`. After this release, `/bugfix` is the multi-agent default — symmetric with `/develop` (multi-agent) ↔ `/feature-dev` (single-agent fallback).
