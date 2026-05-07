@@ -89,11 +89,13 @@ EXPECTED_COUNTS = {
     "events": 13,
     "rubrics": 17,
     "calibration_samples": 102,  # 6 per rubric × 17
-    "user_invocable_skills": 29, # skills with `context: fork` frontmatter
-                                 # (10 primary workflows + 9 named companion +
-                                 #  12 extended + 1 plugin-skill-audit;
-                                 #  this plugin uses skills-as-commands
-                                 #  convention rather than commands/*.md)
+    "user_invocable_skills": 28, # skills with `context: fork` frontmatter
+                                 # (after v0.3.2: /bugfix joined the
+                                 # main-thread orchestrators with /develop,
+                                 # /team-bugfix, /feature-design — they run
+                                 # in main thread to retain Agent spawn
+                                 # capability; total user-invocable = 32 =
+                                 # 28 fork + 4 main-thread orchestrators)
     "user_docs": 15,
     "schemas": 2,
     "output_styles": 2,
@@ -535,7 +537,7 @@ def check_orchestration_dual_path(report: Report) -> None:
     and Agent Teams (when CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1) paths. Verify
     each orchestration skill body contains the detection bash block + both Path
     A and Path B sections."""
-    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design"}
+    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix"}
     issues = []
     for name in ORCHESTRATION_SKILLS:
         p = PLUGIN_ROOT / "skills" / name / "SKILL.md"
@@ -579,7 +581,7 @@ def check_orchestration_skills_no_fork(report: Report) -> None:
     NOT have `context: fork` — that would run them in a forked subagent where
     the Agent tool is unavailable. Confirmed alpha.25 failure mode.
     """
-    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design"}
+    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix"}
     issues = []
     for name in ORCHESTRATION_SKILLS:
         p = PLUGIN_ROOT / "skills" / name / "SKILL.md"

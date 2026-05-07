@@ -28,6 +28,29 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.3.2] — 2026-05-07 — `/bugfix` becomes multi-agent (design inversion fix)
+
+Patch release. Closes a long-standing design inversion: `/bugfix` was documented as the canonical bugfix workflow but ran single-session inline, while the multi-agent pipeline was hidden behind `/team-bugfix`. After this release, `/bugfix` is the multi-agent default — symmetric with `/develop` (multi-agent) ↔ `/feature-dev` (single-agent fallback).
+
+### Changed — `/bugfix` is now a multi-agent orchestrator
+
+- **Removed `context: fork` from `plugin/skills/bugfix/SKILL.md` frontmatter.** Per Anthropic docs, subagents cannot spawn other subagents. With `context: fork` the skill body ran in a forked subagent that retained no `Agent`-spawn capability, so the orchestrator silently degraded to inline single-session work — exactly the alpha.25 failure mode that already cost `/develop`, `/team-bugfix`, and `/feature-design` their fork in earlier releases. `/bugfix` now joins them as a main-thread orchestrator.
+- **Added the canonical hard spawn invariant** ("YOU MUST spawn subagents via `Agent({...})`") near the top of the skill.
+- **Added `Read @team-protocols`** as a prerequisite step so the Lead has the spawn pattern, role-by-role mapping, conflict prevention, dual-path detection, and G7 contracts loaded before issuing the first spawn.
+- **Added the Path A / Path B execution-path selector** mirroring `/develop`. Path B (Agent Teams) is the default; Path A (sequential subagent spawns) is the fallback only when team-create returns a hard technical error. Required substrings — `Path A`, `Path B`, `no silent fallback` — are present in the body, validated by `check_orchestration_dual_path`.
+- **Restructured Steps 1–11.** Steps 1–5 (intake, env-analyze, stack detection, evidence collection, bug report) stay in the main thread (Lead's job — investigation isn't parallelizable across DEV/REVIEW/QA). Step 6 picks the execution path. Step 7 enforces the DEVELOP → REVIEW → QA pipeline with explicit gate rules. Step 8 is Lead-side final verification. Step 9 is the summary. Optional RALF wrap on the DEV spawn for hard-to-converge bugs (race conditions, memory leaks, off-by-ones) is preserved per `ralph-budget` rule.
+- **Description rewritten** in `>-` folded scalar form (the original contained a bare `: ` after "Lead orchestrates" that broke `yaml.safe_load`, same root cause as the v0.3.0 `develop` BLOCKER). Now parses universally; description length 391 chars, well under the 1024-char spec limit.
+- **Added cross-reference to `/team-bugfix`** in the Integration block — `/team-bugfix` remains the auxiliary skill for fixing a batch of issues from an audit document; `/bugfix` is the single-bug multi-agent default. The Path A spawn templates live in `team-bugfix/path-a-spawn-templates.md` and are reused verbatim.
+
+### Changed — `plugin/dev/validate.py`
+
+- **`ORCHESTRATION_SKILLS`** in `check_orchestration_skills_no_fork` and `check_orchestration_dual_path` now includes `bugfix`. Both checks pass: `/bugfix` no longer carries `context: fork`, and its body contains the three required substrings (`Path A`, `Path B`, `no silent fallback`) plus no forbidden `echo "TEAMS_FLAG="` literal.
+- **`EXPECTED_COUNTS["user_invocable_skills"]`** decreased 29 → 28 (one fewer skill with `context: fork`). Total user-invocable skills remains 32 = 28 with fork + 4 main-thread orchestrators (`develop`, `team-bugfix`, `feature-design`, `bugfix`). Comment updated to document the convention.
+
+### Why this matters
+
+User-observable: `/bugfix` now spawns Developer / Reviewer / QA via the `Agent` tool with mandatory pipeline gates — independent role inspection, DEVELOP → REVIEW → QA gate enforcement, and the same Path B Agent Teams panel the user gets from `/develop`. Cost goes up vs the prior inline behavior (multiple subagent spawns) but quality and inspectability go up correspondingly. Users who explicitly want single-agent inline execution should reach for `/feature-dev`-style invocation patterns or open an issue requesting a `/bugfix-inline` companion.
+
 ## [0.3.1] — 2026-05-07 — agent cost optimization + audit follow-up
 
 Patch release. Two-fold refinement of v0.3.0: explicit cost-tier pinning on 9 agents (Sonnet 4.6 instead of inherited Opus 4.7) and execution of the v0.3.0 follow-up audit list.

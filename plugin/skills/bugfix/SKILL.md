@@ -1,266 +1,181 @@
 ---
 name: bugfix
-description: End-to-end bugfix workflow — analyze environment (local Docker via /env-analyze, or cloud production via /analyze-prod), collect evidence, prepare bug report, plan fix, apply appropriate engineer role, implement and verify. Includes optional RALF loop on the reproduction test (kill-on oracle-pass). Use when investigating, diagnosing, and fixing a reported bug.
-context: fork
-argument-hint: [bug description or error message]
+description: >-
+  End-to-end bugfix workflow with mandatory DEVELOP → REVIEW → QA pipeline.
+  Lead orchestrates triage intake, environment analysis (`/env-analyze` for
+  local, `/analyze-prod` for production), evidence collection, and bug report
+  — then spawns developer/reviewer/QA via the Anthropic `Agent` tool to apply,
+  review, and verify the fix. Use when investigating, diagnosing, and fixing
+  a reported bug.
+argument-hint: "[bug description or error message]"
 ---
 
-# Bugfix
+<!-- ARCHITECTURAL NOTE: no `context: fork` here. Per Anthropic docs, subagents cannot spawn other subagents. The DEV/REVIEW/QA pipeline requires the `Agent` tool, which is only available in the main thread. -->
 
-End-to-end workflow for investigating, diagnosing, and fixing bugs. Orchestrates environment analysis (`/env-analyze` for local Docker, `/analyze-prod` for production), evidence collection, bug report preparation, fix planning, and implementation by the appropriate engineering role.
+
+# Bugfix (Multi-Agent Pipeline)
+
+End-to-end bugfix workflow. The Lead handles intake / env analysis / evidence / bug report in the main thread, then drives a mandatory **DEVELOP → REVIEW → QA** pipeline by spawning named subagents via the **`Agent` tool** for the implementation, review, and verification of the fix.
+
+You are the Lead. Read `@team-protocols` end-to-end before issuing the first spawn — it covers the spawn pattern, role-by-role mapping, conflict prevention, dual-path detection, and the G7 spawn payload + return contract schemas.
+
+> **YOU MUST spawn subagents via `Agent({...})`.** Do not perform Developer / Reviewer / QA work inline with `Bash`/`Read`/`Edit`. Doing so violates the team-protocols hard invariant — the user loses per-role inspection and the pipeline gates collapse. Every fix-apply / review / verify step in this skill is an explicit, executable `Agent({...})` call.
 
 ## 1. Receive Bug Report
 
-Gather the bug description from the user:
+Gather from the user (Lead, main thread):
 
-- **What is the expected behavior?**
-- **What is the actual behavior?** (error message, wrong output, crash, performance issue)
-- **Steps to reproduce** (if known)
-- **Environment**: local (Docker) or production (cloud K8s)?
-- **When did it start?** (after deploy, config change, or unknown)
-- **Severity**: P1 (outage), P2 (degraded), P3 (minor), P4 (cosmetic)
+- Expected vs actual behavior, error message / stack trace, steps to reproduce
+- Environment (local Docker / cloud production / code-only)
+- When it started (after deploy / config change / unknown), recent commits
+- Severity: P1 (outage), P2 (degraded), P3 (minor), P4 (cosmetic)
 
-If the user provides partial information, extract what you can and fill gaps during analysis. For P1/P2 — skip detailed intake and proceed immediately to Step 2.
+For P1/P2 — skip detailed intake and proceed immediately to Step 2.
 
 ## 2. Analyze Environment
 
-Based on the environment, delegate to the appropriate analysis sub-workflow:
+Based on the environment, delegate to the appropriate diagnostic sub-workflow (these are skills, not subagent spawns — they run inline):
 
-| Environment | Sub-workflow | When to use |
-|---|---|---|
-| Local Docker / Docker Compose | `/env-analyze` (B12) or `/analyze-local` (carried) | Bug observed in local dev environment |
-| Cloud production (GKE/AKS/EKS, managed DB) | `/analyze-prod` | Bug observed in production or staging |
-| Code-only (no infra) | Skip to Step 3 | Bug is in application logic, no environment analysis needed |
-
-Run the sub-workflow. It will:
-- Apply the appropriate diagnostic role (`Agent(sre-engineer)` or `Agent(devops-engineer)`)
-- Collect environment snapshot (container/pod status, logs, metrics, networking)
-- Identify infrastructure-level issues
-- Present diagnosis
-
-**If the sub-workflow resolves the issue** (e.g., container restart, config fix) — skip to Step 9.
-
-**If the root cause is in application code** — continue to Step 3 with the collected evidence.
-
-## 3. Detect Stack and Apply Engineer Role
-
-Determine the affected service's tech stack and apply the appropriate engineering role:
-
-1. **Read project's `CLAUDE.md`** — tech stack declaration
-2. **Scan project files** — `package.json`, `pom.xml`, `requirements.txt`, `go.mod`, etc.
-3. **Check evidence from Step 2** — which service's logs show the error? What language is the stack trace in?
-
-**Role assignment:**
-
-| Stack Signal | Role |
+| Environment | Sub-workflow |
 |---|---|
-| Next.js, React, TypeScript, `.tsx` files | `Agent(frontend-engineer)` |
-| Spring Boot, Java, `.java` files | `Agent(java-engineer)` |
-| FastAPI, Python, `.py` files | `Agent(python-engineer)` |
-| Terraform, Dockerfile, Helm, CI/CD | `Agent(devops-engineer)` |
-| ML model, training pipeline, inference | `Agent(ml-engineer)` |
-| Multiple stacks affected | Apply all relevant roles |
-| Unknown / general | `Agent(software-engineer)` |
+| Local Docker / Docker Compose | `/env-analyze` (or `/analyze-local`) |
+| Cloud production (GKE/AKS/EKS, managed DB) | `/analyze-prod` |
+| Code-only (no infra) | Skip to Step 3 |
 
-Announce the applied role(s) to the user.
+The sub-workflow applies the diagnostic role (`Agent(sre-engineer)` / `Agent(devops-engineer)`), collects environment snapshot, and presents diagnosis. **If it resolves the issue at the infra layer** — skip to Step 11. **If the root cause is in application code** — continue to Step 3 with the collected evidence.
+
+## 3. Detect Stack and Pick Developer Role
+
+Determine the affected service's tech stack to choose the right Developer `subagent_type` for the pipeline:
+
+1. Read `CLAUDE.md` / `AGENTS.md` — tech stack declaration
+2. Scan project files (`package.json`, `pom.xml`, `requirements.txt`, `go.mod`)
+3. Inspect Step 2 evidence — which language is the stack trace in?
+
+| Stack signal | Developer `subagent_type` |
+|---|---|
+| Next.js, React, TypeScript, `.tsx` files | `ai-assets:frontend-engineer` |
+| Spring Boot, Java, `.java` files | `ai-assets:java-engineer` |
+| FastAPI, Python, `.py` files | `ai-assets:python-engineer` |
+| Terraform, Dockerfile, Helm, CI/CD | `ai-assets:devops-engineer` |
+| ML model, training pipeline, inference | `ai-assets:ml-engineer` |
+| Multiple stacks | One Developer per affected stack (sequential per `subagent-isolation.md`) |
+| Unknown / general | `ai-assets:software-engineer` |
+
+Announce the selected Developer role(s) to the user.
 
 ## 4. Collect Evidence
 
-Gather all evidence into a structured collection. Combine data from Step 2 (environment analysis) with code-level investigation:
+Gather a structured evidence collection (Lead, main thread). Combine Step 2 environment data with code-level investigation:
 
-<evidence_checklist>
-- **Error output**: Full error message, stack trace, exit code
-- **Logs**: Relevant log entries (timestamped) from the affected service
-- **Reproduction**: Can you reproduce locally? Consistent or intermittent?
-- **Scope**: Which endpoints / features / components are affected?
-- **Timeline**: When did it start? What changed? (recent commits, deploys, config)
-- **Data**: Specific inputs that trigger the bug (request payload, user ID, dataset)
-- **Metrics** (if from prod): Error rate, latency change, affected user count
-- **Related code**: Files, functions, lines most likely involved
-</evidence_checklist>
+- Error output (full message, stack trace, exit code)
+- Logs (timestamped) from the affected service
+- Reproduction (local? consistent or intermittent?)
+- Scope (which endpoints / features / components)
+- Timeline + recent commits (`git log -n 20 --oneline`)
+- Triggering inputs (request payload, user ID, dataset)
+- Production metrics (error rate, latency change, affected users) if relevant
+- Related code (files, functions, lines most likely involved)
 
-Use the applied role's debugging methodology to trace the bug:
-- Read error stack traces to identify the failing code path
-- Search codebase for related functions, error handlers, and data flows
-- Check recent changes (`git log -n 20 --oneline`) for potential regressions
-- Identify the **minimal reproduction case**
+Identify the **minimal reproduction case** — this becomes the regression-test oracle in Step 7.
 
 ## 5. Prepare Bug Report
 
-Compile findings into a structured bug report. Present to the user for review:
+Compile findings into a structured bug report (Summary, Severity, Environment, Expected/Actual, Steps to reproduce, Evidence, Root cause analysis, Affected components). Present to the user. Wait for confirmation that the diagnosis is correct before committing the fix to the pipeline.
 
-```
-## Bug Report
+## 6. Choose execution path
 
-### Summary
-[One sentence: what is broken]
+Per `@team-protocols/path-selection-rules.md`: this skill supports Path A (Subagents) and Path B (Agent Teams). **Path B is the default preference** — visual team panel, Shift+↓ context-switching, dedicated transcript per role.
 
-### Severity: [P1 | P2 | P3 | P4]
+Detection is implicit. Do NOT run a Bash env-var check. Go to Path B Step 1 directly. If team-creation natural language fails ("Agent Teams not enabled" or equivalent), fall back silently to Path A. Display-mode or platform reasons are NEVER valid Path A triggers — Path B has an `in-process` mode that works in any terminal. **No silent fallback for non-technical reasons** — rationalised downgrades violate the alpha.27 rule.
 
-### Environment
-- **Type**: [local | production]
-- **Service**: [name]
-- **Stack**: [detected] | **Role**: [applied]
+When you announce the chosen path, the FIRST sentence MUST be one of:
 
-### Expected Behavior
-[What should happen]
+- "Attempting Path B (Agent Teams) team-create..."
+- (after fallback) "Agent Teams API returned: <verbatim error>. Falling back to Path A."
 
-### Actual Behavior
-[What actually happens — include error messages]
+## Step 0 — ATTEMPT Path B FIRST (literal, mandatory)
 
-### Steps to Reproduce
-1. [step]
-2. [step]
-3. [observed error]
+Before reading the Path A section below, you MUST attempt Path B Step 1 first. Do NOT pre-emptively pick Path A based on absent CLAUDE.md, "small" bug, sequential pipeline, single-stack project, Windows host, or "no tmux available". The ONLY way to land on Path A is: try Path B Step 1's natural-language team-creation, get back a literal "Agent Teams not enabled" / equivalent technical error, THEN fall back.
 
-### Evidence
-- **Stack trace**: [snippet or reference]
-- **Logs**: [relevant entries]
-- **Metrics**: [if applicable]
-- **Affected code**: [file:line references]
+## 7. Mandatory Pipeline — DEV → REVIEW → QA (both paths)
 
-### Root Cause Analysis
-[Technical explanation of why the bug occurs]
+Every fix MUST pass all three stages. Gate semantics are identical regardless of execution path; only the spawn mechanism differs.
 
-### Affected Components
-- [file/module 1] — [how it's affected]
-- [file/module 2] — [how it's affected]
-```
+### Gate Rules
 
-Wait for user confirmation before proceeding to fix.
+1. The fix CANNOT enter REVIEW until the Developer's `Agent` call returns a valid G7 contract.
+2. The fix CANNOT enter QA until the Reviewer's contract has `verdict: approved`.
+3. The fix is NOT COMPLETE until QA returns `qa_verdict: pass`.
+4. If the Developer reports "no changes needed" — the Reviewer STILL runs (independent confirmation).
+5. If any spawn returns malformed JSON — re-spawn the same role with a corrected prompt; do NOT advance.
+6. **The Lead MUST NEVER skip a spawn and do the work inline.**
 
-## 6. Plan the Fix
+Optional RALF on the reproduction test (kill-on `oracle-pass`): wrap the DEV spawn in `/ralph` per `ralph-budget.md` for intermittent / environment-dependent / hard-to-converge bugs (race conditions, memory leaks, off-by-ones). Defaults: 6 iter / 300K tokens / 60 min. Skip RALF for trivial bugs where the regression test passes on the first DEV iteration.
 
-Create an ordered fix plan following the applied role's guidelines:
+## Path B — Agent Teams (PREFERRED — try this FIRST)
 
-1. **Root cause fix** — address the actual cause, not symptoms
-2. **Complete fix** — fix everything described in the bug report. Do not leave cosmetic issues, lint warnings, or minor problems unfixed. Do not create follow-up tickets for things you can fix now
-3. **Regression test** — test that would have caught this bug
-4. **Related fixes** — any adjacent issues discovered during investigation. Fix them in the same changeset — do not increase tech debt
+### Step 1 — create the team
 
-Present the plan:
+```text
+Create an agent team named "<bug-id>-bugfix-team" with these teammates, all using subagent definitions from the ai-assets plugin:
 
-```
-## Fix Plan
+- "developer" (ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>) — implements the fix per the bug report's affected-components list, follows team-protocols/developer-protocol.md, isolation: worktree
+- "reviewer" (ai-assets:software-engineer) — read-only review (disallow Write/Edit), follows reviewer-protocol.md, applies code-review skill
+- "qa" (ai-assets:qa-engineer) — runs the regression test, full test suite, smoke checks; follows the QA section of develop/SKILL.md
 
-### Root Cause
-[What caused the bug — one sentence]
-
-### Changes
-1. [file] — [what to change and why]
-2. [file] — [what to change and why]
-...
-
-### Tests
-1. [test file] — [test that reproduces and verifies the fix]
-2. [test file] — [regression test for edge cases]
-
-### Risk Assessment
-- **Blast radius**: [which features could be affected by this change]
-- **Rollback**: [how to revert if the fix causes issues]
+Use teammate-mode `in-process` by default. Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available.
 ```
 
-Wait for user approval before implementing.
+### Step 2 — populate the shared task list
 
-## 7. RALF Loop on Reproduction Test (optional)
+Three tasks per fix iteration (DEV / REVIEW / QA) linked via `dependsOn`. If the bug report identifies multiple affected components / stacks, create one DEV task per component (with `isolation: worktree`).
 
-For bugs where the failure mode is intermittent, environment-dependent, or hard to converge on, this skill MAY run inside `/ralph` per `ralph-budget.md` rule. Defaults: 6 iter / 300K tokens / 60 min. Mandatory `--kill-on oracle-pass` (oracle: the regression test transitions from FAIL to PASS).
+### Step 3 — drive and monitor
 
-Use cases:
-- Test passes locally but fails in CI (environment drift)
-- Race condition reproductions
-- Memory leak repro that needs a load profile
-- Hard-to-find off-by-one or boundary bugs
+Teammates self-claim next unblocked task. On reviewer `changes_requested` → Lead inserts a follow-up DEV task and re-points dependencies. On QA `fail` → same. Loop until reviewer approves AND QA passes.
 
-Skip RALF for trivial bugs where the regression test passes on first attempt.
+### Step 4 — final cleanup
 
-## 8. Implement the Fix
+After the fix passes the pipeline: run final verification in main thread (full test suite, linter), produce the Step 11 summary, then ask: "Clean up the team."
 
-Execute the approved plan step by step.
+## Path A — Subagents fallback (only if Path B Step 1 returned a technical error)
 
-**For each change:**
-1. State what you are about to do (file, change summary)
-2. Implement the fix following the applied role's code quality standards
-3. Verify the code compiles/parses without errors
+If Path B Step 1 returns a literal "Agent Teams not enabled" / equivalent technical error, fall back silently to Path A: per-fix sequential spawns of Developer → Reviewer → QA via the `Agent` tool.
 
-**Then write tests:**
-1. **Regression test**: Reproduces the original bug — must fail without fix, pass with fix
-2. **Edge case tests**: Cover related scenarios discovered during investigation
-3. Run the full test suite to catch regressions via `/run-tests`
+> The verbatim per-step `Agent({...})` invocation templates (DEVELOP / REVIEW / QA), the `disallowedTools: ["Write", "Edit"]` reviewer constraint, the `isolation: "worktree"` directive, and the loop-on-`changes_requested` / loop-on-`fail` rules live in [`team-bugfix/path-a-spawn-templates.md`](../team-bugfix/path-a-spawn-templates.md). The same templates apply here — the only difference vs `/team-bugfix` is the input shape (one bug from a report vs N issues from an audit doc). Load the template file when actually executing the Path A fallback loop.
 
-**Rules:**
-- Fix the root cause, not the symptom
-- Fix EVERYTHING reported in the bug — do not leave non-blocking or cosmetic issues unfixed
-- Fix all lint errors, style violations, and warnings introduced or exposed by the change
-- Follow existing code patterns and conventions
-- No new warnings or linter errors — and fix pre-existing ones in the affected files if trivial
-- Do not defer fixes to "follow-up" tasks — complete the fix in this changeset
-- Do not increase tech debt — if you touch it, leave it better than you found it
-- If the fix is more complex than expected — stop and discuss with the user
-- If you need more information about the environment, launch sub-agents (`/env-analyze` or `/analyze-prod`) to collect it
+## 8. Self-Review and Final Verification (Lead, main thread)
 
-## 9. Self-Review the Fix
+After the pipeline returns the final fix:
 
-Before declaring the bug fixed, perform a thorough self-review. Do NOT skip this step.
+- Re-read every changed file diff — verify correctness and completeness against the Step 5 bug report
+- Run linter on changed files — zero warnings
+- Run formatter — zero diffs
+- Run the full test suite (or `/run-tests`) one more time — all tests pass
+- For production bugs: verify the fix locally first; deploy through normal CI/CD (no direct prod hotfix); after deploy re-run relevant `/analyze-prod` checks; monitor error rates and SLIs
 
-**Code review checklist:**
-- [ ] Re-read every changed file diff — verify correctness and completeness
-- [ ] Every item from the bug report or user description is addressed — nothing left unfixed
-- [ ] No cosmetic issues, lint warnings, or style violations remain in changed files
-- [ ] No TODO, FIXME, or "will fix later" comments introduced
-- [ ] No tech debt created — the code is clean and production-ready
-- [ ] Run linter on all changed files — zero warnings
-- [ ] Run formatter on all changed files — zero diffs
+Do NOT declare the bug fixed until every item passes.
 
-If the self-review reveals any remaining issues — fix them before proceeding. Do not declare the bug fixed with known remaining problems.
-
-## 10. Verify the Fix
-
-Verify the bug is resolved in the appropriate environment:
-
-**For local bugs:**
-- Run the reproduction steps — confirm the bug no longer occurs
-- Run the full test suite — all tests pass (new + existing)
-- If Docker-based: rebuild and verify with `/env-analyze` (optional)
-- If you need more data, launch sub-agents for `/env-analyze` to collect environment state
-
-**For production bugs:**
-- Verify the fix locally first
-- Deploy through normal CI/CD pipeline (do NOT hotfix production directly)
-- After deploy: re-run relevant checks from `/analyze-prod` to confirm resolution
-- Monitor error rates and SLIs for regression
-
-**Verification checklist:**
-- [ ] Original bug no longer reproduces
-- [ ] ALL items from the bug report are fixed — not just the primary symptom
-- [ ] Regression test passes
-- [ ] Full test suite passes (no new failures)
-- [ ] Linter passes with zero warnings on changed files
-- [ ] No unrelated files modified
-- [ ] Code follows project conventions and role guidelines
-- [ ] No deferred work — everything is done in this changeset
-
-If any check fails — fix and re-verify. Do NOT declare the bug fixed until every checkbox passes.
-
-## 11. Summary
+## 9. Summary
 
 Present the completed bugfix:
 
-- **Bug**: one-sentence summary
-- **Severity**: P1–P4
-- **Environment**: local / production
-- **Role(s) applied**: which roles were used
-- **Root cause**: technical explanation
-- **Fix**: what was changed (files, brief description)
-- **Tests added**: count and description
-- **Self-review**: passed — all items verified
-- **Verification**: how it was confirmed fixed
-- **Remaining issues**: NONE (if any remain, go back and fix them before reporting)
-- **Prevention**: recommendations to avoid similar bugs (e.g., add validation, improve error handling, add monitoring)
+- **Bug** (one sentence) and **severity** (P1–P4)
+- **Environment** (local / production) and **roles applied** (developer + reviewer + qa subagent_types)
+- **Root cause** (technical explanation)
+- **Fix** (files changed, brief description) and **tests added** (count + description)
+- **Pipeline trace**: DEV/REVIEW/QA iterations + verdicts (e.g. `DEV-1 → REVIEW changes_requested → DEV-2 → REVIEW approved → QA pass`)
+- **Verification** (how it was confirmed fixed)
+- **Remaining issues**: NONE (if any remain, go back through the pipeline before reporting)
+- **Prevention**: recommendations to avoid similar bugs
 
 ## Integration
 
-- **Sub-workflows**: `/env-analyze` (B12 — local Docker diagnostics), `/analyze-prod` (production diagnostics — launch as sub-agents when more data is needed)
-- **Follow-up**: `/run-tests` (verify fix), `/pre-commit` (quality gate), `/create-pr` (submit fix)
-- **Skills**: `code-review` skill (review fix), `test-strategy` skill (test strategy), `worktree-isolation` skill (branch isolation)
-- **Rules**: `ralph-budget` (caps for reproduction-test RALF per Step 7), `untrusted-content-wrapping` (G1 wrap on /env-analyze and /analyze-prod outputs)
+- **Sub-workflows (inline, not spawns)**: `/env-analyze` (local Docker diagnostic), `/analyze-prod` (production diagnostic), `/ralph` (optional RALF wrap on the DEV spawn for hard-to-converge bugs)
+- **Auxiliary multi-agent skill**: `/team-bugfix` (same DEV/REVIEW/QA pipeline applied to a batch of issues from a code-review or audit document — use it when the input is an audit doc rather than a single bug report)
+- **Followed by**: `/run-tests` (final test gate), `/pre-commit` (commit gate), `/create-pr` (submit fix)
+- **Protocols**: `@team-protocols` (execution model, spawn primitives, agent coordination, G7 contracts)
+- **Schemas**: `plugin/schemas/spawn-payload.schema.json`, `plugin/schemas/return-contract.schema.json`
+- **Skills**: `code-review` (Reviewer applies), `test-strategy` (QA applies), `worktree-isolation` (multi-Developer isolation)
+- **Rules**: `subagent-isolation` (G7 + bounded recursion + sequential code-mod gate), `ralph-budget` (RALF caps), `untrusted-content-wrapping` (G1 wrap on `/env-analyze` + `/analyze-prod` outputs)
