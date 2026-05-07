@@ -1,6 +1,6 @@
 ---
 name: geo-writer
-description: Optimize any text for GEO/AEO — Generative Engine Optimization and Answer Engine Optimization. Use when writing or editing public-facing text intended to be cited or quoted by LLMs (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) — blog posts, landing pages, help articles, glossary entries, FAQ blocks, programmatic SEO templates, pillar guides. Applies macro/meso/micro structure rules, answer-first sections, entity-first phrasing, schema requirements, freshness cadence, and platform-specific citation patterns.
+description: Optimize text for GEO/AEO — Generative Engine Optimization and Answer Engine Optimization. Use when writing or editing public-facing text intended to be cited or quoted by LLMs (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) — blog posts, landing pages, help articles, FAQ blocks, programmatic SEO templates, pillar guides.
 user-invocable: true
 ---
 

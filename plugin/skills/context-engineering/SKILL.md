@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: Context engineering knowledge base — context stack architecture (8-layer model), memory engineering (taxonomy, CRUD, conflict resolution, compression), agent harness patterns (init/continuation, state blobs, token budgeting, caching, failure modes), RAG pipeline design (chunking, packing, degradation signals), multi-agent orchestration (boundaries, payload schemas, fan-out patterns), production AI checklists (8 checklists), reference implementation templates (grounding envelope, untrusted wrapper, tool error envelope), privacy and compliance for AI systems. Use when designing AI agent systems, reviewing context quality, building RAG pipelines, implementing memory, planning multi-agent architectures, or preparing AI systems for production.
+description: Context engineering knowledge base — stack architecture, memory engineering, agent harness patterns, RAG pipeline design, multi-agent orchestration, production checklists, and reference templates. Use when designing AI agent systems, reviewing context quality, building RAG pipelines, implementing memory, planning multi-agent architectures, or preparing AI systems for production.
 user-invocable: true
 ---
 

@@ -55,6 +55,7 @@ import json
 import os
 import re
 import sys
+import yaml
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
@@ -82,18 +83,18 @@ FORBIDDEN_AGENT_FIELDS = {"permissionMode", "hooks", "mcpServers"}
 
 EXPECTED_COUNTS = {
     "agents": 26,
-    "skills": 52,
+    "skills": 53,                # +1 plugin-skill-audit (companion to plugin-skill-create)
     "rules": 12,
     "hooks": 18,                 # excludes _lib.py (16 + ralph-iter-meter v0.1.6 + subagent-depth-guard v0.1.7)
     "events": 13,
     "rubrics": 17,
     "calibration_samples": 102,  # 6 per rubric × 17
-    "user_invocable_skills": 28, # skills with `context: fork` frontmatter
+    "user_invocable_skills": 29, # skills with `context: fork` frontmatter
                                  # (10 primary workflows + 9 named companion +
-                                 #  12 extended; this plugin uses
-                                 #  skills-as-commands convention rather than
-                                 #  commands/*.md)
-    "user_docs": 14,
+                                 #  12 extended + 1 plugin-skill-audit;
+                                 #  this plugin uses skills-as-commands
+                                 #  convention rather than commands/*.md)
+    "user_docs": 15,
     "schemas": 2,
     "output_styles": 2,
     "userConfig_knobs": 13,
@@ -139,7 +140,8 @@ def _glob(rel_pattern: str) -> list[Path]:
 
 
 def _read_yaml_frontmatter(md_path: Path) -> dict | None:
-    """Crude single-doc YAML frontmatter parser. Returns dict or None."""
+    """Single-doc YAML frontmatter parser (yaml.safe_load). Returns dict or
+    None on parse error / non-dict / missing frontmatter."""
     try:
         text = md_path.read_text(encoding="utf-8")
     except OSError:
@@ -150,33 +152,15 @@ def _read_yaml_frontmatter(md_path: Path) -> dict | None:
     if end == -1:
         return None
     block = text[3:end].strip("\n")
-    out: dict = {}
-    current_key: str | None = None
-    current_list: list[str] | None = None
-    for raw_line in block.splitlines():
-        if not raw_line.strip() or raw_line.strip().startswith("#"):
-            continue
-        if raw_line.startswith("  - ") and current_list is not None:
-            current_list.append(raw_line[4:].strip())
-            continue
-        m = re.match(r"^([A-Za-z_][A-Za-z0-9_-]*)\s*:\s*(.*)$", raw_line)
-        if not m:
-            continue
-        key, value = m.group(1), m.group(2).rstrip()
-        if value == "":
-            current_key = key
-            current_list = []
-            out[key] = current_list
-        else:
-            current_key = None
-            current_list = None
-            # Strip surrounding quotes if present
-            if (value.startswith('"') and value.endswith('"')) or (
-                value.startswith("'") and value.endswith("'")
-            ):
-                value = value[1:-1]
-            out[key] = value
-    return out
+    if not block.strip():
+        return None
+    try:
+        data = yaml.safe_load(block)
+    except yaml.YAMLError:
+        return None
+    if not isinstance(data, dict):
+        return None
+    return data
 
 
 # ---------- Individual checks ----------

@@ -40,32 +40,14 @@ Read `<repo>/CLAUDE.md` (or `AGENTS.md`) for product description, blog conventio
 
 ### Step 1: Define Scope
 
-Ask the user (or extract from context):
-- **Action**: create new / update existing / start a series
-- **Topic**: subject + angle
-- **Target audience**: developers / decision-makers / general
-- **Goal**: educate / announce / promote / thought-leadership / SEO traffic
-- **Constraints**: deadline, word count, related posts, brand guidelines
-
-If updating: read the existing post first, note what needs to change.
+Ask the user (or extract from context): action (new / update / series), topic + angle, target audience (developers / decision-makers / general), goal (educate / announce / promote / thought-leadership / SEO traffic), constraints (deadline, word count, related posts, brand guidelines). If updating: read the existing post first, note what needs to change.
 
 ### Step 2: Research and Content Brief
 
 `Agent(product-manager)`:
-- **Web research** — 3–5 top-ranking articles on the topic; angle/depth/gaps
-- **Competitive analysis** — what competitors cover; market gaps
-- **Data + statistics** — recent, citable points (studies, surveys, benchmarks)
-- **Keyword research** — primary keyword, 2–3 secondary, search intent
-- **Existing content audit** — scan blog for related posts; cross-link opportunities
+Web research (3–5 top-ranking articles, angle/depth/gaps), competitive analysis (what competitors cover + market gaps), data/statistics (recent citable points), keyword research (primary + 2–3 secondary, search intent), existing-content audit (related posts + cross-link opportunities).
 
-Produce **Content Brief** using template from companion `content-tools-guide.md` → "Content Research Workflows":
-- Working title + angle
-- Target audience + search intent (primary + secondary keywords)
-- Outline (H2 sections + what each covers)
-- Key data points (with sources from research)
-- Cross-link opportunities (existing posts to link to/from)
-- Visual needs (cover image, diagrams, screenshots)
-- Word count target
+Produce a **Content Brief** using the template in [`content-tools-guide.md`](./content-tools-guide.md) → "Content Research Workflows": working title + angle, target audience + search intent, outline (H2 sections + content), key data points + sources, cross-link opportunities, visual needs, word-count target.
 
 Present to user. **Wait for approval.** Adjust outline per feedback.
 
@@ -73,100 +55,31 @@ Present to user. **Wait for approval.** Adjust outline per feedback.
 
 `Agent(content-writer)`. Apply Blog Post pattern from companion `page-content-patterns.md`.
 
-Create the post file using project's blog conventions (directory, frontmatter format, naming). Follow approved outline. Per section:
-- **Hook intro** — surprising stat / question / pain point in first paragraph
-- **Structured body** — short paragraphs (2–3 sentences); break with lists/tables/code/quotes
-- **Internal links** — minimum 3 to existing posts (from brief's cross-link list)
-- **External links** — 1–2 authoritative sources (cite data points)
-- **Key takeaways** — bullet summary
-- **CTA** — natural, value-first
+Create the post using the project's blog conventions (directory, frontmatter, naming). Follow the approved outline. Per section: hook intro (surprising stat / question / pain point), structured body (2–3 sentence paragraphs, broken with lists/tables/code/quotes), ≥ 3 internal links from the brief, 1–2 authoritative external sources, bullet key-takeaways, value-first CTA.
 
-Visual direction per visual need:
-- Alt text (descriptive, includes keyword where natural)
-- Placement relative to content
-- Cover image: style, mood, composition
+Visual direction per visual need: descriptive alt text (includes keyword where natural), placement relative to content, cover image style/mood/composition.
 
 ### Step 4: GEO/AEO Structure Pass — MANDATORY
 
-Apply `@geo-writer` skill. Per `geo-content` rule (mandatory for all blog content):
-1. **Macro structure** — single literal H1; 5–9 H2 sections each phrased as standalone question/topic; TL;DR at end
-2. **Meso chunking** — paragraphs 40–80 words (cap 120); sections 120–180 words; one idea per paragraph; statistic/source every 150–200 words
-3. **Micro emphasis** — bold 3–5 quotable phrases per section; bullets for 3+ items; tables for 2+ entity comparisons
-4. **Answer-first** — first sentence of every H2/H3 fully answers in 30–60 words
-5. **Entity clarity** — no pronoun drift across sections; canonical brand terms verbatim (from `marketing/MARKETING.md`)
-6. **High-leverage formats** — FAQ block (4–8 Q&A) / comparison table / HowTo steps where natural
-7. **Schema block** — prepare `Article` + `Person` + `FAQPage` JSON-LD (Step 5 SEO pass)
+Apply `@geo-writer` skill. Per `geo-content` rule (mandatory for all blog content). Enforces macro / meso / micro structure, answer-first sentences, entity clarity, high-leverage formats (FAQ / comparison table / HowTo), and a JSON-LD schema block (`Article` + `Person` + `FAQPage`). The full 7-step macro/meso/micro checklist with paragraph word counts, micro-emphasis quotas, and schema requirements lives in `plugin/skills/geo-writer/SKILL.md` (the @-applied skill); see also [`page-content-patterns.md`](./page-content-patterns.md) for the discovery-assets checklist + per-page tables.
 
 ### Step 4.5: Humanize Content — MANDATORY
 
-Apply `@humanizer` skill. Per `humanize-content` rule (mandatory for public-facing):
-1. Scan draft for AI writing patterns (per `humanizer` pattern catalog)
-2. Rewrite problematic sections — remove AI-isms, add natural voice
-3. Anti-AI audit — ask "What makes this obviously AI generated?"; revise
-4. Verify humanized text preserves accuracy + matches outline + sounds natural read aloud
+Apply `@humanizer` skill. Per `humanize-content` rule (mandatory for public-facing). Scan draft for AI patterns, rewrite problematic sections, run anti-AI audit, verify accuracy preserved.
 
 GEO + humanizer are complementary: GEO optimizes structure for extraction; humanizer optimizes voice. Order: GEO first, humanizer second.
 
 ### Step 5: SEO Optimization
 
-`Agent(seo-engineer)`. Run SEO pass:
+`Agent(seo-engineer)`. Run on-page SEO check (title / meta / H1 / hierarchy / URL slug / first paragraph / image alt), internal link audit (≥ 3 descriptive anchors, no broken refs, no "click here"), structured data (`Article` / `BlogPosting` + `Person` + `FAQPage` / `HowTo` JSON-LD validated in Google Rich Results Test), and discovery assets (sitemap / `robots.txt` / `llms.txt` / canonical URL).
 
-**5a. On-page SEO**
-
-| Element | Check |
-|---|---|
-| Title tag | Primary keyword, compelling, 50–60 chars |
-| Meta description | Unique, keyword, 120–160 chars |
-| H1 | Matches title, one per page |
-| Heading hierarchy | Logical H1→H2→H3, secondary keywords in H2s naturally |
-| URL / slug | Short, descriptive, hyphenated, includes keyword |
-| First paragraph | Contains primary keyword naturally |
-| Image alt | Descriptive, keyword where natural |
-
-**5b. Internal link audit**
-- ≥ 3 internal links with descriptive anchor text
-- All internal links valid (no broken refs)
-- No "click here" / "read more"
-- Contextually relevant
-
-**5c. Structured data** (mandatory per GEO)
-- `Article` or `BlogPosting` JSON-LD + `Person` for author (with `sameAs`) + `Organization`
-- `FAQPage` JSON-LD if FAQ block (questions match body verbatim, no duplicate marketing prose)
-- `HowTo` JSON-LD for tutorials with 3–8 steps
-- Verify: `headline`, `author.sameAs`, `datePublished`, `dateModified`, `description`, `image`
-- Validate in Google Rich Results Test + schema.org/validator before merge
-
-**5d. Discovery assets**
-- Sitemap will pick up new URL (verify config)
-- `robots.txt` does not block path
-- Update `llms.txt` if maintained
-- Canonical URL correct
+The full 5a / 5b / 5c / 5d sub-checklist with the on-page table, structured-data validation steps, and discovery-asset audit lives in [`seo-content-sync-checklist.md`](./seo-content-sync-checklist.md) — load it during the SEO pass.
 
 ### Step 6: Quality Review
 
-`Agent(product-manager)`. Review against original brief:
+`Agent(product-manager)`. Review against original brief — checks: brief compliance (outline + angle), accuracy (cited stats), audience fit, completeness, ≥ 3 internal cross-links, natural value-first CTA, visual direction, SEO (title/meta/headings/keywords), no secrets/PII, brand voice consistent.
 
-| Check | Pass criteria |
-|---|---|
-| Brief compliance | All outline sections covered, angle maintained |
-| Accuracy | Facts/stats/claims correct + cited |
-| Audience fit | Language + depth match target |
-| Completeness | No rushed sections |
-| Cross-links | ≥ 3 internal links, present + relevant |
-| CTA | Natural, value-first, not aggressive |
-| Visual direction | Cover + inline visuals specified |
-| SEO | Title, meta, headings, keywords optimized |
-| No secrets/PII | No internal data, credentials, personal info |
-| Brand voice | Consistent with project tone + terminology |
-
-**Decision Gate** — route to appropriate step on failure:
-| Issue | Route to |
-|---|---|
-| Content gaps, accuracy, tone | Step 3 with specific feedback |
-| Buried lede, walls of text, missing answer-first | Step 4 (GEO pass) |
-| AI-sounding text detected | Step 4.5 (humanizer) with patterns to fix |
-| SEO/schema issues | Step 5 |
-| Brief was wrong | Step 2 to revise brief |
+**Decision Gate** — route on failure: content gaps / accuracy / tone → Step 3 with feedback; buried lede / walls of text / missing answer-first → Step 4 (GEO); AI-sounding text → Step 4.5 (humanizer); SEO/schema → Step 5; wrong brief → Step 2.
 
 Loop until review passes.
 
@@ -182,20 +95,7 @@ Final checks: frontmatter complete, file in correct dir, name follows convention
 
 ### Step 8: Summary
 
-```
-## Blog Post Summary
-- **Title**: <title>
-- **File**: <path>
-- **Status**: published / draft / scheduled for <date>
-- **Topic**: <one-sentence>
-- **Target keyword**: <primary>
-- **Word count**: <count>
-- **Roles applied**: PM → Writer → @humanizer → SEO → PM
-- **Review rounds**: <count>
-- **Cross-links added**: <count — list>
-- **Discovery assets**: llms.txt updated yes/no, sitemap auto/manual
-- **Follow-ups**: <if any>
-```
+Output a compact summary block: title, file path, status (published / draft / scheduled), topic, target keyword, word count, roles applied (PM → Writer → @humanizer → SEO → PM), review rounds, cross-links added, discovery assets (llms.txt + sitemap status), follow-ups.
 
 ## Workflow B: Page Content / Landing / Other
 
@@ -211,25 +111,20 @@ Visual content via AI tools per companion `content-tools-guide.md` and `image-an
 
 ## Content Quality Gates (apply to every content type)
 
-| Gate | Check |
-|---|---|
-| **1. Accuracy** | Claims verifiable; stats cite sources; screenshots current; pricing current; legal claims reviewed |
-| **2. Brand alignment** | Voice + tone + terminology match guidelines; no off-brand humor/slang |
-| **3. Conversion optimization** | Value prop above-fold; single primary CTA per section; benefits-focused; social proof near decision points; minimal friction |
-| **4. Accessibility** | Descriptive alt text; video captions; 4.5:1 contrast; readable at 200% zoom; no color-only meaning |
-| **5. SEO + content sync** | Unique title + meta; H1→H2→H3 hierarchy; descriptive internal anchors; structured data; all surfaces in sync (see `seo-content-sync-checklist.md`) |
-| **6. Legal + ethics** | No fabricated testimonials; no misleading before/after; AI images reviewed for artifacts/bias; attribution for third-party; license compliance; no dark patterns |
-| **7. GEO/AEO structure** (mandatory for public-facing) | Macro/meso/micro applied; answer-first; entity consistent; high-leverage formats; schema identified; `geo-content` rule satisfied |
-| **8. Humanization** (mandatory) | Scanned via `@humanizer`; no AI vocabulary; no promotional inflation; no chatbot artifacts; no em-dash overuse; no filler/hedging; anti-AI audit performed; sounds natural read aloud |
+Eight gates — each must pass before publish:
+
+1. **Accuracy** — claims verifiable, stats cited, pricing/screenshots current, legal claims reviewed
+2. **Brand alignment** — voice + tone + terminology per guidelines; no off-brand humor/slang
+3. **Conversion** — value prop above-fold, one primary CTA per section, benefits-focused, social proof near decision points
+4. **Accessibility** — descriptive alt text, video captions, 4.5:1 contrast, readable at 200% zoom, no color-only meaning
+5. **SEO + content sync** — unique title + meta, H1→H2→H3 hierarchy, descriptive internal anchors, structured data, surfaces in sync (`seo-content-sync-checklist.md`)
+6. **Legal + ethics** — no fabricated testimonials, no misleading before/after, AI images reviewed for artifacts/bias, attribution for third-party, license compliance, no dark patterns
+7. **GEO/AEO structure** (mandatory for public-facing) — macro/meso/micro applied, answer-first, entity consistent, high-leverage formats, schema identified, `geo-content` rule satisfied
+8. **Humanization** (mandatory) — `@humanizer` scan; no AI vocabulary, promotional inflation, chatbot artifacts, em-dash overuse, filler/hedging; anti-AI audit; sounds natural read aloud
 
 ## AI Tool References
 
-For AI text generation, image generation, and asset services — see companion `content-tools-guide.md` (full tool matrix with best-for + integration notes). Highlights:
-
-- **Text**: ChatGPT (long-form), Claude (nuanced/brand-voice), Gemini (multimodal), Jasper (marketing copy), Copy.ai (short-form)
-- **Image**: Midjourney (highest quality), DALL-E 3 (concept), Stable Diffusion (custom), Flux (fast), Ideogram (text-in-images), Leonardo (consistency)
-- **Stock**: Unsplash, Pexels, Undraw, Storyset, Lottie, Noun Project
-- **Video**: Loom, Synthesia, Runway, Rive, Spline
+For AI text generation (ChatGPT / Claude / Gemini / Jasper / Copy.ai), image generation (Midjourney / DALL-E 3 / Stable Diffusion / Flux / Ideogram / Leonardo), stock assets (Unsplash / Pexels / Undraw / Storyset / Lottie / Noun Project), and video tooling (Loom / Synthesia / Runway / Rive / Spline) — see companion [`content-tools-guide.md`](./content-tools-guide.md) for the full tool matrix with best-for + integration notes.
 
 ## G7 spawn payloads
 

@@ -1,7 +1,13 @@
 ---
 name: develop
-description: Multi-agent feature implementation pipeline — DEVELOP → REVIEW → QA with developer(s), reviewer, QA, and lead orchestrator. Spawns specialized subagents via the Agent tool (`subagent_type: "ai-assets:<role>"`). Use when implementing a feature with the canonical Anthropic `Agent` tool available — preferred over single-agent /feature-dev fallback. Renamed from team-dev (per Round 4 N2).
-argument-hint: [PRD path or feature description]
+description: >-
+  Multi-agent feature implementation pipeline — DEVELOP → REVIEW → QA with
+  developer(s), reviewer, QA, and lead orchestrator. Spawns specialized
+  subagents via the Agent tool (`subagent_type: "ai-assets:<role>"`). Use
+  when implementing a feature with the canonical Anthropic `Agent` tool
+  available — preferred over single-agent /feature-dev fallback. Renamed
+  from team-dev (per Round 4 N2).
+argument-hint: "[PRD path or feature description]"
 ---
 
 <!-- ARCHITECTURAL NOTE (alpha.25): no `context: fork` here. Per Anthropic docs, subagents cannot spawn other subagents. Orchestration skills MUST run in the main conversation thread to retain access to the `Agent` tool for spawning DEV/REVIEW/QA subagents. Adding `context: fork` would run this skill in a `general-purpose` subagent without spawn capability — exactly the alpha.24 failure mode. -->

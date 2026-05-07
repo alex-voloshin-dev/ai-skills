@@ -136,43 +136,7 @@ After rubric passes: Lead writes IMPLEMENTATION-PLAN.md in main thread (not a te
 
 ## Pipeline (Path A — Subagents fallback, only if Path B Step 1 returned a technical error)
 
-```
-┌─ Context load: /context-load --for <role> for each Wave-1/2 agent
-│  (shrinks per-agent input vs full project dump)
-│
-├─ WAVE 1 (parallel, independent drafts; 50K tokens each):
-│  ├─ product-manager          → PRD.md
-│  ├─ marketing-strategist     → MARKET-ANALYSIS.md (skip if not public-facing)
-│  └─ system-architect         → ARCHITECTURE.md
-│
-├─ Gate: all wave-1 files exist & parseable (lead checks)
-│
-├─ WAVE 2 (parallel, domain reviews; reads wave-1 outputs):
-│  ├─ ui-ux-designer (reads ARCHITECTURE + PRD)     → UX-FLOW.md + wireframes
-│  ├─ db-engineer (reads ARCHITECTURE + PRD)        → DATA-MODEL.md
-│  ├─ security-engineer (reads all wave-1)          → security section in RISKS.md
-│  └─ qa-engineer (reads PRD + ARCHITECTURE)        → acceptance criteria review
-│
-├─ Gate: all wave-2 files exist & complete (lead checks)
-│
-├─ WAVE 3 (sequential, cross-check + eval):
-│  ├─ product-manager-reviewer (fresh subagent, reads all w1+w2)  → feedback.md
-│  ├─ system-architect (reviewer role, reads all)                 → architecture-review.md
-│  └─ eval-judge (scores against feature-design.md rubric)        → REVIEW-LOG.md
-│
-├─ Gate: rubric score ≥ 4.0 AND all dimensions ≥ 3 → proceed; else → RALF
-│
-├─ RALF (if rubric not met):
-│  │  Oracle: judge:feature-design.md (min_score 4.0)
-│  │  Kill-on: regex:RUBRIC_FAILED_3X (three consecutive failures, same issue)
-│  │  Caps: 5 iter / 250K tokens / 60 min (overridable in userConfig)
-│  │  On failure: re-prompt Wave 2 agents with reviewer feedback
-│  └─ (loop back to WAVE 3)
-│
-└─ Lead writes IMPLEMENTATION-PLAN.md (maps PRD requirements → work packages → engineer roles)
-   Memory write: L4 designs/<feature-id>.md (summary + decisions)
-   Final report: TodoList check + token totals + handoff hint to `/develop`
-```
+Three-wave pipeline with parallel Wave-1 / Wave-2 spawns and a sequential Wave-3 cross-check + eval. The full wave-by-wave ASCII tree (per-agent context-load, gate checks between waves, RALF retry hookup, and the final IMPLEMENTATION-PLAN.md handoff) lives in [`wave-protocol.md`](./wave-protocol.md). Load it when actually executing Path A.
 
 ## G7 spawn payloads
 
@@ -180,54 +144,9 @@ Every spawn embeds a structured payload per `plugin/schemas/spawn-payload.schema
 
 Trace IDs follow pattern `wf-<YYYYMMDD>-<feature-id>-spawn-<seq>`. Allows span tracing across all 9+ spawns per design.
 
-## Eval rubric
+## Eval, RALF, memory, observability
 
-Pointer: `plugin/eval/judge-rubrics/feature-design.md` (B10 deliverable).
-
-Six dimensions × 5 levels:
-
-1. **Completeness** — all required artefacts present with depth
-2. **Internal consistency** — no cross-doc contradictions, coherent vision
-3. **Traceability** — requirements map to components map to test cases
-4. **Handoff clarity** — engineer can begin work without back-and-forth
-5. **Risk coverage** — identified, scored, mitigations specified
-6. **GEO/marketing readiness** (if public-facing) — passes geo-audit + humanizer standards
-
-Pass: avg ≥ 4.0, no dimension < 3.
-
-## RALF wiring
-
-- **Oracle:** `judge:feature-design.md` (min_score 4.0)
-- **Kill-on:** `regex:RUBRIC_FAILED_3X`
-- **Caps:** 5 iter / 250K tokens / 60 min — overridable in userConfig
-- **State:** `<repo>/.ai-assets-memory/ralph/<run-id>/`
-
-## Memory writes
-
-| Layer | When | Shape |
-|---|---|---|
-| L4 | After Wave 1 complete | `.ai-assets-memory/designs/<feature-id>/wave1-summary.md` — high-level decisions per agent |
-| L4 | After RALF complete | `.ai-assets-memory/designs/<feature-id>/final.md` — trace of rubric scores + converged design |
-| L4 (committed, opt-in) | Before handoff | `.ai-assets-memory/.committed/designs/<feature-id>.md` — finalized snapshot for team review |
-
-## Failure modes
-
-- **Wave 1 or 2 subagent timeout:** lead retries once with explicit error context. If persistent, escalates to user with "narrow scope" instruction
-- **Rubric score oscillates:** RALF detects same-issue-3X pattern, kills loop, writes diagnostic suggesting design ambiguity
-- **Oracle (judge) crashes:** treat as `ORACLE_ERROR`; kill loop; surface full diagnostic from eval-judge stderr
-- **Budget hit mid-RALF:** hard pause; prompt user to confirm continuation, raise budget, or abort
-
-## Observability events
-
-Written to `<repo>/.ai-assets-memory/sessions/<sid>/runs.jsonl` by `task-event-log.py` + `subagent-start-budget.py` + `subagent-stop-learnings.py` hooks:
-
-- `workflow_start` — feature-design + idea hash
-- `context_load` × 9 — per-agent context slice tokens
-- `wave_start` (1, 2, 3)
-- `agent_spawned` × N — per agent + model + tokens budget
-- `agent_returned` — tokens in/out, duration
-- `ralf_iter` — iteration N, oracle result, kill-on check
-- `workflow_end` — final status (`SUCCESS` / `RALF_FAILED_BUDGET` / `RALF_FAILED_ITER`)
+The 6-dimension eval rubric (pass: avg ≥ 4.0, no dimension < 3), RALF caps (5 iter / 250K tokens / 60 min, kill-on `regex:RUBRIC_FAILED_3X`), memory-write layers (L4 wave1-summary + L4 final + opt-in L4 committed), failure modes (timeouts, oscillation, oracle crashes, budget hits), and observability events written to `runs.jsonl` all live in [`eval-and-ralf.md`](./eval-and-ralf.md). Load it when running the Wave-3 → RALF retry loop, validating rubric scores, or diagnosing why a design didn't converge.
 
 ## Integration
 

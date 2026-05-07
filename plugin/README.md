@@ -102,6 +102,7 @@ The repo's `.claude-plugin/marketplace.json` already declares the registry. **Lo
 - [docs/concepts/memory.md](docs/concepts/memory.md) — 6-layer memory model summary
 - [docs/concepts/eval.md](docs/concepts/eval.md) — eval framework summary
 - [docs/concepts/ralf.md](docs/concepts/ralf.md) — RALF iteration loop summary
+- [docs/concepts/skill-frontmatter-extensions.md](docs/concepts/skill-frontmatter-extensions.md) — the 4 Claude Code-specific frontmatter fields and how they relate to the agentskills.io spec
 - [CHANGELOG.md](CHANGELOG.md) — version history per batch
 - `../plugin-design/00-PHASE-1-PLAN.md` — full plan with locked decisions D1-D13
 - `../plugin-design/04-MIGRATION-CHECKLIST.md` — atomic-batch implementation checklist

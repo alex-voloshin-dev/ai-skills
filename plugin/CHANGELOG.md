@@ -28,6 +28,38 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.3.0] — 2026-05-06 — agentskills.io compliance pass + new audit skill
+
+Minor release. Aligns the plugin's SKILL.md files with the [agentskills.io](https://agentskills.io) specification and adds a self-audit companion to the existing `/plugin-skill-create`.
+
+### Added
+
+- **`/plugin-skill-audit`** — new user-invocable companion skill that audits, validates, and (opt-in) auto-fixes existing `plugin/skills/` against the agentskills.io spec + ai-assets plugin conventions. Five check groups: `spec`, `body`, `refs`, `eval`, `plugin`. Counterpart to legacy `.claude/skills/asset-validation/` (removed in v0.2.0) and to the Codex/Windsurf shared skill `.agents/skills/asset-validation/`. Skill total: 52 → 53; user-invocable: 28 → 29.
+- **`plugin/docs/concepts/skill-frontmatter-extensions.md`** — documents the 4 Claude Code-specific frontmatter fields (`argument-hint`, `context: fork`, `user-invocable`, `disable-model-invocation`) and how they relate to the agentskills.io spec. Cross-client portability guidance via the spec-compliant `metadata` map. User docs: 14 → 15.
+- **`plugin/skills/team-protocols/`** — 3 new companion files (`spawn-pattern.md`, `path-selection-rules.md`, `g7-contracts.md`) split out of the oversized SKILL.md per progressive-disclosure best practice.
+- **`plugin/skills/feature-design/`** — 2 new companion files (`wave-protocol.md`, `eval-and-ralf.md`).
+- **`plugin/skills/team-bugfix/`** — 1 new companion file (`path-a-spawn-templates.md`).
+
+### Changed
+
+- **`plugin/skills/develop/SKILL.md`** — frontmatter `description` converted to a `>-` folded scalar block. The previous unquoted scalar contained the literal `subagent_type: "ai-assets:<role>"` inside backticks, whose embedded `: ` made strict YAML parsers (`yaml.safe_load`) raise `mapping values are not allowed here`. Anthropic's lenient parser accepted the broken value, but every other agentskills.io-compliant client (PyYAML, Cursor, OpenCode, Gemini CLI, Goose) would fail to load the skill. Now parses universally.
+- **`plugin/dev/validate.py`** — `_read_yaml_frontmatter` rewritten to use `yaml.safe_load` instead of the hand-rolled regex parser. The old parser silently accepted malformed YAML (including the `develop/SKILL.md` BLOCKER above) and shipped CI green. The new parser surfaces the same class of regression as a `skill_frontmatter` failure. Behavioral parity preserved: returns `dict` on success, `None` on parse error / missing frontmatter / non-dict top-level.
+- **`plugin/skills/deploy-production/SKILL.md`** — description gained a "Use when shipping to production after staging is green, when a deploy needs a documented rollback plan, or when the APPROVE-gate workflow is required." trigger sentence per agentskills.io best practice (descriptions tell the agent when to act).
+- **3 verbose descriptions tightened** to the project's 200–400 char sweet spot (still under the 1024-char hard limit) — `context-engineering` (748 → 381), `social-media-manager` (605 → 307, also flattened from a YAML `|` literal block to single-line), `geo-writer` (525 → 334).
+- **4 oversized SKILL.md split into companion files** to honor the 12,000-char project rule from CLAUDE.md and reduce activation context cost per progressive-disclosure best practice — `team-protocols` (20,402 → 8,917), `feature-design` (14,544 → 11,104), `content-creation` (14,379 → 11,939), `team-bugfix` (12,960 → 11,590). All extracted content is verbatim; SKILL.md bodies carry explicit `[file.md](./file.md)` pointers with "load when X" triggers.
+- **`/plugin-skill-create`** — description references agentskills.io specification; hard-rules section restructured into 4 layers (spec, best practices, description rules, ai-assets conventions); behaviour step 6 wires `/plugin-skill-audit <name> --strict` as the post-scaffold compliance gate.
+- **`plugin/dev/validate.py` `EXPECTED_COUNTS`** — `skills` 52 → 53, `user_invocable_skills` 28 → 29 (new audit skill); `user_docs` 14 → 15 (new concept doc).
+- **`plugin/README.md`** — Learn-more section gained a bullet linking `docs/concepts/skill-frontmatter-extensions.md`.
+
+### Compliance
+
+All 53 SKILL.md now pass `yaml.safe_load` strict parsing. Validator passes 23/23 checks in default and `--strict` modes. No new Claude Code-specific frontmatter introduced; existing extensions documented for cross-client portability.
+
+### Known follow-ups (not in this release)
+
+- `plugin/skills/develop/SKILL.md` (15,577 chars), `plugin/skills/marketing/SKILL.md` (12,065), `plugin/skills/plan/SKILL.md` (12,017) still exceed the 12,000-char project rule. Surfaced by the audit but out of scope for the listed action items; a follow-up minor release will apply WP-5-style splits.
+- `plugin/dev/validate.py` does not enforce the 12,000-char limit on SKILL.md / rule files — adding a `skill_size_limit` check would prevent this class of regression from shipping green.
+
 ## [0.2.0] — 2026-04-30 — Sunset legacy `.claude/` package (Phase 5, BREAKING)
 
 Major release. The repository previously shipped Claude Code assets in two parallel layouts: the legacy three-package mirror (`.claude/` + `.codex/` + `.windsurf/` + shared `.agents/`) and the new plugin format (`plugin/`). v0.2.0 retires the legacy `.claude/` package — the plugin is now the single canonical Claude Code delivery format.

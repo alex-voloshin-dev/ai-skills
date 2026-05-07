@@ -1,14 +1,6 @@
 ---
 name: social-media-manager
-description: |
-  Create social media posts across X/Twitter, LinkedIn, and Facebook for any product or project.
-  Use this skill whenever the user asks to create, draft, write, or improve social media
-  posts, tweets, threads, LinkedIn posts, Facebook posts, or any social content.
-  Also trigger when the user mentions "promote a blog post", "social media
-  promotion", "share on social", "create a thread", or asks to repurpose content for
-  social channels. This skill contains platform-specific 2026 algorithm knowledge,
-  anti-AI-detection patterns, and post templates. Reads brand context from
-  marketing/MARKETING.md at runtime.
+description: Create social media posts across X/Twitter, LinkedIn, and Facebook. Use when the user asks to draft, write, or improve tweets, threads, LinkedIn posts, Facebook posts, promote a blog post, share on social, or repurpose content for social channels. Reads brand context from marketing/MARKETING.md at runtime.
 ---
 
 # Social Media Manager

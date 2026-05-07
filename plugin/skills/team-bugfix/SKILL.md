@@ -144,49 +144,11 @@ If `/env-analyze` produced findings, add a context-only task at the start (assig
 
 After all audit tasks complete: run final verification in main thread (build/test), emit summary, then ask: "Clean up the team."
 
-## Path A — Subagents fallback (only if Path B Step 1 returned a technical error) — per-task spawn loop
+## Path A — Subagents fallback (only if Path B Step 1 returned a technical error)
 
-For each task from the audit plan, the Lead does this exactly:
+If Path B Step 1 returns a literal "Agent Teams not enabled" / "experimental flag not set" / equivalent technical error, fall back silently to Path A: per-task sequential spawns of Developer → Reviewer → QA via the `Agent` tool, one task at a time, with the same DEV → REVIEW → QA gate semantics.
 
-**Step 1 — DEVELOP.** Spawn the Developer subagent via `Agent`:
-
-```text
-Agent({
-  description: "<task-id> fix (<role>)",
-  subagent_type: "ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>",
-  prompt: "You are the Developer subagent for audit task <ID>. Read plugin/skills/team-protocols/developer-protocol.md before starting. G7 spawn payload:\n\n<JSON-payload-per-team-protocols>\n\nWhen done, return a G7 return contract.",
-  isolation: "worktree"
-})
-```
-
-Wait for return. Validate the return contract.
-
-**Step 2 — REVIEW.** Spawn the Reviewer subagent via `Agent`:
-
-```text
-Agent({
-  description: "<task-id> review",
-  subagent_type: "ai-assets:software-engineer",
-  prompt: "You are the Reviewer subagent for audit task <ID>. Read plugin/skills/team-protocols/reviewer-protocol.md and plugin/skills/code-review/SKILL.md before starting. Files to review:\n<list-from-developer-return>\n\nDeveloper summary:\n<from-developer-return>\n\nAudit task brief:\n<original-audit-section>\n\nReturn a G7 contract with `result.verdict` set to 'approved' or 'changes_requested' with a structured issues list.",
-  disallowedTools: ["Write", "Edit"]
-})
-```
-
-Loop on `changes_requested` back to Step 1 with issues attached, until `approved`.
-
-**Step 3 — QA.** Spawn the QA subagent via `Agent`:
-
-```text
-Agent({
-  description: "<task-id> QA",
-  subagent_type: "ai-assets:qa-engineer",
-  prompt: "You are the QA subagent for audit task <ID>. Higher-level test scope (smoke / API / integration / E2E — NOT unit tests). Files changed:\n<list>\n\nReturn a G7 contract with `result.qa_verdict` set to 'pass' or 'fail' with issues."
-})
-```
-
-Loop on `fail` back to Step 1, until `pass`.
-
-The Lead progress table includes: #, Task, Developer subagent_type, Dev, Review, Review rounds, QA, Status. Final summary includes: total tasks, review iterations, subagent_types used, unresolved issues, all changed files grouped by subproject, and the spawn ledger (count of `Agent` invocations per role).
+> The verbatim per-step `Agent({...})` invocation templates (DEVELOP / REVIEW / QA), the `disallowedTools: ["Write", "Edit"]` reviewer constraint, the `isolation: "worktree"` directive, the loop-on-`changes_requested` / loop-on-`fail` rules, and the Lead progress-table + spawn-ledger format live in [`path-a-spawn-templates.md`](./path-a-spawn-templates.md). Load it when actually executing the Path A fallback loop.
 
 ## Integration
 
