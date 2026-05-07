@@ -4,6 +4,8 @@ description: SEO review workflow — technical SEO audit, meta tags, structured 
 argument-hint: "URL or page path"
 ---
 
+<!-- ARCHITECTURAL NOTE: no `context: fork`. This skill spawns `Agent(seo-engineer)` for review steps. Subagents cannot spawn other subagents (per Anthropic docs), so this skill MUST run in the main thread to retain spawn capability. -->
+
 # SEO Review
 
 Systematic SEO audit for public-facing pages. Checks crawlability, indexability, on-page SEO, structured data, Core Web Vitals, and AI search readiness. Applies `Agent(seo-engineer)` for all steps.

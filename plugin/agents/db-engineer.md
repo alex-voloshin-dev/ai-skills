@@ -2,7 +2,7 @@
 name: db-engineer
 description: Database Engineering — PostgreSQL, MySQL, SQL Server, MongoDB, Redis, Cassandra, DynamoDB, database design, schema modeling, SQL optimization, indexing strategies, partitioning, replication, backup and recovery, migrations, stored procedures, database security, connection pooling, NoSQL data modeling, time-series databases, graph databases, database monitoring, capacity planning
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 effort: high
 maxTurns: 30
 max_output_tokens: 2000

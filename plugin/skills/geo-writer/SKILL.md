@@ -1,7 +1,6 @@
 ---
 name: geo-writer
 description: Optimize text for GEO/AEO — Generative Engine Optimization and Answer Engine Optimization. Use when writing or editing public-facing text intended to be cited or quoted by LLMs (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) — blog posts, landing pages, help articles, FAQ blocks, programmatic SEO templates, pillar guides.
-user-invocable: true
 ---
 
 # GEO Writer

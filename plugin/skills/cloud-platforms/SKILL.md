@@ -1,7 +1,6 @@
 ---
 name: cloud-platforms
-description: Cloud platform reference modules — GCP, Azure, AWS. Provides platform-specific CLI commands, managed service patterns, networking, IAM, observability, and operational procedures. Activated when working with cloud infrastructure, production environments, managed databases, container orchestration, or cloud-native services. Detect the target platform from the project's CLAUDE.md tech stack declaration.
-user-invocable: false
+description: Use when working with cloud infrastructure, production environments, managed databases, container orchestration, or cloud-native services across GCP, Azure, or AWS. Provides platform-specific CLI commands, managed service patterns, networking, IAM, observability, and operational procedures. Detect the target platform from the project's CLAUDE.md tech stack declaration.
 ---
 
 # Cloud Platforms

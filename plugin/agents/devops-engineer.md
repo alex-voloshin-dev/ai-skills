@@ -2,7 +2,7 @@
 name: devops-engineer
 description: DevOps Engineering — Terraform, Kubernetes, Docker, Helm, CI/CD pipelines, infrastructure as code, container orchestration, cloud platforms (GCP, Azure, AWS), Git, GitHub Actions, GitOps, monitoring, security hardening, shell scripting
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 effort: high
 maxTurns: 30
 max_output_tokens: 2000

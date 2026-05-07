@@ -4,6 +4,8 @@ description: Documentation workflow — edit markdown docs, technical writing, b
 argument-hint: [documentation target or section]
 ---
 
+<!-- ARCHITECTURAL NOTE: no `context: fork`. This skill spawns the Content Writer subagent (and optionally an SEO Engineer subagent) via the `Agent` tool. Subagents cannot spawn other subagents (per Anthropic docs), so this skill MUST run in the main thread to retain spawn capability. -->
+
 # Documentation
 
 Safe documentation-only workflow. Edit markdown files without touching application source code, configs, or infrastructure. Applies `Agent(content-writer)` for all writing tasks.

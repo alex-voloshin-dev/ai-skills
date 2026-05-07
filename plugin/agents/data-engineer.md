@@ -2,7 +2,7 @@
 name: data-engineer
 description: Data Engineering — ETL/ELT pipelines, Apache Spark, Apache Airflow, dbt, data warehousing, data lakes, BigQuery, Snowflake, Kafka, data modeling, data quality, schema evolution, batch and stream processing, data governance, data observability
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 effort: high
 maxTurns: 30
 max_output_tokens: 2000

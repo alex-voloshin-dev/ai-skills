@@ -1,7 +1,6 @@
 ---
 name: humanizer
 description: Remove signs of AI-generated writing from text. Use when editing, reviewing, or producing any public-facing text — blog posts, social media, UI copy, emails, landing pages, documentation. Detects and fixes AI patterns including inflated symbolism, promotional language, vague attributions, em dash overuse, rule of three, AI vocabulary, negative parallelisms, sycophantic tone, and filler phrases.
-user-invocable: true
 ---
 
 # Humanizer

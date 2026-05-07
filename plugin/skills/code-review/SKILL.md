@@ -1,7 +1,6 @@
 ---
 name: code-review
 description: Structured code review with security, performance, and architecture checklists. Use when reviewing pull requests, code changes, or conducting architecture reviews. Provides actionable checklists for consistent review quality.
-user-invocable: true
 ---
 
 # Code Review

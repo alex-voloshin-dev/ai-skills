@@ -2,7 +2,7 @@
 name: sre-engineer
 description: Site Reliability Engineering — SLOs, SLIs, error budgets, incident management, postmortems, capacity planning, chaos engineering, toil reduction, cloud platforms (GCP, Azure, AWS), Kubernetes observability, Docker, on-call, runbooks, alerting, reliability, shell scripting
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 effort: high
 maxTurns: 30
 max_output_tokens: 2000

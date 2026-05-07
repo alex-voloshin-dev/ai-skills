@@ -2,7 +2,7 @@
 name: java-engineer
 description: Java Backend Engineering — Java 21+, Spring Boot 3, Spring Data JPA, Hibernate, PostgreSQL, Redis, Spring Security, REST API design, Flyway migrations, HikariCP, Testcontainers, JUnit 5, Mockito, observability, performance tuning
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 effort: high
 maxTurns: 30
 max_output_tokens: 2000

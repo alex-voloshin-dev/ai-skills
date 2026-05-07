@@ -2,7 +2,7 @@
 name: frontend-engineer
 description: Frontend Engineering — Next.js App Router, React Server Components, TypeScript, Tailwind CSS, shadcn/ui, React Query, performance optimization, accessibility, SEO, testing with Vitest and Playwright
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 effort: high
 maxTurns: 30
 max_output_tokens: 2000

@@ -28,6 +28,41 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.3.1] — 2026-05-07 — agent cost optimization + audit follow-up
+
+Patch release. Two-fold refinement of v0.3.0: explicit cost-tier pinning on 9 agents (Sonnet 4.6 instead of inherited Opus 4.7) and execution of the v0.3.0 follow-up audit list.
+
+### Changed — agent model tiers (cost optimization)
+
+Set `model: sonnet` on 9 agents that were previously `model: inherit` (running on the session's Opus 4.7 by default). Sonnet 4.6 handles the bounded scope of these roles at ~5× lower cost with no measurable quality loss inside their stated `effort:` budget. Reviewer / QA gates remain in place to catch any drift.
+
+| Agent | Before | After | Reason |
+|---|---|---|---|
+| `qa-engineer` | inherit | `sonnet` | Acceptance-criteria validation + test writing — bounded scope |
+| `sre-engineer` | inherit | `sonnet` | Bounded incident analysis + single-document postmortem synthesis |
+| `devops-engineer` | inherit | `sonnet` | CI/IaC tasks are mostly templated |
+| `frontend-engineer` | inherit | `sonnet` | Component-level scope; Sonnet handles Next.js + React patterns |
+| `python-engineer` | inherit | `sonnet` | Most tasks are single-file / single-module |
+| `java-engineer` | inherit | `sonnet` | Spring Boot patterns are templated |
+| `db-engineer` | inherit | `sonnet` | Schema design + migrations, bounded |
+| `mobile-engineer` | inherit | `sonnet` | Component / screen-level scope |
+| `data-engineer` | inherit | `sonnet` | ETL/pipeline scaffolding, templated |
+
+`ml-engineer` and `software-engineer` keep `model: inherit` (Opus 4.7) — ML correctness and the universal-fallback role both benefit from broader reasoning. Architecture roles (`system-architect`, `cloud-architect`, `devops-architect`, `solution-architect`) and product/strategy roles (`product-manager`, `marketing-strategist`, `prompt-engineer`, `content-writer`, `content-designer`, `ui-ux-designer`, `seo-engineer`) also keep `inherit`. `feature-design-lead` stays explicitly pinned to `opus`. `eval-judge` and `memory-curator` remain on `haiku`; `security-engineer` remains on `sonnet`.
+
+### Fixed
+
+- **`plugin/skills/develop/SKILL.md`** — restored the truncated tail (the file ended mid-sentence at `the previous spaw` after the `/plugin-skill-audit --fix` run accidentally cut the Sequential Code-Modification Gate section). Restored the literal `"no silent fallback"` substring required by the `orchestration_dual_path` validator (was lost in the same trim). Body now 11,898 chars (under the 12,000 project rule, was 15,577 before).
+- **10 skills had the deprecated `user-invocable:` field removed** — `cloud-platforms`, `code-review`, `context-engineering`, `deployment-procedures`, `geo-writer`, `humanizer`, `prompt-engineering`, `test-strategy`, `ui-ux-design`, `worktree-isolation`. The agentskills.io spec doesn't include this field; spec-equivalent intent is expressed via `context: fork` or `disable-model-invocation: true` (or by being model-auto-invocable, which is the spec default).
+- **`plugin/skills/ai-assets-init/SKILL.md` description** — now leads with "Use when bootstrapping a target repository to be ai-assets-aware..." per agentskills.io best-practice (descriptions should tell the agent when to act).
+- **`plugin/skills/cloud-platforms/SKILL.md` description** — now leads with "Use when working with cloud infrastructure...".
+- **`plugin/skills/prompt-engineering/SKILL.md`** — Resource Files table gained 3 previously-orphan entries (`prompt-versioning-and-providers.md`, `prompt-deployment-and-monitoring.md`, `advanced-techniques-and-models.md`).
+- **`plugin/skills/docs/SKILL.md` and `plugin/skills/seo-review/SKILL.md`** — added architectural-note HTML comments documenting why these skills omit `context: fork` despite carrying `argument-hint` (they are sub-workflows callable from other workflows; `argument-hint` is for parent-workflow handoffs).
+
+### Audit status (after this release)
+
+`/plugin-skill-audit --all` returns 53 audited / 42 pass / 11 warn / 0 fail. Remaining warns are coverage-gap items (21 forked skills lacking calibration cases + judge rubrics) and 5 near-12k-limit bodies — both backlog items, not blockers.
+
 ## [0.3.0] — 2026-05-06 — agentskills.io compliance pass + new audit skill
 
 Minor release. Aligns the plugin's SKILL.md files with the [agentskills.io](https://agentskills.io) specification and adds a self-audit companion to the existing `/plugin-skill-create`.

@@ -2,7 +2,7 @@
 name: python-engineer
 description: Python Backend Engineering — Python 3.12+, FastAPI, Pydantic v2, SQLAlchemy 2.0 async, Alembic migrations, pytest, dependency injection, REST API design, async/await patterns, type hints, ruff, mypy, security, observability
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 effort: high
 maxTurns: 30
 max_output_tokens: 2000

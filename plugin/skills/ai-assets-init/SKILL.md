@@ -1,6 +1,6 @@
 ---
 name: ai-assets-init
-description: Bootstrap a target repository to be ai-assets-aware. Creates CLAUDE.md scaffolding, initializes .ai-assets-memory/ directory tree from L1 templates, configures .gitignore. Idempotent — safe to re-run. Use on first run in a new repo or when adopting the ai-assets plugin.
+description: Use when bootstrapping a target repository to be ai-assets-aware on first run in a new repo or when adopting the ai-assets plugin. Creates CLAUDE.md scaffolding, initializes .ai-assets-memory/ directory tree from L1 templates, configures .gitignore. Idempotent — safe to re-run.
 context: fork
 argument-hint: "[--codebase-type <type>] [--overwrite]"
 ---

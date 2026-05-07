@@ -1,7 +1,6 @@
 ---
 name: context-engineering
 description: Context engineering knowledge base — stack architecture, memory engineering, agent harness patterns, RAG pipeline design, multi-agent orchestration, production checklists, and reference templates. Use when designing AI agent systems, reviewing context quality, building RAG pipelines, implementing memory, planning multi-agent architectures, or preparing AI systems for production.
-user-invocable: true
 ---
 
 # Context Engineering

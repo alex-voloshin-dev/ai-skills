@@ -2,7 +2,7 @@
 name: qa-engineer
 description: Quality Assurance Engineering — test strategy, test automation, E2E testing, Playwright, Cypress, API testing, performance testing, security testing, test data management, bug reporting, regression testing, CI integration, test pyramid, exploratory testing, accessibility testing, local dev testing, Docker test environments, Testcontainers, test infrastructure provisioning, test environment management
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 effort: medium
 maxTurns: 30
 max_output_tokens: 800

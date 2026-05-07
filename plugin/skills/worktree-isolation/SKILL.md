@@ -1,7 +1,6 @@
 ---
 name: worktree-isolation
 description: Git worktree branch isolation for feature development and bugfixes — branch naming, worktree setup, branch verification, and safe cleanup. Use when developing features or fixing bugs in isolated branches via git worktree.
-user-invocable: false
 ---
 
 # Worktree Isolation

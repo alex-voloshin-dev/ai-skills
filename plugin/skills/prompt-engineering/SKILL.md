@@ -1,7 +1,6 @@
 ---
 name: prompt-engineering
 description: Prompt engineering knowledge base — technique taxonomy with decision tree, prompt template patterns and formatting conventions, OWASP LLM Top 10 security checklist, eval frameworks and testing guide, context engineering, structured output contracts, multi-agent orchestration patterns, cost optimization. Use when designing prompts, reviewing prompt quality, building AI features, creating AI assets, or auditing LLM security.
-user-invocable: false
 ---
 
 # Prompt Engineering
@@ -57,6 +56,9 @@ A prompt is not a string — it is a **system** composed of:
 | `prompt-template-patterns.md` | Delimiter conventions, system prompt structure, few-shot formatting, CoT triggers, output schema patterns |
 | `security-checklist.md` | OWASP LLM Top 10 mapped to prompt-level mitigations with checklist |
 | `eval-and-testing-guide.md` | Eval frameworks, grader types, dataset curation, A/B testing, regression gates |
+| `prompt-versioning-and-providers.md` | Version-control patterns for prompts, prompt registry layout, provider differences (Anthropic / OpenAI / Google / open-source), portability tradeoffs |
+| `prompt-deployment-and-monitoring.md` | Production rollout patterns — staged release, canary, rollback, observability, cost/latency monitoring, drift detection, on-call runbook hooks |
+| `advanced-techniques-and-models.md` | Advanced techniques (self-consistency, tree-of-thought, ReAct, reflection) and model-specific patterns (Claude reasoning vs OpenAI, Gemini long context, Haiku/Sonnet/Opus selection) |
 
 ## Integration
 

@@ -2,7 +2,7 @@
 name: mobile-engineer
 description: Mobile Engineering — React Native, Flutter, Expo, iOS Swift/SwiftUI, Android Kotlin/Jetpack Compose, mobile UI/UX, offline-first architecture, push notifications, deep linking, app store deployment, mobile performance, accessibility, responsive layouts
 tools: Read, Grep, Glob, Bash, Write, Edit
-model: inherit
+model: sonnet
 effort: high
 maxTurns: 30
 max_output_tokens: 2000
