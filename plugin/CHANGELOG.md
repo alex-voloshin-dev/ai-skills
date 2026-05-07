@@ -28,6 +28,25 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.3.4] — 2026-05-07 — Path B (Agent Teams) is the MANDATORY default for subagent work
+
+Patch release. Upgrades the Path B preference language from "default preference" to MANDATORY across all places that drive path selection. The intent has been "Path B unless technical block" since alpha.27, but the wording in several places left room for the model to read it as a soft preference and rationalise a downgrade.
+
+### Changed — wording upgraded from "preferred" to MANDATORY
+
+- **`plugin/skills/team-protocols/SKILL.md`** — "Two Paths" section. "Default preference: Path B" → "MANDATORY default: Path B. Path B MUST be selected for every multi-agent workflow." Path A reframed as "fallback-only". Added an inline 6-item invalid-reasons checklist (sequential pipeline, "simpler", tmux/iTerm2 absence, Windows host, "small feature", single-stack project) so the rule is enforceable without a follow-up read of `path-selection-rules.md`. Subsection headers reordered to put Path B first (before Path A) and updated to "MANDATORY default — try this FIRST" / "technical-block fallback only".
+- **`plugin/skills/team-protocols/path-selection-rules.md`** — added an explicit "Bottom line up front" sentence so the rule is unambiguous on first read. Section heading "Hard rule for path selection — no rationalised downgrade" → "MANDATORY rule for path selection — no rationalised downgrade". Body upgraded "Path B is the preferred path" → "Path B is the MANDATORY default. Path A is permitted ONLY when Path B Step 1 returns a hard technical block" with the three documented technical-block cases listed inline.
+- **`plugin/skills/develop/SKILL.md`** — "Choose execution path" section now says "Path B is the MANDATORY default" / "Path A is fallback-only" and includes the same 6-item invalid-reasons checklist as the other three orchestration skills (`bugfix`, `team-bugfix`, `feature-design`). Added a Step-0 forbidden-announcement clause: "Saying 'I'll proceed via Path A' without first attempting Path B Step 1 is forbidden." This brings `develop` to parity with the other orchestration skills, which already had Step-0 enforcement.
+- **`plugin/rules/subagent-isolation.md`** — Routing Rules table: "Multi-stack code change" row upgraded from "TeamCreate when available; otherwise sequential `Agent` calls" to "Path B (Agent Teams) — MANDATORY default. Path A (sequential `Agent` calls) is fallback ONLY when Path B Step 1 returns a hard technical block." Runtime-Detection-of-`TeamCreate` paragraph rewritten to spell out implicit detection + the "Path A for non-technical reasons is a protocol violation" rule.
+
+### Validator coverage preserved
+
+`check_orchestration_dual_path` still passes for all 4 orchestration skills — required literals (`Path A`, `Path B`, `no silent fallback`) and the alpha.29 anti-pattern check (no `echo "TEAMS_FLAG="` Bash command) remain intact. All 23 validate.py checks pass.
+
+### Why this matters
+
+The model's job at every multi-agent activation is now explicit: attempt Path B Step 1, take the technical-block fallback only if the team-creation natural language returns a real "Agent Teams not enabled" error, and never select Path A for any other reason. Past failure modes (alpha.26 "pipeline is sequential anyway", alpha.27 silent rationalised downgrade, alpha.30 "tmux not available on Windows") are now blocked at the wording level — there is no "preference" interpretation that lets them slip through.
+
 ## [0.3.3] — 2026-05-07 — Hooks invoke scripts via `python3` (cross-platform install fix)
 
 Patch release. Fixes a `Permission denied` failure on plugin install that prevented Claude Code from completing `SessionStart` and other hook events.

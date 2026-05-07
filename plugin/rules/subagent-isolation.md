@@ -11,8 +11,8 @@ When to spawn subagents vs do work in the main thread. When to run subagents in 
 | Use case | Mechanism | Why |
 |---|---|---|
 | Independent investigation, audit, parallel reviews of distinct artefacts | `Agent` × N in parallel | Multiple findings merged at end; outputs are documents, not code edits |
-| Multi-stack code change | `TeamCreate` + role-mapped developers + reviewer + qa | When `TeamCreate` available; otherwise sequential `Agent` calls |
-| Code-modifying stages of any workflow (write/edit ops) | Sequential `Agent` calls or `SendMessage`, **one writer at a time per file** | File conflict prevention — mandatory |
+| Multi-stack code change | **Path B (Agent Teams) — MANDATORY default** via `TeamCreate`. Path A (sequential `Agent` calls) is fallback ONLY when Path B Step 1 returns a hard technical block | Per `team-protocols`: Path B is the user-facing UX default (panel, switchable transcripts, dependency graph). Sequential `Agent` calls are reserved for technical-block fallback — never selected for "simpler" / "sequential anyway" reasons |
+| Code-modifying stages of any workflow (write/edit ops) | Sequential per file (whichever path), **one writer at a time per file** | File conflict prevention — mandatory in both Path A and Path B |
 | Document-production stages (analysis, design, audit) | Parallel `Agent` × N permitted | Even within code-touching workflows, design phases parallelize safely |
 | Single-file edit | Inline (no subagent) | Cost discipline |
 | Anything > 3 deliverables / > 30 min | Mandatory subagent decomposition | Context budget discipline |
@@ -40,7 +40,7 @@ Depth=1 is a top-level spawn from main; depth=2 is one nested level; depth=3 is 
 
 ## Runtime Detection of `TeamCreate`
 
-The `team-dev` (renamed to `develop`) and `team-bugfix` skills probe for the team primitive at activation time per existing `team-protocols/SKILL.md` detection logic. Fall back to standalone `Agent` calls if absent. No design changes needed; existing logic carries over.
+The `develop`, `team-bugfix`, `bugfix`, and `feature-design` skills MUST attempt Path B (Agent Teams) at activation time per `team-protocols/SKILL.md` and `team-protocols/path-selection-rules.md`. Detection is implicit — the workflow attempts Path B Step 1 (natural-language team-create) directly; if that fails with "Agent Teams not enabled" or equivalent, it silently falls back to Path A (standalone `Agent` calls). **Path A selection for any non-technical reason** (sequential pipeline, single stack, small feature, Windows host, no tmux) is a protocol violation.
 
 ## Existing `team-protocols/` Resources
 

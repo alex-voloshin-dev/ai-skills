@@ -2,9 +2,11 @@
 
 Detailed Path A (Subagents) and Path B (Agent Teams) bodies, plus the hard anti-rationalization rules so the Lead does not silently downgrade Path B → Path A for invalid reasons. Loaded from `SKILL.md` when authoring or auditing a workflow that supports both paths.
 
-## Path A — Subagents (always available, sequential)
+**Bottom line up front: Path B is the MANDATORY default. Path A is selected ONLY when Path B Step 1 returns a hard technical block. There is no silent fallback for non-technical reasons.** All "Path B is preferred" / "Path A is canonical" wording elsewhere in this document is shorthand for the same rule — read it as MUST.
 
-This is the canonical path. Per role:
+## Path A — Subagents (technical-block fallback only, sequential)
+
+Fallback path used only on hard technical block of Path B. Per role:
 
 ```text
 Agent({
@@ -17,9 +19,9 @@ Agent({
 
 The Lead waits for each `Agent` return, validates the G7 return contract, then proceeds to the next role. See `spawn-pattern.md` for the full per-role recipe.
 
-Pros: works in every Claude Code environment; lower token cost than Teams. Cons: sequential by default; no inter-teammate messaging; no visual panel.
+Pros: works in every Claude Code environment; lower token cost than Teams. Cons: sequential by default; no inter-teammate messaging; no visual panel — these are the reasons Path A is reserved for technical-block fallback only.
 
-## Path B — Agent Teams (experimental, when flag is on)
+## Path B — Agent Teams (MANDATORY default — always try this first)
 
 Per [Anthropic Agent Teams docs](https://docs.claude.com/en/docs/claude-code/agent-teams), the Lead drives the team via natural language. Each teammate is a full Claude Code session with its own context, and the user can switch between teammates with **Shift+↓**, view their transcripts with **Enter**, and toggle the shared task list with **Ctrl+T**.
 
@@ -52,9 +54,9 @@ Pros: visual team panel, parallel teammates, switchable contexts, direct messagi
 
 Whichever path is active, the Lead NEVER does Developer/Reviewer/QA work inline with `Bash`/`Read`/`Edit`. The role-isolation invariant applies in both modes — only the spawn mechanism differs.
 
-## Hard rule for path selection — no rationalised downgrade
+## MANDATORY rule for path selection — no rationalised downgrade
 
-**Path B is the preferred path. Falling back to Path A is acceptable ONLY when Path B technically fails (no silent fallback for any other reason).**
+**Path B is the MANDATORY default. Path A is permitted ONLY when Path B Step 1 returns a hard technical block — `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` not set, the Anthropic Agent Teams API not exposed in the current session, or the Lead is itself running inside a subagent that has no team primitives. There is no silent fallback for any other reason — every other downgrade is a protocol violation.**
 
 Observed failure modes (do NOT repeat any of these):
 

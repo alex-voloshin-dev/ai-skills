@@ -59,20 +59,20 @@ Proceeding to execution. (To intervene: stop me with Esc and edit the plan, or s
 
 ## Choose execution path
 
-Per `@team-protocols/path-selection-rules.md`: this skill supports Path A (Subagents) and Path B (Agent Teams). **Path B is the default preference** — visual team panel, Shift+↓ context-switching, dedicated transcript per role.
+Per `@team-protocols/path-selection-rules.md`: **Path B (Agent Teams) is the MANDATORY default** — visual panel, Shift+↓ context-switching, per-role transcript. Path A (Subagents) is fallback-only — used ONLY on a hard technical block at Path B Step 1 ("Agent Teams not enabled" / `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` unset).
 
-Detection is implicit. Do NOT run a Bash env-var check. Go to Path B Step 1 directly. If team-creation natural language fails ("Agent Teams not enabled" or equivalent), fall back silently to Path A. Display-mode or platform reasons are NEVER valid Path A triggers — Path B has an `in-process` mode that works in any terminal. **No silent fallback for non-technical reasons** — rationalised downgrades violate the alpha.27 rule.
+Detection is implicit — go to Path B Step 1 directly (no Bash env-var check). On technical failure, fall back silently to Path A. **No silent fallback for non-technical reasons** — sequential WPs, "simpler", tmux/iTerm2 absence, Windows host, single-stack, "small feature" are all invalid Path A triggers (`in-process` display mode works in every terminal). Full anti-rationalization list in `@team-protocols/path-selection-rules.md`.
 
-When you announce the chosen path, the FIRST sentence MUST be one of:
+Saying "I'll proceed via Path A" without first attempting Path B Step 1 is forbidden. Announce the chosen path with one of:
 
 - "Attempting Path B (Agent Teams) team-create..."
 - (after fallback) "Agent Teams API returned: <verbatim error>. Falling back to Path A."
 
 ## Mandatory Pipeline — DEV → REVIEW → QA (both paths)
 
-Every work package MUST pass all three stages. Gate semantics are identical regardless of execution path; only the spawn mechanism differs.
+Every WP MUST pass all three stages. Gate semantics are identical across paths; only the spawn mechanism differs.
 
-## Path B — Agent Teams (PREFERRED — try this FIRST)
+## Path B — Agent Teams (MANDATORY default — try this FIRST)
 
 The Lead drives the team via natural language; each teammate is a full Claude Code session with switchable context.
 
@@ -87,7 +87,7 @@ Create an agent team named "<feature-slug>-team" with these teammates, all using
 
 Do NOT require plan approval from the developer (the Lead already resolved the plan — execution starts immediately). Use the shared task list with three tasks per WP (DEV, REVIEW, QA) linked via `dependsOn` so REVIEW unblocks when DEV completes and QA unblocks when REVIEW completes with verdict 'approved'.
 
-Use teammate-mode `in-process` by default (works in any terminal including Windows without WSL). Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available.
+Use teammate-mode `in-process` by default. Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux/iTerm2 is available.
 ```
 
 ### Step 2 — populate the shared task list

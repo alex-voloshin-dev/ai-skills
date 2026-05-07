@@ -35,19 +35,29 @@ You are the Lead. You run in the main conversation thread and coordinate the tea
 
 Two execution paths are supported. Both preserve the DEV → REVIEW → QA gate semantics — only the execution mechanism differs.
 
-**Default preference: Path B (Agent Teams).** It gives the user a visual team panel, Shift+↓ to switch context into any teammate, dedicated transcript per role, and a shared task list with `dependsOn`. Use Path B unless a hard technical block prevents it.
+**MANDATORY default: Path B (Agent Teams).** Path B MUST be selected for every multi-agent workflow. It gives the user a visual team panel, Shift+↓ to switch context into any teammate, dedicated transcript per role, and a shared task list with `dependsOn`. Path A is **fallback-only** and may be selected ONLY when Path B Step 1 returns a hard technical block (defined below). Any other downgrade is a protocol violation — there is **no silent fallback** for non-technical reasons.
 
-**Hard technical block** = the natural-language team creation in Path B Step 1 actually fails (Anthropic Agent Teams API not exposed in the current Claude Code session, typically because `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is not set). In that case, silently fall back to Path A and continue without re-asking the user.
+**Hard technical block** = the natural-language team creation in Path B Step 1 actually fails (Anthropic Agent Teams API not exposed in the current Claude Code session, typically because `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is not set, or the Lead is itself running inside a subagent that has no access to team primitives). In that case — and ONLY in that case — silently fall back to Path A and continue without re-asking the user.
+
+**Invalid reasons to downgrade Path B → Path A** (these are protocol violations — never use them):
+- "the pipeline is sequential, parallelism doesn't help" — Path B's value is UX, not parallelism
+- "Path A is simpler / cleaner / fewer tools" — Path B's panel gives strictly more visibility
+- "tmux / iTerm2 not available" — Path B has `in-process` display mode that works on every terminal
+- "Windows host" / "no Unix tools" / "no WSL" — Agent Teams is platform-independent in `in-process` mode
+- "small / simple feature" — size is irrelevant to path selection
+- "single-stack project" — stack count is irrelevant to path selection
+
+The full anti-rationalization checklist with observed failure modes (alpha.26 / alpha.27 / alpha.30) lives in [`path-selection-rules.md`](./path-selection-rules.md).
 
 **Detection is implicit, not explicit.** Do NOT run an explicit env-var check (no `echo $CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` Bash call) — that triggers a tool-permission prompt for the user without adding value. Just attempt Path B Step 1 directly. If it succeeds you're in Teams mode. If it returns "Agent Teams not enabled" or similar, fall back to Path A immediately and proceed.
 
-### Path A — Subagents (always available, sequential)
+### Path B — Agent Teams (MANDATORY default — try this FIRST)
 
-Canonical fallback path. Per role, the Lead invokes `Agent({...})` and waits for return. Sequential by default; lower token cost; works in every Claude Code environment.
+Lead drives via natural language. Each teammate is a full Claude Code session with switchable context. User can Shift+↓ to switch teammates, Enter for transcripts, and Ctrl+T for the shared task list. This is the path the workflow MUST use unless a hard technical block at Step 1 forces Path A.
 
-### Path B — Agent Teams (experimental, when flag is on)
+### Path A — Subagents (technical-block fallback only, sequential)
 
-Lead drives via natural language. Each teammate is a full Claude Code session with switchable context. User can Shift+↓ to switch teammates, Enter for transcripts, and Ctrl+T for the shared task list.
+Fallback path used ONLY when Path B Step 1 returns a hard technical block. Per role, the Lead invokes `Agent({...})` and waits for return. Sequential by default; lower token cost; works in every Claude Code environment. Never selected as a primary choice — only on documented technical failure of Path B.
 
 > The full Path A / Path B body (team-create natural-language template, task-list dependency graph, gate enforcement, the `in-process` vs `tmux` display-mode rules, and the comprehensive "no silent fallback" anti-rationalization checklist with all invalid Path A triggers) lives in [`path-selection-rules.md`](./path-selection-rules.md). Load it when authoring a workflow skill that supports both paths or auditing one for compliance with the dual-path rules.
 
