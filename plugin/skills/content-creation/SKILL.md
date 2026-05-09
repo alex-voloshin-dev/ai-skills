@@ -1,17 +1,15 @@
 ---
 name: content-creation
-description: Content creation workflow + tools knowledge — blog post authoring (8-step pipeline), page content optimization, AI text/image generation tools, quality gates, GEO/AEO structure, humanization. MERGED from former `blog-post` (workflow) + `content-creation` (knowledge) skills (B12 MERGE plan). Use to write blog posts, create page content, draft conversion copy, generate visuals, or run quality audits on existing content.
+description: Content creation workflow + tools knowledge — blog post authoring (8-step pipeline), page content optimization, AI text/image generation tools, quality gates, GEO/AEO structure, humanization. Use to write blog posts, create page content, draft conversion copy, generate visuals, or run quality audits on existing content.
 context: fork
 argument-hint: "<content type: blog-post | page | landing | email | other>"
 ---
 
-# /content-creation — Content Authoring + Tools (MERGED)
+# /content-creation — Content Authoring + Tools
 
-Two functions in one skill (per B12 MERGE plan):
+Two functions in one skill:
 - **Workflow:** 8-step blog-post pipeline (research → brief → write → GEO → humanize → SEO → review → publish)
 - **Knowledge base:** AI text + image generation tools, quality gates, copywriting patterns, content sync procedures
-
-Merged from former `blog-post` + `content-creation` skills.
 
 ## When to use
 
@@ -124,7 +122,7 @@ Eight gates — each must pass before publish:
 
 ## AI Tool References
 
-For AI text generation (ChatGPT / Claude / Gemini / Jasper / Copy.ai), image generation (Midjourney / DALL-E 3 / Stable Diffusion / Flux / Ideogram / Leonardo), stock assets (Unsplash / Pexels / Undraw / Storyset / Lottie / Noun Project), and video tooling (Loom / Synthesia / Runway / Rive / Spline) — see companion [`content-tools-guide.md`](./content-tools-guide.md) for the full tool matrix with best-for + integration notes.
+For AI text generation (ChatGPT / Claude / Gemini / Jasper / Copy.ai), image generation (Midjourney v7 / GPT-Image-1 / Flux 1.1 Pro / Ideogram / Stable Diffusion / Leonardo), video / motion (Sora 2 / Runway / Kling / Luma / Synthesia / Loom), stock assets (Unsplash / Pexels / Undraw / Storyset / Lottie / Noun Project), and design tooling (Rive / Spline) — see companion [`content-tools-guide.md`](./content-tools-guide.md) for the full tool matrix with best-for + integration notes.
 
 ## G7 spawn payloads
 

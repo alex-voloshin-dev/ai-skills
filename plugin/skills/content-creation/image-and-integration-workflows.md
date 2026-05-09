@@ -6,10 +6,12 @@ Companion to `content-tools-guide.md`. Covers AI image generation workflows, ext
 
 ### Hero Image Generation
 
-**Prompt structure for Midjourney/DALL-E**:
+**Prompt structure** (works for Midjourney v7, GPT-Image-1, Flux 1.1 Pro, Ideogram, Stable Diffusion):
 ```
 [Subject description], [style], [mood/atmosphere], [color palette], [composition], [technical specs]
 ```
+
+For Sora 2 / Runway / Kling video prompts, append: `[motion / camera direction], [duration], [framing]`.
 
 **Examples by page type**:
 

@@ -20,7 +20,7 @@ Generate a coherent set of user-facing docs for a module or feature. Output goes
 
 - Internal technical docs (ADRs, design decisions) → use internal wiki / `docs` skill
 - Code comments, docstrings → IDE / language-native tools
-- Marketing copy or blog posts → `/content-creation` (B12 MERGE)
+- Marketing copy or blog posts → `/content-creation`
 
 ## Invocation
 
@@ -142,6 +142,6 @@ Pass: avg ≥ 4.0, no dimension < 3.
 - **Orchestrator**: `feature-design-lead`
 - **Schemas**: `plugin/schemas/spawn-payload.schema.json`, `plugin/schemas/return-contract.schema.json`
 - **Companions**: `/subagent-spawn`, `/context-load`
-- **Knowledge skills**: `docs` (general writing patterns), `geo-writer` (GEO structure pass), `humanizer` (voice pass), `content-creation` (B12 MERGE — if marketing/blog overlap)
+- **Knowledge skills**: `docs` (general writing patterns), `geo-writer` (GEO structure pass), `humanizer` (voice pass), `content-creation` (when marketing/blog content overlaps with the docs pack)
 - **Rules**: `subagent-isolation`, `untrusted-content-wrapping` (G1 wrap on source code reads), `geo-content` (if public-facing — mandatory per rule), `humanize-content` (mandatory for public-facing per rule), `memory-discipline`
 - **Hooks**: `tool-output-normalize.py` (G2 on extracted code samples)
