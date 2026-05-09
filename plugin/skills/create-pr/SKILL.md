@@ -15,6 +15,24 @@ Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
 - PR template or description conventions
 - Required reviewers or review process
 
+### 0a. Detect repo conventions — adopt before generating
+
+| File present | Adopt as |
+|---|---|
+| `.github/PULL_REQUEST_TEMPLATE.md` (or `.gitlab/merge_request_templates/<name>.md`) | PR body template — **override** the inline template in Step 3 with this file's structure. Keep the repo's section ordering verbatim. |
+| `.github/CODEOWNERS` (or `.gitlab/CODEOWNERS`) | Reviewer suggestion — match changed file paths to owner globs; add owners as default reviewers in Step 6. |
+| `.github/workflows/*.yml` referring to specific labels (e.g., `release-please-action`) | Required labels — add them in Step 6 so CI fires. |
+
+### 0b. Detect stacked-PR tooling
+
+| Marker | Tool | Note |
+|---|---|---|
+| `gt` binary on PATH + `.graphite_repo_config` | [Graphite](https://graphite.dev) | Use `gt submit` instead of `gh pr create` to manage the stack. |
+| `sl` binary on PATH (Sapling) | [Sapling](https://sapling-scm.com) | Use `sl pr submit` for stacks. |
+| `git spice` config / `.spice/` | [git-spice](https://abhinav.github.io/git-spice/) | Use `gs branch submit` for stacks. |
+
+If stacked-PR tooling is detected, route to it for the PR creation; do not run `gh pr create` directly.
+
 ## 1. Verify Branch State
 
 ```

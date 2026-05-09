@@ -75,6 +75,11 @@ The Lead picks the SME role based on the question domain (e.g., `db-engineer` fo
 
 No RALF — spike is exploration, not convergence.
 
+## Decision lens & evidence requirements
+
+- **Step 3 (Investigate):** every quantitative claim cites a source from `references/evidence-hierarchy.md` (level 1–5; level 6–7 requires "low confidence" caveat).
+- **Step 4 (Synthesize):** apply Cynefin classification + One-Way/Two-Way Doors lens per `references/decision-frameworks.md`. Recommendation is one of `go-two-way`, `go-one-way`, or `needs more spike before commit`, with each option classified on (Cynefin domain, reversibility, ICE/RICE relative score, confidence level).
+
 ## G7 spawn payloads
 
 SME and reviewer spawns use structured G7 payloads per `plugin/schemas/spawn-payload.schema.json`. Returns conform to `plugin/schemas/return-contract.schema.json`.

@@ -9,6 +9,21 @@ argument-hint: [service-name]
 
 Structured workflow for deploying to staging environment. Builds the application, deploys, runs smoke tests, and verifies the deployment.
 
+## 0. Detect controller / preview-env tooling — route first
+
+Before running an imperative `helm upgrade` / `kubectl apply` against staging, check whether the cluster has a controller-driven flow.
+
+| Marker | Implication |
+|---|---|
+| `Application` / `Kustomization` CRDs (Argo CD / Flux) | Push manifest changes to the staging git path; controller reconciles. See `/deploy-production` Step 0a for details. |
+| `ApplicationSet` with `pullRequest` generator | Argo CD per-PR ephemeral environments — staging deploy creates a per-PR namespace automatically on PR open. |
+| `vcluster` config or Loft `Space` CRDs | [Loft / vCluster](https://www.vcluster.com) — virtual ephemeral staging clusters per branch. |
+| `tilt.yaml` (root) | [Tilt](https://tilt.dev) — local dev loop; staging usually still flows through Argo CD/Flux. |
+
+Use the cloud-platforms skill for platform-specific kubectl/helm context (GKE/AKS/EKS).
+
+For supply-chain integrity — staging is the natural validation gate for image signing (Cosign sign + verify), SBOM generation (Syft → CycloneDX), and SLSA provenance attestation. If the project ships any of these in CI, verify they ran successfully on the staging artefact before promoting to production.
+
 ## 1. Pre-Deployment Checks
 
 ### 1a. Verify Branch State

@@ -2,6 +2,7 @@
 name: team-bugfix
 description: Multi-agent fix workflow for issues from a code review or deep audit document — spawns developer(s), reviewer, QA via the Anthropic `Agent` tool with mandatory DEVELOP → REVIEW → QA pipeline. Auxiliary skill of /bugfix; not directly user-invoked. Use when fixing a batch of issues from an audit document.
 argument-hint: [path to audit/code-review document]
+disable-model-invocation: true
 ---
 
 <!-- ARCHITECTURAL NOTE (alpha.25): no `context: fork` here. Per Anthropic docs, subagents cannot spawn other subagents. Orchestration skills MUST run in the main conversation thread to retain access to the `Agent` tool for spawning DEV/REVIEW/QA subagents. -->

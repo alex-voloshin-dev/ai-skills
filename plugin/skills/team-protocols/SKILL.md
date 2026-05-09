@@ -1,6 +1,7 @@
 ---
 name: team-protocols
 description: Shared protocols for multi-agent team coordination — execution model, named subagent spawning via the Agent tool, file conflict prevention, developer/reviewer/lead protocols, role selection table, G7 spawn payload + return contract schemas. Referenced by multi-agent workflow skills (`/develop`, `/team-bugfix`, `/feature-design`). Not directly user-invoked. Use when authoring or auditing a multi-agent skill that spawns named subagents.
+disable-model-invocation: true
 ---
 
 # Multi-Agent Orchestration

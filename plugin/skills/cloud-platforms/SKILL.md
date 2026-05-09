@@ -1,6 +1,7 @@
 ---
 name: cloud-platforms
-description: Use when working with cloud infrastructure, production environments, managed databases, container orchestration, or cloud-native services across GCP, Azure, or AWS. Provides platform-specific CLI commands, managed service patterns, networking, IAM, observability, and operational procedures. Detect the target platform from the project's CLAUDE.md tech stack declaration.
+description: Knowledge module — platform-specific CLI commands, managed service patterns, networking, IAM, observability, and operational procedures across GCP, Azure, and AWS. Loaded by `/analyze-prod`, `/infra-change`, `/deploy-production`, and similar workflows; not a workflow itself. Use when authoring a workflow that needs cloud-platform-specific commands or when reviewing such workflows for platform coverage.
+disable-model-invocation: true
 ---
 
 # Cloud Platforms

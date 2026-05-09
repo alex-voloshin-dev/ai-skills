@@ -1,6 +1,7 @@
 ---
 name: prompt-engineering
-description: Prompt engineering knowledge base — technique taxonomy with decision tree, prompt template patterns and formatting conventions, OWASP LLM Top 10 security checklist, eval frameworks and testing guide, context engineering, structured output contracts, multi-agent orchestration patterns, cost optimization. Use when designing prompts, reviewing prompt quality, building AI features, creating AI assets, or auditing LLM security.
+description: Prompt engineering knowledge base — technique taxonomy, template patterns, OWASP LLM Top 10 security checklist, eval frameworks, structured output contracts, cost optimization. Use when designing prompts, building AI features, or auditing LLM security.
+disable-model-invocation: true
 ---
 
 # Prompt Engineering

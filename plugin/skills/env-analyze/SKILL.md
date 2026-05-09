@@ -1,6 +1,6 @@
 ---
 name: env-analyze
-description: Standalone diagnostic for environment state — local Docker compose, Kubernetes, CI runner, resource usage, network, logs. Renamed from env-analyzer (per Round 4 N2). Use when troubleshooting deployment, debugging CI flakes, or validating environment before deployment. Not for code bugs (use /bugfix), not for application-level diagnostics (use /spike).
+description: Multi-scope environment diagnostic — Kubernetes, CI runner, network, resource usage, and cross-scope drift snapshot for baselining across runs. Optional `--auto-fix` for container-level safe actions. Use when troubleshooting a deployment, debugging CI flakes, validating an environment before deployment, or when local diagnostics need to span more than just Docker. For Docker-only local triage use `/analyze-local`. Not for code bugs (use /bugfix) or application-level diagnostics (use /spike).
 context: fork
 argument-hint: "[--scope local|docker|kubernetes|ci] [--auto-fix]"
 allowed-tools: Read, Grep, Glob, Bash

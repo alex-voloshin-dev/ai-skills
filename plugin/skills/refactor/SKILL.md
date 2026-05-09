@@ -60,6 +60,17 @@ Plan + execute + verify a refactor that changes structure without changing behav
 │  └─ Lead reads target files, scopes refactor, breaks into per-file steps
 │     Generates REFACTOR-PLAN.md with before/after sketches
 │
+│     Prerequisite checks:
+│       • Coverage scan on target files. If line coverage <80%
+│         → developer writes characterization tests as a SEPARATE PRIOR PHASE
+│           per `references/characterization-tests.md` BEFORE refactor begins.
+│       • If refactor crosses >5 files OR module/package boundaries
+│         → use Mikado method per `references/mikado-method.md`;
+│           emit MIKADO.md alongside REFACTOR-PLAN.md.
+│       • REFACTOR-PLAN.md MUST list named refactorings per file using
+│         canonical names from `references/fowler-catalogue.md`
+│         (e.g. "Extract Function", "Replace Conditional with Polymorphism").
+│
 ├─ Gate: user approval of plan
 │
 ├─ EXECUTE (sequential per file per `subagent-isolation.md` Sequential Code-Modification Gate):

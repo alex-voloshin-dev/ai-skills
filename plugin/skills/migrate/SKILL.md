@@ -58,9 +58,14 @@ Plan + execute + validate a migration with a documented + tested rollback proced
 ```
 ┌─ PLAN:
 │  └─ Lead: research target version, compatibility matrix, rollback strategy
+│     PLAN MUST classify the migration: (a) additive-only (single safe step),
+│     (b) requires expand-contract (multi-phase per
+│     `references/expand-contract.md`), or (c) blue-green data migration.
+│     Detect target stack to pick migration tool from
+│     `references/migration-tools-by-stack.md`.
 │     Generates MIGRATION-PLAN.md with:
 │     - Pre-flight checklist (dependencies, backups)
-│     - Step-by-step migration procedure
+│     - Step-by-step migration procedure (one phase per deploy if expand-contract)
 │     - Rollback procedure (TESTED, not theoretical)
 │     - Risk matrix (data loss, compatibility, performance)
 │

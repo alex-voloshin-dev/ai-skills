@@ -14,12 +14,42 @@ Production deployment with mandatory approval gates, verification, and rollback 
 ## 0. Gather Context
 
 Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
-- Cloud platform (GCP, Azure, AWS)
+- Cloud platform (GCP, Azure, AWS) — apply `cloud-platforms` skill for platform-specific commands
 - Deployment method (Kubernetes, Helm, Docker Compose, serverless)
 - Production environment configuration (namespace, cluster, region)
 - CI/CD pipeline (GitHub Actions, GitLab CI, Jenkins)
 
 This determines which deployment commands and health checks apply.
+
+### 0a. Detect GitOps / progressive-delivery controller — route first
+
+Before running `helm upgrade` / `kubectl apply` directly against production, check whether a controller owns the apply step.
+
+| Marker | System | What this means for production deploys |
+|---|---|---|
+| `Application` / `ApplicationSet` CRDs in Git | [Argo CD](https://argo-cd.readthedocs.io) | Production manifest changes flow through git PR → Argo CD reconciles. Manual `helm upgrade` will be reverted on next sync. Use `argocd app sync <name>` only for intentional out-of-band promotion. |
+| Flux `HelmRelease` / `Kustomization` CRDs | [Flux](https://fluxcd.io) | Same model as Argo CD. Manual override via `flux reconcile helmrelease <name>`. |
+| `Rollout` CRDs (`argoproj.io/v1alpha1`) | [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) | Progressive delivery — promotion via `kubectl argo rollouts promote <name>` or automatic per AnalysisTemplate. Replaces manual canary monitoring (Step 3c). |
+| `Canary` CRDs (`flagger.app/v1beta1`) | [Flagger](https://docs.flagger.app/) | Same — promotion driven by Prometheus / Datadog metrics analyzer. |
+
+If a controller is detected: skip imperative `helm upgrade` / `kubectl apply` in Step 3; promote via the controller. The 5–10 minute monitoring window in Step 4 is replaced by the controller's analyzer-based promotion (which is the modern best practice — automated SLO-based promotion gates the rollout, not a static wall-clock window).
+
+### 0b. Detect feature-flag platform
+
+If the codebase imports a feature-flag SDK, prefer **decoupled deploy**: ship code dark, then flip the flag separately, ramp, observe.
+
+| Marker | Platform | Approach |
+|---|---|---|
+| `import { Client } from '@launchdarkly/...'` / `LaunchDarkly` SDK | [LaunchDarkly](https://launchdarkly.com) | Deploy with flag default OFF. Flip flag in LD UI after deploy passes smoke. Rollback = flip flag, no redeploy needed for the new code path. |
+| `unleash-client` / `@unleash/...` | [Unleash](https://www.getunleash.io) | Same pattern via Unleash UI. |
+| `@openfeature/...` | [OpenFeature](https://openfeature.dev) (vendor-neutral) | Same pattern via the underlying provider (LD/Unleash/Flagsmith/Split). |
+| `flagsmith` / `splitsoftware` SDKs | Flagsmith / Split.io | Same pattern. |
+
+Decoupled deploy fundamentally changes Step 3: the deploy itself is low-risk because the new code path is gated. The risk shifts to the flag flip, which is reversible in seconds.
+
+### 0c. Change-window / freeze check
+
+If the project has a documented change-freeze policy (e.g., end-of-quarter freeze, major-event blackout), verify the current date is OUTSIDE the freeze window. Hard stop if inside; require documented exception.
 
 ## 1. Pre-Deployment Checklist
 

@@ -14,10 +14,37 @@ Safe infrastructure change workflow for Terraform, Helm, and Kubernetes. Every m
 ## 0. Gather Context
 
 Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
-- Infrastructure tools in use (Terraform, Helm, kubectl, Pulumi)
-- Cloud platform (GCP, Azure, AWS)
+- Infrastructure tools in use (Terraform, Helm, kubectl, Pulumi, OpenTofu)
+- Cloud platform (GCP, Azure, AWS) — apply `cloud-platforms` skill for platform-specific commands
 - Environment structure (dev, staging, production)
 - State backend and workspace conventions
+
+### 0a. Detect orchestration / GitOps controllers — route first
+
+Before running `terraform apply` or `helm upgrade` directly, check whether the repo's infra changes flow through a controller. If so, the change is a git PR, not an imperative command.
+
+| Marker | System | Implication |
+|---|---|---|
+| `argocd/` directory or `Application` / `ApplicationSet` CRDs in Git | [Argo CD](https://argo-cd.readthedocs.io) (GitOps) | Push manifest changes to git; Argo CD reconciles. Do NOT `helm upgrade` directly — it will be reverted on next sync. Use `argocd app sync` or `kubectl argo rollouts promote` only when intentionally bypassing the loop. |
+| `kustomization.yaml` + Flux `HelmRelease` / `Kustomization` CRDs | [Flux](https://fluxcd.io) (GitOps) | Push to git; Flux reconciles. Manual override: `flux reconcile kustomization <name>`. |
+| `atlantis.yaml` (root) | [Atlantis](https://www.runatlantis.io) | Plans run in PR comments via `atlantis plan` / `atlantis apply`. Do NOT run `terraform apply` locally — Atlantis is the apply gate. |
+| `terraform { cloud { ... } }` block in `.tf` files | [Terraform Cloud / HCP Terraform](https://cloud.hashicorp.com/products/terraform) | Plans/applies run in HCP Terraform UI/API. Local `terraform apply` is disabled by the cloud backend. |
+| `.spacelift/` directory | [Spacelift](https://spacelift.io) | Stacks orchestrate plans/applies. Local apply forbidden. |
+| `.env0/` or env0 stack tags | [env0](https://www.env0.com) | Same as Spacelift — managed apply layer. |
+
+If a GitOps/orchestrator is detected:
+1. Plan the change as a git PR against the manifest repo.
+2. After PR approval and merge, the controller reconciles automatically (GitOps) or runs the apply (Atlantis/HCP/Spacelift).
+3. Skip the local `terraform apply` / `helm upgrade` steps below.
+4. Verify reconciliation via the controller's status (e.g., `argocd app get <name>`, `flux get kustomizations`, Atlantis PR comment, HCP run page).
+
+### 0b. Detect Terraform fork
+
+If `.terraform-version` or `tofu.lock.hcl` indicates [OpenTofu](https://opentofu.org) (HashiCorp BSL fork, 2023+), substitute `tofu` for `terraform` in all commands below — flag semantics are identical for the operations covered here.
+
+### 0c. Policy-as-code gate (when configured)
+
+If `.conftest/` (Conftest), `.opa/` (raw OPA Rego), `.tflint.hcl` (TFLint), or `tfsec.yml` (tfsec) / `.checkov.yml` (Checkov) configs are present, run them as a **pre-plan** gate. A plan that violates policy never advances to apply.
 
 ## 1. Define the Change
 

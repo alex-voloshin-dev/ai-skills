@@ -1,6 +1,6 @@
 ---
 name: docs
-description: Documentation workflow — edit markdown docs, technical writing, blog content, release notes without touching source code. Applies Content Writer role. Includes SEO review branch for public-facing content. Use when the user asks to edit docs, write technical documentation, draft a blog post, or update release notes — and source code must stay untouched.
+description: Internal documentation workflow — edit technical docs, ADRs, PRDs, design notes, release notes, and UI microcopy without touching source code. Applies Content Writer role. Use when the user asks to edit internal markdown documentation and source code must stay untouched. For public-facing blog posts, landing pages, and marketing content use `/content-creation` (it owns the GEO/SEO/humanizer pipeline). For full multi-document user-facing packs (README + API ref + runbook + tutorial) use `/docs-pack`.
 argument-hint: [documentation target or section]
 ---
 
@@ -16,12 +16,11 @@ Safe documentation-only workflow. Edit markdown files without touching applicati
 
 Ask the user (or extract from parent workflow):
 
-- **What documentation?** (technical docs, API reference, README, PRD, design doc, ADR, blog post, release notes, UI copy)
-- **Content type**:
-  - **Internal** (technical docs, design docs, ADRs) → `Agent(content-writer)` only
-  - **Public-facing** (blog, landing page, marketing) → `Agent(content-writer)` + `Agent(seo-engineer)`
+- **What documentation?** (technical docs, API reference, README, PRD, design doc, ADR, release notes, UI copy)
 - **Action**: Create new / update existing / restructure
 - **Target files**: Which `.md` files will be affected
+
+If the request is for **public-facing blog / landing / marketing content**, stop and route to `/content-creation`. This skill is internal-only.
 
 ## 2. Apply Roles
 
@@ -29,12 +28,10 @@ Ask the user (or extract from parent workflow):
 |---|---|---|
 | Technical documentation | `Agent(content-writer)` | — |
 | API reference | `Agent(content-writer)` | Stack-specific role for accuracy |
-| Blog / landing page content | `Agent(content-writer)` | `Agent(seo-engineer)` |
 | PRD / acceptance criteria | `Agent(product-manager)` | — |
 | Architecture / ADR | `Agent(solution-architect)` | — |
 | Release notes | `Agent(content-writer)` | — |
 | UI microcopy | `Agent(content-writer)` | `Agent(frontend-engineer)` for context |
-| Page content (landing, product) | `Agent(content-designer)` | `Agent(seo-engineer)`, `Agent(ui-ux-designer)` |
 
 ## 3. Gather Context
 
@@ -55,48 +52,14 @@ Follow `Agent(content-writer)` standards:
 - **Tested examples** — all code snippets must be accurate
 - **Consistent terminology** — match existing project conventions
 
-### For Blog / Public Content
-
-Apply `@geo-writer` skill first — macro/meso/micro structure, answer-first sections, entity clarity, schema requirements. Then apply `@humanizer` skill — scan for and remove AI writing patterns. Then follow `Agent(seo-engineer)` standards:
-
-- **Title tag**: Descriptive, matches search intent
-- **Meta description**: Compelling summary
-- **Heading hierarchy**: One H1, logical H2→H3 flow
-- **Internal links**: Descriptive anchor text to related content
-- **Images**: Descriptive alt text
-- **Structured data**: Article/BlogPosting schema (JSON-LD) where applicable
-- **No keyword stuffing** — write for users, not crawlers
-
 ## 5. Verify
 
 - [ ] All internal links are valid (no broken references)
 - [ ] Code examples are accurate and match current implementation
 - [ ] Terminology is consistent with project conventions
 - [ ] Formatting follows existing documentation patterns
-- [ ] No secrets, PII, or internal-only information in public content
+- [ ] No secrets, PII, or internal-only information leaked
 - [ ] No source code, config, or infrastructure files were modified
-
-### For Public Content — GEO/AEO Checklist
-
-- [ ] Text passed through `@geo-writer` skill — structure, answer-first sentences, entity clarity
-- [ ] Schema requirements identified and JSON-LD prepared (`Article`, `Person`, `Organization`, `FAQPage`, `HowTo`)
-- [ ] `geo-content` rule satisfied
-
-### For Public Content — Humanization Checklist
-
-- [ ] Text scanned for AI writing patterns (`@humanizer` skill)
-- [ ] Anti-AI audit performed for text longer than 2 paragraphs
-- [ ] Text sounds natural when read aloud
-
-### For Public Content — SEO Checklist
-
-- [ ] Title and meta description present and unique
-- [ ] Heading hierarchy is logical (H1→H2→H3)
-- [ ] Internal links with descriptive anchors added
-- [ ] Images have alt text
-- [ ] Page is indexable (no accidental noindex)
-- [ ] Canonical URL is correct
-- [ ] Structured data validates (Rich Results Test)
 
 ## 6. Summary
 
@@ -115,8 +78,6 @@ Apply `@geo-writer` skill first — macro/meso/micro structure, answer-first sec
 
 ## Integration
 
-- **Roles**: `Agent(content-writer)` (primary), `Agent(seo-engineer)` (public-facing content), `Agent(product-manager)` (PRDs)
-- **Skills**: `@geo-writer` (GEO/AEO structure pass for public-facing content), `@humanizer` (AI writing pattern removal for public-facing content)
-- **Rules**: `geo-content` (auto-enforces GEO structure and schema on public-facing text), `humanize-content` (auto-enforces humanizer pass)
-- **Follow-up**: `/seo-review` (for public content), `/pre-commit`, `/create-pr`
-- **Related**: `/feature-dev` (inline docs during development), `/release` (release notes)
+- **Roles**: `Agent(content-writer)` (primary), `Agent(product-manager)` (PRDs), `Agent(solution-architect)` (ADRs)
+- **Follow-up**: `/pre-commit`, `/create-pr`
+- **Related**: `/feature-dev` (inline docs during development), `/release` (release notes), `/docs-pack` (multi-document user-facing packs), `/content-creation` (public-facing blog / landing / marketing — owns GEO + SEO + humanizer pipeline)

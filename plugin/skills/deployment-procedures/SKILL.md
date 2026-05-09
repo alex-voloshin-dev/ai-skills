@@ -1,6 +1,7 @@
 ---
 name: deployment-procedures
-description: Production deployment procedures with rollback plans, health checks, and verification steps. Use when deploying to production, planning rollback strategies, or verifying production health after deployment.
+description: Knowledge skill — deployment strategy reference (rolling, blue-green, canary, recreate) plus rollback decision criteria, pre-deploy checklist, and post-deploy verification. Loaded by `/deploy-production` and `/deploy-staging` workflows; not a workflow itself. Use when authoring or reviewing a deploy workflow that needs the strategy and rollback knowledge.
+disable-model-invocation: true
 ---
 
 # Deploy to Production

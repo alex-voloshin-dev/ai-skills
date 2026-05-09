@@ -1,12 +1,34 @@
 ---
 name: pre-commit
-description: Pre-commit quality gate — lint, format, test, validate before committing. Runs automated checks and fixes issues. Use before git commit to ensure code quality.
+description: Pre-commit quality gate — lint, format, type-check, test, validate before committing. Detects existing pre-commit framework / Husky / Lefthook / lint-staged and routes to it; otherwise runs an inline stack-detected gate. Use before git commit to ensure code quality. Not the [pre-commit framework](https://pre-commit.com) itself — see Step 0 for framework detection.
 disable-model-invocation: true
 ---
 
 # Pre-Commit
 
 Automated quality gate before committing code. Runs linting, formatting, tests, and validation checks. Fixes auto-fixable issues and reports blockers.
+
+## 0. Detect Existing Hook Framework — route first, build inline second
+
+Before running any inline gate, check whether the repo already has a pre-commit hook framework configured. If so, route to it; the team's framework choice supersedes anything in this skill.
+
+| Marker file present | Framework | Run command |
+|---|---|---|
+| `.pre-commit-config.yaml` (root) | [pre-commit framework](https://pre-commit.com) | `pre-commit run --files <staged-files>` (or `--all-files` if staged scope ambiguous) |
+| `.husky/` directory | [Husky](https://typicode.github.io/husky/) | `.husky/pre-commit` (or `git commit` triggers it; just continue) |
+| `lefthook.yml` / `lefthook.toml` (root) | [Lefthook](https://github.com/evilmartians/lefthook) | `lefthook run pre-commit` |
+| `package.json["lint-staged"]` | [lint-staged](https://github.com/okonet/lint-staged) (Node) | `npx lint-staged` |
+| `.git/hooks/pre-commit` (custom) | Bespoke shell hook | inspect contents; run only if obviously safe |
+
+If a framework is detected:
+1. Run its command on staged files.
+2. Capture its output (pass/fail + which checks ran).
+3. If it passes — skip Steps 1–7 below; go straight to Step 8 (Summary).
+4. If it fails — fix per its output, re-stage, re-run; do not duplicate the same checks inline.
+
+If multiple markers are present, prefer the most specific (Husky + lint-staged is the common Node combo — let Husky drive).
+
+If no framework is detected, continue to Step 1 below.
 
 ## 1. Detect Project Stack
 
