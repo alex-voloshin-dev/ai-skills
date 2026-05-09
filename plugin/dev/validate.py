@@ -87,8 +87,8 @@ EXPECTED_COUNTS = {
     "rules": 12,
     "hooks": 18,                 # excludes _lib.py (16 + ralph-iter-meter v0.1.6 + subagent-depth-guard v0.1.7)
     "events": 13,
-    "rubrics": 17,
-    "calibration_samples": 102,  # 6 per rubric × 17
+    "rubrics": 21,               # +4 meta-tools rubrics (eval, plugin-doctor, plugin-skill-audit, plugin-skill-create) per audit P1.D
+    "calibration_samples": 126,  # 6 per rubric × 21
     "user_invocable_skills": 28, # skills with `context: fork` frontmatter
                                  # (after v0.3.2: /bugfix joined the
                                  # main-thread orchestrators with /develop,
