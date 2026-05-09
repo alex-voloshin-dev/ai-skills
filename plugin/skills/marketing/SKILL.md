@@ -1,17 +1,17 @@
 ---
 name: marketing
-description: Marketing workflow combining strategy initialization (MARKETING.md), channel playbooks (X/LinkedIn/Reddit/email), recurring operations (social posts, email campaigns, trend research, analytics), and measurement framework. MERGED from former `marketing` + `marketing-operations` skills (B12 MERGE plan). Use to initialize marketing strategy, run any recurring marketing operation, or review marketing analytics. Owns the marketing/ directory in the target repo.
+description: Marketing workflow combining strategy initialization (MARKETING.md), channel playbooks (X/LinkedIn/Reddit/email), recurring operations (social posts, email campaigns, trend research, analytics), and measurement framework. Use to initialize marketing strategy, run any recurring marketing operation, or review marketing analytics. Owns the marketing/ directory in the target repo.
 context: fork
 argument-hint: "init | <operation: social-post | blog-post | email | trend-research | analytics | strategy-review | community | content-repurpose>"
 ---
 
-# /marketing — Strategy + Operations (MERGED)
+# /marketing — Strategy + Operations
 
 Two-phase workflow:
 - **Phase 1 — Init**: one-time strategy setup; produces `marketing/MARKETING.md` + `marketing/content-calendar.md`
 - **Phase 2 — Execute**: any recurring marketing operation (social, email, trends, analytics, etc.)
 
-Merged from former `marketing` (workflow) + `marketing-operations` (knowledge) skills per B12 MERGE plan. Strategy frameworks (hierarchy, channel selection, content pillars, measurement) inline below; operational templates as companions.
+Strategy frameworks (hierarchy, channel selection, content pillars, measurement) inline below; operational templates as companions.
 
 **⚠️ CONSTRAINT:** This workflow NEVER modifies source code (`*.java`, `*.ts`, `*.tsx`, `*.py`, `*.go`), configs (`*.yaml`, `*.yml`, `*.json`), infrastructure (`*.tf`, `Dockerfile`, `Helm`), or dependency files (`pom.xml`, `package.json`, `requirements.txt`). Marketing creates and edits ONLY markdown files in the `marketing/` directory.
 
@@ -151,12 +151,7 @@ Read `marketing/MARKETING.md`, `marketing/content-calendar.md`, recent items in 
 ### 3. Execute Operation
 
 #### `social-post`
-`Agent(content-designer)` + `Agent(marketing-strategist)`. Topic from calendar/trend/user. Research if trend-based. Draft per platform per companion `channel-playbooks.md`:
-- **X**: ≤280 chars, hook first line, 1–3 hashtags, thread if longer
-- **LinkedIn**: professional tone, 1–3 paragraphs, personal angle, 3–5 hashtags
-- **Reddit**: community tone, value-first, no self-promotion, context-aware
-
-Apply `@humanizer` (GEO not used for social — `social-media-manager` skill owns platform-specific optimization). Save to `marketing/posts/YYYY-MM-DD-[platform]-[topic].md`. Present, wait for approval.
+Delegate to `social-media-manager` skill — it owns platform-specific format rules (X, LinkedIn, Facebook, Threads, etc.) which churn faster than this skill should track. Pass topic (from calendar/trend/user) and `marketing/MARKETING.md` context (ICP, content pillars, voice). The social-media-manager skill applies `@humanizer` and saves to `marketing/posts/YYYY-MM-DD-[platform]-[topic].md`. Present, wait for approval.
 
 #### `blog-post`
 Delegate to `/content-creation` with `marketing/MARKETING.md` context (ICP, content pillars, voice).

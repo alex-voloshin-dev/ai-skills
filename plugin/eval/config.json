@@ -8,8 +8,8 @@
     "tier_2_smoke": {
       "tokens_soft": 50000,
       "tokens_hard": 150000,
-      "scope": "10 sampled skills × 20 prompts each = ~60K tokens with Haiku",
-      "rationale": "Sample-based smoke per critique R1 fix. Full coverage would need 600K+ tokens (impractical for nightly CI)."
+      "scope": "Judge-calibration drift smoke. 10 sampled rubrics × 2 calibration samples (1 good + 1 bad) = 20 judge calls. Each call scores a known-graded sample and verifies the judge stays within ±0.5 of the encoded score. ~10–20K tokens with Haiku.",
+      "rationale": "Detects rubric drift, judge-model drift, and sample drift. Sample-based smoke per critique R1 fix. Full Tier 3 behavioral coverage is planned but not yet shipped."
     },
     "tier_3_per_skill": {
       "tokens_soft": 30000,

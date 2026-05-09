@@ -68,7 +68,7 @@ Not needed when running `/ai-assets-init` — that workflow runs memory-init as 
 
 ## Integration
 
-- **Templates source**: `${CLAUDE_PLUGIN_ROOT}/memory/templates/` (B9: 7 + pii-patterns.txt)
+- **Templates source**: `${CLAUDE_PLUGIN_ROOT}/memory/templates/` (7 files: ai-assets-memory.gitignore, committed-allowlist.txt, committed-readme.md, conventions-schema.md, eval-baseline.schema.json, learnings-schema.md, untrusted-content-wrapper.md). PII pattern file lives separately at `${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pii-patterns.txt` because the secret-scan + memory-curator hooks load it directly.
 - **Called by**: `/ai-assets-init` (full bootstrap including memory), used standalone for upgrades
 - **Rules**: `memory-discipline` (write rules per layer), `memory-validation` (entry validation)
 - **Hooks**: `pre-tool-use-committed-write.py` validates `.committed/` writes against allowlist

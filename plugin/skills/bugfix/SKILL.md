@@ -42,7 +42,7 @@ Based on the environment, delegate to the appropriate diagnostic sub-workflow (t
 | Cloud production (GKE/AKS/EKS, managed DB) | `/analyze-prod` |
 | Code-only (no infra) | Skip to Step 3 |
 
-The sub-workflow applies the diagnostic role (`Agent(sre-engineer)` / `Agent(devops-engineer)`), collects environment snapshot, and presents diagnosis. **If it resolves the issue at the infra layer** — skip to Step 11. **If the root cause is in application code** — continue to Step 3 with the collected evidence.
+The sub-workflow applies the diagnostic role (`Agent(sre-engineer)` / `Agent(devops-engineer)`), collects environment snapshot, and presents diagnosis. **If it resolves the issue at the infra layer** — skip to Step 9 (Summary). **If the root cause is in application code** — continue to Step 3 with the collected evidence.
 
 ## 3. Detect Stack and Pick Developer Role
 
@@ -137,7 +137,7 @@ Teammates self-claim next unblocked task. On reviewer `changes_requested` → Le
 
 ### Step 4 — final cleanup
 
-After the fix passes the pipeline: run final verification in main thread (full test suite, linter), produce the Step 11 summary, then ask: "Clean up the team."
+After the fix passes the pipeline: run final verification in main thread (full test suite, linter), produce the Step 9 (Summary) report, then ask: "Clean up the team."
 
 ## Path A — Subagents fallback (only if Path B Step 1 returned a technical error)
 

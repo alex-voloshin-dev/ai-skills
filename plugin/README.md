@@ -25,7 +25,7 @@ After cleaning up the old install: `rm -rf ~/.claude/agents ~/.claude/skills ~/.
 | Rules | **12** (8 carried + 4 new) | 12 | — |
 | Skills | **52** (20 KEEP + 13 REFACTOR + 17 NEW + 2 MERGE) | 52 | — (target met) |
 | JSON schemas | **2** (G7 spawn + return) | 2 | — |
-| Memory templates | **7** + `pii-patterns.txt` | 7 | — |
+| Memory templates | **7** in `memory/templates/` (+ `pii-patterns.txt` co-located in `hooks/scripts/` for hook loading) | 7 | — |
 | Eval rubrics | **17** + Tier 1 linter (`runner.py`) | 17 | — (target met) |
 | Calibration samples | **102** (3 good + 3 bad per rubric × 17) | 102 (alpha.16 HIGH-A) | full Phase 3 target met |
 | Output styles | **2** (`concise-pr`, `design-pack`) | 2 | — (target met) |

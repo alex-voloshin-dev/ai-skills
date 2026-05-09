@@ -126,7 +126,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 ## Integration
 
-- **Reads templates from**: `${CLAUDE_PLUGIN_ROOT}/memory/templates/` (B9 deliverable: 7 templates + `pii-patterns.txt`)
+- **Reads templates from**: `${CLAUDE_PLUGIN_ROOT}/memory/templates/` (7 files for memory skeleton). PII pattern file is at `${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pii-patterns.txt` (loaded by hooks, not copied during init); project extension at `.ai-assets-memory/.committed/pii-patterns.txt` (created on demand).
 - **Schemas**: `plugin/schemas/spawn-payload.schema.json` (G7 — even though `scaffolder` is internal, payload still embedded for consistency)
 - **Sub-workflow**: `/memory-init` (the memory portion of the bootstrap)
 - **Companions**: `/plugin-doctor` (verify install before init), `/context-load` (after init, validate context loads correctly)

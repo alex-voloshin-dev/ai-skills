@@ -1,69 +1,84 @@
 ---
 name: eval
-description: Run plugin evaluation tiers — Tier 1 linters, Tier 2 sampled smoke, Tier 3 full behavioral suites. Wraps the eval/runner.py harness. Use for pre-release validation, regression detection, or skill tuning. Tier 1 is free (no LLM); Tiers 2 and 3 budget tokens per `eval/config.json`.
+description: Run plugin evaluation tiers — Tier 1 linters and Tier 2 judge-calibration drift smoke. Wraps the eval/runner.py harness. Use for pre-release validation, regression detection, or skill tuning. Tier 1 is free (no LLM); Tier 2 budgets tokens per `eval/config.json`. Tier 3 (full behavioral suites) is planned but not yet shipped — runner returns error code 3 if invoked.
 context: fork
-argument-hint: "[skill-name | --tier N | --all]"
+argument-hint: "[skill-name | --tier 1|2 | --rubric NAME]"
 ---
 
 # /eval — Plugin Evaluation Harness
 
-Validate skills and agents against rubric-scored test cases. Three tiers:
+Validate the plugin against rubric-scored test cases. Two tiers shipped today:
 
-- **Tier 1 — linters:** frontmatter, schema, reference checks. No LLM calls. Always free
-- **Tier 2 — smoke:** 10 sampled skills × 20 prompts each, activation precision check. ~60K tokens with Haiku judge
-- **Tier 3 — behavioral:** full test cases per skill, executor + judge + blind-comparator. 30–100K tokens per skill
+- **Tier 1 — linters** (shipped, free): frontmatter, schema, hook-reference, char-limit, JSON-syntax, AST checks. No LLM calls.
+- **Tier 2 — judge-calibration drift smoke** (shipped, opt-in): for each sampled rubric, the Haiku judge scores the shipped good + bad calibration samples, and the result is checked against a ±0.5 score-band tolerance around the score encoded in each filename (`<scenario>.score-X.X.md`). This catches three drift classes:
+  1. **Rubric drift** — someone edits the rubric in a way that breaks scoring
+  2. **Judge model drift** — Anthropic ships a new Haiku version that scores samples differently
+  3. **Sample drift** — someone edits a calibration sample so it no longer hits its band
+- **Tier 3 — behavioral** (planned, not shipped): full executor + judge + blind-comparator per skill case. `runner.py --tier 3` currently exits with error code 3.
 
 ## Invocation
 
+Shipped commands:
+
+```text
+/eval                                  # Tier 1 linters across all skills
+/eval feature-design                   # Tier 1 lint scoped to one skill
+/eval --tier 2                         # Tier 2 judge-calibration smoke (default 10 rubrics × 2 samples)
+/eval --tier 2 --rubric feature-design # Tier 2 limited to one rubric
+/eval --tier 2 --dry-run               # plan-only; no API calls (also auto-applies if anthropic SDK unavailable)
+/eval --all                            # Tier 1 + Tier 2 in one run
 ```
-/eval feature-design                     # all tiers for one skill
-/eval --skill feature-design --tier 3    # Tier 3 only for one skill
-/eval --tier 2                           # Tier 2 smoke across sampled skills
-/eval --all                              # Tier 3 full suite — release-gate run
-/eval --all --resume                     # resume after interruption
-/eval --baseline <skill>                 # capture per-skill baseline scorecard
+
+Planned (not yet shipped — runner returns error code 3):
+
+```text
+/eval --tier 3                         # full behavioral suite (planned)
+/eval --skill <name> --tier 3          # Tier 3 per-skill (planned)
+/eval --baseline <skill>               # capture per-skill baseline scorecard (planned)
+/eval --all --resume                   # resume after interruption (planned, Tier 3 only)
 ```
+
+## Tier 2 details
+
+Sample plan (default seed 42): 10 rubrics × 2 samples = 20 judge calls. Override via runner flags `--seed N`, `--sample-rubrics N`, `--samples-per-rubric N`, `--rubric NAME`.
+
+Requires `ANTHROPIC_API_KEY` and the `anthropic` Python SDK. Without either, the runner reports `DRY-RUN ONLY` and skips actual API calls.
+
+Default judge model: **Haiku** (`claude-haiku-4-5`). Per-rubric override allowed when calibration Spearman drops below threshold (see `plugin/eval/config.json` → `judge_models`).
 
 ## Token budgets
 
-Per `plugin/eval/config.json` (D11 token-based budgets fit Max-subscription model):
+Per `plugin/eval/config.json`:
 
-| Tier | Soft cap | Hard cap |
-|---|---|---|
-| Tier 1 | 0 | 0 (no LLM) |
-| Tier 2 smoke | 50K | 150K |
-| Tier 3 per-skill | 30K | 100K (60K/150K with Sonnet judge override) |
-| Tier 3 full suite | 500K | 1.5M |
-
-## Judge model selection
-
-Default judge: **Haiku** (fast, cheap). Sonnet override per `eval/config.json`:
-- Rubric calibration Spearman < 0.7
-- Rubric explicitly marked `judge_model: sonnet` in case JSON
-- Subjective rubrics (faithfulness, security-soundness)
+| Tier | Soft cap | Hard cap | Notes |
+|---|---|---|---|
+| Tier 1 | 0 | 0 | No LLM. Always free. |
+| Tier 2 smoke | 50K | 150K | Default plan ~10–20K with Haiku. |
+| Tier 3 (planned) | 30K | 100K | Per-skill (60K/150K with Sonnet judge override). Not shipped. |
+| Tier 3 full suite (planned) | 500K | 1.5M | Release-gate run. Not shipped. |
 
 ## Output
 
-- `plugin/eval/results/<run-id>/summary.json` — overall pass/fail per skill
-- `plugin/eval/results/<run-id>/<skill>/<case-id>.json` — per-case scores per dimension
-- Console: pass/fail summary + token totals + duration
-
-## Resume support
-
-`--resume` picks up from the last completed case in `summary.json` — useful for long Tier 3 full-suite runs interrupted by network or rate-limit.
-
-## Blind-comparator (Round 3 Q3)
-
-Tier 3 cases that ship a `comparator-prompt` field run a third agent in an isolated subagent context with skills suppressed via instruction. Validates that the executor's output is genuinely better than a vanilla baseline. Suppression compliance is probed per `eval/config.json` `blind_comparator.suppression_compliance_probe`.
+- Tier 1: stderr findings + summary count of CRITICAL / WARNING. Exit code 0/1/2.
+- Tier 2: per-sample PASS/FAIL with score delta + dry-run skip count. Exit code 0/1/2.
 
 ## Integration
 
-- **Wraps**: `plugin/eval/runner.py` (B10 deliverable)
-- **Reads**: `plugin/eval/config.json` (token caps + judge model + calibration thresholds)
-- **Reads**: `plugin/eval/judge-rubrics/<skill>.md` (per-skill rubrics, B10)
-- **Reads**: `plugin/eval/cases/<skill>/*.json` (test cases, B10)
-- **Reads**: `plugin/eval/calibration/<rubric>/` (calibration samples, B10a)
-- **Spawns**: `eval-judge` agent (G7 spawn payload required)
-- **Honors**: `userConfig.ralph_session_*` caps if eval cases trigger embedded RALF
-- **Memory writes**: `.committed/eval-baselines/<release-tag>.json` when `--baseline` flag used
-- **Used by**: `/plugin-doctor` (Tier 1 + opt-in calibration), CI (release gate `--all`)
+- **Wraps**: `plugin/eval/runner.py` (entry) + `plugin/eval/tier2.py` (Tier 2 implementation)
+- **Reads**: `plugin/eval/config.json` (token caps + judge models + calibration thresholds)
+- **Reads**: `plugin/eval/judge-rubrics/<rubric>.md` (per-rubric scoring criteria)
+- **Reads**: `plugin/eval/calibration/<rubric>/{good,bad}/<scenario>.score-X.X.md` (Tier 2 calibration samples — 17 rubrics × 6 samples = 102 total)
+- **Honors**: `userConfig.ralph_session_*` caps if eval cases ever trigger embedded RALF (Tier 3, planned)
+- **Used by**: `/plugin-doctor --calibrate-judge` (Tier 2 opt-in)
+
+## Future surfaces (not currently wired)
+
+These are referenced by the planned Tier 3 design but **not implemented**:
+
+- `plugin/eval/cases/<skill>/*.json` — per-skill behavioral test cases. Directory does not exist; expect to ship in Phase 4.
+- `plugin/eval/results/<run-id>/` — per-run output artefacts.
+- `eval-judge` subagent role — currently inline; if the planned design needs a dedicated agent, it would land in `plugin/agents/`.
+- `--baseline <skill>` capture to `.committed/eval-baselines/<release-tag>.json`.
+- Blind-comparator ("Round 3 Q3" — third agent in isolated context with skills suppressed) — design-only.
+
+Do not write code that depends on these surfaces today; they are documented for design continuity, not behavior.
