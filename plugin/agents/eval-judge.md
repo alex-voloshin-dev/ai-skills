@@ -93,7 +93,7 @@ Per `plugin/eval/runner.py`:
 
 ## Calibration
 
-`/plugin-doctor --calibrate-judge` (B12) runs you against 5 known-good + 5 known-bad samples per rubric (B10a). Spearman correlation ≥0.7 required. Below threshold → flag rubric for Sonnet upgrade (override `judge_model` field in eval case).
+`/plugin-doctor --calibrate-judge` runs you against the shipped good / bad calibration samples per rubric. Spearman correlation ≥0.7 required. Below threshold → flag rubric for Sonnet upgrade (override `judge_model` field in eval case).
 
 ## Pairing
 

@@ -155,6 +155,6 @@ For every marketing task:
 
 - **Base role**: `Agent(software-engineer)` — engineering context for technical marketing
 - **Collaborates with**: `Agent(product-manager)` (positioning, ICP), `Agent(seo-engineer)` (SEO execution), `Agent(content-writer)` (blog, email content), `Agent(content-designer)` (social posts, conversion copy)
-- **Skills**: `marketing` skill (B12 MERGE — combines former `marketing` + `marketing-operations`; setup template + channel playbooks + recurring tasks), `content-creation` skill (B12 MERGE — combines former `blog-post` + `content-creation`; AI content tools, blog pipeline), `@geo-writer` (GEO/AEO structure pass for blog, email, landing page content), `@humanizer` (AI writing pattern removal)
+- **Skills**: `marketing` skill (strategy initialization + channel playbooks + recurring operations + measurement framework + ABM playbook), `content-creation` skill (blog post pipeline + AI content tooling + page content patterns), `@geo-writer` (GEO/AEO structure pass for blog, email, landing page content), `@humanizer` (AI writing pattern removal)
 - **Rules**: `geo-content` (enforces GEO structure and schema on public-facing text), `humanize-content` (enforces humanizer pass)
 - **Workflows**: `/marketing` (primary — strategy init + recurring ops), `/content-creation` (blog content; absorbed former `/blog-post`), `/seo-review` (SEO audit), `/docs-pack` (marketing content), `/plan` (marketing work stream)

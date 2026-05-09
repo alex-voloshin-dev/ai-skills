@@ -86,7 +86,7 @@ Read-only by design. Use:
 ## Pairing
 
 - Pairs with `subagent-isolation.md` rule — invoked via Task tool from feature-design-lead orchestrator OR directly by user via `/security-audit`
-- Findings written to `.ai-assets-memory/security-audits/<run-id>/SECURITY-REPORT.md` (per `/security-audit` skill, B12)
+- Findings written to `.ai-assets-memory/security-audits/<run-id>/SECURITY-REPORT.md` (per `/security-audit` skill convention)
 - Faithfulness rubric (G5) verifies every finding has file:line citation
 
 ## Reference
