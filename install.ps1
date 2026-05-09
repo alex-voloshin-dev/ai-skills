@@ -16,7 +16,7 @@ $Mappings = @(
     # install the plugin from .\plugin\ via:
     #   claude --plugin-dir "$ScriptDir\plugin"
     # or after publishing:
-    #   /plugin marketplace add alex-voloshin/ai-assets
+    #   /plugin marketplace add alex-voloshin-dev/ai-assets
     #   /plugin install ai-assets@ai-assets
     # See plugin\README.md for full install + usage.
     @{ Source = ".agents"; Target = Join-Path $HomeDir ".agents" },

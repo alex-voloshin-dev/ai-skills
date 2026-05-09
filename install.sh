@@ -50,7 +50,7 @@ echo "Installing AI assets into $HOME_DIR"
 # install the plugin from ./plugin/ via:
 #   claude --plugin-dir "$SCRIPT_DIR/plugin"
 # or after publishing:
-#   /plugin marketplace add alex-voloshin/ai-assets
+#   /plugin marketplace add alex-voloshin-dev/ai-assets
 #   /plugin install ai-assets@ai-assets
 # See plugin/README.md for full install + usage.
 

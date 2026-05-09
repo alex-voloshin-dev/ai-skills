@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/alex-voloshin/ai-assets/plugin/schemas/return-contract.schema.json",
+  "$id": "https://github.com/alex-voloshin-dev/ai-assets/plugin/schemas/return-contract.schema.json",
   "title": "Subagent Return Contract",
   "description": "G7 typed return value from subagent → orchestrator. Embedded in subagent's final message. Validated by subagent-stop-learnings.py hook (B8). Replaces free-form HANDOFF text from team-protocols. On validation failure: log to errors.log, fail-open, surface diagnostic to orchestrator (per Round 6 HIGH-4).",
   "type": "object",

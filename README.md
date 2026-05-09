@@ -1,82 +1,205 @@
-# AI Assets
+# ai-assets
 
-Reusable AI assets for Claude Code, Codex, and Windsurf.
+> Vendor-agnostic agentic-dev tooling: 26 agents, 53 skills, and 45 eval
+> rubrics that work across Claude Code, Codex, and Windsurf.
 
-Two delivery formats live in this repo:
+Engineering teams adopting AI coding agents hit the same wall: ad-hoc
+patterns that work for one developer don't scale to the team, evaluation
+is hand-wavy, and switching runtimes means rewriting everything.
 
-1. **`plugin/`** — full Claude Code plugin (v0.2.0+). The canonical source of truth for Claude Code: 26 agents, 52 skills, 18 hooks, 17 eval rubrics + 102 calibration samples, 12 rules, 31 user-invocable workflows. Install via `claude --plugin-dir ./plugin` (local) or `/plugin marketplace add alex-voloshin/ai-assets` (after publishing). See [plugin/README.md](plugin/README.md) for full install + usage.
-2. **`.codex/` + `.windsurf/` + `.agents/`** — copy-ready runtime folders for OpenAI Codex and Codeium Windsurf. Install via `install.sh` / `install.ps1`, which sync them into `~/.codex/`, `~/.windsurf/`, and `~/.agents/`.
+This repo is the working playbook of patterns that survived production
+use across all three major agentic-dev runtimes — with a tracked parity
+matrix so you know exactly what's available where, and 45 eval rubrics
+with 270 calibrated samples so "is it working?" has an answer.
 
-The legacy `.claude/` package was removed in v0.2.0 — `plugin/` fully replaces it. Existing `~/.claude/` installs from earlier versions can be cleaned up with `rm -rf ~/.claude/agents ~/.claude/skills ~/.claude/rules ~/.claude/hooks ~/.claude/settings.json` (preserve any of your own personal `~/.claude/` content first).
+---
 
-## Documentation
+## What's inside
 
-| Document | Purpose |
-|---|---|
-| [plugin/README.md](plugin/README.md) | Claude Code plugin install, workflows, and what's inside |
-| [plugin/CHANGELOG.md](plugin/CHANGELOG.md) | Plugin version history (v0.1.0 → current) |
-| [CLAUDE.md](CLAUDE.md) | Claude Code instructions for working in this repo |
-| [AGENTS.md](AGENTS.md) | Codex instructions, package layout, editing rules |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System design, primitive mapping, hook architecture, installation flow |
-| [PARITY.md](PARITY.md) | Cross-vendor parity model — Codex ↔ Windsurf parity (Claude Code lives in plugin/) |
-| [TESTING.md](TESTING.md) | Validation approach, hook testing, parity checks |
-| [review/parity-matrix.md](review/parity-matrix.md) | Change log and detailed parity tracking |
+| Asset | Count | What it is |
+|-------|-------|------------|
+| **Agents** | 26 | Specialized sub-agents (review, planning, testing, refactor, security, etc.) — invoked from a parent agent or a slash command |
+| **Skills** | 53 | Reusable, named instruction packs that adapt the agent's behavior to a domain (Python, Go, AWS, frontend, etc.) |
+| **Eval rubrics** | 45 | Scorable rubrics for AI coding-agent output — code quality, test discipline, prompt-following, etc. |
+| **Calibration samples** | 270 | Labeled examples (6 per rubric) that show what each rubric catches in practice — not theory |
+| **Hooks** | 18 | Pre/post-action interceptors for guardrails (no `git commit`, file size limits, etc.) |
+| **Rules** | 12 | Cross-cutting policies enforced at the agent or repo level |
+| **Workflows** | 32 | User-invocable slash commands that compose agents + skills into a multi-step recipe |
 
-## Structure
+**Codex + Windsurf parity packages:** 39 shared skills, 22 roles, 8
+rules. Cross-runtime parity tracked in
+[`review/parity-matrix.md`](./review/parity-matrix.md) — see exactly
+what's available on each runtime.
 
-```text
-ai-assets/
-├── plugin/                 # Claude Code plugin (v0.2.0+) — canonical source of truth for Claude Code
-├── .agents/skills/         # 38 shared skills (Codex + Windsurf)
-├── .codex/                 # Codex runtime package
-├── .windsurf/              # Windsurf runtime package
-├── review/                 # parity-matrix.md
-├── plugin-design/          # historical plugin design docs (Phase 1-2 plan + checklists)
-├── install.ps1             # PowerShell installer (Codex + Windsurf only — Windows)
-└── install.sh              # bash installer (Codex + Windsurf only — Linux/macOS)
-```
+---
 
-## Install
+## Why this exists
 
-### Claude Code (plugin)
+- **Tri-vendor parity, not vendor lock-in.** Almost every public
+  agentic-dev expert is locked to one runtime. This repo tracks parity
+  across Claude Code, Codex, and Windsurf so the runtime decision stays
+  reversible — one of the few public-facing trackers for cross-runtime
+  gaps.
+- **Eval-driven, not hand-wavy.** 45 rubrics ship with 270 calibrated
+  samples (6 per rubric, paired good/bad with target scores). If you're
+  operationalizing AI agents on a team, "how do I know it's working?"
+  gets a concrete answer instead of vibes.
+
+---
+
+## Quick start
+
+**Prerequisites** — clone the repo:
 
 ```bash
-claude --plugin-dir /path/to/ai-assets/plugin
+git clone https://github.com/alex-voloshin-dev/ai-assets.git
+cd ai-assets
 ```
 
-After editing plugin files in the same Claude Code session, reload without restarting:
+### Claude Code
+
+The plugin is not yet on a public marketplace. Install from the local
+clone:
+
+```bash
+claude --plugin-dir ./plugin
+```
+
+All 32 user-invocable workflows appear under the `ai-assets:` namespace
+in `/help`. After editing plugin files in the same session, reload
+without restarting:
 
 ```text
 /reload-plugins
 ```
 
-All 31 user-invocable skills appear in `/help` under the `ai-assets:` namespace, e.g. `/ai-assets:feature-design`, `/ai-assets:develop`, `/ai-assets:plugin-doctor`.
+See [`plugin/README.md`](./plugin/README.md) for full plugin install +
+usage and [`plugin/docs/getting-started.md`](./plugin/docs/getting-started.md)
+for a guided tour.
 
-### Codex + Windsurf (legacy three-package)
+### Codex
 
-Windows PowerShell:
-
-```powershell
-.\install.ps1
-```
-
-Linux/macOS:
+The installer syncs the Codex package (`.codex/`) plus the shared
+skills (`.agents/`) into your home directory:
 
 ```bash
-./install.sh
+bash install.sh
 ```
 
-The scripts sync `.agents/`, `.codex/`, `.windsurf/` into `~/.agents/`, `~/.codex/`, `~/.windsurf/` and remove stale files so the global packages stay aligned with the repo contents.
+Idempotent — files removed from the repo are also removed from
+`~/.codex/` / `~/.agents/` on re-run. Codex root instructions live in
+[`AGENTS.md`](./AGENTS.md).
 
-## Parity
+### Windsurf
 
-The Codex and Windsurf packages must stay in sync with each other (38 shared skills via `.agents/skills/`, 22 roles, 8 rules + role overlays). Claude Code parity moved to `plugin/` in v0.2.0 — those assets follow the plugin's own internal organization rather than the three-package mirror. See [PARITY.md](PARITY.md) for the full model.
+Same installer — it also syncs the Windsurf package (`.windsurf/`)
+into `~/.windsurf/`:
 
-## Maintenance Rules
+```bash
+bash install.sh
+```
 
-- keep all asset contents in English
-- changes to Codex assets MUST be mirrored to Windsurf assets (and vice versa)
-- changes to Claude Code assets land in `plugin/` only
-- prefer runtime-native representations over forced file mirroring
-- remove project-specific assumptions when importing assets from other repositories
-- update `review/parity-matrix.md` for any Codex ↔ Windsurf parity-impacting change
+On Windows use `install.ps1` instead. Windsurf-native hooks are wired
+through [`.windsurf/hooks.json`](./.windsurf/hooks.json) — see
+[`TESTING.md`](./TESTING.md) for hook validation.
+
+A minimal first run — once installed, sample the eval harness in
+dry-run mode (no API key needed) to see the rubric system at work:
+
+```bash
+$ python3 plugin/eval/runner.py --tier 2 --dry-run --sample-rubrics 3 --samples-per-rubric 2
+
+=== Tier 2 — Judge-Calibration Drift Smoke ===
+Sample seed: 42
+Rubrics sampled: 3 (analyze, code-review, spike)
+API available: False
+Tokens used: 0 (soft 50000, hard 150000)
+
+  [ERR ] analyze       good  tech-stack-comparison.score-4.0.md       -- dry-run
+  [ERR ] analyze       bad   opinion-without-evidence.score-1.0.md    -- dry-run
+  [ERR ] code-review   good  clean-pass.score-3.8.md                  -- dry-run
+  [ERR ] code-review   bad   mixed-with-security-scan.score-1.4.md    -- dry-run
+  [ERR ] spike         good  auth-openidconnect-vs-oauth.score-4.4.md -- dry-run
+  [ERR ] spike         bad   unsubstantiated-claim.score-1.3.md       -- dry-run
+```
+
+Each rubric ships with paired "good" and "bad" calibration samples
+labeled with target scores — that's how you can tell whether the judge
+is drifting before it shows up in production. Drop `--dry-run` (with an
+API key in env) to run the full Tier 2 calibration smoke.
+
+---
+
+## Use cases
+
+**Operationalizing AI coding agents on a team scaling beyond a few
+developers.** Stop writing one-off prompt libraries that don't survive
+turnover. The agents + skills here are designed to be installed as a
+unit, with eval rubrics to verify they're actually working in your
+codebase.
+
+**Picking an agentic-dev runtime without locking in.**
+The parity matrix tells you exactly which features have parity and
+which don't, so the runtime decision is reversible. Adopt the one that
+fits today; switch when something better lands.
+
+**Building your own agentic-dev framework.**
+Use this repo as a reference implementation. The conventions for
+agents, skills, hooks, and eval rubrics are battle-tested — fork or
+borrow whatever fits your context.
+
+---
+
+## Repo layout
+
+```text
+ai-assets/
+├── plugin/                  # Claude Code plugin (canonical for Claude Code)
+│   ├── .claude-plugin/      # Plugin manifest + 13 userConfig knobs
+│   ├── agents/              # 26 specialized agents
+│   ├── skills/              # 53 skills (32 user-invocable workflows)
+│   ├── rules/               # 12 cross-cutting policies
+│   ├── hooks/               # 18 hook scripts across 13 lifecycle events
+│   ├── eval/                # 45 rubrics + 270 calibration samples + Tier 1/2 runner
+│   ├── schemas/             # G7 spawn-payload + return-contract JSON schemas
+│   ├── docs/                # Getting-started + workflow + concept docs
+│   └── dev/validate.py      # Local validator
+├── .agents/skills/          # 39 skills shared by Codex + Windsurf
+├── .codex/                  # Codex package (22 roles, 8 rules, operations, templates)
+├── .windsurf/               # Windsurf package (22 roles, 39 skills, 27 workflows, hooks)
+├── .claude-plugin/          # Marketplace manifest pointing at ./plugin
+├── plugin-design/           # Historical Phase 1–2 design docs
+├── review/parity-matrix.md  # Cross-package alignment tracker (Codex ↔ Windsurf)
+├── AGENTS.md                # Codex root instructions
+├── ARCHITECTURE.md          # System design, primitive mapping, install flow
+├── CLAUDE.md                # Claude Code root instructions
+├── PARITY.md                # Cross-vendor parity model
+├── TESTING.md               # Validation approach + hook testing
+├── install.sh               # Codex + Windsurf installer (Linux/macOS)
+└── install.ps1              # Codex + Windsurf installer (Windows)
+```
+
+---
+
+## Status
+
+- **Latest version:** 0.3.7 (see [`plugin/CHANGELOG.md`](./plugin/CHANGELOG.md) for history)
+- **License:** [MIT](./LICENSE)
+- **Maintainer:** Alex Voloshin
+  ([@alex-voloshin-dev](https://github.com/alex-voloshin-dev))
+- **Issues / discussion:** open a GitHub issue
+- **Project status:** active development
+
+---
+
+## Contributing
+
+Contributions welcome — particularly:
+
+- Eval rubric additions with calibration samples
+- Parity-matrix entries for runtimes not yet covered
+- Production failure modes / war stories that motivate new hooks or
+  rules
+
+Open an issue first to discuss scope. Direct PRs without an issue are
+fine for typo / link / small-doc fixes.

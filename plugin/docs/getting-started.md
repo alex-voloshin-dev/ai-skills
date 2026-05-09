@@ -12,7 +12,7 @@ A 30-minute tutorial: install the plugin, bootstrap your repo, run a first featu
 
 ```bash
 # From git
-claude plugin install https://github.com/alex-voloshin/ai-assets
+claude plugin install https://github.com/alex-voloshin-dev/ai-assets
 
 # From local checkout (developer mode)
 claude plugin install ./plugin

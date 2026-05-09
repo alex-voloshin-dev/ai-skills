@@ -4,11 +4,11 @@
   "description": "Reusable team-of-agents plugin for the full SDLC — feature design, development, bugfix, environment analysis — with built-in RALF iteration loop, layered memory, and systematic eval. Project-agnostic: operations live in plugin, project context lives in target repo (CLAUDE.md / AGENTS.md).",
   "author": {
     "name": "Alex Voloshin",
-    "email": "avav25@gmail.com"
+    "email": "alex@voloshin.net"
   },
   "license": "MIT",
-  "homepage": "https://github.com/alex-voloshin/ai-assets",
-  "repository": "https://github.com/alex-voloshin/ai-assets",
+  "homepage": "https://github.com/alex-voloshin-dev/ai-assets",
+  "repository": "https://github.com/alex-voloshin-dev/ai-assets",
   "keywords": [
     "sdlc",
     "agent-team",

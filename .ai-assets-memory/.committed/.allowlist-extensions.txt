@@ -1,0 +1,9 @@
+# Project-specific allowlist extensions for .ai-assets-memory/.committed/
+# Format: one glob pattern per line; lines starting with # are comments
+# These extend (do not replace) the plugin defaults shipped in:
+#   plugin/memory/templates/committed-allowlist.txt
+#
+# Add patterns here when the team agrees a new committed file type is needed.
+# Plugin defaults already cover: README.md, conventions.md, pii-patterns.txt,
+# architecture-decisions/*.md, eval-baselines/*.json, decisions/**/*.md,
+# releases/**/*.md, .allowlist-extensions.txt itself.

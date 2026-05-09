@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/alex-voloshin/ai-assets/plugin/schemas/spawn-payload.schema.json",
+  "$id": "https://github.com/alex-voloshin-dev/ai-assets/plugin/schemas/spawn-payload.schema.json",
   "title": "Subagent Spawn Payload",
   "description": "G7 typed payload for orchestrator → subagent delegation. Embedded in the Agent tool prompt. Validated by subagent-start-budget.py hook (B8). Replaces free-form HANDOFF text from team-protocols. See 01-WORKFLOW-SPECS.md Common Patterns + Round 6 HIGH-2 (memory-curator operational contract example).",
   "type": "object",

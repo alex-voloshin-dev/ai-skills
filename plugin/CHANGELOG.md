@@ -276,7 +276,7 @@ Major release. The repository previously shipped Claude Code assets in two paral
 ### Breaking changes
 
 - **`.claude/` package removed.** All 143 files under `.claude/` (22 agents + 41 skills + 7 rules + 4 hook scripts + 7 templates + settings.json + supporting files) are deleted. Equivalent (and richer) content lives in `plugin/`: 26 agents, 52 skills, 12 rules, 18 hooks, 17 eval rubrics, 102 calibration samples, etc.
-- **`install.sh` / `install.ps1` no longer install Claude Code.** They sync `.agents/` + `.codex/` + `.windsurf/` only. Claude Code users must switch to `claude --plugin-dir /path/to/ai-assets/plugin` (or `/plugin marketplace add alex-voloshin/ai-assets` after publishing).
+- **`install.sh` / `install.ps1` no longer install Claude Code.** They sync `.agents/` + `.codex/` + `.windsurf/` only. Claude Code users must switch to `claude --plugin-dir /path/to/ai-assets/plugin` (or `/plugin marketplace add alex-voloshin-dev/ai-assets` after publishing).
 - **Existing `~/.claude/` install needs manual cleanup.** Run (preserve any of your own personal `~/.claude/` content first):
   ```bash
   rm -rf ~/.claude/agents ~/.claude/skills ~/.claude/rules ~/.claude/hooks ~/.claude/settings.json
@@ -303,7 +303,7 @@ Major release. The repository previously shipped Claude Code assets in two paral
 |---|---|
 | `~/.claude/` global install via `install.sh`/`install.ps1` | `claude --plugin-dir /path/to/ai-assets/plugin` |
 | Project-local `.claude/` copied into your project | `cd /your-project && claude --plugin-dir /path/to/ai-assets/plugin` |
-| Claude Code marketplace install | `/plugin marketplace add alex-voloshin/ai-assets && /plugin install ai-assets@ai-assets` (after GitHub publish) |
+| Claude Code marketplace install | `/plugin marketplace add alex-voloshin-dev/ai-assets && /plugin install ai-assets@ai-assets` (after GitHub publish) |
 | Codex `~/.codex/` install | No change — `install.sh`/`install.ps1` still sync `.codex/` |
 | Windsurf `~/.windsurf/` install | No change — `install.sh`/`install.ps1` still sync `.windsurf/` |
 
@@ -756,7 +756,7 @@ After 17 alpha iterations and 4 review rounds (Round 13 / 14 / 15 / 16), the plu
 claude --plugin-dir /path/to/ai-assets/plugin
 
 # After GitHub publish (v0.2+)
-/plugin marketplace add alex-voloshin/ai-assets
+/plugin marketplace add alex-voloshin-dev/ai-assets
 /plugin install ai-assets
 ```
 
@@ -1078,7 +1078,7 @@ claude --plugin-dir C:\Users\avav2\dev\code\ai-assets\plugin
 
 ### Kept — marketplace.json files (alpha.20-alpha.22 work isn't wasted)
 
-- `ai-assets/.claude-plugin/marketplace.json` — registry pointing at `./plugin`. **Will work** when the plugin is published to GitHub and added via `/plugin marketplace add alex-voloshin/ai-assets`. The format conforms to anthropics/skills convention.
+- `ai-assets/.claude-plugin/marketplace.json` — registry pointing at `./plugin`. **Will work** when the plugin is published to GitHub and added via `/plugin marketplace add alex-voloshin-dev/ai-assets`. The format conforms to anthropics/skills convention.
 - `plugin/.claude-plugin/marketplace.json` — deprecation stub from alpha.22 (delete manually if desired: `del C:\Users\avav2\dev\code\ai-assets\plugin\.claude-plugin\marketplace.json`).
 
 ### Lessons learned (saved to design-doc memory pattern set)
@@ -1402,7 +1402,7 @@ Canonical order: `name, description, tools, disallowedTools, model, effort, maxT
 
 ### Fixed — Round 14 typo notation: author email
 
-`plugin.json` author email had a typo (`avav25my@gmail.com`); corrected to `avav25@gmail.com`. Caught during Round 14 verification pass.
+`plugin.json` author email had a typo (`avav25my@gmail.com`); corrected to `alex@voloshin.net`. Caught during Round 14 verification pass.
 
 ### Pending (not in alpha.15) — HIGH findings recommended for alpha.16+ — ALL CLOSED IN ALPHA.16
 
@@ -1683,8 +1683,8 @@ Per WebSearch of [Skill authoring best practices](https://docs.claude.com/en/doc
 - `plugin/hooks/scripts/ralph-stop.py` — removed unused `from datetime import datetime, timezone` (body uses `_lib.iso_now()` exclusively)
 
 ### Publish-metadata filled (user-supplied values)
-- `plugin/.claude-plugin/plugin.json` — `author.name = "Alex Voloshin"`, `author.email = "avav25my@gmail.com"`, `homepage = repository = "https://github.com/alex-voloshin/ai-assets"`. All `<author-name>` / `<author-email>` / `<owner>` placeholders replaced.
-- `plugin/schemas/spawn-payload.schema.json`, `plugin/schemas/return-contract.schema.json`, `plugin/memory/templates/eval-baseline.schema.json` — `$id` URLs now point at `https://github.com/alex-voloshin/ai-assets/...`.
+- `plugin/.claude-plugin/plugin.json` — `author.name = "Alex Voloshin"`, `author.email = "avav25my@gmail.com"`, `homepage = repository = "https://github.com/alex-voloshin-dev/ai-assets"`. All `<author-name>` / `<author-email>` / `<owner>` placeholders replaced.
+- `plugin/schemas/spawn-payload.schema.json`, `plugin/schemas/return-contract.schema.json`, `plugin/memory/templates/eval-baseline.schema.json` — `$id` URLs now point at `https://github.com/alex-voloshin-dev/ai-assets/...`.
 - `plugin/README.md` install command + all 11 `CHANGELOG.md` compare URLs (Unreleased + alpha.0 through alpha.9) — `<owner>` → `alex-voloshin`.
 
 ### Known unfixed (need future batches, not user input)
@@ -1917,19 +1917,19 @@ Pattern 11 cascade — actual count of unique top-level lifecycle events in `hoo
 - This is a skeleton-only release. Plugin is INSTALLABLE (`claude plugin install ./plugin`) but workflows/agents/hooks/rules are empty.
 - Following batches per migration checklist: B2 (existing 4 hook scripts + format upgrade), B3 (20 KEEP skills), B4-B5 (26 agents), B6-B7 (12 rules), B8 (12 new hooks + `_lib.py` shared module), B9-B13 (schemas, eval, calibration, refactor skills, new skills, user docs).
 
-[Unreleased]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.14...HEAD
-[0.1.0-alpha.14]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.13...v0.1.0-alpha.14
-[0.1.0-alpha.13]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.12...v0.1.0-alpha.13
-[0.1.0-alpha.12]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.11...v0.1.0-alpha.12
-[0.1.0-alpha.11]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.10...v0.1.0-alpha.11
-[0.1.0-alpha.10]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.9...v0.1.0-alpha.10
-[0.1.0-alpha.9]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.8...v0.1.0-alpha.9
-[0.1.0-alpha.8]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.7...v0.1.0-alpha.8
-[0.1.0-alpha.7]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.6...v0.1.0-alpha.7
-[0.1.0-alpha.6]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.5...v0.1.0-alpha.6
-[0.1.0-alpha.5]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.4...v0.1.0-alpha.5
-[0.1.0-alpha.4]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.3...v0.1.0-alpha.4
-[0.1.0-alpha.3]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.2...v0.1.0-alpha.3
-[0.1.0-alpha.2]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
-[0.1.0-alpha.1]: https://github.com/alex-voloshin/ai-assets/compare/v0.1.0-alpha.0...v0.1.0-alpha.1
-[0.1.0-alpha.0]: https://github.com/alex-voloshin/ai-assets/releases/tag/v0.1.0-alpha.0
+[Unreleased]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.14...HEAD
+[0.1.0-alpha.14]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.13...v0.1.0-alpha.14
+[0.1.0-alpha.13]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.12...v0.1.0-alpha.13
+[0.1.0-alpha.12]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.11...v0.1.0-alpha.12
+[0.1.0-alpha.11]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.10...v0.1.0-alpha.11
+[0.1.0-alpha.10]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.9...v0.1.0-alpha.10
+[0.1.0-alpha.9]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.8...v0.1.0-alpha.9
+[0.1.0-alpha.8]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.7...v0.1.0-alpha.8
+[0.1.0-alpha.7]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.6...v0.1.0-alpha.7
+[0.1.0-alpha.6]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.5...v0.1.0-alpha.6
+[0.1.0-alpha.5]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.4...v0.1.0-alpha.5
+[0.1.0-alpha.4]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.3...v0.1.0-alpha.4
+[0.1.0-alpha.3]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.2...v0.1.0-alpha.3
+[0.1.0-alpha.2]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
+[0.1.0-alpha.1]: https://github.com/alex-voloshin-dev/ai-assets/compare/v0.1.0-alpha.0...v0.1.0-alpha.1
+[0.1.0-alpha.0]: https://github.com/alex-voloshin-dev/ai-assets/releases/tag/v0.1.0-alpha.0

@@ -57,7 +57,7 @@ All 31 user-invocable skills appear in `/help` under the `ai-assets:` namespace,
 Once the plugin is pushed to GitHub, install via the official marketplace flow:
 
 ```text
-/plugin marketplace add alex-voloshin/ai-assets
+/plugin marketplace add alex-voloshin-dev/ai-assets
 /plugin install ai-assets@ai-assets
 ```
 
