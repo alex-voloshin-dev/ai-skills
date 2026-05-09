@@ -79,6 +79,6 @@ These are referenced by the planned Tier 3 design but **not implemented**:
 - `plugin/eval/results/<run-id>/` — per-run output artefacts.
 - `eval-judge` subagent role — currently inline; if the planned design needs a dedicated agent, it would land in `plugin/agents/`.
 - `--baseline <skill>` capture to `.committed/eval-baselines/<release-tag>.json`.
-- Blind-comparator ("Round 3 Q3" — third agent in isolated context with skills suppressed) — design-only.
+- Blind-comparator (third agent in isolated context with skills suppressed) — design-only.
 
 Do not write code that depends on these surfaces today; they are documented for design continuity, not behavior.

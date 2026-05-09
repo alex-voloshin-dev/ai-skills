@@ -29,7 +29,7 @@ Three-wave parallel-then-sequential pipeline that turns a feature idea into a ve
 /feature-design "We need to limit API calls per month for non-paying users"
 ```
 
-## Output (Round 4 N6 convention exception)
+## Output (versioned with code, not with project memory)
 
 Files written to **`<repo>/docs/features/<feature-id>/`** — INSIDE the target repo's `docs/`, NOT inside `.ai-assets-memory/`. Reason: design packs are intended to be VERSIONED IN GIT as project documentation, reviewed by the team, and live across many sprints.
 

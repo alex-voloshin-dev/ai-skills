@@ -30,7 +30,7 @@ Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify project struct
 
 ## Optional: Local Environment Analysis
 
-If the bug involves local development environment issues (container crashes, networking, Docker problems, service health), or if the user explicitly requests environment analysis — invoke `/env-analyze` (B12, renamed from env-analyzer per Round 4 N2) before starting the fix pipeline:
+If the bug involves local development environment issues (container crashes, networking, Docker problems, service health), or if the user explicitly requests environment analysis — invoke `/env-analyze` before starting the fix pipeline:
 
 `/env-analyze` is a standalone skill (not a spawn). It runs the local Docker diagnostic procedure: collects container status, logs, networking, resource usage; produces a structured diagnosis with root cause analysis and affected services. The Lead receives findings as context for task assignment.
 

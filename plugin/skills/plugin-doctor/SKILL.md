@@ -1,6 +1,6 @@
 ---
 name: plugin-doctor
-description: Self-diagnostic for the ai-assets plugin — validates skill frontmatter, hook executability, run-log parseability, and judge calibration. Default mode is fast and cost-free; --calibrate-judge is opt-in (Round 4 O4). Use when installing the plugin, upgrading to a new version, or troubleshooting unexpected plugin behavior.
+description: Self-diagnostic for the ai-assets plugin — validates skill frontmatter, hook executability, run-log parseability, and judge calibration. Default mode is fast and cost-free; `--calibrate-judge` is opt-in. Use when installing the plugin, upgrading to a new version, or troubleshooting unexpected plugin behavior.
 context: fork
 argument-hint: "[--calibrate-judge]"
 ---
@@ -27,7 +27,7 @@ Planned (not yet shipped):
 
 Both `--runs` and `--health-trends` will land once `.ai-assets-memory/runs.jsonl` accumulates enough entries to make the summary meaningful. Track progress in the plugin issue tracker.
 
-## Two-step boot model (Round 4 O4)
+## Two-step boot model
 
 ### Default mode (`/plugin-doctor`)
 
@@ -44,7 +44,7 @@ Reports calibration as `not yet run; use /plugin-doctor --calibrate-judge to run
 
 ### `--calibrate-judge` (explicit opt-in)
 
-Delegates to the Tier 2 smoke runner — `plugin/eval/runner.py --tier 2` — which performs a **score-band tolerance check** against `plugin/eval/calibration/<rubric>/` samples (shipped in B10a). For each sampled rubric, the Haiku judge scores known good + known bad samples and the result must land within ±0.5 of the expected score encoded in the filename (`<scenario>.score-X.X.md`).
+Delegates to the Tier 2 smoke runner — `plugin/eval/runner.py --tier 2` — which performs a **score-band tolerance check** against `plugin/eval/calibration/<rubric>/` samples. For each sampled rubric, the Haiku judge scores known good + known bad samples and the result must land within ±0.5 of the expected score encoded in the filename (`<scenario>.score-X.X.md`).
 
 Catches three drift classes: rubric edits that break scoring, judge-model version changes, and calibration-sample edits that move them out of band.
 

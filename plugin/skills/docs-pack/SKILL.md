@@ -7,7 +7,7 @@ argument-hint: "<path> [--template api-reference|user-guide|runbook|architecture
 
 # /docs-pack — User-Facing Documentation Pack
 
-Generate a coherent set of user-facing docs for a module or feature. Output goes to `<repo>/docs/<module>/` (versioned in git, NOT in `.ai-assets-memory/`) — same convention exception as `/feature-design` per Round 4 N6.
+Generate a coherent set of user-facing docs for a module or feature. Output goes to `<repo>/docs/<module>/` (versioned in git, NOT in `.ai-assets-memory/`) — same convention exception as `/feature-design`: docs are versioned with the code, not with project memory.
 
 ## When to use
 
@@ -51,7 +51,7 @@ Each `--template` value maps to a starter document under
 | `runbook` | [`assets/templates/runbook.md`](./assets/templates/runbook.md) | SRE-aligned operator runbook: service overview, SLO/SLI/SLA, Alert → Diagnose → Mitigate → Verify per alert, top 5 incident playbooks, rollback, escalation matrix, on-call cheatsheet |
 | `architecture` | [`assets/templates/architecture.md`](./assets/templates/architecture.md) | C4-aligned architecture doc: Mermaid C4Context + C4Container diagrams, 3–5 sequenceDiagram flows, tech stack table, quality attributes, ADR ledger, risks |
 
-## Output (Round 4 N6 convention exception)
+## Output (versioned with code, not with project memory)
 
 Files written to **`<repo>/docs/<module>/`** — versioned in git as project documentation:
 

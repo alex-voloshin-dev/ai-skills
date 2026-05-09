@@ -104,7 +104,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 | L4 | After complete | `.ai-assets-memory/spikes/<run-id>/report.md` — full findings |
 | L4 (committed) | **Always ask user explicitly after report**, never auto-write | `.ai-assets-memory/.committed/decisions/<date>-<question>.md` — recorded decision |
 
-**Q4 hard rule (per design):** never auto-create `.committed/decisions/` files. `.committed/` goes to git and the user may want to reword the decision before committing. The skill ALWAYS asks before writing to `.committed/decisions/`. The `pre-tool-use-committed-write.py` hook enforces the allowlist on these paths regardless.
+**Hard rule on committed decisions:** never auto-create `.committed/decisions/` files. `.committed/` goes to git and the user may want to reword the decision before committing. The skill ALWAYS asks before writing to `.committed/decisions/`. The `pre-tool-use-committed-write.py` hook enforces the allowlist on these paths regardless.
 
 ## Failure modes
 

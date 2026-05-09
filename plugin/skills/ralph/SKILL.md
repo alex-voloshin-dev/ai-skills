@@ -75,9 +75,8 @@ Every run writes to `<repo>/.ai-assets-memory/ralph/<run-id>/`:
 
 Per-iteration `tokens.json` (v0.1.6) records `tokens` spent that iteration plus `runaway: true` when a single iteration exceeds 3× the fair share (`token_budget / max_iterations`). Runaway warnings also append to `.ai-assets-memory/ralph-warnings.log`.
 
-## G10 init vs continuation prompts
+## Init vs continuation prompts
 
-Per Round 3 G10:
 - **Iter 1 (init):** full task brief — goal, constraints, evidence, output contract, oracle definition, kill-on signal. Typically 5–15K tokens
 - **Iter ≥ 2 (continuation):** state delta only — last-iter diff + oracle failure summary + top-3 active constraints + kill-on countdown. Typically 1–3K tokens (~70% savings)
 

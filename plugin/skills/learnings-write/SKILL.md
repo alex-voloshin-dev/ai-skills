@@ -36,7 +36,7 @@ Append a curated entry to `learnings.md` (L4 project, default) or `~/.claude/ai-
 ## Behavior
 
 1. Validate `--global` permission per `memory-discipline.md` rule 3 — must have BOTH `userConfig.user_global_memory_enabled: true` AND `--global` flag.
-2. Spawn `memory-curator` agent (per Round 6 HIGH-2 — agent is spawn-only) with G7 spawn payload:
+2. Spawn `memory-curator` agent (the agent is spawn-only — not user-invocable) with G7 spawn payload:
    - `goal`: "Add a learning entry the user wrote: <text>"
    - `state_slice`: existing learnings.md (target layer) for dedupe context
    - `allowed_tools`: Read, Write
@@ -55,7 +55,7 @@ Append a curated entry to `learnings.md` (L4 project, default) or `~/.claude/ai-
 
 - **Spawn-only memory-curator** — never bypass and write learnings.md directly per `memory-discipline.md` rule 1
 - **PII filter mandatory** — every write passes through filter; redactions logged to `redactions.log`
-- **`.committed/` writes route through `pre-tool-use-committed-write.py` hook** (Round 8 CRIT-1) — committed learnings must match allowlist pattern (default: `learnings.md`, `architecture-decisions/*.md`, etc.)
+- **`.committed/` writes route through `pre-tool-use-committed-write.py` hook** — committed learnings must match the allowlist pattern (default: `learnings.md`, `architecture-decisions/*.md`, etc.)
 - **L5 strict scope** — entries with project-specific paths or names are rejected (must be generalizable patterns)
 
 ## Failure modes

@@ -104,7 +104,7 @@ No RALF — scaffolding is one-pass; idempotent so safe to re-run.
 ## Hard rules
 
 - **Never overwrite `CLAUDE.md` without `--overwrite`** — refuse with: "CLAUDE.md exists; pass --overwrite to replace"
-- **`pre-tool-use-committed-write.py` hook applies** to any `.committed/` writes per Round 8 CRIT-1
+- **`pre-tool-use-committed-write.py` hook applies** to any `.committed/` writes (committed-allowlist enforcement)
 - **Idempotent** — re-running on a fully-set-up repo is a no-op + report
 
 ## Eval rubric

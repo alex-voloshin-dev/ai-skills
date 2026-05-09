@@ -144,4 +144,4 @@ Pass: avg ≥ 4.0, no dimension < 3.
 - **Schemas**: `plugin/schemas/spawn-payload.schema.json` (G7 spawn payloads)
 - **Hooks**: `tool-output-normalize.py` (G2 on large bash output), `subagent-start-budget.py` (G7 validation + budget)
 - **Used by**: `/bugfix` Step 2 (local-Docker diagnostic), `/team-bugfix` (optional pre-pipeline context-gathering), `/migrate` (pre-flight env check)
-- **Carried alternative**: `/analyze-local` (existing skill, still works) — `/env-analyze` is the renamed B12 deliverable per Round 4 N2 with G7 + G2 pre-wired
+- **Carried alternative**: `/analyze-local` (Docker-only triage)

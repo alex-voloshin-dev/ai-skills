@@ -52,7 +52,7 @@ Not needed when running `/ai-assets-init` — that workflow runs memory-init as 
 ## Hard rules
 
 - **Never overwrite** existing files. If a file exists, skip it and report "skipped: <path>".
-- **Never write to `.committed/` paths outside the allowlist** — `pre-tool-use-committed-write.py` hook (Round 8 CRIT-1) enforces; this skill should not bypass.
+- **Never write to `.committed/` paths outside the allowlist** — `pre-tool-use-committed-write.py` hook enforces this; the skill must not bypass.
 - **PII filter applies** to any seeded content per `memory-discipline.md` rule 2.
 
 ## Failure modes

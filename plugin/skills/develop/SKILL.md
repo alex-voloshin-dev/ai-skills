@@ -5,8 +5,7 @@ description: >-
   developer(s), reviewer, QA, and lead orchestrator. Spawns specialized
   subagents via the Agent tool (`subagent_type: "ai-assets:<role>"`).
   Use when implementing a feature with the canonical Anthropic `Agent`
-  tool available — preferred over single-agent /feature-dev fallback. Renamed
-  from team-dev (per Round 4 N2).
+  tool available — preferred over single-agent /feature-dev fallback.
 argument-hint: "[PRD path or feature description]"
 ---
 
