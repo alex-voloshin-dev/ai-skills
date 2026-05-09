@@ -9,7 +9,7 @@ argument-hint: "<idea, 1-3 sentences>"
 
 # /feature-design — Multi-Agent Design Pack
 
-Three-wave parallel-then-sequential pipeline that turns a feature idea into a versioned design pack ready for `/develop` to execute. Orchestrated by `feature-design-lead` (the only plugin agent with `tools: Task`).
+Three-wave parallel-then-sequential pipeline that turns a feature idea into a versioned design pack ready for `/develop` to execute. Orchestrated by `feature-design-lead` (the only plugin agent with `tools: Task`). Conceptually aligned with [Shape Up](https://basecamp.com/shapeup): the idea is a shaped pitch; the output is a betting-ready package — fixed-time variable-scope.
 
 ## When to use
 

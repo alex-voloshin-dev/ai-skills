@@ -74,6 +74,18 @@ Classify commits since last release:
 
 ## 3. Bump Version
 
+### 3a. Monorepo / per-package versioning
+
+If `.changeset/` directory or `pnpm-workspace.yaml` / `lerna.json` / `nx.json` is present, the repo uses per-package versioning. Different bump strategy:
+
+- **Changesets** (`.changeset/`): for each affected package, run `npx changeset` to record an intent file (`<random>.md` with package name + bump type + summary). Then `npx changeset version` rewrites all affected `package.json` versions and the changelogs. Then `npx changeset publish` (or via CI) tags + publishes.
+- **Lerna**: `npx lerna version <minor|patch|major>` (or `--conventional-commits` to derive bumps from commit history). `npx lerna publish from-package` to release.
+- **Nx release**: `npx nx release` (replaces lerna for Nx workspaces 17+).
+
+For monorepos, the rest of this skill (Steps 3b onward) applies per-package only when the team has decided to handle one package outside the workspace tooling.
+
+### 3b. Single-package version bump
+
 Update version in project files:
 
 | Stack | Files to Update |

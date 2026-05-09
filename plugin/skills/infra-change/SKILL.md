@@ -78,11 +78,37 @@ terraform validate
 terraform fmt -check -recursive
 ```
 
+Modern pre-plan suite (run when configs are present):
+```
+// turbo
+tflint                              # if .tflint.hcl present
+tfsec . --soft-fail                 # if tfsec.yml or .tfsec/ present
+checkov -d . --soft-fail            # if .checkov.yml present
+terraform-docs markdown table .     # regenerate docs if terraform-docs.yml present
+```
+
 Review relevant `.tf` files and current state:
 ```
 // turbo
-terraform plan -out=tfplan
+terraform plan -out=tfplan -detailed-exitcode
+# Exit codes: 0=no changes, 1=error, 2=changes proposed
 ```
+
+### 3a-bis. Terraform State Operations (use with extreme caution)
+
+Second-most-fragile area after `destroy`. Always backup state before any of these:
+
+```
+terraform state list                                # enumerate resources
+terraform state show <addr>                         # inspect a resource
+terraform state mv <src> <dst>                      # rename / refactor
+terraform state rm <addr>                           # remove from state (resource still exists in cloud)
+terraform import <addr> <id>                        # adopt an existing cloud resource
+```
+
+For module refactoring without state surgery, prefer `moved {}` blocks (TF v1.1+) and `removed {}` blocks (TF v1.7+) — they encode the rename in `.tf` files instead of imperative state ops.
+
+`-target=<resource>` for partial-apply is an anti-pattern except in emergencies (state drift between resources causes surprising future plans).
 
 ### 3b. Helm State (if applicable)
 
@@ -197,7 +223,17 @@ terraform apply tfplan
 
 **Helm:**
 ```
-helm upgrade <release> <chart-path> -n <namespace> -f <values-file>
+helm upgrade <release> <chart-path> -n <namespace> -f <values-file> \
+  --atomic --timeout 5m --wait
+# --atomic auto-rolls back on failure (recommended for prod)
+# --timeout matches your readiness-probe budget
+# --wait blocks until all resources reach Ready (otherwise upgrade returns immediately)
+```
+
+If using `helm-diff` plugin (recommended for production previews; install once with `helm plugin install https://github.com/databus23/helm-diff`):
+
+```
+helm diff upgrade <release> <chart-path> -n <namespace> -f <values-file>
 ```
 
 **Kubectl:**

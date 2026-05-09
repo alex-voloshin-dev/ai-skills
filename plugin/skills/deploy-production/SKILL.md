@@ -174,11 +174,22 @@ curl -s <production-url>/health
 
 ### 4b. Smoke Tests
 
-- [ ] Application responds on production URL
+Run the project's existing smoke suite — do NOT improvise from generic checklists. Detect and execute (in priority order):
+
+| Marker | Run command |
+|---|---|
+| `tests/smoke/` directory + `pytest`/`vitest`/etc. | Project test runner against that path |
+| `e2e/` or `tests/e2e/` with Playwright config (`playwright.config.ts`) | `npx playwright test --grep @smoke` (filter by `@smoke` annotation) |
+| `cypress/e2e/smoke/*` | `npx cypress run --spec 'cypress/e2e/smoke/**'` |
+| Postman / Newman collection | `npx newman run smoke.postman_collection.json` |
+| K6 / Artillery script | run against the prod URL with a low-rate profile |
+
+Fallback when no smoke suite exists (write down for follow-up — every project should ship one):
+- [ ] Application responds on production URL (HTTP 200)
 - [ ] Health endpoint returns 200
-- [ ] Authentication flow works
-- [ ] Core API endpoints respond correctly
-- [ ] Key user journeys functional
+- [ ] Authentication flow works (login + session retrieval)
+- [ ] Core API endpoints respond correctly (3-5 representative routes)
+- [ ] One key user journey end-to-end
 
 ### 4c. Monitor (5–10 minutes)
 
