@@ -252,4 +252,5 @@ Guide the next steps based on scope:
 - **Followed by**: `/plan` (work decomposition), `/feature-dev` (implementation)
 - **Roles**: `Agent(solution-architect)` (feature design, ADRs, API contracts), `Agent(system-architect)` (system analysis, ARCHITECTURE.md, component boundaries), `Agent(cloud-architect)` (cloud platform design, landing zones, networking, cost), `Agent(devops-architect)` (CI/CD architecture, deployment strategies, platform engineering)
 - **Output style**: `${CLAUDE_PLUGIN_ROOT}/output-styles/design-pack.md` (ARCHITECTURE.md per-artefact section template)
+- **Templates**: ready-to-use scaffolds in `${CLAUDE_PLUGIN_ROOT}/skills/architecture/assets/` — `adr-template.md` (Nygard/MADR ADR with Y-statement), `c4-mermaid-template.md` (C4 Context+Container in Mermaid), `nfr-template.md` (ISO/IEC 25010 NFR table), `gap-analysis-template.md` (current vs target), `tech-debt-register-template.md` (debt items with interest/principal/forces-payment)
 - **Skills**: `context-engineering` skill (for AI/agent system architecture)

@@ -1,0 +1,31 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Maya Patel",
+  "jobTitle": "Head of Content, Acme AI",
+  "image": "https://example.com/authors/maya-patel/headshot-512.jpg",
+  "url": "https://example.com/authors/maya-patel",
+  "sameAs": [
+    "https://www.linkedin.com/in/maya-patel-example",
+    "https://twitter.com/mayapatel_dev",
+    "https://github.com/mayapatel-example",
+    "https://mayapatel.substack.com",
+    "https://en.wikipedia.org/wiki/Maya_Patel_example"
+  ],
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Acme AI",
+    "url": "https://example.com"
+  },
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "University of Washington"
+  },
+  "knowsAbout": [
+    "Generative Engine Optimization",
+    "Answer Engine Optimization",
+    "Technical content strategy",
+    "B2B SaaS marketing"
+  ],
+  "description": "Maya Patel leads content at Acme AI, where she has shipped 90+ pillar articles cited by ChatGPT, Perplexity, and Google AI Overviews. Previously editorial lead at a Y Combinator dev-tools company."
+}

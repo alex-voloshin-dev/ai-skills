@@ -46,6 +46,17 @@ Files written to **`<repo>/docs/features/<feature-id>/`** — INSIDE the target 
 
 `<feature-id>` auto-generated from first 3 words of idea.
 
+### Templates (`assets/`)
+
+Concrete starter templates with worked examples (Two-factor auth feature). Producers copy + adapt rather than draft from scratch:
+
+| Template | Used by | Purpose |
+|---|---|---|
+| `assets/prd-template.md` | product-manager (Wave 1) | PRD scaffold — TL;DR, problem, ICP+JTBD, solution, user stories, metrics, scope, open Qs |
+| `assets/risks-template.md` | security-engineer + qa-engineer (Wave 2) | Risk register with 3×3 P×I heatmap and seeded example rows |
+| `assets/implementation-plan-template.md` | feature-design-lead | Work-package decomposition with three-point estimates + mandatory Walking Skeleton WP-1 |
+| `assets/review-log-template.md` | feature-design-lead (Wave 2/3 collation) | Multi-reviewer rounds, per-finding severity, signoff block |
+
 ## Agent roster
 
 | Agent | Model | Effort | Wave | Role |

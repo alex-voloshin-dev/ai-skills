@@ -1,0 +1,46 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Acme AI",
+  "legalName": "Acme AI, Inc.",
+  "url": "https://example.com",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://example.com/static/logo-512.png",
+    "width": 512,
+    "height": 512
+  },
+  "description": "Acme AI builds the AI-Readiness Score, a content audit platform that measures how citable your site is to ChatGPT, Claude, Perplexity, Gemini, and Google AI Overviews.",
+  "foundingDate": "2024-02-01",
+  "sameAs": [
+    "https://www.linkedin.com/company/acme-ai-example",
+    "https://twitter.com/acmeai_example",
+    "https://github.com/acme-ai-example",
+    "https://www.youtube.com/@acmeai-example",
+    "https://www.crunchbase.com/organization/acme-ai-example"
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "401 Pike Street, Suite 800",
+    "addressLocality": "Seattle",
+    "addressRegion": "WA",
+    "postalCode": "98101",
+    "addressCountry": "US"
+  },
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "email": "support@example.com",
+      "availableLanguage": ["English"],
+      "areaServed": "Worldwide"
+    },
+    {
+      "@type": "ContactPoint",
+      "contactType": "sales",
+      "email": "sales@example.com",
+      "availableLanguage": ["English"],
+      "areaServed": ["US", "CA", "EU", "UK"]
+    }
+  ]
+}

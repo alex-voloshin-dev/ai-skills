@@ -223,6 +223,7 @@ All agent spawns use structured payloads per `plugin/schemas/spawn-payload.schem
 
 - **`marketing-setup-template.md`** — full MARKETING.md template for init
 - **`channel-playbooks.md`** — platform-specific format rules (X, LinkedIn, Reddit, email, community)
+- Email templates in `assets/email-templates/{newsletter,launch,re-engagement,welcome-drip}.md`. ICP worksheet in `assets/icp-worksheet.md`.
 
 ## Integration
 

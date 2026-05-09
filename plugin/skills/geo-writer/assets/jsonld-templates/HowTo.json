@@ -1,0 +1,64 @@
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Add JSON-LD Structured Data to a Next.js Blog Post",
+  "description": "Add Article and FAQPage JSON-LD to a Next.js 15 blog route so that Google AI Overviews and Perplexity can cite the page. Tested on Next.js 15.2 with the App Router.",
+  "image": "https://example.com/tutorials/nextjs-jsonld/cover.png",
+  "totalTime": "PT25M",
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Existing Next.js 15 project with App Router"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "Article frontmatter (title, description, datePublished, author)"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Node.js 20 or later"
+    },
+    {
+      "@type": "HowToTool",
+      "name": "Google Rich Results Test"
+    },
+    {
+      "@type": "HowToTool",
+      "name": "schema.org validator"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Create the JSON-LD generator helper",
+      "text": "Add lib/jsonld.ts that exports buildArticleJsonLd(post) returning an Article object with @context, @type, headline, datePublished, dateModified, author, and publisher. Pull values from frontmatter; never hard-code titles.",
+      "image": "https://example.com/tutorials/nextjs-jsonld/step-1.png"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Inject the script tag in the route layout",
+      "text": "In app/blog/[slug]/page.tsx, render <script type=\"application/ld+json\" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonld) }} />. Place it in the <head> via the metadata API or directly in the component tree.",
+      "image": "https://example.com/tutorials/nextjs-jsonld/step-2.png"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Add FAQPage schema for any Q&A block",
+      "text": "If the post contains a FAQ section, build a parallel FAQPage object with mainEntity as an array of Question/Answer pairs. Question text must literally match the H3 in the prose so retrievers de-duplicate cleanly.",
+      "image": "https://example.com/tutorials/nextjs-jsonld/step-3.png"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Validate with Google Rich Results Test",
+      "text": "Deploy to a preview URL and paste it into search.google.com/test/rich-results. Confirm zero errors and zero warnings on Article and FAQPage. Fix any missing required fields (image, author.name, datePublished) before promoting to production.",
+      "image": "https://example.com/tutorials/nextjs-jsonld/step-4.png"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Verify ingestion in Search Console",
+      "text": "Within 7-14 days, check Search Console > Enhancements > Article and FAQ reports for valid items. If counts stay at zero, re-validate the URL with the URL Inspection tool and request indexing.",
+      "image": "https://example.com/tutorials/nextjs-jsonld/step-5.png"
+    }
+  ]
+}

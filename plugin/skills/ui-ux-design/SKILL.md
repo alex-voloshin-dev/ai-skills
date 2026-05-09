@@ -1,6 +1,7 @@
 ---
 name: ui-ux-design
 description: UI/UX design systems, Figma workflows, accessibility checklists, browser-based visual audit with automated screenshots, component specification patterns, and design-to-code handoff procedures. Use when designing interfaces, creating design systems, auditing accessibility, reviewing existing UI via browser screenshots, specifying components, or preparing design handoff for developers.
+disable-model-invocation: true
 ---
 
 # UI/UX Design
@@ -100,51 +101,22 @@ See `accessibility-checklist.md` for the comprehensive WCAG 2.2 AA audit checkli
 4. **Screen reader test** — do headings, landmarks, and alt text make sense?
 5. **Keyboard-only** — can you complete the primary task without a mouse?
 
-## Design-to-Code Handoff Template
+## Design-to-Code Handoff
 
-When handing off designs to developers, provide:
+See `assets/handoff-template.md` for the full handoff format — includes component inventory, W3C-format design tokens per component, WCAG 2.2 AA accessibility requirements (with the four new SCs: 2.4.11, 2.5.7, 3.3.7, 3.3.8), animation + reduced-motion contract, edge cases (empty/loading/error/overflow/RTL), browser/device support matrix, and engineer gotchas. Worked example: Button/Primary with measured contrast values and ARIA contract.
 
-```
-## Component: [Name]
+## Component Specification
 
-### Visual Spec
-- Dimensions: [width × height or fluid]
-- Spacing: [padding, margin in token values]
-- Colors: [background, text, border in token values]
-- Typography: [font, size, weight, line-height in token values]
-- Border: [width, style, color, radius in token values]
-- Shadow: [elevation token]
+See `assets/component-spec-template.md` for a single-component spec template aligned with Atomic Design, Material Design 3, and Apple HIG. Covers anatomy diagram, variants, props API table, composition rules, accessibility spec, states, responsive behavior, do/don't pairs, related components, and Figma/Storybook reference fields. Worked example: `Card` molecule.
 
-### Variants
-- [variant-name]: [visual differences]
+## Templates
 
-### States
-- Default: [spec]
-- Hover: [changes from default]
-- Focus: [focus indicator spec]
-- Active: [changes]
-- Disabled: [opacity, cursor, interaction]
-
-### Responsive Behavior
-- Mobile (< 640px): [layout changes]
-- Tablet (640–1024px): [layout changes]
-- Desktop (> 1024px): [default layout]
-
-### Interactions
-- [trigger] → [animation: property, duration, easing]
-
-### Accessibility
-- Role: [ARIA role if not implicit]
-- Keyboard: [key bindings]
-- Screen reader: [announcement text]
-
-### Code Reference
-- Component: `<ComponentName variant="..." size="..." />`
-- Tokens: `--token-name: value`
-```
+- `assets/handoff-template.md` — Design-to-Code handoff format.
+- `assets/component-spec-template.md` — Component specification format for design systems.
 
 ## Integration
 
 - **Follows rules**: `Agent(ui-ux-designer)` (design principles, accessibility, design systems)
-- **Used by workflows**: `/ui-ux-design` (primary), `/feature-dev` (UI features)
-- **Companion resources**: `design-system-checklist.md`, `figma-workflow.md`, `accessibility-checklist.md`, `visual-audit-checklist.md`
+- **Activation**: `@ui-ux-design` (knowledge skill loaded by the `ui-ux-designer` agent — not user-invoked)
+- **Used by workflows**: `/feature-dev` (UI features), `/develop` (when ui-ux-designer is in the team)
+- **Companion resources**: `design-system-checklist.md`, `figma-workflow.md`, `accessibility-checklist.md`, `visual-audit-checklist.md`, `assets/handoff-template.md`, `assets/component-spec-template.md`

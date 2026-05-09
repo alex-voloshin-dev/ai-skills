@@ -1,0 +1,19 @@
+{
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "Generative Engine Optimization (GEO)",
+  "alternateName": ["GEO", "AI search optimization"],
+  "description": "Generative Engine Optimization (GEO) is the practice of structuring web content so that LLM-based search engines such as ChatGPT, Claude, Perplexity, Gemini, and Google AI Overviews cite or quote it as a source. GEO optimizes for extraction rather than ranking: 30-180 word self-contained answer chunks, entity-first phrasing, named statistics with year, FAQ blocks paired with FAQPage JSON-LD, and off-site brand mentions across Reddit, YouTube, and LinkedIn.",
+  "termCode": "GEO",
+  "url": "https://example.com/glossary/generative-engine-optimization",
+  "inDefinedTermSet": {
+    "@type": "DefinedTermSet",
+    "name": "Acme AI Glossary of AI Search and Content Terms",
+    "url": "https://example.com/glossary",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Acme AI",
+      "url": "https://example.com"
+    }
+  }
+}

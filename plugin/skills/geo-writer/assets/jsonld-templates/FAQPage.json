@@ -1,0 +1,46 @@
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Generative Engine Optimization (GEO)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Generative Engine Optimization (GEO) is the practice of structuring web content so that LLM-based engines like ChatGPT, Claude, Perplexity, Gemini, and Google AI Overviews cite or quote it as a source. Unlike classic SEO, which optimizes for SERP rankings, GEO optimizes for extraction: 30-180 word self-contained chunks, entity-first phrasing, named statistics, and matching JSON-LD schema."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is GEO different from traditional SEO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Traditional SEO optimizes for crawlers and ranking signals (backlinks, keyword density, page speed). GEO optimizes for retrieval-augmented generation: extractable answer blocks, FAQ-matched JSON-LD, off-site brand mentions, and freshness within 24-72 hours for time-sensitive topics. SEO and GEO overlap on entity clarity and authoritative sourcing, but the surface area is different — citations vs clicks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which schema type gives the highest GEO lift?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "FAQPage schema produces the largest measured citation lift, with 3.1-3.2x higher extraction rate vs unstructured prose answering the same questions. Pair it with 4-8 questions per page, 8-20 words per question, and 40-80 word self-contained answers that match how users actually phrase prompts to LLMs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often should I refresh GEO-optimized content?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Refresh time-sensitive pages (algorithm updates, model releases) every 24-48 hours; FAQ blocks on pillar pages monthly; evergreen guides, glossary entries, and landing pages quarterly. Pages not refreshed quarterly lose AI citations at roughly 3x the normal rate. On every refresh, update dateModified in schema, add a visible Updated on line, and replace at least one statistic with a fresher one."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do off-site brand mentions matter for GEO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, more than backlinks. Off-site brand mentions correlate with AI visibility at 0.67 — stronger than any on-site factor — and beat backlinks roughly 3:1 for Google AI Overviews. A pillar topic should have at least one Reddit post or comment in a relevant subreddit, one YouTube video with descriptive chapters, and one LinkedIn long-form post for B2B visibility."
+      }
+    }
+  ]
+}

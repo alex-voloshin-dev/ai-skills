@@ -78,15 +78,23 @@ Comparison articles lead citation rates at ~32.5% across all formats.
 
 ### By content type
 
-| Content type | Required schema | Notes |
-|---|---|---|
-| Article / blog | `Article` + `Person` (author) | `datePublished`, `dateModified`, `author.sameAs` |
-| Pillar / guide with Q&A | `Article` + `FAQPage` | Questions must literally match prompt phrasing |
-| Tutorial / walkthrough | `HowTo` | `step` array with 3-8 steps |
-| Product / tool page | `Product` or `SoftwareApplication` | `aggregateRating` if honest data exists |
-| Glossary entry | `DefinedTerm` in `DefinedTermSet` | |
+| Content type | Required schema | Pre-built template | Notes |
+|---|---|---|---|
+| Article / blog | `Article` + `Person` (author) | `assets/jsonld-templates/Article.json` + `Person.json` | `datePublished`, `dateModified`, `author.sameAs` |
+| Pillar / guide with Q&A | `Article` + `FAQPage` | `assets/jsonld-templates/FAQPage.json` | Questions must literally match prompt phrasing |
+| Tutorial / walkthrough | `HowTo` | `assets/jsonld-templates/HowTo.json` | `step` array with 3-8 steps |
+| Product / tool page | `Product` or `SoftwareApplication` | `assets/jsonld-templates/Product.json` or `SoftwareApplication.json` | `aggregateRating` if honest data exists |
+| Glossary entry | `DefinedTerm` in `DefinedTermSet` | `assets/jsonld-templates/DefinedTerm.json` | |
+| Site-level (homepage) | `Organization` + `WebSite` | `assets/jsonld-templates/Organization.json` + `WebSite.json` | `WebSite.potentialAction` enables sitelinks search box |
+| Non-homepage URL | `BreadcrumbList` | `assets/jsonld-templates/BreadcrumbList.json` | One ListItem per crumb, position 1..N |
 
 **FAQPage** is the single highest-leverage schema: 4-8 questions per page, 8-20 words each; answers 40-80 words, self-contained, matching the prompt phrasing; never duplicate marketing copy. Validate in Google Rich Results Test and schema.org/validator.
+
+### Schema templates
+
+Pre-built JSON-LD templates with realistic example values live in `assets/jsonld-templates/`. Copy the file matching your content type, replace example values with project-specific data (canonical brand from `marketing/MARKETING.md`, real URLs, real `datePublished`/`dateModified`), and embed inside `<script type="application/ld+json">`. Each template has a valid `@context` + `@type` root and validates conceptually in Google Rich Results Test before any project data is added.
+
+Available templates: `Article.json`, `FAQPage.json`, `HowTo.json`, `Person.json`, `Organization.json`, `WebSite.json`, `BreadcrumbList.json`, `Product.json`, `SoftwareApplication.json`, `DefinedTerm.json`.
 
 ## Entities and Brand Signals
 
