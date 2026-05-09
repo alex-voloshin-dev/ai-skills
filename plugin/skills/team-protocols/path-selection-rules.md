@@ -67,6 +67,8 @@ Observed failure modes (do NOT repeat any of these):
 
   When tmux/iTerm2 is unavailable (e.g., Windows host without WSL), Path B still works in `in-process` display mode. The Lead MUST pass `teammate-mode in-process` in the team-creation prompt and proceed. Do NOT downgrade to Path A.
 
+- **alpha.31 — `in-process` teammate-idle flake**: in `teammate-mode in-process`, a downstream teammate (most often the Reviewer, also seen on QA) gets its task unblocked by `dependsOn` auto-claim but silently sits idle — no transcript activity, no file reads, no return. This is a known flake of the alpha Agent Teams API and is **NOT** a valid reason to downgrade to Path A. Mitigation lives in `lead-protocol.md` "Path B Liveness — Explicit Hand-off + Watchdog": the Lead pushes an explicit hand-off message at every stage transition, runs a ~90s watchdog with up to 2 retry nudges, and escalates to the user after 3 nudges. A per-task Agent fallback (this WP only, remainder stays in Path B) is permitted **only** when the user explicitly picks that option from the escalation prompt — never as a silent automatic downgrade.
+
 Path B's value is user-facing UX, not parallelism:
 
 - **Visual team panel** in the terminal — user sees all teammates at once (works in in-process mode too — the panel is below the prompt input)

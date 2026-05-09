@@ -1,6 +1,6 @@
 ---
 name: plugin-doctor
-description: Self-diagnostic for the ai-assets plugin — validates skill frontmatter, hook executability, run-log parseability, and judge calibration. Default mode is fast and cost-free; --calibrate-judge is opt-in (Round 4 O4). Use after install, after upgrades, or when something feels off.
+description: Self-diagnostic for the ai-assets plugin — validates skill frontmatter, hook executability, run-log parseability, and judge calibration. Default mode is fast and cost-free; --calibrate-judge is opt-in (Round 4 O4). Use when installing the plugin, upgrading to a new version, or troubleshooting unexpected plugin behavior.
 context: fork
 argument-hint: "[--calibrate-judge | --runs --last N | --health-trends]"
 ---
@@ -33,7 +33,11 @@ Reports calibration as `not yet run; use /plugin-doctor --calibrate-judge to run
 
 ### `--calibrate-judge` (explicit opt-in)
 
-Runs Spearman correlation per rubric against `plugin/eval/calibration/<rubric>/` samples (shipped in B10a). Errors clearly when samples missing or count too low (< 4 per rubric):
+Delegates to the Tier 2 smoke runner — `plugin/eval/runner.py --tier 2` — which performs a **score-band tolerance check** against `plugin/eval/calibration/<rubric>/` samples (shipped in B10a). For each sampled rubric, the Haiku judge scores known good + known bad samples and the result must land within ±0.5 of the expected score encoded in the filename (`<scenario>.score-X.X.md`).
+
+Catches three drift classes: rubric edits that break scoring, judge-model version changes, and calibration-sample edits that move them out of band.
+
+Errors clearly when samples are missing or count too low (< 4 per rubric):
 
 ```
 ERROR: Insufficient calibration samples at plugin/eval/calibration/<rubric>/.
@@ -41,7 +45,7 @@ ERROR: Insufficient calibration samples at plugin/eval/calibration/<rubric>/.
        See plugin/docs/concepts/eval.md for guidance.
 ```
 
-Spearman < 0.7 triggers a Sonnet judge override flag in subsequent eval runs.
+Requires `ANTHROPIC_API_KEY` and the `anthropic` Python SDK; without them the run reports `DRY-RUN ONLY` and skips real judge calls. Default sample plan (seed 42): 10 rubrics × 2 samples = 20 judge calls. Override with `--seed`, `--sample-rubrics`, `--samples-per-rubric` on `runner.py`.
 
 ## Other modes
 
@@ -70,12 +74,14 @@ Context health summary per Round 4 G8 — over the last 30 days:
 ## Failure modes
 
 - **No `.ai-assets-memory/`:** report as "first run — no history yet"; suggest `/ai-assets-init`
-- **Hook script missing executable bit on Unix:** report as warning (Windows ignores); suggest `chmod +x`
+- **Hook script missing executable bit:** **expected** since v0.3.3. Hooks are invoked via the wrapper form `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/<name>.py` (commit `4ea3347`), which does not need the exec bit. Reverting to the bare `${CLAUDE_PLUGIN_ROOT}/...` form would re-introduce the v0.3.2 "Permission denied" install bug. Report this as `INFO` only, not as a warning.
+- **`hooks.json` command starts with `python3 ${CLAUDE_PLUGIN_ROOT}/...` rather than `${CLAUDE_PLUGIN_ROOT}/...`:** **expected** since v0.3.3 — same reason as above. The Tier 1 linter (`plugin/eval/runner.py`) accepts both forms by searching for the placeholder substring rather than requiring it at position 0. If a third-party validator still flags the wrapper form, treat it as a linter-bug, not a plugin-bug.
+- **`marketplace.json` missing at the cache root (`~/.claude/plugins/cache/<owner>/<plugin>/.claude-plugin/marketplace.json`):** **expected** in `claude --plugin-dir` install mode. The repo-level `/<repo>/.claude-plugin/marketplace.json` is the source-of-truth and is consumed only by `/plugin marketplace add`. `--plugin-dir` is the supported install mode for local development of this repo (per repo `README.md` and `CLAUDE.md`); the cache-root warning can be ignored unless distributing via marketplace.
 - **Run log too large to parse fully:** stream-parse last 1000 lines; report partial stats with "(last 1000 events)" note
 
 ## Integration
 
 - **Reads**: every file under `plugin/` for lints; `.ai-assets-memory/runs.jsonl`, `plugin-doctor.log` for summaries
-- **Calls**: `eval/runner.py --tier 1` (Tier 1 linters); `eval/runner.py --calibrate` if `--calibrate-judge`
+- **Calls**: `eval/runner.py --tier 1` (Tier 1 linters); `eval/runner.py --tier 2` if `--calibrate-judge`
 - **Memory writes**: `.ai-assets-memory/plugin-doctor.log` (audit trail)
 - **Used by**: developers post-install, CI smoke before merge

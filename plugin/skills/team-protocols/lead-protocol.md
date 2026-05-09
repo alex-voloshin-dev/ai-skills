@@ -29,6 +29,29 @@ The Lead MUST verify each gate transition:
 
 The Lead validates every spawn payload against `plugin/schemas/spawn-payload.schema.json` before invoking the `Agent` tool. The Lead validates every return contract (received as the `Agent` call's return value) against `plugin/schemas/return-contract.schema.json` before passing data to the next stage. Validation failures are surfaced as a `[lead] G7 schema violation: <details>` diagnostic and the Lead re-spawns the originating agent with a corrected prompt. Per `subagent-isolation.md`.
 
+## Path B Liveness — Explicit Hand-off + Watchdog
+
+Applies to Path B (Agent Teams) only. Downstream teammates (Reviewer, QA) are wired to auto-claim via `dependsOn`, but in alpha `in-process` mode they sometimes go silently idle and never pick the task up. The Lead MUST NOT rely on implicit pull alone:
+
+1. **Explicit hand-off (push).** As soon as a Developer's task transitions to `completed`, the Lead sends a direct message to the next teammate naming the task and the changed files: `"WP-N dev finished, claim review-N now. Changed files: <paths>."` Same template for the Reviewer → QA hand-off. The `dependsOn` auto-claim stays as a backup, not the primary trigger.
+
+2. **Liveness watchdog.** ~90 seconds after the hand-off the Lead checks the downstream task: if it is still `pending` / `in_progress` with no transcript activity and no file reads, the Lead sends a second nudge with the same payload plus `"Teammate appears idle — please confirm receipt and start <review|qa>."` After another ~90 seconds, a third and final nudge. Maximum 2 retry nudges after the initial hand-off.
+
+3. **Escalation after 3 nudges.** If the teammate is still silent after the initial hand-off plus 2 retry nudges (~4.5 min total), this is a documented Path B teammate-idle flake — see `path-selection-rules.md` Observed failure modes. The Lead MUST NOT silently downgrade the whole session to Path A. Instead, halt and surface to the user:
+
+   ```text
+   [lead] Path B <reviewer|qa> idle after 3 nudges (~4.5 min) on WP-N. Options:
+   1. Wait longer
+   2. Respawn the teammate in the team
+   3. Run <review|qa> for this WP via per-task Agent fallback (degraded mode, this WP only)
+   ```
+
+   Only a user-approved option 3 is a legitimate per-task Path A fallback. The remainder of the pipeline continues in Path B.
+
+4. **Logging.** Every nudge and its outcome MUST be recorded in `REVIEW-LOG.md` (free-form Notes or an extra "Liveness events" line per affected WP) so future runs can spot systemic flake.
+
+Watchdog applies ONLY to teammates that auto-claim via `dependsOn` (Reviewer, QA). Developer hand-offs are already explicit, so no watchdog is needed for them.
+
 ## Escalation
 
 - If 3 review iterations pass without approval — escalate to the user for decision

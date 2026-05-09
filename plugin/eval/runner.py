@@ -46,7 +46,21 @@ CHAR_LIMIT_RULE = 12_000
 
 PLUGIN_ROOT = pathlib.Path(os.environ.get("CLAUDE_PLUGIN_ROOT") or pathlib.Path(__file__).resolve().parent.parent)
 
-USE_WHEN_RE = re.compile(r"\bUse when\b|\bUse this\b|\bUse to\b|\bUse for\b|\bUse before\b|\bActivated when\b|\bUse standalone\b|\btrigger when\b|\btrigger whenever\b", re.IGNORECASE)
+USE_WHEN_RE = re.compile(
+    r"\bUse when\b"
+    r"|\bUse this\b"
+    r"|\bUse to\b"
+    r"|\bUse for\b"
+    r"|\bUse before\b"
+    r"|\bUse after\b"
+    r"|\bUse only when\b"
+    r"|\bUse\s+\w+\s+when\b"          # "Use ONLY when", "Use it when", etc.
+    r"|\bActivated when\b"
+    r"|\bUse standalone\b"
+    r"|\btrigger when\b"
+    r"|\btrigger whenever\b",
+    re.IGNORECASE,
+)
 
 SKILL_NAME_RE = re.compile(r"^[a-z0-9-]+$")
 
@@ -119,10 +133,14 @@ def lint_skill(path: pathlib.Path, findings: list[Finding]) -> None:
 
     if not desc:
         findings.append(Finding("CRITICAL", str(path), "frontmatter missing required `description` field"))
-    elif not USE_WHEN_RE.search(desc):
-        # Skip H5 check for non-invocable utility skills explicitly opting out
-        if "disable-model-invocation: true" not in text:
-            findings.append(Finding("WARNING", str(path), "description lacks `Use when` trigger pattern (H5)"))
+    else:
+        # Normalize whitespace so multi-line YAML scalars (`description: >-`) match
+        # the same way as single-line descriptions.
+        desc_normalized = re.sub(r"\s+", " ", desc)
+        if not USE_WHEN_RE.search(desc_normalized):
+            # Skip H5 check for non-invocable utility skills explicitly opting out
+            if "disable-model-invocation: true" not in text:
+                findings.append(Finding("WARNING", str(path), "description lacks `Use when` trigger pattern (H5)"))
 
 
 def lint_rule(path: pathlib.Path, findings: list[Finding]) -> None:
@@ -183,17 +201,23 @@ def lint_hooks_json_refs(plugin_root: pathlib.Path, findings: list[Finding]) -> 
     if not isinstance(hooks_block, dict):
         findings.append(Finding("CRITICAL", str(hooks_path), "`hooks` key must be an object"))
         return
+    # Accept either bare `${CLAUDE_PLUGIN_ROOT}/...` or the v0.3.3 wrapper form
+    # `python3 ${CLAUDE_PLUGIN_ROOT}/...` (and `python3 -X ${...}` variants).
     placeholder = "${CLAUDE_PLUGIN_ROOT}"
+    placeholder_re = re.compile(r"\$\{CLAUDE_PLUGIN_ROOT\}/(\S+)")
     for event, entries in hooks_block.items():
         if not isinstance(entries, list):
             continue
         for entry in entries:
             for h in entry.get("hooks", []):
                 cmd = h.get("command", "")
-                if not cmd.startswith(placeholder):
-                    findings.append(Finding("WARNING", str(hooks_path), f"event {event}: command does not start with {placeholder}: {cmd}"))
+                match = placeholder_re.search(cmd)
+                if not match:
+                    findings.append(Finding("WARNING", str(hooks_path), f"event {event}: command does not reference {placeholder}: {cmd}"))
                     continue
-                rel = cmd.replace(placeholder + "/", "")
+                rel = match.group(1)
+                # Strip trailing argument tokens — only the first whitespace-bounded
+                # path after the placeholder is the script reference.
                 target = plugin_root / rel
                 if not target.exists():
                     findings.append(Finding("CRITICAL", str(hooks_path), f"event {event}: command references missing script: {rel}"))

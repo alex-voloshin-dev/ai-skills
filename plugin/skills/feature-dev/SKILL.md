@@ -1,6 +1,6 @@
 ---
 name: feature-dev
-description: Single-agent fallback for feature implementation. Detects tech stack, applies one engineering role inline (no Developer/Reviewer/QA spawning). Use ONLY when explicit single-agent inline execution is requested or `/develop` is impractical for the situation — the canonical Anthropic `Agent` tool is always available in modern Claude Code, so `/develop` (multi-agent pipeline) should be the default.
+description: Single-agent fallback for feature implementation. Detects tech stack, applies one engineering role inline (no Developer/Reviewer/QA spawning). Use when explicit single-agent inline execution is requested or `/develop` is impractical for the situation — the canonical Anthropic `Agent` tool is always available in modern Claude Code, so `/develop` (multi-agent pipeline) should be the default and this fallback should be selected only on a documented technical block.
 context: fork
 argument-hint: [PRD path or feature description]
 ---
