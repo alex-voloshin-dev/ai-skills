@@ -32,7 +32,7 @@ One-time (or re-runnable) setup for a target repo. Detects codebase type, scaffo
 
 | Flag | Default | Effect |
 |---|---|---|
-| `--codebase-type` | auto-detect | `python-flask`, `python-fastapi`, `nodejs-express`, `nodejs-nextjs`, `java-spring`, `go`, `ruby-rails`, `rust`, `dotnet`, `mixed`, `generic` |
+| `--codebase-type` | auto-detect | `python-flask`, `python-fastapi`, `nodejs-express`, `nodejs-nextjs`, `astro`, `sveltekit`, `remix`, `nodejs-bun`, `deno`, `java-spring`, `kotlin-spring`, `kotlin-ktor`, `elixir-phoenix`, `go`, `ruby-rails`, `rust`, `dotnet`, `mixed`, `generic` |
 | `--overwrite` | false | If `CLAUDE.md` already exists, OVERWRITE with fresh scaffold. Default: skip if exists |
 
 ## Output
@@ -53,7 +53,9 @@ One-time (or re-runnable) setup for a target repo. Detects codebase type, scaffo
 ```
 ┌─ Auto-detect codebase type:
 │  └─ Check for: Pipfile, pyproject.toml, package.json, pom.xml,
-│     go.mod, Cargo.toml, Gemfile, *.csproj
+│     build.gradle.kts, go.mod, Cargo.toml, Gemfile, mix.exs,
+│     *.csproj, astro.config.mjs, svelte.config.js, remix.config.js,
+│     bun.lockb / bunfig.toml, deno.json / deno.jsonc / deps.ts
 │     Multiple matches → mixed; none → generic
 │
 ├─ Generate CLAUDE.md scaffold:
@@ -63,7 +65,8 @@ One-time (or re-runnable) setup for a target repo. Detects codebase type, scaffo
 │     Leave blank for user: business context, architectural decisions
 │
 ├─ Generate (optional) AGENTS.md:
-│  └─ List the 26 plugin agents with brief role descriptions
+│  └─ List all plugin agents enumerated from `plugin/agents/`
+│     (count auto-tracks future additions) with brief role descriptions
 │     User can override / add per-repo customization
 │
 ├─ Create .ai-assets-memory/ tree (delegate to /memory-init logic):
@@ -84,6 +87,19 @@ One-time (or re-runnable) setup for a target repo. Detects codebase type, scaffo
 ```
 
 No RALF — scaffolding is one-pass; idempotent so safe to re-run.
+
+## Codebase-type detection markers + template deltas
+
+| Type | Markers | CLAUDE.md template deltas |
+|---|---|---|
+| `astro` | `astro.config.mjs`; `package.json` has `"astro"` dep | Primary role: `frontend-engineer`. Note SSG/SSR/hybrid mode. Likely Tailwind / shadcn-ui. Playwright for E2E |
+| `sveltekit` | `svelte.config.js`; `package.json` has `"@sveltejs/kit"` dep | Primary role: `frontend-engineer`. Note SSR/SSG modes. Tailwind / shadcn-ui likely. Playwright for E2E |
+| `remix` | `remix.config.js`; `package.json` has `"@remix-run/*"` deps | Primary role: `frontend-engineer`. Note SSR-first full-stack. Tailwind / shadcn-ui likely. Playwright for E2E |
+| `nodejs-bun` | `bun.lockb` or `bunfig.toml` | Use `bunx` over `npx`. Native TypeScript (no `tsc` step). Native test runner (`bun test`) |
+| `deno` | `deno.json` / `deno.jsonc`; `deps.ts` | Use `deno run` / `deno test`. Built-in TS. Document the permissions model (`--allow-net`, `--allow-read`, …) |
+| `elixir-phoenix` | `mix.exs` with `:phoenix` dep | Primary role: `elixir-engineer` (NOT `software-engineer` for stack-specific work). ExUnit for tests. `mix release` for deploy |
+| `kotlin-spring` | `build.gradle.kts` + `kotlin` plugin + Spring deps | Primary role: `java-engineer`. Gradle Kotlin DSL. JUnit + Kotlin idioms |
+| `kotlin-ktor` | `build.gradle.kts` + `io.ktor` deps | Primary role: `java-engineer`. Ktor coroutines model. H2 + Exposed common stack |
 
 ## Hard rules
 

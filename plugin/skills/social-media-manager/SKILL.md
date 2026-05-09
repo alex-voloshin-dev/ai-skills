@@ -1,6 +1,6 @@
 ---
 name: social-media-manager
-description: Create social media posts across X/Twitter, LinkedIn, and Facebook. Use when the user asks to draft, write, or improve tweets, threads, LinkedIn posts, Facebook posts, promote a blog post, share on social, or repurpose content for social channels. Reads brand context from marketing/MARKETING.md at runtime.
+description: Create social media posts across X/Twitter, LinkedIn (posts + newsletters), Facebook, Threads, and Bluesky. Use when the user asks to draft, write, or improve tweets, threads, LinkedIn posts, LinkedIn newsletter issues, Facebook posts, Threads posts, Bluesky posts, promote a blog post, share on social, or repurpose content for social channels. Reads brand context from marketing/MARKETING.md at runtime.
 ---
 
 # Social Media Manager
@@ -87,38 +87,10 @@ more engagement than third-person education ("most sites have", "studies show").
 
 ## Anti-AI patterns (humanizer rules)
 
-Every post must pass these checks before being finalized. AI-generated
+Every post must pass a humanizer pass before being finalized. AI-generated
 social media posts are immediately recognizable and get less engagement.
 
-**Patterns to avoid:**
-
-- **Rule of three**: Don't force ideas into groups of three
-  ("innovation, inspiration, and industry insights"). Use two or four instead.
-- **"Here's..." repetition**: Don't start every CTA with "Here's how/what/why".
-  Vary the bridge language.
-- **Em dash overuse**: Use commas or periods instead of — dashes.
-- **Promotional vocabulary**: Never use "groundbreaking", "game-changing",
-  "revolutionary", "best-in-class", "synergy", "leverage", "delve",
-  "crucial", "landscape", "pivotal", "showcase", "testament", "underscore",
-  "vibrant", "tapestry", "foster", "garner", "interplay", "intricate".
-- **Negative parallelisms**: Don't write "It's not just X, it's Y" or
-  "Not only X, but also Y".
-- **Superficial -ing phrases**: Don't tack on "highlighting", "showcasing",
-  "emphasizing", "underscoring", "fostering" to add fake depth.
-- **Copula avoidance**: Use "is/are/has" instead of "serves as", "stands as",
-  "functions as", "marks a".
-- **Generic conclusions**: No "the future looks bright", "exciting times ahead".
-- **Sycophantic tone**: No "Great question!", "Absolutely!", "I hope this helps!".
-- **Filler phrases**: No "in order to", "it is important to note",
-  "at this point in time", "due to the fact that".
-
-**Patterns to use:**
-
-- Vary sentence length (short. then longer when explaining something).
-- Use specific numbers and names instead of vague claims.
-- Have opinions. "This surprised us" is more human than neutral reporting.
-- Acknowledge uncertainty when appropriate ("we're not sure yet why").
-- First-person where it fits ("we tested", "I keep coming back to").
+Apply `@humanizer` skill — runs the AI-pattern catalogue + Adding Soul transformations. See `humanizer/SKILL.md` for the 25-pattern reference.
 
 ## Character limits
 
@@ -130,7 +102,10 @@ shrink the font. Shorter and punchier always beats longer and thorough.
 | X main tweet | 280 chars max | Platform hard limit |
 | X thread reply | 280 chars max | Platform hard limit |
 | LinkedIn post | 1,300-1,900 chars | Sweet spot for engagement. Below 1,300 is too thin. Above 1,900 loses readers and dwell time drops. |
+| LinkedIn newsletter | up to ~100,000 chars | Long-form thought leadership format with email + in-feed delivery to subscribers. |
 | Facebook post | Under 1,000 chars | Facebook audience skims. Shorter = more engagement. |
+| Threads post | 500 chars max | Platform hard limit. Conversational tone. |
+| Bluesky post | 300 chars max | Platform hard limit. |
 
 After writing any LinkedIn post, count the characters. If over 1,900, trim.
 Sacrifice detail, not the hook or the CTA. The middle section (method,

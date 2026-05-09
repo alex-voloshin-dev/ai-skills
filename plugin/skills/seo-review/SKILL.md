@@ -70,7 +70,7 @@ For each target page:
 | Internal links | Present, descriptive anchor text |
 | Outbound links | Qualified with `rel` attributes where needed |
 
-### 3d. Structured Data
+### 3d. Structured Data + E-E-A-T Author Signals
 
 - JSON-LD present where applicable:
   - `Organization` / `WebSite` on homepage
@@ -81,7 +81,16 @@ For each target page:
 - Structured data matches visible page content (no misleading markup)
 - Validate with [Rich Results Test](https://search.google.com/test/rich-results)
 
-### 3e. Core Web Vitals
+E-E-A-T author signals (Experience, Expertise, Authoritativeness, Trustworthiness — see [Google's helpful content guidance](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)):
+
+- `Person` schema on every blog post with `sameAs` linking to author's LinkedIn, Wikipedia, personal site, or X profile
+- `dateModified` current — refresh evergreen content within rolling 6 months
+- Author byline pages exist, are crawlable (not `noindex`), and link from each post
+- `Organization` schema on author pages reinforces publisher trust
+
+### 3e. Core Web Vitals + Mobile + Modern Transport
+
+Mobile-first indexing is universal in 2026 — mobile checks fold into CWV.
 
 | Metric | Target | Tool |
 |---|---|---|
@@ -89,21 +98,61 @@ For each target page:
 | INP (Interaction to Next Paint) | < 200ms | PageSpeed Insights |
 | CLS (Cumulative Layout Shift) | < 0.1 | PageSpeed Insights |
 
-### 3f. Mobile Optimization
+Mobile rendering:
 
-- Responsive design across viewports
-- Tap targets ≥ 48×48px
-- No horizontal scrolling
-- Font size ≥ 16px body text
+- Responsive across viewports, no horizontal scroll
+- Tap targets ≥ 48×48px, body font ≥ 16px
 - No intrusive interstitials
 
-### 3g. AI Search Readiness
+Modern transport baseline (verify with `curl -I --http3` or browser devtools):
+
+- HTTP/3 (QUIC) enabled at the edge
+- TLS 1.3 served (TLS 1.2 acceptable as fallback; 1.0/1.1 disabled)
+- HSTS header set on production hostnames
+
+### 3f. AI Search Readiness
 
 - Pages crawlable and well-structured (SSR/SSG, semantic HTML)
 - Content is clear, factual, and authoritative
 - Structured data present and accurate
-- `llms.txt` present (optional, experimental — not a ranking factor)
+- `llms.txt` present — recommended for AI-search visibility as an active discovery signal for AI engines (format: [llmstxt.org](https://llmstxt.org/)). Google still does not honor it, but ChatGPT, Claude, and Perplexity surface it.
 - Pages indexed and snippet-eligible (prerequisite for AI features)
+
+### 3g. AI Bot Accessibility
+
+The most-broken 2026 SEO/GEO surface: AI crawlers silently 403'd by CDN/WAF rules. Verify `robots.txt` allows current AI bots and that the edge layer (Cloudflare, Akamai, Fastly) is not blocking them.
+
+Required `robots.txt` allowlist:
+
+```
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: OAI-SearchBot
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: meta-externalagent
+Allow: /
+```
+
+CDN/WAF check — Cloudflare "Bot Fight Mode" and the "AI Scrapers and Crawlers" managed rule are the most common silent blockers. Either disable the rule or add explicit allow rules per AI bot UA string.
+
+Verify each bot returns 200, not 403:
+
+```bash
+curl -A "GPTBot" https://example.com/ -I
+curl -A "ClaudeBot" https://example.com/ -I
+curl -A "Perplexity-User" https://example.com/ -I
+curl -A "Google-Extended" https://example.com/ -I
+```
+
+Bot UA references (sources change — re-check on audit):
+
+- OpenAI GPTBot — [platform.openai.com/docs/bots](https://platform.openai.com/docs/bots)
+- Anthropic ClaudeBot — [docs.anthropic.com/en/docs/agents-and-tools/web-search-tool/bot-info](https://docs.anthropic.com/en/docs/agents-and-tools/web-search-tool/bot-info)
+- Google-Extended — [developers.google.com/search/docs/crawling-indexing/overview-google-crawlers](https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers)
+- Perplexity — [docs.perplexity.ai/guides/bots](https://docs.perplexity.ai/guides/bots)
 
 ### 3h. GEO/AEO Audit
 
@@ -141,10 +190,11 @@ Compile audit results:
 - Crawlability: [OK / issues found]
 - Indexability: [OK / issues found]
 - On-Page SEO: [OK / issues found]
-- Structured Data: [OK / missing / errors]
-- Core Web Vitals: [LCP: Xs, INP: Xms, CLS: X.XX]
-- Mobile: [OK / issues found]
-- AI Search: [OK / opportunities]
+- Structured Data + E-E-A-T: [OK / missing / errors]
+- Core Web Vitals + Mobile + Transport: [LCP: Xs, INP: Xms, CLS: X.XX, HTTP/3: y/n, TLS 1.3: y/n]
+- AI Search Readiness: [OK / opportunities]
+- AI Bot Accessibility: [200 per bot / 403 found on: bot list]
+- GEO/AEO: [OK / opportunities]
 ```
 
 Wait for user to review and approve which fixes to implement.

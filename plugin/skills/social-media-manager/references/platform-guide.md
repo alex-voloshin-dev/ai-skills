@@ -1,9 +1,10 @@
 # Platform Guide — 2026 Algorithm Rules & Post Formats
 
-Last updated: 2026-03-23
+Last updated: 2026-05-08
 
 This guide is based on research of current 2026 algorithm behavior across
-all three platforms. Algorithm rules change — re-research quarterly.
+the major platforms (X, LinkedIn, Facebook, Threads, Bluesky). Algorithm
+rules change — re-research quarterly.
 
 **Note**: Replace `your-domain.com` with the actual product domain from
 `marketing/MARKETING.md` when writing posts.
@@ -21,10 +22,20 @@ all three platforms. Algorithm rules change — re-research quarterly.
 - **Images/videos**: +40% engagement over text-only tweets.
 - **Threads** (4-8 tweets): best format for educational B2B content.
   1-2 threads per week recommended.
-- **Hashtags**: 1-2 max. More hurts reach. Some data suggests zero is fine.
+- **Hashtags**: 0-2 max (down from 1-3 in earlier eras). Zero hashtags often
+  performs the same or better. More than 2 actively hurts reach.
 - **Personal accounts**: 5x more engagement than company pages.
 - **Best posting times**: Tuesday-Thursday mornings (audience timezone).
-- **Engagement signals**: replies > retweets > likes. Prompt replies.
+- **Engagement weights** (per 2026 algorithm research):
+  - Reply ≈ 27× a like
+  - Bookmark ≈ 100× a like
+  - Conversation participation (multi-reply thread engagement) ≈ 150× a like
+  - Retweet sits between reply and like
+- **Grok tone scoring**: positive / constructive / informative posts get a
+  distribution boost. Combative, dunking, or rage-bait content is dampened.
+  Write like a thoughtful peer, not a culture-war combatant.
+- **Posting cadence**: 2-5 posts/day for B2B accounts. Personal-brand creators
+  often run higher (5-15/day). Below 1/day is invisible.
 
 ### Post format
 
@@ -148,6 +159,24 @@ Don't use generic "What do you think?" — be specific:
 - Ask a question relevant to the product's problem space
 - Options should include: manual approach / tool approach / "I don't" / awareness check
 
+**Newsletter** (one of the strongest 2026 LinkedIn organic formats):
+- Subscribers get an email AND an in-feed notification on every issue —
+  no other LinkedIn format gets this dual delivery.
+- Character limit: 100,000+ per issue (vs 1,300-1,900 for posts), so this
+  is the place for long-form thought leadership.
+- Native commenting + per-issue analytics (subscribers, opens, reads).
+- Best for: weekly or monthly cadence on a single sharp topic.
+- Cadence discipline matters — skipping weeks erodes the email-open habit
+  faster than it hurts the in-feed reach of regular posts.
+- Pick a narrow angle ("AI search visibility weekly") rather than a generic
+  one ("Marketing thoughts"). Subscribers commit to the topic, not the author.
+
+**LinkedIn Articles** (NOT the same as Newsletters):
+- Permanent long-form posts with no subscriber model and no email push.
+- Falling out of favor in 2026 — reach is meaningfully lower than both
+  feed posts and newsletter issues. Treat as archival / SEO-only, not as
+  a growth channel.
+
 ---
 
 ## Facebook
@@ -204,15 +233,97 @@ Be honest about this in recommendations.
 
 ---
 
+## Threads (Meta)
+
+Launched 2023, scaled hard through 2024-2026. Now a real distribution
+channel, not a curiosity.
+
+### Algorithm rules (2026)
+
+- **Character limit**: 500 chars per post (longer than X, shorter than LinkedIn).
+- **Original posts and replies** get the strongest distribution. Reposts
+  (shares of someone else's Thread) get noticeably less reach.
+- **Cross-posting from Instagram** is supported and convenient, but the
+  algorithm tends to throttle reach on cross-posted content vs Threads-native
+  posts. Native authoring wins.
+- **Tone**: the platform skews conversational, brand-voice, community-driven.
+  Not a great direct-response channel — CTAs that work on X often feel
+  pushy here.
+- **Best use case**: secondary distribution for X / Twitter content, plus
+  voice-and-personality posts that don't fit anywhere else. Repurpose top
+  X posts as standalone Threads (don't link, just rewrite).
+
+### Post format
+
+```
+## Post (≤500 chars, no links, conversational)
+
+[Hook: observation or question, casual tone]
+[Body: the thought / micro-story / data point]
+[Optional: light invitation to reply, no hard CTA]
+```
+
+### What to avoid on Threads
+
+- Don't paste an X post verbatim — the audience is more casual, the tone
+  needs softening.
+- Don't lead with a CTA. Lead with a thought.
+- Don't over-hashtag. 0-1 hashtag is the norm.
+
+---
+
+## Bluesky
+
+Open-protocol (AT Protocol) network, growing steadily through 2024-2026.
+Smaller audience than X, but the audience is concentrated in tech,
+open-source, and journalism communities.
+
+### Algorithm rules (2026)
+
+- **Character limit**: 300 chars per post.
+- **Default feed**: chronological. Custom feeds (algorithmic, topic-based,
+  community-curated) are first-class — users can subscribe to many.
+- **Lower noise** than X — replies tend to be substantive, less rage-bait —
+  but the audience is meaningfully smaller, so absolute reach is lower.
+- **Federated**: posts can be syndicated across multiple instances on the
+  AT Protocol. A single post can reach beyond the default Bluesky app.
+- **Starter packs**: curated lists of accounts for new users to follow as
+  a bundle. Getting into a relevant starter pack is one of the strongest
+  growth levers on the platform.
+- **Best for**: tech, open-source, journalism, AI research, indie-hacker
+  audiences. Not the right channel for mass-market consumer B2C.
+
+### Post format
+
+```
+## Post (≤300 chars, no links in body, plain conversational tone)
+
+[Hook: observation, finding, or question]
+[Body: the substance, in 1-2 short sentences]
+[Optional: domain mention as plain text — no clickable URL]
+```
+
+### What to avoid on Bluesky
+
+- Don't import an X marketing playbook wholesale — the community reads
+  promotional patterns quickly and pushes back.
+- Don't expect X-scale reach. Optimize for community fit, not virality.
+- Don't ignore custom feeds — being included in a relevant topic feed
+  can outperform the default chronological view.
+
+---
+
 ## Cross-platform rules
 
 ### Post scheduling
 
 | Platform | Best days | Best times | Frequency |
 |----------|-----------|------------|-----------|
-| X/Twitter | Tue-Thu | Morning | 1-2 posts/day, 1-2 threads/week |
-| LinkedIn | Tue-Thu | 8-10am | 1 post/day |
+| X/Twitter | Tue-Thu | Morning | 2-5 posts/day (B2B), 1-2 threads/week |
+| LinkedIn | Tue-Thu | 8-10am | 1 post/day; newsletter weekly or monthly |
 | Facebook | Wed-Fri | 1-3pm | 2-3x/week (if worth it) |
+| Threads | Tue-Fri | Late morning / evening | 1-3 posts/day, native (not cross-posted) |
+| Bluesky | Tue-Thu | Morning / mid-day | 1-3 posts/day |
 
 ### Content adaptation (not copy-paste)
 
@@ -220,12 +331,17 @@ Each platform needs a different version, not a resized copy:
 - **X**: Punchiest hook, thread for depth, engagement prompt
 - **LinkedIn**: Professional peer angle, zero-click full value, → arrows
 - **Facebook**: Shortest, most casual, video preferred
+- **Threads**: Casual rewrite of the X angle, no hard CTA, ≤500 chars
+- **Bluesky**: Tech / open-source angle, ≤300 chars, plain-text domain mention
 
 ### Naming convention
 
 Files: `marketing/posts/YYYY-MM-DD-[platform]-[slug].md`
 
 Examples:
-- `2026-03-23-x-check-chatgpt-recommends.md`
-- `2026-03-23-linkedin-check-chatgpt-recommends.md`
-- `2026-03-23-facebook-check-chatgpt-recommends.md`
+- `2026-05-08-x-check-chatgpt-recommends.md`
+- `2026-05-08-linkedin-check-chatgpt-recommends.md`
+- `2026-05-08-linkedin-newsletter-ai-search-weekly-issue-12.md`
+- `2026-05-08-facebook-check-chatgpt-recommends.md`
+- `2026-05-08-threads-check-chatgpt-recommends.md`
+- `2026-05-08-bluesky-check-chatgpt-recommends.md`
