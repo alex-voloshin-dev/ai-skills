@@ -1,16 +1,15 @@
 # ai-assets
 
-> Vendor-agnostic AI coding-agent tooling: 26 agents, 53 skills, and 45
-> eval rubrics that work across Claude Code, Codex, and Windsurf.
+> Vendor-agnostic agentic-dev tooling: 26 agents, 53 skills, and 45 eval
+> rubrics that work across Claude Code, Codex, and Windsurf.
 
-Teams adopting AI coding agents tend to hit the same wall. Patterns that
-work for one developer don't scale to a team. Evaluation is hand-wavy.
-Switching runtimes means rewriting everything.
-
-This repo is the working playbook of patterns that survived production
-use across all three major AI coding-agent runtimes. A tracked parity
-matrix shows exactly what's available where, and 45 eval rubrics with
-270 calibrated samples make "is it actually working?" answerable.
+Engineering teams adopting AI coding agents hit the same wall: ad-hoc
+patterns that work for one developer don't scale to the team, evaluation
+is hand-wavy, and switching runtimes means rewriting everything. This
+repo is the working playbook of patterns that survived production use
+across all three major agentic-dev runtimes — with a tracked parity
+matrix so you know exactly what's available where, and 45 eval rubrics
+with 270 calibrated samples so "is it working?" has an answer.
 
 ---
 
@@ -35,14 +34,27 @@ the per-runtime availability of any capability.
 
 ## Why this exists
 
-- **Tri-vendor parity, no lock-in.** Most public agentic-dev expertise
-  ends up locked to one runtime. This repo tracks parity across Claude
-  Code, Codex, and Windsurf so the runtime decision stays reversible.
-  One of the few public trackers for cross-runtime gaps.
-- **Eval-driven, not hand-wavy.** 45 rubrics ship with 270 calibrated
-  samples (6 per rubric, paired good/bad with target scores). When
-  you're running AI agents on a team, "how do I know it's working?" gets
-  a concrete answer instead of vibes.
+### Tri-vendor parity, not vendor lock-in
+
+Almost every public agentic-dev expert is locked to one runtime. This
+repo tracks parity across all three with a public matrix. When a
+feature lands in Claude Code first, the matrix tracks the gap and the
+workaround for Codex / Windsurf until parity is reached.
+
+### Eval-driven, not hand-wavy
+
+Most public discourse on AI coding-agent evaluation is a vague "AI eval
+is hard". The 45 rubrics ship with 270 calibrated samples showing what
+each rubric actually catches in production code. If you're
+operationalizing AI coding agents on a team, "how do I know it's
+working?" has an answer.
+
+### Formal-methods background applied to agentic dev
+
+LTL, model checking, and FRR techniques apply to agent specifications
+more directly than people think. The intersection between formal
+methods and agentic dev is one of the least-explored angles in public
+discourse, and a few patterns in this repo lean on that background.
 
 ---
 
@@ -130,19 +142,18 @@ API key in env) to run the full Tier 2 calibration smoke.
 
 ## Use cases
 
-**Running AI coding agents on a team beyond a few developers.** One-off
-prompt libraries don't survive turnover. The agents and skills here are
-designed to be installed as a unit, with eval rubrics that verify
-they're actually working in your codebase.
+**Operationalizing AI coding agents on a team of 50+.** Stop writing
+one-off prompt libraries that don't survive turnover. The agents and
+skills here are designed to be installed as a unit, with eval rubrics
+to verify they're actually working in your codebase.
 
-**Picking a runtime without locking in.** The parity matrix shows which
-features have parity and which don't, so the runtime decision is
-reversible. Adopt the one that fits today; switch when something better
-lands.
+**Picking an agentic-dev runtime without locking in.** The parity
+matrix tells you exactly which features have parity and which don't, so
+the runtime decision is reversible.
 
-**Building your own AI coding-agent framework.** Use this repo as a
-reference. The conventions for agents, skills, hooks, and eval rubrics
-have run in production. Fork or borrow whatever fits your context.
+**Building your own agentic-dev framework.** Use this repo as a
+reference implementation. The conventions for agents, skills, hooks,
+and eval rubrics are battle-tested.
 
 ---
 
@@ -182,9 +193,9 @@ ai-assets/
 - **Latest version:** 0.3.7 (see [`plugin/CHANGELOG.md`](./plugin/CHANGELOG.md) for history)
 - **License:** [MIT](./LICENSE)
 - **Maintainer:** Alex Voloshin
-  ([@alex-voloshin-dev](https://github.com/alex-voloshin-dev))
+  ([@alex-voloshin-dev](https://github.com/alex-voloshin-dev)) — MS CS in progress
 - **Issues / discussion:** open a GitHub issue
-- **Project status:** active development
+- **Updates:** periodic, visible commits weekly
 
 ---
 

@@ -43,10 +43,13 @@ Each rubric (`plugin/eval/judge-rubrics/<name>.md`) defines:
 - **Anti-patterns** — auto-fail conditions regardless of dimension scores
 - **Judge model** — Haiku for routine, Sonnet for subjective/complex
 
-The plugin ships **17 rubrics**:
+The plugin ships **45 rubrics** organized as:
 
-### Per-workflow (10)
-- `feature-design.md`, `develop.md`, `bugfix.md`, `refactor.md`, `migrate.md`, `spike.md`, `security-audit.md`, `docs-pack.md`, `env-analyze.md`, `ai-assets-init.md`
+### Per-workflow (28)
+One rubric per major workflow. The original 10 (`feature-design`, `develop`, `bugfix`, `refactor`, `migrate`, `spike`, `security-audit`, `docs-pack`, `env-analyze`, `ai-assets-init`) plus 4 meta-tools rubrics and the 24-rubric per-skill workflow expansion (audit B coverage push). Live list: `plugin/eval/judge-rubrics/`.
+
+### Per-skill workflow rubrics (additional coverage)
+Included in the 28 above — each user-invocable workflow skill has a matched rubric so Tier 2 can score outputs against that skill's contract.
 
 ### Cross-cutting (7)
 - `humanizer-compliance.md` — text passes the `humanize-content` rule
@@ -63,7 +66,7 @@ The plugin ships **17 rubrics**:
 
 If correlation < 0.7, the rubric flips to Sonnet judge until calibration is restored.
 
-v0.1 ships **34 minimal calibration samples** (1 good + 1 bad per rubric × 17). Phase 3 expands to 102 (3 + 3 per rubric). With N=2, calibration is informational-only; gates use the rubric directly without weighting by Spearman.
+Currently ships **270 calibration samples** (3 good + 3 bad per rubric × 45). With this N, calibration is still informational-only; gates use the rubric directly without weighting by Spearman.
 
 ## Faithfulness — the special rubric (G5)
 

@@ -2,7 +2,7 @@
 
 This repository ships AI coding assistant configurations in two delivery formats:
 
-1. **`plugin/`** — full Claude Code plugin (v0.2.0+, canonical source of truth for Claude Code).
+1. **`plugin/`** — full Claude Code plugin (canonical source of truth for Claude Code; current version in `plugin/.claude-plugin/plugin.json`).
 2. **`.codex/` + `.windsurf/` + `.agents/`** — copy-ready three-package layout for OpenAI Codex and Codeium Windsurf (.agents/ holds skills shared between Codex and Windsurf).
 
 The legacy `.claude/` package was removed in v0.2.0 — `plugin/` fully replaces it for Claude Code.
@@ -11,7 +11,7 @@ The legacy `.claude/` package was removed in v0.2.0 — `plugin/` fully replaces
 
 ```text
 ai-assets/
-├── plugin/                  # Claude Code plugin (v0.2.0+)
+├── plugin/                  # Claude Code plugin
 │   ├── .claude-plugin/
 │   │   └── plugin.json      # manifest + 13 userConfig knobs
 │   ├── agents/              # 26 specialized agents

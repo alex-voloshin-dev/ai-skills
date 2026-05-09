@@ -17,7 +17,7 @@ The legacy `.claude/` package was removed in v0.2.0; everything it carried lives
 │                    ai-assets repo                       │
 │                                                         │
 │  ┌────────────────────────────────────────────────────┐ │
-│  │ plugin/  (Claude Code plugin v0.2.0+)              │ │
+│  │ plugin/  (Claude Code plugin)                      │ │
 │  │  agents/  skills/  rules/  hooks/  schemas/        │ │
 │  │  eval/  docs/  dev/validate.py                     │ │
 │  │  .claude-plugin/plugin.json   (manifest)            │ │

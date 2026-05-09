@@ -98,5 +98,5 @@ Per `plugin/eval/runner.py`:
 ## Pairing
 
 - `subagent-isolation.md` rule — spawned via Task by /eval and /ralph; no nested spawn (no Task tool)
-- `02-EVAL-FRAMEWORK.md` §4 rubric library — full list of 17 rubrics
+- `02-EVAL-FRAMEWORK.md` §4 rubric library — full list of 45 rubrics
 - `02-EVAL-FRAMEWORK.md` §6 release gate criteria — pass thresholds aggregate from per-case judging

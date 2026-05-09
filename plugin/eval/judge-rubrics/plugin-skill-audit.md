@@ -49,7 +49,7 @@ Enforces ai-assets-specific rules — H5 trigger heading pattern (`# /<name>`), 
 - **Level 2:** One convention checked (e.g. kebab-case only)
 - **Level 3:** All conventions checked; some flagged as warnings only
 - **Level 4:** All conventions checked + severity tier per convention
-- **Level 5:** All of L4 + convention drift across the plugin reported (e.g. "3/52 skills use 2nd-person")
+- **Level 5:** All of L4 + convention drift across the plugin reported (e.g. "3/53 skills use 2nd-person")
 
 ### Dimension 6: Safe-Fix Conservatism
 With `--fix`, only deterministic fixes are applied — trailing whitespace, missing trailing newline, missing recommended section stub. NEVER auto-renames `name` field. NEVER invents eval cases. NEVER rewrites prose.

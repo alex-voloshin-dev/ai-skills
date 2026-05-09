@@ -44,6 +44,6 @@ Exit code:       3
 
 ## Next steps
 
-- For the currently-shipped behavioral coverage, run `/eval --tier 2` (judge-calibration drift smoke against 17 rubrics × 6 samples).
+- For the currently-shipped behavioral coverage, run `/eval --tier 2` (judge-calibration drift smoke against 45 rubrics × 6 samples).
 - For Tier 1 lints, run `/eval` (free, no LLM).
 - Track Tier 3 ship status in the plugin issue tracker / `plugin/eval/02-EVAL-FRAMEWORK.md`.

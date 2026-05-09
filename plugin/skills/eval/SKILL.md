@@ -67,7 +67,7 @@ Per `plugin/eval/config.json`:
 - **Wraps**: `plugin/eval/runner.py` (entry) + `plugin/eval/tier2.py` (Tier 2 implementation)
 - **Reads**: `plugin/eval/config.json` (token caps + judge models + calibration thresholds)
 - **Reads**: `plugin/eval/judge-rubrics/<rubric>.md` (per-rubric scoring criteria)
-- **Reads**: `plugin/eval/calibration/<rubric>/{good,bad}/<scenario>.score-X.X.md` (Tier 2 calibration samples — 17 rubrics × 6 samples = 102 total)
+- **Reads**: `plugin/eval/calibration/<rubric>/{good,bad}/<scenario>.score-X.X.md` (Tier 2 calibration samples — 45 rubrics × 6 samples = 270 total)
 - **Honors**: `userConfig.ralph_session_*` caps if eval cases ever trigger embedded RALF (Tier 3, planned)
 - **Used by**: `/plugin-doctor --calibrate-judge` (Tier 2 opt-in)
 
