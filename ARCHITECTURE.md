@@ -48,12 +48,12 @@ The legacy `.claude/` package was removed in v0.2.0; everything it carried lives
 |---|---|---|---|
 | Role definition | `plugin/agents/*.md` | `.codex/roles/*.md` | `.windsurf/rules/roles/**/*.role.md` |
 | Reusable knowledge | `plugin/skills/*/SKILL.md` | `.agents/skills/*/SKILL.md` | `.windsurf/skills/*/SKILL.md` |
-| User-invocable procedure | Skill with `context: fork` (31 in plugin) | Skill with invocation instructions | `.windsurf/workflows/**/*.md` |
+| User-invocable procedure | Skill with `context: fork` + 4 main-thread orchestrators (32 in plugin) | Skill with invocation instructions | `.windsurf/workflows/**/*.md` |
 | Guardrail rule | `plugin/rules/*.md` (12) | `.codex/rules/*.md` | `.windsurf/rules/*.md` |
 | Runtime enforcement | `plugin/hooks/scripts/*.py` (18 across 13 events) + `hooks.json` | Documented intent in `.codex/operations/hook-intents.md` | `.windsurf/hooks/scripts/*.py` + `hooks.json` |
 | Hook wiring | `plugin/hooks/hooks.json` | N/A | `.windsurf/hooks.json` |
 | Scaffolding | n/a (templates folded into skill resources or plugin docs/) | `.codex/templates/*.template.md` | Embedded in skill resource directories |
-| Eval framework | `plugin/eval/` (Tier 1 linter, Tier 2 judge-calibration smoke, Tier 3 stub, g1g2 attack-surface) | n/a | n/a |
+| Eval framework | `plugin/eval/` — 45 rubrics + 270 calibration samples + Tier 1 linter + Tier 2 judge-calibration smoke + g1g2 attack-surface (Tier 3 planned, not yet shipped) | n/a | n/a |
 
 ## Skill Architecture
 
@@ -99,7 +99,7 @@ RALF (Stop / PostToolUse):
 
 All scripts share `_lib.py` for hook-input normalization, PII filtering, untrusted-content wrapping, token meter, RALF state, and active-spawn tracking. Scripts read JSON from stdin and exit with code 0 (allow) or 2 (block with reason on stdout).
 
-In the Windsurf package (`.windsurf/hooks/scripts/`): the original four security/audit scripts are mirrored from the legacy `.claude/hooks/scripts/`. Codex declares the same intent declaratively in `.codex/operations/hook-intents.md`.
+In the Windsurf package (`.windsurf/hooks/scripts/`): four security/audit scripts (block-dangerous-commands, block-secrets-in-code, block-sensitive-files, log-actions) are mirrored from the plugin equivalents. Codex declares the same intent declaratively in `.codex/operations/hook-intents.md`.
 
 ## Installation Flow
 

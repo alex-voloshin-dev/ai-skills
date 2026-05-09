@@ -1,16 +1,16 @@
 # ai-assets
 
-> Vendor-agnostic agentic-dev tooling: 26 agents, 53 skills, and 45 eval
-> rubrics that work across Claude Code, Codex, and Windsurf.
+> Vendor-agnostic AI coding-agent tooling: 26 agents, 53 skills, and 45
+> eval rubrics that work across Claude Code, Codex, and Windsurf.
 
-Engineering teams adopting AI coding agents hit the same wall: ad-hoc
-patterns that work for one developer don't scale to the team, evaluation
-is hand-wavy, and switching runtimes means rewriting everything.
+Teams adopting AI coding agents tend to hit the same wall. Patterns that
+work for one developer don't scale to a team. Evaluation is hand-wavy.
+Switching runtimes means rewriting everything.
 
 This repo is the working playbook of patterns that survived production
-use across all three major agentic-dev runtimes — with a tracked parity
-matrix so you know exactly what's available where, and 45 eval rubrics
-with 270 calibrated samples so "is it working?" has an answer.
+use across all three major AI coding-agent runtimes. A tracked parity
+matrix shows exactly what's available where, and 45 eval rubrics with
+270 calibrated samples make "is it actually working?" answerable.
 
 ---
 
@@ -27,23 +27,22 @@ with 270 calibrated samples so "is it working?" has an answer.
 | **Workflows** | 32 | User-invocable slash commands that compose agents + skills into a multi-step recipe |
 
 **Codex + Windsurf parity packages:** 39 shared skills, 22 roles, 8
-rules. Cross-runtime parity tracked in
-[`review/parity-matrix.md`](./review/parity-matrix.md) — see exactly
-what's available on each runtime.
+rules. Cross-runtime parity is tracked in
+[`review/parity-matrix.md`](./review/parity-matrix.md) — check there for
+the per-runtime availability of any capability.
 
 ---
 
 ## Why this exists
 
-- **Tri-vendor parity, not vendor lock-in.** Almost every public
-  agentic-dev expert is locked to one runtime. This repo tracks parity
-  across Claude Code, Codex, and Windsurf so the runtime decision stays
-  reversible — one of the few public-facing trackers for cross-runtime
-  gaps.
+- **Tri-vendor parity, no lock-in.** Most public agentic-dev expertise
+  ends up locked to one runtime. This repo tracks parity across Claude
+  Code, Codex, and Windsurf so the runtime decision stays reversible.
+  One of the few public trackers for cross-runtime gaps.
 - **Eval-driven, not hand-wavy.** 45 rubrics ship with 270 calibrated
-  samples (6 per rubric, paired good/bad with target scores). If you're
-  operationalizing AI agents on a team, "how do I know it's working?"
-  gets a concrete answer instead of vibes.
+  samples (6 per rubric, paired good/bad with target scores). When
+  you're running AI agents on a team, "how do I know it's working?" gets
+  a concrete answer instead of vibes.
 
 ---
 
@@ -66,15 +65,14 @@ claude --plugin-dir ./plugin
 ```
 
 All 32 user-invocable workflows appear under the `ai-assets:` namespace
-in `/help`. After editing plugin files in the same session, reload
-without restarting:
+in `/help`. To reload after editing plugin files in the same session:
 
 ```text
 /reload-plugins
 ```
 
-See [`plugin/README.md`](./plugin/README.md) for full plugin install +
-usage and [`plugin/docs/getting-started.md`](./plugin/docs/getting-started.md)
+See [`plugin/README.md`](./plugin/README.md) for full plugin install and
+usage, or [`plugin/docs/getting-started.md`](./plugin/docs/getting-started.md)
 for a guided tour.
 
 ### Codex
@@ -124,29 +122,27 @@ Tokens used: 0 (soft 50000, hard 150000)
 ```
 
 Each rubric ships with paired "good" and "bad" calibration samples
-labeled with target scores — that's how you can tell whether the judge
-is drifting before it shows up in production. Drop `--dry-run` (with an
+labeled with target scores. That's how you tell whether the judge is
+drifting before it shows up in production. Drop `--dry-run` (with an
 API key in env) to run the full Tier 2 calibration smoke.
 
 ---
 
 ## Use cases
 
-**Operationalizing AI coding agents on a team scaling beyond a few
-developers.** Stop writing one-off prompt libraries that don't survive
-turnover. The agents + skills here are designed to be installed as a
-unit, with eval rubrics to verify they're actually working in your
-codebase.
+**Running AI coding agents on a team beyond a few developers.** One-off
+prompt libraries don't survive turnover. The agents and skills here are
+designed to be installed as a unit, with eval rubrics that verify
+they're actually working in your codebase.
 
-**Picking an agentic-dev runtime without locking in.**
-The parity matrix tells you exactly which features have parity and
-which don't, so the runtime decision is reversible. Adopt the one that
-fits today; switch when something better lands.
+**Picking a runtime without locking in.** The parity matrix shows which
+features have parity and which don't, so the runtime decision is
+reversible. Adopt the one that fits today; switch when something better
+lands.
 
-**Building your own agentic-dev framework.**
-Use this repo as a reference implementation. The conventions for
-agents, skills, hooks, and eval rubrics are battle-tested — fork or
-borrow whatever fits your context.
+**Building your own AI coding-agent framework.** Use this repo as a
+reference. The conventions for agents, skills, hooks, and eval rubrics
+have run in production. Fork or borrow whatever fits your context.
 
 ---
 

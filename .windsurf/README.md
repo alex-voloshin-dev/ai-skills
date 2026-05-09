@@ -1,6 +1,6 @@
 # Windsurf Package
 
-This directory is the copy-ready Windsurf runtime package for the shared `ai-assets` repository.
+This directory is the copy-ready Windsurf runtime package for the `ai-assets` repository.
 
 ## Runtime Layout
 
@@ -10,29 +10,32 @@ This directory is the copy-ready Windsurf runtime package for the shared `ai-ass
 ├── hooks.json
 ├── hooks/
 │   ├── configs/
-│   └── scripts/
+│   └── scripts/              # 4 carry-over security/audit hooks
 ├── rules/
-│   ├── roles/
+│   ├── roles/                # 22 role rules (mirrors .codex/roles/)
 │   ├── failure-recovery.md
+│   ├── geo-content.md
 │   ├── git-conventions.md
 │   ├── global-package-rules.md
 │   ├── global-rules.md
-│   └── memory-validation.md
-├── skills/
-└── workflows/
+│   ├── humanize-content.md
+│   ├── memory-validation.md
+│   └── task-completion.md
+├── skills/                   # 39 skills (mirrors .agents/skills/)
+└── workflows/                # 27 user-facing workflow files
 ```
 
 ## Purpose
 
-- keep Windsurf assets versioned beside the other runtime packages in this repository
-- preserve semantic parity across `.claude`, `.agents`, `.codex`, and `.windsurf`
-- stay directly copyable into a project root as `.windsurf/`
+- Keep Windsurf assets versioned alongside the Codex package and shared `.agents/skills/` corpus
+- Maintain semantic parity with `.codex/` (parity is enforced between Codex and Windsurf only — Claude Code lives in `plugin/` and follows its own internal organization)
+- Stay directly copyable into a project root as `.windsurf/` via `install.sh` / `install.ps1`
 
 ## Package Conventions
 
-- rules are short Windsurf-native instructions with `trigger` and `description`
-- role rules live under `rules/roles/` and stay concise enough for Windsurf rule limits
-- reusable knowledge lives under `skills/`
-- manual entry points live under `workflows/`
-- hook runtime config lives at `hooks.json`
-- parity support resources are preserved inside relevant Windsurf skills when Windsurf has no matching top-level primitive
+- Rules are short Windsurf-native instructions with `trigger` and `description`
+- Role rules live under `rules/roles/` and stay concise enough for Windsurf rule limits
+- Reusable knowledge lives under `skills/`
+- Manual entry points live under `workflows/`
+- Hook runtime config lives at `hooks.json`
+- Parity support resources are preserved inside relevant Windsurf skills when Windsurf has no matching top-level primitive

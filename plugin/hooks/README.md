@@ -2,20 +2,20 @@
 
 This directory wires the ai-assets plugin into Claude Code's hook lifecycle. The wiring lives in `hooks.json` (pure standard JSON, no comments). This file is the human-readable companion that explains **what** each hook does, **why** it exists, and **what order** matters when multiple hooks fire on the same event.
 
-> Per Round 14 HIGH-B (option 3, real solution): `hooks.json` no longer carries a non-standard `$schema-comment` field. All wiring documentation lives here in `hooks/README.md` and is referenced from the manifest implicitly via co-location.
+> `hooks.json` is pure standard JSON with no comments. All wiring documentation lives in this file and is referenced from the manifest implicitly via co-location.
 
 ## At a glance
 
 | Count | What |
 |---|---|
-| 16 | hook scripts in `hooks/scripts/` (excluding `_lib.py`) |
+| 18 | hook scripts in `hooks/scripts/` (excluding `_lib.py`) |
 | 13 | distinct lifecycle events wired |
 | 1 | shared helper module — `hooks/scripts/_lib.py` |
 | 1 | PII pattern file — `hooks/scripts/pii-patterns.txt` |
 
 The 13 lifecycle events: `SessionStart`, `InstructionsLoaded`, `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `StopFailure`, `SubagentStart`, `SubagentStop`, `TaskCreated`, `TaskCompleted`, `Stop`, `PreCompact`, `SessionEnd`.
 
-Provenance: 4 carried hooks (Phase 2 batch B2) + 12 new hooks (Phase 2 batch B8 — including R8 CRIT-1 `pre-tool-use-committed-write`) = 16 total.
+Provenance: 4 carried hooks + 12 new hooks (including the `.committed/` allowlist enforcement `pre-tool-use-committed-write`) + `ralph-iter-meter.py` (v0.1.6) + `subagent-depth-guard.py` (v0.1.7) = 18 total.
 
 ## Per-event wiring
 
@@ -30,19 +30,19 @@ Provenance: 4 carried hooks (Phase 2 batch B2) + 12 new hooks (Phase 2 batch B8 
 
 ### PreToolUse — matcher `Write|Edit`
 - `block-secrets-in-code.py` — block writes that contain secrets matching `pii-patterns.txt`. Exit 2 on block.
-- `pre-tool-use-committed-write.py` — enforce the `.committed/` allowlist (R8 CRIT-1). Writes outside allowlisted paths are blocked. Exit 2 on block.
+- `pre-tool-use-committed-write.py` — enforce the `.committed/` allowlist. Writes outside allowlisted paths are blocked. Exit 2 on block.
 
 ### PreToolUse — matcher `Read`
 - `block-sensitive-files.py` — block reads of `.env`, `.ssh/`, `.aws/`, credentials files. Exit 2 on block.
 
 ### PostToolUse — matcher `.*`
-- `log-actions.py` — append a structured audit line to `.ai-assets-memory/agent-actions.log` for every tool call. PII-filter applied before persistence (closed in alpha.15 MED-A). Rotate at 10 MB.
+- `log-actions.py` — append a structured audit line to `.ai-assets-memory/agent-actions.log` for every tool call. PII-filter is applied before persistence. Rotates at 10 MB.
 
 ### PostToolUse — matcher `Read|Bash`
 **Order matters here:** the two hooks fire as a fixed pair, in this order.
 
 1. `tool-output-wrap.py` (G1) — wrap tool stdout in `<untrusted_content>` envelope, emit a wrap marker.
-2. `tool-output-normalize.py` (G2) — read the wrap marker (R5 S6 self-enforcing order: this hook asserts the marker is present), extract envelope metadata, update `injected_tokens_from_tools` in the session token meter. v0.1 stops at metadata; Haiku-summarize step is deferred to Phase 4 hardening.
+2. `tool-output-normalize.py` (G2) — read the wrap marker (this hook asserts the marker is present, which makes the order self-enforcing), extract envelope metadata, update `injected_tokens_from_tools` in the session token meter. Stops at metadata today; the Haiku-summarize step is deferred to a later hardening pass.
 
 If `tool-output-wrap.py` did not run first, `tool-output-normalize.py` logs a wrap-marker-missing error and proceeds (fail-open).
 
@@ -66,12 +66,12 @@ If `tool-output-wrap.py` did not run first, `tool-output-normalize.py` logs a wr
 
 ### Stop
 - `ralph-stop.py` — RALF iteration controller. If `.ai-assets-memory/ralph/<run-id>/active.lock` exists:
-  - Run oracle (v0.1: `oracle-pass` SUCCESS marker + `same-error-repeats:N`).
-  - Check per-workflow caps (`max_iterations` from `config.json`).
-  - Check session-aggregate caps (alpha.16 HIGH-C): reads `CLAUDE_USER_CONFIG_ralph_session_max_iter`, `CLAUDE_USER_CONFIG_ralph_session_token_budget`, `CLAUDE_USER_CONFIG_ralph_session_time_cap_minutes`. Compares against session meter (`ralf_iter_total`, `ralf_tokens_total`, elapsed minutes from `ralf_started_at`).
-  - On terminal state → write `budget.json`, release lock, allow Stop (exit 0).
-  - Otherwise → write `iter-NNN/prompt.md` continuation, block Stop (exit 2 with re-injection prompt).
-  - Per A3: never block Stop because of internal hook bug (`__main__` wraps `main()` and exits 0 on exception).
+  - Runs the oracle (`oracle-pass` SUCCESS marker + `same-error-repeats:N`).
+  - Checks per-workflow caps (`max_iterations` from `config.json`).
+  - Checks session-aggregate caps from `CLAUDE_USER_CONFIG_ralph_session_max_iter`, `CLAUDE_USER_CONFIG_ralph_session_token_budget`, and `CLAUDE_USER_CONFIG_ralph_session_time_cap_minutes`. Compares against the session meter (`ralf_iter_total`, `ralf_tokens_total`, elapsed minutes from `ralf_started_at`).
+  - On terminal state → writes `budget.json`, releases the lock, allows Stop (exit 0).
+  - Otherwise → writes the `iter-NNN/prompt.md` continuation and blocks Stop (exit 2 with re-injection prompt).
+  - Never blocks Stop because of an internal hook bug (`__main__` wraps `main()` and exits 0 on exception).
 
 ### PreCompact
 - `pre-compact-memory-flush.py` — invoke memory-curator to flush session-resident learnings to L4 `learnings.md` before context compaction discards them.
@@ -81,7 +81,7 @@ If `tool-output-wrap.py` did not run first, `tool-output-normalize.py` logs a wr
 
 ## Shared helper — `_lib.py`
 
-All 16 hook scripts import `_lib`. Public API:
+All 18 hook scripts import `_lib`. Public API:
 
 - `read_stdin_json() -> dict` — read and parse the hook event payload from stdin.
 - `normalize_hook_input(data) -> dict` — bridge legacy `agent_action_name` and modern `tool_name` shapes.
@@ -132,4 +132,4 @@ tail -f .ai-assets-memory/hook-errors.log
 4. Wrap `main()` in `__main__` exception handler that calls `_lib.log_to("hook-errors.log", ...)` + `sys.exit(0)`.
 5. Wire the script into the appropriate event in `hooks.json`.
 6. Update this README's per-event section.
-7. Update the at-a-glance counter at the top of this file and in `README.md` (root).
+7. Update the at-a-glance counter at the top of this file and in the root `plugin/README.md`.

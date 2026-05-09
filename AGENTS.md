@@ -12,17 +12,17 @@ The legacy `.claude/` package was removed in v0.2.0 — `plugin/` fully replaces
 ```text
 ai-assets/
 ├── plugin/                  # Claude Code plugin — DO NOT MIRROR INTO .codex/
-├── .agents/skills/          # 38 skills (shared between Codex and Windsurf)
-├── .codex/                   # Codex runtime package (your home)
+├── .agents/skills/          # 39 skills (shared between Codex and Windsurf)
+├── .codex/                  # Codex runtime package (your home)
 │   ├── roles/               # 22 role definitions (mirrors .windsurf/rules/roles/)
 │   ├── rules/               # 8 rule files + role overlays
-│   ├── operations/          # hook-intents, launch-reference, settings-mapping, source-sync
+│   ├── operations/          # hook-intents, launch-reference, settings-mapping, source-sync, skill-role-mapping
 │   ├── templates/           # 14 AGENTS.md scaffolds
 │   └── checklists/          # review checklists
-├── .windsurf/                # Windsurf runtime package (parity target)
+├── .windsurf/               # Windsurf runtime package (parity target)
 │   ├── rules/roles/         # 22 role files (mirrors .codex/roles/)
-│   ├── skills/              # 38 skills (mirrors .agents/skills/)
-│   ├── workflows/           # 26 user-facing workflow files
+│   ├── skills/              # 39 skills (mirrors .agents/skills/)
+│   ├── workflows/           # 27 user-facing workflow files
 │   └── hooks/               # Python scripts + configs
 ├── review/parity-matrix.md  # Codex ↔ Windsurf alignment tracker
 ├── install.sh               # bash installer (Codex + Windsurf only — Linux/macOS)

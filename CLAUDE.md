@@ -13,31 +13,31 @@ The legacy `.claude/` package was removed in v0.2.0 — `plugin/` fully replaces
 ai-assets/
 ├── plugin/                  # Claude Code plugin (v0.2.0+)
 │   ├── .claude-plugin/
-│   │   ├── plugin.json      # manifest + 13 userConfig knobs
+│   │   └── plugin.json      # manifest + 13 userConfig knobs
 │   ├── agents/              # 26 specialized agents
-│   ├── skills/              # 52 skills (31 user-invocable)
+│   ├── skills/              # 53 skills (32 user-invocable)
 │   ├── rules/               # 12 guardrail rules
 │   ├── hooks/               # 18 hooks across 13 lifecycle events
 │   ├── schemas/             # 2 JSON Schemas (G7 spawn + return)
-│   ├── eval/                # 17 rubrics + 102 calibration samples + Tier 1/2 runners + g1g2 attack-surface
-│   ├── docs/                # 14 user docs (1 getting-started + 10 workflows + 3 concepts)
+│   ├── eval/                # 45 rubrics + 270 calibration samples + Tier 1/2 runners + g1g2 attack-surface
+│   ├── docs/                # 15 user docs (1 getting-started + 10 workflows + 4 concepts)
 │   └── dev/validate.py      # local validator (23 checks)
-├── .agents/skills/          # 38 skills (shared by Codex + Windsurf)
-├── .codex/                   # Codex runtime package
+├── .agents/skills/          # 39 skills (shared by Codex + Windsurf)
+├── .codex/                  # Codex runtime package
 │   ├── roles/               # 22 role definitions
-│   ├── rules/               # 8 rule files + 2 aliases + 5 role overlays
+│   ├── rules/               # 8 rule files + role overlays
 │   ├── operations/          # hook-intents, launch-reference, settings-mapping, source-sync, skill-role-mapping
-│   ├── templates/           # 14 AGENTS.md scaffolds (includes parity aliases)
+│   ├── templates/           # 14 AGENTS.md scaffolds
 │   └── checklists/          # review checklists
-├── .windsurf/                # Windsurf runtime package
+├── .windsurf/               # Windsurf runtime package
 │   ├── rules/roles/         # 22 role files (mirrors .codex/roles/)
-│   ├── skills/              # 38 skills (mirrors .agents/skills/)
-│   ├── workflows/           # 26 user-facing workflow files
+│   ├── skills/              # 39 skills (mirrors .agents/skills/)
+│   ├── workflows/           # 27 user-facing workflow files
 │   ├── hooks/               # Python scripts + configs
 │   └── hooks.json           # Windsurf-native hook wiring
 ├── .claude-plugin/marketplace.json  # marketplace manifest pointing at ./plugin
 ├── review/parity-matrix.md  # cross-package alignment tracker (Codex ↔ Windsurf)
-├── plugin-design/           # historical plugin design docs (Phase 1-2 plan + migration checklist)
+├── plugin-design/           # historical plugin design docs
 ├── install.sh               # bash installer (Codex + Windsurf only — Linux/macOS)
 └── install.ps1              # PowerShell installer (Codex + Windsurf only — Windows)
 ```
@@ -69,7 +69,7 @@ After editing plugin files in the same Claude Code session, reload without resta
 /reload-plugins
 ```
 
-All 31 user-invocable skills appear in `/help` under the `ai-assets:` namespace.
+All 32 user-invocable skills appear in `/help` under the `ai-assets:` namespace.
 
 ### Skill Format
 

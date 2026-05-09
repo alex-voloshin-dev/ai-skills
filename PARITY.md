@@ -41,7 +41,7 @@ The Claude Code plugin (`plugin/`) is a first-class artifact with its own intern
 
 This was the v0.2.0 transition: before v0.2.0, the repo enforced three-way parity across `.claude/ + .codex/ + .windsurf/`. The `.claude/` package was retired because the plugin format superseded it with native plugin primitives (manifest, eval framework, schemas, namespaced skills, hook lifecycle events) that the legacy folder layout couldn't carry.
 
-For Claude Code asset coverage, see [plugin/README.md](plugin/README.md) — 26 agents, 52 skills (31 user-invocable), 18 hooks across 13 lifecycle events, 12 rules, 17 eval rubrics + 102 calibration samples, 2 schemas, 13 userConfig knobs.
+For Claude Code asset coverage, see [plugin/README.md](plugin/README.md) — 26 agents, 53 skills (32 user-invocable), 18 hooks across 13 lifecycle events, 12 rules, 45 eval rubrics + 270 calibration samples, 2 schemas, 13 userConfig knobs.
 
 ## Current parity status (Codex ↔ Windsurf)
 
@@ -56,21 +56,21 @@ Full parity. Every role exists in both packages.
 | Designers (2) | content-designer, ui-ux-designer |
 | Other (4) | content-writer, marketing-strategist, product-manager, prompt-engineer |
 
-### Skills: 38 / 38
+### Skills: 39 / 39
 
 Full parity via shared `.agents/skills/`. Both Codex and Windsurf read the same skill bodies.
 
-### Rules: 8 / 7
+### Rules: 8 / 8
 
-Semantic parity. Codex carries one additional `README.md` and organizes rules differently, but the guardrail coverage matches.
+Semantic parity. Each side keeps its own README and organizes rules to fit its runtime, but guardrail coverage matches.
 
 ### Hooks: 4 scripts (Windsurf only) + intent docs (Codex)
 
 Hook scripts (`block-dangerous-commands.py`, `block-secrets-in-code.py`, `block-sensitive-files.py`, `log-actions.py`) ship in Windsurf. Codex documents hook intent in `.codex/operations/hook-intents.md` because Codex has no native hook execution.
 
-### Workflows: 26
+### Workflows: 27
 
-All 26 Windsurf workflows have corresponding user-invocable skills in Codex.
+All 27 Windsurf workflows have corresponding user-invocable skills in Codex.
 
 ## Intentional gaps
 
@@ -98,9 +98,9 @@ The plugin carries capabilities that are intentionally not mirrored to Codex/Win
 | RALF iteration loop (`/ralph` + `ralph-stop.py` + `ralph-iter-meter.py`) | Depends on Stop/PostToolUse lifecycle events |
 | Subagent depth-guard + budget hooks | Depends on SubagentStart/SubagentStop events + Task tool spawn primitive |
 | Untrusted-content wrapping (G1) | Depends on PostToolUse event piping |
-| 17 eval rubrics + Tier 1/Tier 2/g1g2 runners | Plugin-internal eval framework (rubrics + Haiku judge calibration) |
-| `team-protocols`, `team-bugfix`, `develop` orchestration | Depend on Claude Code's Agent tool + optional Agent Teams flag |
-| 52 skills × 31 user-invocable | Plugin-namespaced via `ai-assets:` prefix per Anthropic spec |
+| 45 eval rubrics + 270 calibration samples + Tier 1/Tier 2/g1g2 runners | Plugin-internal eval framework (rubrics + Haiku judge calibration) |
+| `team-protocols`, `team-bugfix`, `develop`, `feature-design`, `bugfix` orchestration | Depend on Claude Code's Agent tool + optional Agent Teams flag |
+| 53 skills × 32 user-invocable | Plugin-namespaced via `ai-assets:` prefix per Anthropic spec |
 
 Codex and Windsurf carry the simpler 4 carry-over hooks (security/audit only) plus the shared skill+role corpus.
 
