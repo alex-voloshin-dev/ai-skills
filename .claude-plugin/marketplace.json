@@ -10,7 +10,7 @@
       "name": "ai-assets",
       "source": "./plugin",
       "description": "Reusable team-of-agents plugin for the full SDLC — feature design, development, bugfix, environment analysis — with built-in RALF iteration loop, layered memory, and systematic eval.",
-      "version": "0.3.5"
+      "version": "0.3.6"
     }
   ]
 }

@@ -28,6 +28,77 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.3.6] — 2026-05-09 — Full audit-driven hardening pass (top-10 + P1–P3 + B)
+
+Substantial release. Closes the entire prioritized fix list from `/plugin-skill-audit` (run 2026-05-08). 21 commits, 53 skills audited, 24 new judge rubrics, 144 new calibration samples, 30 new templates, 7 new industry-pattern reference files, two follow-up reviewer cycles.
+
+### Critical fixes (5)
+
+- **`marketing/SKILL.md`**: trimmed under the 12K cap (was 12,065 → 11,962). Removed `B12 MERGE` history note + duplicate platform rules in `social-post` (now delegates to `social-media-manager`).
+- **`analyze/analytical-frameworks.md`**: was empty (single `---` line); populated with 17 named frameworks (5 Whys, Fishbone, Causal Loop, MECE, SCQA, SWOT, Five Forces, JTBD, Wardley, MCDA, Cynefin, Two-Way Doors, C4, Gap Analysis, Tech Debt, Risk Matrix, Pre-mortem) + question→framework selection heuristic.
+- **`bugfix/SKILL.md`**: replaced two broken `Step 11` references (file has Steps 1–9; Step 11 was a stale ordinal from older layout) with `Step 9 (Summary)`.
+- **`pii-patterns.txt` provisioning**: file lives at `plugin/hooks/scripts/pii-patterns.txt` (loaded by `_lib.py` directly). Path claims in `ai-assets-init/SKILL.md`, `memory-init/SKILL.md`, `plugin/README.md` made explicit so the location is no longer ambiguous.
+- **`eval/SKILL.md` + `plugin/eval/config.json`**: rewrote Tier 2 spec to match `tier2.py` reality (judge-calibration drift smoke with ±0.5 score-band tolerance, 10 rubrics × 2 calibration samples), not the never-shipped "10 skills × 20 prompts activation precision" copy. Tier 3 / `--baseline` / `--resume` marked "planned, not yet shipped — runner returns error code 3". Phantom `eval-judge` agent claim removed; `plugin/eval/cases/<skill>/` moved to "Future surfaces".
+
+### High-priority — H6: 30 new templates across 6 skills
+
+- `architecture/assets/`: `adr-template.md` (Nygard/MADR + Y-statement), `c4-mermaid-template.md`, `nfr-template.md`, `gap-analysis-template.md`, `tech-debt-register-template.md`.
+- `feature-design/assets/`: `prd-template.md`, `risks-template.md` (3×3 P×I heatmap), `implementation-plan-template.md` (three-point estimates + Walking Skeleton WP-1), `review-log-template.md`.
+- `ui-ux-design/assets/`: `handoff-template.md` (W3C Design Tokens + WCAG 2.2 AA SCs cited), `component-spec-template.md` (Material 3 variants + atomic-design role).
+- `geo-writer/assets/jsonld-templates/`: 10 schema templates (`Article`, `FAQPage`, `HowTo`, `Person`, `Organization`, `WebSite`, `BreadcrumbList`, `Product`, `SoftwareApplication`, `DefinedTerm`).
+- `docs-pack/assets/templates/`: `api-reference.md` (OpenAPI 3.1 + RFC 7807), `user-guide.md` (Diátaxis Tutorial + How-to hybrid), `runbook.md` (SRE-aligned), `architecture.md` (C4 + Mermaid).
+- `marketing/assets/`: `email-templates/{newsletter,launch,re-engagement,welcome-drip}.md`, `icp-worksheet.md` (JTBD + April Dunford + ABM signals + scorecard).
+
+### High-priority — H7-H10: boundaries, references, frontmatter, routing
+
+- **H7**: narrowed `/docs` to internal-only (technical, ADR, PRD, release notes); removed public-content branch (now `/content-creation` owns it). `/analyze-local` ↔ `/env-analyze` repositioned as Docker-only vs multi-scope rather than redundant.
+- **H8**: 7 new industry-pattern reference files. `migrate/references/{expand-contract,migration-tools-by-stack}.md`. `refactor/references/{fowler-catalogue,mikado-method,characterization-tests}.md`. `spike/references/{decision-frameworks,evidence-hierarchy}.md`.
+- **H9**: `disable-model-invocation: true` added to 7 knowledge / auxiliary skills (context-engineering, prompt-engineering, ui-ux-design, team-protocols, team-bugfix, deployment-procedures, cloud-platforms). Descriptions on context-engineering and prompt-engineering tightened from 5–7 use contexts to 2–3.
+- **H10**: detect-then-route to existing ecosystem tooling in 6 skills. `pre-commit` (pre-commit framework / Husky / Lefthook / lint-staged). `release` (release-please / semantic-release / Changesets / GoReleaser / cargo-release / JReleaser). `infra-change` (Argo CD / Flux / Atlantis / HCP Terraform / Spacelift / env0 + OpenTofu detection + Conftest/tfsec/Checkov pre-plan policy gate). `deploy-production` (GitOps controllers + Argo Rollouts/Flagger + LaunchDarkly/Unleash/OpenFeature + freeze-window check). `deploy-staging` (Argo CD ApplicationSet pullRequest / Loft vCluster / Tilt + Cosign/SBOM/SLSA validation gate). `create-pr` (PULL_REQUEST_TEMPLATE.md / CODEOWNERS / Graphite / Sapling / git-spice).
+
+### P1 honourable mentions — A through D
+
+- **P1.A**: Path B Liveness Watchdog (v0.3.5) cross-referenced into `bugfix/`, `team-bugfix/`, `team-protocols/SKILL.md`. 4 memory skills now cross-link `plugin/docs/concepts/memory.md` for the L0–L5 layer model.
+- **P1.B**: security-audit + security-scan got SBOM (Syft / CycloneDX) + SLSA L2 + EPSS / CISA KEV prioritization + SAST/DAST/SCA/IAST methodology distinction. security-scan now escalates to security-audit on AI/LLM component detection (G3 boundary).
+- **P1.C**: plugin-doctor vapor flags (`--runs --last N`, `--health-trends`) explicitly marked "planned, not yet shipped". plugin-skill-create scaffolded description now ships literal `TODO —` token; `plugin-skill-audit` + `runner.py` lint as CRITICAL on `TODO` in description (write-and-forget guard for fresh scaffolds).
+- **P1.D**: judge-rubrics + 6 calibration samples (3 good + 3 bad) per skill for the 4 meta-plugin-tools skills (`eval`, `plugin-doctor`, `plugin-skill-audit`, `plugin-skill-create`). Closes the dog-food gap.
+
+### P2 — currency + methodology + cross-platform
+
+- **P2.1**: 2026 framework currency. `ai-assets-init` codebase-type detection extended with Astro / SvelteKit / Remix / Bun / Deno / kotlin-spring / kotlin-ktor / elixir-phoenix. `social-media-manager` adds Threads (500c), Bluesky (300c), LinkedIn Newsletters; X section refreshed (Grok-transformer tone-scoring, engagement weights reply ≈ 27× / conversation ≈ 150× / bookmark ≈ 100×, hashtag norm 0–2). `marketing` adds `references/abm-playbook.md` (~76 % B2B 2026 adoption, intent stacks, trigger events). `seo-review` adds AI Bot Accessibility check (GPTBot / ClaudeBot / Perplexity-User / Google-Extended robots.txt allowlist + Cloudflare WAF caveat) + E-E-A-T author signals; refreshes `llms.txt` framing.
+- **P2.2**: industry methodology naming. `analyze-prod` Step 4h-j now names Four Golden Signals (Google SRE) + RED method (Tom Wilkie) + USE method (Brendan Gregg) explicitly with source links and a problem→method routing table; new Production Telemetry Surface table (Prometheus/Datadog/Honeycomb/New Relic/Sentry/OTel+Tempo/Jaeger); new Distributed Tracing section. `analyze-local` adds USE method to `docker stats` reads + RED for HTTP-exposing containers + cross-link to analyze-prod for the full method/problem matrix. `code-review` rewritten with Google eng-practices framing (improve code health > perfection; technical facts > preferences) + Conventional Comments vocabulary (`praise:` / `nit:` / `suggestion:` / `issue:` / `question:` / `thought:` / `chore:`) + Microsoft Research effectiveness ceilings. `qa` rewritten with Bach/Kaner HTSM (SFDPOT + CIDTESTD mnemonics) + Session-Based Test Management (SBTM — charter / session report / debrief) + Risk-Based Testing (P × I matrix) + concrete bug-report template (STR / Severity S1-S4 / Priority P1-P4 / Repro rate / etc.).
+- **P2.3**: cross-platform commands. `plan/SKILL.md:51` `ls -la (or dir for Windows)` → `ls -la 2>/dev/null || dir`. `test-local/SKILL.md:76` Windows-only `netstat -ano | findstr` → platform-branched (lsof / ss for macOS / Linux; netstat fallback for Windows).
+- **P2.4**: specific gaps. `infra-change` Step 3a Terraform State adds modern pre-plan suite (tflint/tfsec/checkov/terraform-docs); new Step 3a-bis Terraform State Operations + `moved {}` (TF v1.1+) and `removed {}` (TF v1.7+) blocks; `helm upgrade` extended with `--atomic --timeout --wait` + `helm-diff` plugin install hint. `deploy-production` Step 4b smoke tests now bind to project's discoverable suite (`tests/smoke/`, `e2e/` with `@smoke`-tagged Playwright, Cypress smoke, Postman/Newman, K6/Artillery). `release` Step 3a adds Monorepo / per-package versioning (Changesets / Lerna / Nx). `feature-design` adds Shape Up reference at top — shaped pitch input → betting-ready output, fixed-time variable scope.
+
+### P3 — cleanup
+
+- **P3.1**: `create-pr` got missing `argument-hint`. `content-creation` AI image tools refreshed (DALL-E 3 sole-billing → Midjourney v7, GPT-Image-1, Flux 1.1 Pro, Ideogram, Stable Diffusion, Leonardo + Sora 2 / Runway / Kling for video). All `B12 MERGE` / `MERGED from former` internal-process metadata stripped from skill bodies and descriptions.
+- **P3.2**: stripped `Round N` / `Q4 hard rule` / `G10` / `B10a` / `B12` design-process metadata from 12 SKILL.md files (develop, docs-pack, env-analyze, eval, feature-design, learnings-write, memory-init, plugin-doctor, ralph, spike, team-bugfix, ai-assets-init). Replaced with intent-equivalent prose. `alpha.X` mentions left in the 4 orchestration skills (team-protocols, bugfix, team-bugfix, feature-design) — they are documented failure modes for skill-author audience and are required by the `orchestration_dual_path` validator.
+- **P3.3**: agent-file cleanup symmetric to P3.2. 5 agent files (marketing-strategist, eval-judge, feature-design-lead, security-engineer, memory-curator) had `B12 MERGE`, `B10a`, `Round 4 N6`, `Round 8 CRIT-1`, `Round 4 O3`, `(B8)`, `(B12)` design-process strings in their system prompts. All replaced with intent-equivalent prose.
+
+### B — eval coverage push (24 new rubrics + 144 calibration samples)
+
+Closes the eval-calibration coverage gap. Pre-batch 21 rubrics covered ~40 % of workflow skills; post-batch 45 rubrics cover ~85 %. Remaining gaps are knowledge-base / utility skills where evals would be over-engineering (`context-engineering`, `prompt-engineering`, `team-protocols`, `worktree-isolation`, `memory-init`, `cloud-platforms`, `deployment-procedures` — all marked `disable-model-invocation: true` in P1).
+
+24 new rubrics across 6 groups:
+- Analysis: `analyze`, `analyze-local`, `analyze-prod`, `architecture`
+- Review/QA/test: `code-review`, `qa`, `test-strategy`, `run-tests`, `test-local`
+- Content/marketing: `content-creation`, `marketing`, `seo-review`, `social-media-manager`
+- Ops/deploy: `create-pr`, `pre-commit`, `release`, `deploy-production`, `deploy-staging`, `infra-change`
+- Dev/security/UI: `feature-dev`, `plan`, `ralph`, `security-scan`, `ui-ux-design`
+
+Each rubric ships 5–6 dimensions × 5 levels with explicit anti-patterns and pass thresholds. Each calibration sample (good ≥ 3.5, bad ≤ 2.0) is a realistic skill output that hits or fails specific rubric dimensions, not a meta-description.
+
+`EXPECTED_COUNTS` in `plugin/dev/validate.py` updated: rubrics 17 → 45, calibration_samples 102 → 270.
+
+### Validator coverage preserved
+
+`validate.py`: **23 pass / 0 warn / 0 fail**. `runner.py --tier 1`: **0 CRITICAL / 0 WARNING / 0 findings**. Two independent reviewer cycles (post-top-10 and post-batch) returned APPROVE.
+
+### Why this matters
+
+The audit identified 5 critical defects (broken cross-refs, spec-drift between docs and runner, empty file referenced as canonical) that any agent invoking the affected workflow would hit. Beyond the criticals, the batch closes ~50 medium-priority quality gaps: missing industry methodology naming (USE/RED/Golden Signals), missing SBOM/SLSA/EPSS/KEV in security skills, missing detect-then-route to existing ecosystem tooling (release-please, Husky, Argo CD, Atlantis…), 30 templates that previously regenerated from prose every invocation, and 24 judge rubrics + 144 calibration samples that lift eval coverage from ~40 % to ~85 % of workflow skills. The plugin is materially closer to its "production-grade SDLC plugin" claim after this release.
+
 ## [0.3.5] — 2026-05-08 — Path B reviewer-idle mitigations + Tier 1 linter polish
 
 Patch release. Hardens Path B (Agent Teams) against alpha-API teammate-idle flakes, expands the Tier 1 H5 trigger lint to handle the four wording variants already in use, and reconciles the `plugin-doctor` skill spec with the real Tier 2 implementation.
