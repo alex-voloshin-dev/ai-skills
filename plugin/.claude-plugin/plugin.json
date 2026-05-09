@@ -1,6 +1,6 @@
 {
   "name": "ai-assets",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Reusable team-of-agents plugin for the full SDLC — feature design, development, bugfix, environment analysis — with built-in RALF iteration loop, layered memory, and systematic eval. Project-agnostic: operations live in plugin, project context lives in target repo (CLAUDE.md / AGENTS.md).",
   "author": {
     "name": "Alex Voloshin",

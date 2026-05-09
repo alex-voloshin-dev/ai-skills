@@ -28,6 +28,42 @@ Pattern 13 (cross-batch reference resolution) sweep + format/style audit found 3
 
 Pattern 13 added to durable memory (`feedback_design_doc_quality.md` patterns 1-13 + pre-flight checklist items 1-13).
 
+## [0.3.5] — 2026-05-08 — Path B reviewer-idle mitigations + Tier 1 linter polish
+
+Patch release. Hardens Path B (Agent Teams) against alpha-API teammate-idle flakes, expands the Tier 1 H5 trigger lint to handle the four wording variants already in use, and reconciles the `plugin-doctor` skill spec with the real Tier 2 implementation.
+
+### Added — Path B liveness watchdog (lead-protocol.md)
+
+- **`plugin/skills/team-protocols/lead-protocol.md`** — new section "Path B Liveness — Explicit Hand-off + Watchdog". The Lead now MUST push an explicit hand-off message to downstream teammates (Reviewer → QA) at every stage transition rather than relying solely on the implicit `dependsOn` auto-claim. ~90s watchdog with up to 2 retry nudges; after 3 silent nudges the Lead halts and escalates to the user with three concrete options (wait, respawn, per-task `Agent` fallback for that WP only). Per-task fallback is permitted **only** on user approval — there is no silent session-wide downgrade. Liveness events are logged in `REVIEW-LOG.md`.
+- **`plugin/skills/team-protocols/path-selection-rules.md`** — new observed-failure entry `alpha.31 — in-process teammate-idle flake`. Documents that this is a known alpha-API flake and explicitly NOT a valid trigger for downgrading to Path A.
+
+### Fixed — Tier 1 linter false-positives
+
+- **`plugin/eval/runner.py`** — `USE_WHEN_RE` (l.49) now also accepts `Use after`, `Use only when`, and the generic `Use <word> when` (covers "Use ONLY when", "Use it when", etc.). Multi-line YAML scalar descriptions (`description: >-`) are whitespace-normalised before the regex check, so a fold that splits "Use" and "when" across lines no longer false-positives.
+- **`plugin/eval/runner.py`** — `lint_hooks_json_refs` (l.186) now searches for `${CLAUDE_PLUGIN_ROOT}/...` as a substring rather than at position 0, so the v0.3.3 wrapper form `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/<name>.py` is accepted alongside the bare form. No more 20× cosmetic warnings on the canonical post-v0.3.3 layout.
+
+### Changed — 4 skill descriptions get the literal `Use when` phrase
+
+- **`plugin/skills/develop/SKILL.md`** — folded scalar reformatted so `Use when implementing a feature ...` lands on a single line.
+- **`plugin/skills/feature-dev/SKILL.md`** — `Use ONLY when ...` → `Use when ... — selected only on a documented technical block`.
+- **`plugin/skills/memory-init/SKILL.md`** — `Use after cloning a new repo ...` → `Use when bootstrapping memory in a freshly cloned repo or when upgrading ...`.
+- **`plugin/skills/plugin-doctor/SKILL.md`** — `Use after install, after upgrades, or when something feels off.` → `Use when installing the plugin, upgrading to a new version, or troubleshooting unexpected plugin behavior.`
+
+All four now match the bare `\bUse when\b` regex without relying on the linter's expanded synonyms.
+
+### Changed — `plugin-doctor` spec reconciled with implementation
+
+- **`plugin/skills/plugin-doctor/SKILL.md`** — `--calibrate-judge` section rewritten. Skill spec previously described "Spearman correlation per rubric" against `plugin/eval/calibration/<rubric>/` and a `--calibrate` runner flag, neither of which exist. Real implementation in `plugin/eval/tier2.py` is a **score-band tolerance check** (judge score within ±0.5 of the score encoded in each calibration filename), invoked via `runner.py --tier 2`. Spec now matches.
+- **`plugin/skills/plugin-doctor/SKILL.md`** — "Failure modes" section now documents three behaviours as **expected**, not warnings: hook scripts without exec bit (v0.3.3 wrapper form), `hooks.json` commands prefixed with `python3 ${CLAUDE_PLUGIN_ROOT}/...` (same), and absence of `.claude-plugin/marketplace.json` at the cache root (a `--plugin-dir` install pipeline artifact, irrelevant unless distributing via marketplace).
+
+### Synced
+
+- **`.claude-plugin/marketplace.json`** — bumped from `0.2.0` to `0.3.5` (had drifted seven patch releases behind `plugin/.claude-plugin/plugin.json`).
+
+### Validator coverage preserved
+
+`runner.py --tier 1`: 0 CRITICAL / 0 WARNING (down from 24 cosmetic warnings on `0.3.4`). `dev/validate.py`: 23 pass / 0 fail.
+
 ## [0.3.4] — 2026-05-07 — Path B (Agent Teams) is the MANDATORY default for subagent work
 
 Patch release. Upgrades the Path B preference language from "default preference" to MANDATORY across all places that drive path selection. The intent has been "Path B unless technical block" since alpha.27, but the wording in several places left room for the model to read it as a soft preference and rationalise a downgrade.
