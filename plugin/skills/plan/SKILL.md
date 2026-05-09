@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Plan feature implementation across services and roles — parse requirements, understand project architecture (ARCHITECTURE.md, CLAUDE.md), decompose into work packages per service/role, estimate complexity, produce an actionable implementation plan. Part of the umbrella feature workflow. Includes mandatory multi-reviewer feedback loop with product-manager, solution-architect, and system-architect. Use when the user has a PRD or feature brief and needs an executable plan before code is written.
+description: Plan feature implementation across services and roles — parse PRD/feature brief, read project architecture (ARCHITECTURE.md, CLAUDE.md), decompose into work packages per service/role with complexity estimates, run a multi-reviewer feedback loop (product-manager + solution-architect + system-architect). Use when the user has a PRD or feature brief and needs an executable plan before code is written.
 context: fork
 argument-hint: [PRD or feature brief path]
 ---
