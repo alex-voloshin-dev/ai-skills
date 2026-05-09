@@ -150,14 +150,40 @@ kubectl get events -n <namespace> --sort-by='.lastTimestamp' --field-selector ty
 
 **Record**: Warning/Error events — especially `FailedScheduling`, `OOMKilled`, `FailedMount`, `Unhealthy`, `BackOff`.
 
-### 4h. Cloud Monitoring (if available)
+### 4h. Observability Methodology
 
-Run platform-specific monitoring commands from `cloud-platforms` skill to list dashboards and check metrics.
+Pick a named industry-canonical method per problem class — gives analysis a vocabulary handle and signal coverage:
 
-Guide the user to check relevant dashboards for:
-- **SLI metrics**: Error rate, latency (p50/p95/p99), availability
-- **Error budget burn rate**: Is the SLO at risk?
-- **Alerting policies**: Which alerts fired?
+- **Four Golden Signals** (Google SRE, user-facing): Latency (p50/p95/p99, success + failed separate), Traffic (RPS), Errors (% by type), Saturation. [SRE Book Ch. 6](https://sre.google/sre-book/monitoring-distributed-systems/).
+- **RED** (Wilkie, microservices): Rate, Errors, Duration. [RED](https://thenewstack.io/monitoring-microservices-red-method/).
+- **USE** (Gregg, resources): Utilization, Saturation, Errors. [USE](https://brendangregg.com/usemethod.html).
+
+| Problem | Method |
+|---|---|
+| Slow API | RED — Duration p99 tail |
+| 5xx spike | Golden Signals — Errors + Saturation |
+| OOMKilled / crashloop | USE — memory/CPU saturation |
+| Customer-reported latency | RED + tracing on slowest 1% |
+| Node/disk pressure | USE on resource axis |
+
+### 4i. Production Telemetry Surface
+
+Identify the stack (`CLAUDE.md`, helm charts, `prometheus-operator` CRDs, OTel collector) and query directly:
+
+| Stack | Where | Common queries |
+|---|---|---|
+| **Prometheus + Grafana** | Dashboards, Alertmanager | `rate(http_requests_total[5m])`, `histogram_quantile(0.99, ...bucket[5m])`, `up == 0` |
+| **Datadog** | APM, Service Catalog, Logs | `service:x error_rate`, `@http.status_code:5*`, anomaly monitors |
+| **Honeycomb** | Tracing + BubbleUp | `WHERE service.name=x \| HEATMAP duration_ms`, BubbleUp on slow traces |
+| **New Relic** | APM + Distributed Tracing | `SELECT percentile(duration,50,95,99) FROM Transaction WHERE appName='x'` |
+| **Sentry** | Issues filtered to release | error patterns + breadcrumbs (FE/mobile) |
+| **OTel + Tempo / Jaeger** | Tempo / Jaeger UI | trace search by `service.name`, `trace.id` |
+
+Cross-reference SLI metrics, error-budget burn, and active alerts against the method's signals.
+
+### 4j. Distributed Tracing
+
+For latency or cross-service failures, a single trace through 5–7 services is the canonical root-cause path. Storage: Tempo / Jaeger / Zipkin. Instrumentation: OpenTelemetry SDK. Search by `service.name`, `trace.id`, or slow-trace heatmap. Span attrs: HTTP route, DB query, external API, retries.
 
 ## 5. Analyze Findings
 

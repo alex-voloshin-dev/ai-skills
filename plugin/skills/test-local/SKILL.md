@@ -70,10 +70,13 @@ If Docker is not running — notify user and stop. Tests requiring containers wi
 
 ### 4b. Port Conflicts
 
-Check that ports needed by test services are available:
+Check that ports needed by test services are available. Use the platform-appropriate command:
 
 ```
 // turbo
+# macOS / Linux:
+lsof -i :<port>          # OR: ss -tulnp 2>/dev/null | grep :<port>
+# Windows (PowerShell or cmd):
 netstat -ano | findstr ":<port>"
 ```
 

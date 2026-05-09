@@ -136,6 +136,29 @@ docker inspect --format '{{range .Mounts}}{{.Type}}: {{.Source}} -> {{.Destinati
 
 **Record**: Volume mounts, bind mounts, permissions (ro/rw).
 
+### 3h. Health and Local Telemetry
+
+Even on a single Docker host, name the methodology applied — this matches the production approach and surfaces gaps:
+
+- **USE Method** (Brendan Gregg) — for `docker stats` reads: Utilization (CPU%, MemPerc), Saturation (memory at limit, swap usage, blocked I/O), Errors (restart count, OOMKilled flag). [Reference](https://www.brendangregg.com/usemethod.html).
+- **RED Method** (Tom Wilkie) — for any container exposing HTTP: Rate, Errors, Duration. Apply it locally if the stack mirrors prod (Prometheus exporters, OTel collector). [Reference](https://thenewstack.io/monitoring-microservices-red-method/).
+- For Golden Signals, RED, USE deep-dive and full method/problem matrix → see `analyze-prod` skill, Step 4h.
+
+Docker-specific telemetry commands beyond Step 3:
+
+```
+// turbo
+docker stats --no-stream
+docker compose logs -f --since 10m
+```
+
+```
+docker inspect --format='{{json .State.Health}}' <container>
+docker inspect --format='{{.State.OOMKilled}} {{.State.ExitCode}} {{.State.RestartCount}}' <container>
+```
+
+If the local stack mirrors prod observability (Promtail/Loki + Grafana, Prometheus + cadvisor, Jaeger/Tempo via OTel collector) — query those directly using the same patterns documented in `analyze-prod` Step 4i.
+
 ## 4. Analyze Findings
 
 Using the applied role's expertise, analyze the collected data:

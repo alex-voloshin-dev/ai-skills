@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Structured code review with security, performance, and architecture checklists. Use when reviewing pull requests, code changes, or conducting architecture reviews. Provides actionable checklists for consistent review quality.
+description: Use when reviewing a pull request or code change before merge — produces a verdict (APPROVE / REQUEST_CHANGES / COMMENT) using Google's eng-practices framing (code health over perfection) and conventional comments vocabulary (nit / suggestion / issue / praise). Distinct from /security-scan (no dependency CVE scan) and /security-audit (no full OWASP audit).
 ---
 
 # Code Review
@@ -19,6 +19,24 @@ Systematic code review skill with layered checklists. Produces consistent, actio
 - Writing new code (use `/feature-dev` or `/bugfix` instead)
 - Validating plugin-shipped AI asset files (use `/plugin-doctor` for plugin self-diagnostic)
 - Running automated checks before commit (use `/pre-commit`)
+
+## Reviewer Principles
+
+Adapted from [Google's eng-practices "The Standard of Code Review"](https://google.github.io/eng-practices/review/reviewer/standard.html). Primary purpose: **improve code health over time, not chase perfection**.
+
+Apply at every review:
+
+1. **Code health over time** — does this CL improve the codebase, even if not perfect? If yes, approve. Do not block on hypothetical future improvements.
+2. **Technical facts override preferences** — opinion vs fact. If the reviewer prefers style A but the author wrote style B and both are valid, defer to the author. Disagreement on style without a documented standard is non-blocking.
+3. **Forward progress vs importance of suggestions** — small improvements should not block merge unless they prevent code health from improving long-term. Convert non-blocking suggestions to follow-up issues.
+
+Effectiveness ceilings (Microsoft Research on code review):
+
+| Signal | Ceiling | Implication |
+|---|---|---|
+| Defect-finding rate | Plateaus past ~60-min sessions | Split large CLs |
+| Throughput | ~200 LoC/hour | Push back on >400 LoC PRs |
+| Reviewers | 1 sufficient for most CLs | Add a 2nd reviewer only for high-risk changes (auth, payments, schema, infra) |
 
 ## Review Process
 
@@ -51,32 +69,56 @@ Use the appropriate checklist(s) based on change type:
 
 ### 3. Provide Feedback
 
-Structure review comments as:
+Use [Conventional Comments](https://conventionalcomments.org) vocabulary so each comment signals intent. Format: `<label>[(decoration)]: <subject>`.
+
+| Label | Use for | Blocks merge? |
+|---|---|---|
+| `praise:` | Positive feedback (research links praise to productivity — do not skip) | No |
+| `nitpick:` / `nit:` | Minor / preference / style | No |
+| `suggestion:` | Concrete change request | Sometimes |
+| `issue:` | Problem requiring change before merge | Yes |
+| `todo:` | Leftover work for a follow-up CL | No |
+| `question:` | Clarification needed | Maybe |
+| `thought:` | Speculative / tangential | No |
+| `chore:` | Small task (e.g., update docs) | No |
+
+Optional decoration: `(blocking)`, `(non-blocking)`, `(if-minor)`. Example:
+
+```
+issue (blocking): SQL query is concatenated, not parameterized — risk of injection.
+nit (non-blocking): inconsistent naming — `userId` elsewhere, `user_id` here.
+praise: nice extraction of the retry logic into a helper.
+```
+
+Verdict template:
 
 ```
 ## Review Summary
 
 **Verdict**: APPROVE | REQUEST_CHANGES | COMMENT
 
-### Critical (must fix before merge)
-- [ ] [file:line] Description — why it matters
+### Blocking (issue / suggestion (blocking))
+- [ ] [file:line] `issue:` description — why it matters + how to fix
 
-### Suggestions (should fix, not blocking)
-- [ ] [file:line] Description — improvement rationale
+### Non-blocking (suggestion / todo / question)
+- [ ] [file:line] `suggestion (non-blocking):` description — rationale
 
-### Nits (optional, style/preferences)
-- [ ] [file:line] Description
+### Nits (nitpick / chore)
+- [ ] [file:line] `nit:` description
+
+### Praise
+- [file:line] `praise:` what worked well
 ```
 
 **Rules:**
-- Every critical finding must explain **why** it's a problem and **how** to fix it
+- Every blocking comment must explain **why** and **how to fix**
 - Link to relevant documentation or standards when applicable
-- Acknowledge good patterns — reinforce what works well
-- Never approve code with known critical issues
+- Include at least one `praise:` comment when warranted — do not skip
+- Never approve code with an open `issue (blocking):`
 - Flag missing tests for new logic paths
 
 ## Integration
 
 - **Follows rules**: `Agent(software-engineer)` (architecture, code quality)
-- **Used by workflows**: `/code-review`, `/create-pr`
+- **Used by workflows**: `/develop` (REVIEW stage), `/bugfix` (REVIEW stage), `/create-pr` (PR description quality), `/security-audit` (line-level security comments)
 - **Companion checklists**: `review-checklist.md`, `security-checklist.md`

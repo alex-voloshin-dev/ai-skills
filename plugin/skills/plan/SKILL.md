@@ -45,11 +45,11 @@ Read the following files (if they exist):
 
 ### 2b. Scan Project Structure
 
-If documentation is incomplete or absent, scan the filesystem:
+If documentation is incomplete or absent, scan the filesystem (cross-platform via `Glob` / `Read`, or use one of):
 
 ```
 // turbo
-ls -la (or dir for Windows)
+ls -la 2>/dev/null || dir
 ```
 
 Look for:
