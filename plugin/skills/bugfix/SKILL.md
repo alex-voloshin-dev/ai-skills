@@ -131,7 +131,7 @@ Three tasks per fix iteration (DEV / REVIEW / QA) linked via `dependsOn`. If the
 
 Teammates self-claim next unblocked task. On reviewer `changes_requested` → Lead inserts a follow-up DEV task and re-points dependencies. On QA `fail` → same. Loop until reviewer approves AND QA passes.
 
-**Liveness watchdog (v0.3.5).** In `in-process` mode the Reviewer / QA can go silently idle after a `dependsOn` claim. Lead MUST push explicit hand-off, run 90 s watchdog, retry up to 2 nudges, escalate after 3 — full procedure in `@team-protocols/lead-protocol.md` "Path B Liveness".
+**Liveness watchdog (v0.3.7).** Any teammate (Developer included) can silently idle in `in-process` mode — covering the alpha.31 "silent-but-complete" Developer sub-flake. Full procedure (explicit hand-off, 90 s watchdog × 2 nudges, disk-state reconciliation on Developer-silent, role-specific escalation menu, no Lead-synthesized G7) in `@team-protocols/lead-protocol.md` "Path B Liveness".
 
 ### Step 4 — final cleanup
 

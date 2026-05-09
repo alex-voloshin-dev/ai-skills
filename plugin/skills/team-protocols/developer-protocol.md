@@ -20,7 +20,7 @@ BEFORE sending to review, MUST self-verify changes on disk:
 4. If edits were made — read the changed files and confirm the changes are there
 5. Do NOT trust tool output alone — always verify the actual file state
 
-## Handoff Format (G7 return contract)
+## Handoff Format (G7 return contract — MANDATORY)
 
 After completing and verifying a task, return a structured payload conforming to `plugin/schemas/return-contract.schema.json`:
 
@@ -36,6 +36,18 @@ After completing and verifying a task, return a structured payload conforming to
 - `next_actions` — suggestions for the next subagent (e.g., `reviewer: focus on error path coverage`)
 
 If the workflow tracks acceptance criteria — include which criteria this task addresses inside `result.summary` or as a custom `result.acceptance_criteria` array.
+
+### G7 envelope is mandatory — silent completion is a protocol violation
+
+Returning a final assistant message without a G7 return-contract envelope (or marking the team task `completed` with no envelope) is a **protocol violation**, even if all edits landed on disk and all acceptance criteria appear met. The Lead cannot validate the handoff against `return-contract.schema.json` without the envelope, the Reviewer has no schema-checked surface to read from, and the orchestrator loses every downstream guarantee (faithfulness rubric per G5, evidence traceability, risk surfacing, idempotent re-spawn on flake).
+
+If you reach the end of a task and the work is done:
+
+1. Run the self-verification checklist above.
+2. Emit the G7 envelope as the final tool / message return — even if the only `risks` and `next_actions` entries are empty arrays. An envelope with `status: ok` and a populated `result` is required.
+3. If you are in Path B (Agent Teams) and your task is auto-claiming, the envelope must be the body of your final message before the task transitions to `completed` — do not let the team runtime mark the task done while you are still composing the envelope.
+
+If the Lead respawns you with the same `trace_id` and you find the requested edits already on disk (the alpha.31 silent-but-complete recovery path): do NOT redo the work. Confirm the existing diff matches the spawn payload's goal + constraints, then emit the G7 envelope describing what is already on disk, with `evidence` citing the existing files and `risks` noting "respawned-after-silent-idle: prior session left work on disk without G7 envelope; this return is a reconciliation envelope, not new work."
 
 ## Review Iteration Rules
 

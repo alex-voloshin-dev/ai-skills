@@ -141,7 +141,7 @@ If `/env-analyze` produced findings, add a context-only task at the start (assig
 - On QA `fail` → same pattern, insert follow-up DEV task.
 - Lead surfaces progress to user after each issue completes the pipeline.
 
-**Liveness watchdog (v0.3.5).** In `in-process` mode the Reviewer / QA can go silently idle after a `dependsOn` claim. Lead MUST push explicit hand-off, run 90 s watchdog, retry up to 2 nudges, escalate after 3 — full procedure in `@team-protocols/lead-protocol.md` "Path B Liveness".
+**Liveness watchdog (v0.3.7).** Any teammate (Developer included) can silently idle in `in-process` mode — covering the alpha.31 "silent-but-complete" Developer sub-flake. Full procedure (explicit hand-off, 90 s watchdog × 2 nudges, disk-state reconciliation on Developer-silent, role-specific escalation menu, no Lead-synthesized G7) in `@team-protocols/lead-protocol.md` "Path B Liveness".
 
 ### Step 4 — final cleanup
 

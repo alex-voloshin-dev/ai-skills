@@ -6,6 +6,18 @@ All notable changes to the `ai-assets` plugin. Format: [Keep a Changelog](https:
 
 Phase 2 implementation in progress per `../plugin-design/04-MIGRATION-CHECKLIST.md`. Following batches will populate the skeleton.
 
+## [0.3.7] — 2026-05-09 — Path B Liveness extended to Developer silent-idle
+
+Recurring observation that the v0.3.5 watchdog covered only Reviewer/QA, but the same alpha.31 in-process silent-idle flake also hits the **Developer** — including a "silent-but-complete" sub-shape where edits actually land on disk and acceptance criteria look met, yet no G7 return envelope ever arrives. The Lead is then stuck without a schema-validated handoff path. Each session was inventing its own escalation menu.
+
+- **`plugin/skills/team-protocols/lead-protocol.md`** — "Path B Liveness" section restructured to apply symmetrically to Developer / Reviewer / QA. Adds a read-only **disk-state reconciliation** sub-protocol (Lead runs `git status` / `git diff` / `Read` only — never tests/lint/build) with three sub-cases (no edits / partial / AC met). Defines a canonical **role-specific escalation menu** with three variants: 4a Developer-silent generic, 4b Developer-silent disk-AC-met (re-spawn with same trace_id is the preferred recovery), 4c Reviewer/QA-silent. Adds explicit Hard rules: never synthesize G7 on a teammate's behalf; never run role work inline; never silently downgrade the whole session; never skip the watchdog for Developer hand-offs.
+- **`plugin/skills/team-protocols/path-selection-rules.md`** — alpha.31 entry rewritten to acknowledge Developer-silent (with the silent-but-complete sub-shape) alongside Reviewer/QA, and to forbid Lead-synthesized G7 envelopes.
+- **`plugin/skills/team-protocols/developer-protocol.md`** — adds "G7 envelope is mandatory — silent completion is a protocol violation" subsection. Defines the **respawn-after-silent-idle reconciliation envelope** (same trace_id; do NOT redo work; emit envelope describing on-disk state with an explicit `risks` note about the prior silent session).
+- **`plugin/skills/team-protocols/SKILL.md`** — Path B Liveness one-liner bumped from v0.3.5 (Reviewer/QA-only) to v0.3.7 (all roles, with Developer disk-state reconciliation and the no-Lead-synthesized-G7 hard rule).
+- **`plugin/skills/bugfix/SKILL.md`**, **`plugin/skills/team-bugfix/SKILL.md`** — watchdog one-liners updated to v0.3.7 wording. Both files re-trimmed to stay under the 12,000-character SKILL.md limit.
+
+This unblocks the recurring "developer worked correctly but stayed silent" failure mode — the Lead now has an explicit, schema-respecting recovery procedure instead of choosing between protocol-violating options ad hoc.
+
 ### Round 8 cross-phase review findings (design-only fixes, no plugin code change)
 
 Holistic review of B1+B2+B6+B7 found 2 real gaps (CRIT-1 and HIGH-1) plus integration concerns. Design docs updated; plugin code changes will be applied in B8 + later batches:
