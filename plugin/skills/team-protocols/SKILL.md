@@ -56,6 +56,8 @@ The full anti-rationalization checklist with observed failure modes (alpha.26 / 
 
 Lead drives via natural language. Each teammate is a full Claude Code session with switchable context. User can Shift+↓ to switch teammates, Enter for transcripts, and Ctrl+T for the shared task list. This is the path the workflow MUST use unless a hard technical block at Step 1 forces Path A.
 
+**Path B Liveness — Explicit Hand-off + Watchdog (v0.3.5).** Downstream teammates (Reviewer, QA) are wired to auto-claim via `dependsOn`, but in alpha `in-process` mode they sometimes go silently idle and never pick the task up. The Lead MUST push an explicit hand-off message at every stage transition, run a ~90 s watchdog with up to 2 retry nudges, and escalate to the user after 3 nudges (per `lead-protocol.md` "Path B Liveness — Explicit Hand-off + Watchdog"). Per-task `Agent` fallback is permitted **only** on user-approved escalation, never as silent session-wide downgrade.
+
 ### Path A — Subagents (technical-block fallback only, sequential)
 
 Fallback path used ONLY when Path B Step 1 returns a hard technical block. Per role, the Lead invokes `Agent({...})` and waits for return. Sequential by default; lower token cost; works in every Claude Code environment. Never selected as a primary choice — only on documented technical failure of Path B.

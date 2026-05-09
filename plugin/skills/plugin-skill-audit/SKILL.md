@@ -73,6 +73,7 @@ Frontmatter — required fields:
 - `description`
   - 1–1024 characters (hard limit per spec)
   - non-empty
+  - **MUST NOT contain `TODO` token** (CRITICAL fail) — guards against unedited scaffolds from `/plugin-skill-create`
   - SHOULD describe both what the skill does AND when to use it
   - SHOULD include trigger keywords agents pattern-match against
   - SHOULD use imperative phrasing ("Use when…")

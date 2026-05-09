@@ -84,8 +84,9 @@ This skill is **read-only** — no memory writes.
 
 ## Integration
 
-- **Reads**: `<repo>/CLAUDE.md`, `<repo>/AGENTS.md`, `<repo>/ARCHITECTURE.md`, L4 `learnings.md` (if `--include-memory`)
+- **Reads**: `<repo>/CLAUDE.md` (L2), `<repo>/AGENTS.md`, `<repo>/ARCHITECTURE.md`, L4 `learnings.md` (if `--include-memory`)
 - **Validates against**: `plugin/agents/*.md` for role name lookup
 - **Rules**: `untrusted-content-wrapping` (G1 wrap on every source excerpt)
 - **Used by**: orchestrator skills (`/feature-design`, `/develop`, `/team-bugfix`) — feeds `state_slice` of G7 spawn payloads
 - **Companion**: `/subagent-spawn` (constructs full G7 payload using context-load output)
+- **Layer model**: `plugin/docs/concepts/memory.md` documents the L0–L5 layers (L0 Cowork host, L1 plugin templates, L2 CLAUDE.md, L3 session run-logs, L4 project memory, L5 user-global memory). This skill reads from L2 + L4.

@@ -141,6 +141,11 @@ def lint_skill(path: pathlib.Path, findings: list[Finding]) -> None:
             # Skip H5 check for non-invocable utility skills explicitly opting out
             if "disable-model-invocation: true" not in text:
                 findings.append(Finding("WARNING", str(path), "description lacks `Use when` trigger pattern (H5)"))
+        # Guard against unedited /plugin-skill-create scaffolds. The placeholder
+        # description ships with a literal `TODO` token; scaffolded skills that
+        # forgot to edit this should fail audit, not silently pass.
+        if "TODO" in desc_normalized:
+            findings.append(Finding("CRITICAL", str(path), "description contains `TODO` placeholder — edit before merge"))
 
 
 def lint_rule(path: pathlib.Path, findings: list[Finding]) -> None:

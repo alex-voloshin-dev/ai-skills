@@ -83,20 +83,16 @@ Identify the **minimal reproduction case** — this becomes the regression-test 
 
 Compile findings into a structured bug report (Summary, Severity, Environment, Expected/Actual, Steps to reproduce, Evidence, Root cause analysis, Affected components). Present to the user. Wait for confirmation that the diagnosis is correct before committing the fix to the pipeline.
 
-## 6. Choose execution path
+## 6. Choose execution path (ATTEMPT Path B FIRST — literal, mandatory)
 
-Per `@team-protocols/path-selection-rules.md`: this skill supports Path A (Subagents) and Path B (Agent Teams). **Path B is the default preference** — visual team panel, Shift+↓ context-switching, dedicated transcript per role.
+Per `@team-protocols/path-selection-rules.md`: Path B (Agent Teams) is MANDATORY default — visual team panel, Shift+↓ context-switching, dedicated transcript per role. Path A (sequential subagents) is fallback-only.
 
-Detection is implicit. Do NOT run a Bash env-var check. Go to Path B Step 1 directly. If team-creation natural language fails ("Agent Teams not enabled" or equivalent), fall back silently to Path A. Display-mode or platform reasons are NEVER valid Path A triggers — Path B has an `in-process` mode that works in any terminal. **No silent fallback for non-technical reasons** — rationalised downgrades violate the alpha.27 rule.
+Detection is implicit — go to Path B Step 1 directly, no Bash env-var check. The ONLY valid Path A trigger is a literal "Agent Teams not enabled" / equivalent technical error from team-creation. Display-mode, platform, "small bug", "sequential pipeline", "single-stack", "Windows host", or "no tmux" — NEVER valid Path A triggers (Path B has `in-process` mode that works in any terminal). **No silent fallback for non-technical reasons** — rationalised downgrades violate alpha.27.
 
-When you announce the chosen path, the FIRST sentence MUST be one of:
+The FIRST sentence when announcing the path MUST be one of:
 
 - "Attempting Path B (Agent Teams) team-create..."
 - (after fallback) "Agent Teams API returned: <verbatim error>. Falling back to Path A."
-
-## Step 0 — ATTEMPT Path B FIRST (literal, mandatory)
-
-Before reading the Path A section below, you MUST attempt Path B Step 1 first. Do NOT pre-emptively pick Path A based on absent CLAUDE.md, "small" bug, sequential pipeline, single-stack project, Windows host, or "no tmux available". The ONLY way to land on Path A is: try Path B Step 1's natural-language team-creation, get back a literal "Agent Teams not enabled" / equivalent technical error, THEN fall back.
 
 ## 7. Mandatory Pipeline — DEV → REVIEW → QA (both paths)
 
@@ -134,6 +130,8 @@ Three tasks per fix iteration (DEV / REVIEW / QA) linked via `dependsOn`. If the
 ### Step 3 — drive and monitor
 
 Teammates self-claim next unblocked task. On reviewer `changes_requested` → Lead inserts a follow-up DEV task and re-points dependencies. On QA `fail` → same. Loop until reviewer approves AND QA passes.
+
+**Liveness watchdog (v0.3.5).** In `in-process` mode the Reviewer / QA can go silently idle after a `dependsOn` claim. Lead MUST push explicit hand-off, run 90 s watchdog, retry up to 2 nudges, escalate after 3 — full procedure in `@team-protocols/lead-protocol.md` "Path B Liveness".
 
 ### Step 4 — final cleanup
 

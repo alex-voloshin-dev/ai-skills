@@ -125,6 +125,31 @@ Eval rubric (`plugin/eval/judge-rubrics/security-audit.md`) MUST verify coverage
 
 If the audit target includes any AI/LLM component (agent harness, prompt template, LLM API integration, RAG pipeline), the GenAI Top 10 IS in scope by default.
 
+## Methodology — SAST / DAST / SCA / IAST distinction
+
+This audit combines four complementary approaches, each with a different surface:
+
+| Approach | Stage | What it sees | Tools |
+|---|---|---|---|
+| **SAST** (Static Application Security Testing) | Source code at rest | Pattern-match dangerous APIs, taint paths, hard-coded secrets | Semgrep, CodeQL (GitHub), SonarQube, Snyk Code |
+| **DAST** (Dynamic Application Security Testing) | Running application | Real HTTP/API behaviour: injection, auth bypass, header issues | OWASP ZAP, Burp Suite, Nuclei |
+| **SCA** (Software Composition Analysis) | Dependencies | Known CVEs in third-party libs and base images | osv-scanner, Snyk, Dependency-Track, Trivy, Grype, Dependabot |
+| **IAST** (Interactive AST) | Running app + instrumentation | Runtime data-flow with code context | Contrast Security, Seeker |
+
+The audit's `security-engineer` covers SAST + SCA + secret scanning. DAST is run only when an instance is reachable (typically as a follow-up against staging). IAST is rare in our typical engagements; mention as available but not default.
+
+## Supply chain — SBOM + SLSA + EPSS/KEV
+
+For 2025/2026 compliance baseline:
+
+- **SBOM**: generate with [Syft](https://github.com/anchore/syft) (`syft <repo> -o cyclonedx-json`); consume with [Grype](https://github.com/anchore/grype). [Dependency-Track](https://dependencytrack.org) for continuous monitoring; [GUAC](https://docs.guac.sh) to graph SBOMs + attestations + vulnerabilities.
+- **SLSA** ([slsa.dev](https://slsa.dev)): build-provenance attestation. Level 2 is the practical baseline. GitHub Actions + [SLSA GitHub Generator](https://github.com/slsa-framework/slsa-github-generator) reach L2 with minimal config.
+- **Sigstore Cosign**: sign release artefacts (`cosign sign-blob`); verify at deploy (`cosign verify-attestation <image>`).
+- **EPSS** (Exploit Prediction Scoring System) + **CISA KEV** (Known Exploited Vulnerabilities): use to prioritize SCA findings — KEV-listed CVEs are confirmed in-the-wild; EPSS ≥ 0.5 indicates high near-term exploitation likelihood. Both gate "must fix before merge". Free APIs at first.org/data and CISA. `grype` consumes both natively.
+- **EO 14028** (US, 2021) and **EU Cyber Resilience Act** (2024+) both mandate SBOMs for software shipped to government / EU markets.
+
+Cite the v2025 OWASP LLM PDF: [genai.owasp.org/llm-top-10/](https://genai.owasp.org/llm-top-10/) for traceability.
+
 ## G7 spawn payloads
 
 All spawns use structured G7 payloads. `security-engineer` is read-only by frontmatter (`disallowedTools: Write, Edit`); developer fixes happen in a separate phase with explicit user approval.

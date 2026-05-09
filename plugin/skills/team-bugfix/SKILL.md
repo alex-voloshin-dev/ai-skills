@@ -141,6 +141,8 @@ If `/env-analyze` produced findings, add a context-only task at the start (assig
 - On QA `fail` → same pattern, insert follow-up DEV task.
 - Lead surfaces progress to user after each issue completes the pipeline.
 
+**Liveness watchdog (v0.3.5).** In `in-process` mode the Reviewer / QA can go silently idle after a `dependsOn` claim. Lead MUST push explicit hand-off, run 90 s watchdog, retry up to 2 nudges, escalate after 3 — full procedure in `@team-protocols/lead-protocol.md` "Path B Liveness".
+
 ### Step 4 — final cleanup
 
 After all audit tasks complete: run final verification in main thread (build/test), emit summary, then ask: "Clean up the team."

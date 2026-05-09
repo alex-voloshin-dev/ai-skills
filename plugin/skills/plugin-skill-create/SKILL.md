@@ -53,12 +53,14 @@ Not for: general-purpose Anthropic skill creation — use the upstream `skill-cr
 ```yaml
 ---
 name: <name>
-description: <one-sentence description; placeholder>. Use when the user <trigger phrase>.
+description: TODO — replace this placeholder. One sentence describing what the skill does. Use when <TODO: trigger phrase>.
 context: fork           # if --invocable
 argument-hint: "<arg>"  # if --invocable
 disable-model-invocation: true  # if --type knowledge AND not --invocable
 ---
 ```
+
+The `TODO —` token is a hard guard: `plugin-skill-audit` fails (CRITICAL severity) on any skill description that still contains `TODO`. This forces the scaffolded description to be edited before merge. Removing the literal `TODO` from your description is the gate that flips the audit from failing to passing.
 
 3. Generate body skeleton:
    - `# /<name>` heading

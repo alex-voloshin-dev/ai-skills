@@ -6,7 +6,7 @@ context: fork
 
 # /memory-init — Memory Skeleton Initializer
 
-Create the `.ai-assets-memory/` directory tree from `plugin/memory/templates/` per `03-MEMORY-ARCHITECTURE.md` §3 L4. Idempotent.
+Create the `.ai-assets-memory/` directory tree from `plugin/memory/templates/`. Idempotent. Layer model and write rules: `plugin/docs/concepts/memory.md`.
 
 ## When to use
 
@@ -72,3 +72,4 @@ Not needed when running `/ai-assets-init` — that workflow runs memory-init as 
 - **Called by**: `/ai-assets-init` (full bootstrap including memory), used standalone for upgrades
 - **Rules**: `memory-discipline` (write rules per layer), `memory-validation` (entry validation)
 - **Hooks**: `pre-tool-use-committed-write.py` validates `.committed/` writes against allowlist
+- **Layer model**: `plugin/docs/concepts/memory.md` documents the L0–L5 layers. This skill creates L3 dirs (`sessions/`, `ralph/`) and L4 files (`learnings.md`, `runs.jsonl`, etc.) inside `.ai-assets-memory/`.

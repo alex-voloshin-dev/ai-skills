@@ -81,3 +81,4 @@ Append a curated entry to `learnings.md` (L4 project, default) or `~/.claude/ai-
 - **Rules**: `memory-discipline` (write rules + PII filter mandate + L5 scope), `memory-validation` (dedupe + conflict resolution)
 - **Hooks**: `pre-tool-use-committed-write.py` (committed allowlist enforcement)
 - **Companion**: `/memory-recall` to search; `/memory-init` to initialize the tree
+- **Layer model**: `plugin/docs/concepts/memory.md` documents the L0–L5 layers (L4 = project memory, L5 = user-global). This skill writes only to L4 (default) and L5 (opt-in).

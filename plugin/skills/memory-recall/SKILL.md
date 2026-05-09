@@ -77,3 +77,4 @@ This skill is **read-only** — no memory writes.
 - **Honors**: `userConfig.user_global_memory_enabled` for L5 access
 - **Rules**: `untrusted-content-wrapping` (G1 wrap on returned excerpts), `memory-validation` (conflict resolution)
 - **Companion**: `/learnings-write` to add new entries; `/context-load` for role-specific context slices
+- **Layer model**: `plugin/docs/concepts/memory.md` documents the L0–L5 layers. This skill reads L4 + (opt-in) L5.
