@@ -6,6 +6,60 @@ All notable changes to the `ai-assets` plugin. Format: [Keep a Changelog](https:
 
 Phase 2 implementation in progress per `../plugin-design/04-MIGRATION-CHECKLIST.md`. Following batches will populate the skeleton.
 
+## [0.3.11] — 2026-05-11 — Path B reliability hardening: file-channel transport + evidence-based watchdog + wave sizing
+
+Closes the 10 field-feedback items from the v22 debrief: team-coordination augmentation gap (alpha.36), false-positive watchdog timing (90 s × 2 too tight for deep work), respawn-curing-respawn loop, missing TaskCreate dep-batch pattern, oversized waves, paraphrased task briefs, ad-hoc file-channel, no auto-disk-reconciliation at gate transitions.
+
+### File-channel transport — first-class, not fallback (alpha.36)
+
+- New `plugin/hooks/scripts/team-gate-reconciliation.py` hook wired on `TaskCompleted` + `TeammateIdle`. Fires on every gate transition; writes a JSON envelope with `git status --short` / `git diff --stat` snapshot + task metadata to `.ai-assets-memory/sessions/<sid>/team-envelopes/<event>-<task>-<ts>.json`. Atomic write (`.tmp` → `os.replace`) so the Lead's `Monitor` never reads partial JSON. Hook fails open; never blocks.
+- New canonical `TeammateIdle` lifecycle event registered in `hooks/hooks.json` (raises plugin event count to 14).
+- New `alpha.36` failure mode in `plugin/skills/team-protocols/path-selection-rules.md` covering the *team-coordination augmentation gap* — Anthropic docs say `SendMessage`/`TaskUpdate` are always available but in field practice this augmentation does not reliably attach. Recovery: file-channel-exclusive transport; the team stays in Path B with negligible overhead.
+- New `plugin/skills/team-protocols/lead-protocol.md` section "File-channel transport — first-class, not fallback" describes the canonical envelope path, atomic-write contract, Lead `Monitor` pattern, and the trigger for switching to file-channel-exclusive mode (two consecutive bus-dropped envelopes within 60 s).
+- `plugin/skills/team-protocols/developer-protocol.md` adds "File-channel envelopes" section requiring every Developer to write its G7 envelope to the file-channel via `Bash` atomic-mv in addition to the bus return.
+- `plugin/skills/team-protocols/reviewer-protocol.md` adds "Findings envelope (file-channel)" — Reviewer remains read-only on source code; the only file-write operation permitted is the envelope under `.ai-assets-memory/sessions/<sid>/team-envelopes/`.
+- `plugin/skills/develop/SKILL.md` team-create prompt now includes the file-channel + verdict-in-response standard clauses for every teammate.
+
+### Evidence-based watchdog — replace 90 s × 2 with progress-or-stall (F5)
+
+- `plugin/skills/team-protocols/lead-protocol.md` Path B Liveness step 2 rewritten: first check at ~180 s, reset on any of three progress signals (envelope timestamp newer than hand-off, `git status` shows `active_files` modified, task transitioned to `in_progress`). Second check at ~180 s after first nudge. Hard ceiling 25 min. `idle_notification` pings alone are NOT a "no progress" signal — alpha runtime emits them even mid-tool-call.
+- Closes the v22 false-positive class where Lead nudged a teammate that was running a 4-min Read sequence + test compile.
+
+### Respawn-curing-respawn auto-fallback (F6)
+
+- `plugin/skills/team-protocols/lead-protocol.md` Path B Liveness step 4 adds new sub-case **4e**: when the first user-approved respawn ALSO fails the watchdog with the same symptom, the Lead surfaces a tightened menu auto-defaulting to per-task Path A (applied in 30 s without explicit response). Passive waiting on a known-bad runtime is the most expensive failure mode the user reported.
+
+### TaskCreate API gap workaround (F7)
+
+- `plugin/skills/team-protocols/lead-protocol.md` new section "TaskCreate API workaround — single-batch deps" documents the canonical 2-batch parallel-create pattern: batch 1 = all `TaskCreate` calls (no deps), batch 2 = all `TaskUpdate(addBlockedBy=...)` calls. Wall-time drops from ~45 s serial to ~5 s parallel for a 4-WP × 3-stage bootstrap.
+
+### Wave sizing — split >6-WP plans (F8)
+
+- `plugin/skills/team-protocols/lead-protocol.md` new pre-flight section "Pre-flight — wave sizing". Plans >6 WPs split into 3-6 WP waves with checkpoint between waves. Auto-continue after 60 s unless user pauses. Field debrief showed 38-WP plan converged on 4 foundation WPs before context drift dominated.
+- `plugin/skills/develop/SKILL.md` adds the wave sizing pre-flight gate.
+
+### Brief-from-source (F4)
+
+- `plugin/skills/team-protocols/lead-protocol.md` new pre-flight section "Brief-from-source" requires every spawn payload's `goal` + `constraints` to be assembled by `Read` of the source design/PRD VERBATIM, never paraphrased from Lead context. Field debrief: Reviewer flagged 3 false "discrepancies" in DB-1, all artefacts of Lead paraphrase. Developer rejected the brief and re-read design.md §9.2/§9.3; the post-judge reconciliation note then walked back all three findings.
+- Self-verification step 6 (already in v0.3.9) coverage-checks the diff against the verbatim block so paraphrase drift is caught at the gate.
+
+### Validator updates
+
+- `plugin/dev/validate.py`: `EXPECTED_COUNTS.hooks = 19`, `EXPECTED_COUNTS.events = 14`; `CANONICAL_EVENTS` adds `TeammateIdle`.
+
+### Files touched
+
+- `plugin/hooks/scripts/team-gate-reconciliation.py` (new)
+- `plugin/hooks/hooks.json` (TeammateIdle event + team-gate-reconciliation on TaskCompleted)
+- `plugin/skills/team-protocols/lead-protocol.md` (5 new sections)
+- `plugin/skills/team-protocols/developer-protocol.md` (file-channel envelopes)
+- `plugin/skills/team-protocols/reviewer-protocol.md` (findings envelope file-channel)
+- `plugin/skills/team-protocols/path-selection-rules.md` (alpha.36)
+- `plugin/skills/team-protocols/SKILL.md` (preflight + file-channel transport reference)
+- `plugin/skills/develop/SKILL.md` (team-create file-channel clauses + wave sizing)
+- `plugin/dev/validate.py` (hooks=19, events=14, TeammateIdle canonical)
+- `plugin/.claude-plugin/plugin.json` (version 0.3.11)
+
 ## [0.3.10] — 2026-05-10 — Path B unblock pass: producer-writes + alpha.33/34 + ground-truth discipline
 
 Three-version pass (0.3.8 + 0.3.9 + 0.3.10) consolidated into one release entry. Closes the most-expensive Path B failure modes observed in field feedback: read-only producer silent-idle (alpha.32), team-wide silent idle when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset despite `TeamCreate` success (alpha.33 / alpha.33-fast-fail), `shutdown_request` non-response from silent teammates (alpha.34), Reviewer self-applying fixes because Path B team-create cannot pass structured `disallowedTools`, Developer spec-drift (skipped files, silently changed constraint values), and producer hallucination of repo structure that doesn't exist.

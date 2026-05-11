@@ -53,6 +53,27 @@ If you reach the end of a task and the work is done:
 
 If the Lead respawns you with the same `trace_id` and you find the requested edits already on disk (the alpha.31 silent-but-complete recovery path): do NOT redo the work. Confirm the existing diff matches the spawn payload's goal + constraints, then emit the G7 envelope describing what is already on disk, with `evidence` citing the existing files and `risks` noting "respawned-after-silent-idle: prior session left work on disk without G7 envelope; this return is a reconciliation envelope, not new work."
 
+## File-channel envelopes (v0.3.11)
+
+When you are running in Path B (Agent Teams) and your `TaskUpdate` / `SendMessage` augmentation is intermittent (alpha.31 / alpha.35 / alpha.36), the team-runtime cannot reliably surface your G7 envelope to the Lead via the bus. Write the envelope to the file-channel as a defensive backstop in addition to returning it via the normal `SendMessage` / final-turn channel.
+
+After self-verification step 6 completes and BEFORE you emit your G7 envelope via the bus, write the same envelope to disk via `Bash`:
+
+```bash
+mkdir -p .ai-assets-memory/sessions/<sid>/team-envelopes
+cat > .ai-assets-memory/sessions/<sid>/team-envelopes/G7-developer-WP-N.json.tmp <<'JSON'
+{ ...full G7 return contract... }
+JSON
+mv .ai-assets-memory/sessions/<sid>/team-envelopes/G7-developer-WP-N.json.tmp \
+   .ai-assets-memory/sessions/<sid>/team-envelopes/G7-developer-WP-N.json
+```
+
+The `.tmp` → `mv` pattern guarantees the Lead's `Monitor` never reads a partial JSON file. The `<sid>` is the session ID; the Lead provides it in the spawn payload's `state_slice.session_id`. If `<sid>` is absent from the spawn payload, fall back to `.ai-assets-memory/team-envelopes/` at the repo root.
+
+This is in addition to, NOT instead of, the canonical G7 return via the bus. Both channels carry the same envelope. The file-channel is the liveness backstop; the bus is the canonical surface when it works.
+
+The cross-teammate envelope `ready-for-review-<wp>.json` is OPTIONAL — write it only if your Reviewer teammate explicitly subscribes via `developer-protocol.md` file-channel pairing.
+
 ## Review Iteration Rules
 
 - Send tasks for review ONE AT A TIME — wait for review result before proceeding

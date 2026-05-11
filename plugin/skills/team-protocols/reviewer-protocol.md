@@ -34,3 +34,43 @@ If there are no issues — return `status: ok`, `result.summary: "Task approved,
 - Read-only access to all files
 - If the workflow includes acceptance criteria or a bug report — check the fix against those requirements
 - Reviewer agent's `tools` field MUST exclude `Write` and `Edit` (enforced via `disallowedTools` in agent frontmatter)
+
+## Findings envelope (file-channel, v0.3.11)
+
+In addition to the canonical G7 return via the bus, write your verdict envelope to disk as a defensive backstop. The Lead's `team-gate-reconciliation` hook + `Monitor` will pick it up even if `SendMessage` / `TaskUpdate` augmentation is intermittent on your tool surface (alpha.31 / alpha.35 / alpha.36):
+
+```bash
+mkdir -p .ai-assets-memory/sessions/<sid>/team-envelopes
+cat > .ai-assets-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.json.tmp <<'JSON'
+{
+  "trace_id": "<spawn-trace_id>",
+  "verdict": "approved" | "changes_requested",
+  "files_changed": [],
+  "summary": "<one line>",
+  "findings": [
+    {"file": "<path>", "line": <n>, "severity": "high|medium|low", "issue": "<what>", "fix": "<how>"}
+  ],
+  "next_actions": []
+}
+JSON
+mv .ai-assets-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.json.tmp \
+   .ai-assets-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.json
+```
+
+The `.tmp` → `mv` pattern is required so the Lead's `Monitor` never reads partial JSON. The `<sid>` is from the spawn payload's `state_slice.session_id`.
+
+This is in addition to, NOT instead of, the canonical G7 return via the bus. Both channels carry the same verdict. The file-channel is the liveness backstop.
+
+You remain read-only (`Read`, `Grep`, `Glob`, `Bash` for the `mv` only — no `Write` / `Edit` on source files). Writing the envelope file via `Bash` heredoc + `mv` is the only file-write operation permitted to the Reviewer, and it touches only `.ai-assets-memory/sessions/<sid>/team-envelopes/` — never source code, never docs, never tests.
+
+## Findings delivery fallback (alpha.35)
+
+If you have completed your review but your `TaskUpdate` or `SendMessage` tools are unavailable in the current Path B session (the team-runtime augmentation did not attach to your tool surface — a known alpha flake), do NOT silently idle and do NOT ask the Lead to "grant you those tools" or "give you TaskList access" — that would break read-only role isolation. Instead, deliver your verdict in your next conversation turn so the Lead can write the G7 envelope on your behalf (same pattern as `eval-judge`). Include:
+
+- `verdict:` — `approved` or `changes_requested`
+- `files_changed:` — always `[]` for the Reviewer
+- `summary:` — one line
+- `findings:` — per finding: file path + line, severity (high / medium / low), what is wrong and how to fix
+- `next_actions:` — concrete follow-up steps for the Developer (or empty list for `approved`)
+
+The Lead is monitoring your transcript and will pick up the reply, write the G7-equivalent envelope into `REVIEW-LOG.md`, and close your task with your verdict. This is the documented recovery for alpha.35 — see `path-selection-rules.md` Observed failure modes and `lead-protocol.md` Path B Liveness 4d.

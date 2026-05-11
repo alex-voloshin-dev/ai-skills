@@ -56,6 +56,10 @@ Proceeding to execution. (To intervene: stop me with Esc and edit the plan, or s
 
 **Do NOT wait for user approval.** Proceed immediately. If the user wants to change the plan they will interrupt.
 
+### Wave sizing (v0.3.11, F8)
+
+If the resolved plan has MORE than 6 work packages, split it into waves of 3-6 WPs per `lead-protocol.md` "Pre-flight — wave sizing". Foundations first, consumers last. After each wave clears DEV→REVIEW→QA, print a checkpoint summary and auto-continue to the next wave unless the user pauses within 60 s. A single team-create reliably converges only on 3-6 WPs; the v22 field debrief showed a 38-WP plan ran out of tool budget after 4 foundation WPs while the Lead was holding the rest in memory.
+
 ## Choose execution path
 
 Per `@team-protocols/path-selection-rules.md`: **Path B (Agent Teams) is the MANDATORY default** — visual panel, Shift+↓ context-switching, per-role transcript. Path A (Subagents) is fallback-only — used ONLY on a hard technical block at Path B Step 1 ("Agent Teams not enabled" / `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` unset).
@@ -87,7 +91,23 @@ Create an agent team named "<feature-slug>-team" with these teammates, all using
 Do NOT require plan approval from the developer (the Lead already resolved the plan — execution starts immediately). Use the shared task list with three tasks per WP (DEV, REVIEW, QA) linked via `dependsOn` so REVIEW unblocks when DEV completes and QA unblocks when REVIEW completes with verdict 'approved'.
 
 Use teammate-mode `in-process` by default. Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux/iTerm2 is available.
+
+Standard clauses to include in every teammate's spawn prompt (v0.3.11):
+- "File-channel backstop: after self-verification and before returning your G7 envelope via the bus, also write it to .ai-assets-memory/sessions/<sid>/team-envelopes/G7-<role>-<wp>.json via Bash + atomic mv. The Lead's Monitor reads this directory; if SendMessage/TaskUpdate augmentation is intermittent on your tool surface (alpha.31 / alpha.35 / alpha.36) this is the liveness backstop. See developer-protocol.md / reviewer-protocol.md 'File-channel envelopes' for the exact pattern."
+- "Verdict-in-response fallback (Reviewer / QA): if your TaskUpdate or SendMessage tools fail at the gate, deliver your verdict in your next conversation turn — the Lead is monitoring your transcript via Shift+↓ and will write the G7 envelope on your behalf."
 ```
+
+After issuing team-create, the Lead immediately starts a `Monitor` on the team-envelopes directory:
+
+```text
+Monitor({
+  scope: ".ai-assets-memory/sessions/<sid>/team-envelopes/",
+  pattern: "*.json",
+  on_event: "lead-handle-team-envelope"
+})
+```
+
+This `Monitor` is the canonical liveness signal — the `team-gate-reconciliation.py` hook fires on every `TaskCompleted` and `TeammateIdle` and the Lead processes envelopes in order. The hook attaches automatically on plugin install; no Lead-side wiring needed.
 
 ### Step 2 — populate the shared task list
 

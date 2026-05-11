@@ -74,6 +74,7 @@ CANONICAL_EVENTS = {
     "SubagentStop",
     "TaskCreated",
     "TaskCompleted",
+    "TeammateIdle",
     "Stop",
     "PreCompact",
     "SessionEnd",
@@ -96,8 +97,8 @@ EXPECTED_COUNTS = {
                                  #   +react-nextjs-patterns, +sql-database-patterns,
                                  #   +spring-jpa-patterns, +design-system-patterns
     "rules": 12,
-    "hooks": 18,                 # excludes _lib.py (16 + ralph-iter-meter v0.1.6 + subagent-depth-guard v0.1.7)
-    "events": 13,
+    "hooks": 19,                 # excludes _lib.py (16 + ralph-iter-meter v0.1.6 + subagent-depth-guard v0.1.7 + team-gate-reconciliation v0.3.11)
+    "events": 14,                # +TeammateIdle (v0.3.11, Path B liveness)
     "rubrics": 45,               # 17 base + 4 meta-tools (P1.D) + 24 per-skill workflow rubrics (audit B coverage push)
     "calibration_samples": 270,  # 6 per rubric × 45
     "user_invocable_skills": 32, # skills with `context: fork` frontmatter.

@@ -24,6 +24,17 @@ You are the Lead. You run in the main conversation thread and coordinate the tea
 
 Before issuing the Path B team-create prompt, if `TeamCreate` / `TaskCreate` / `TaskUpdate` / `SendMessage` / `TeamDelete` / `TaskStop` / `Monitor` schemas are not already in the active toolset, the Lead loads them in a single batched call: `ToolSearch(query: "select:TeamCreate,TaskCreate,TaskUpdate,SendMessage,TeamDelete,TaskStop,Monitor")`. This avoids the mid-workflow latency observed when each tool is fetched on first use (the harness defers tool schemas — calling an unloaded tool raises `InputValidationError`). Skip this step if the Lead has already loaded these tools earlier in the session.
 
+## Pre-flight wave sizing + brief-from-source (v0.3.11)
+
+Before team-create, the Lead also runs the two pre-flight checks from `lead-protocol.md` "Pre-flight — wave sizing and brief-from-source":
+
+1. **Wave sizing**: plans with >6 WPs split into 3-6 WP waves with checkpoint between waves (F8 — single team-create reliably converges on 3-6 WPs, not 38).
+2. **Brief-from-source**: every spawn payload's `goal` + `constraints` are assembled by `Read` of the source design/PRD VERBATIM, never paraphrased from Lead context (F4 — paraphrase drift caused 3 false "discrepancies" in DB-1 during v22).
+
+## File-channel transport — first-class, not fallback (v0.3.11)
+
+Per `lead-protocol.md` "File-channel transport — first-class, not fallback", the Lead wires `.ai-assets-memory/sessions/<sid>/team-envelopes/` as the canonical liveness signal at team-create. The `team-gate-reconciliation.py` hook writes a snapshot envelope automatically on every `TaskCompleted` and `TeammateIdle`; teammates write their G7 envelopes there too (per `developer-protocol.md` and `reviewer-protocol.md` "File-channel envelopes"). The Lead `Monitor`s the directory so silent-lead-bound-bus failures (alpha.36) do not stall the pipeline.
+
 ## Two Paths — Subagents OR Agent Teams
 
 Two execution paths are supported. Both preserve the DEV → REVIEW → QA gate semantics — only the execution mechanism differs.

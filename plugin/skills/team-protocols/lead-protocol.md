@@ -11,6 +11,31 @@ Rules for the Lead / Orchestrator agent in a multi-agent team. The Lead runs in 
 - Follows the plan order (from audit doc, implementation plan, or bug report)
 - Asks questions if the team encounters a blocker
 
+## Pre-flight — wave sizing and brief-from-source (v0.3.11)
+
+Before issuing the first spawn, the Lead runs two sanity checks. Both close field-observed failure modes from the v0.3.10 debrief.
+
+### Wave sizing (F8)
+
+If the resolved plan contains MORE than 6 work packages, the Lead does NOT attempt to drive all of them in a single Path B team-create. A single team session reliably converges only on 3-6 WPs before token cost, idle-flake probability, and bus-recovery overhead dominate.
+
+Procedure for >6 WP plans:
+
+1. Split the plan into waves of 3-6 WPs each, ordered by dependency. Foundations first, consumers last.
+2. Surface the wave plan to the user one time at the start: `"Plan has N WPs — proposing wave 1 (WPs 1-K) → checkpoint → wave 2 (WPs K+1-...). Confirm or override the split."`
+3. After each wave clears DEV→REVIEW→QA, the Lead prints a checkpoint summary (WPs completed, files changed, open risks, residual budget) and asks: `"Wave M complete. Proceed to wave M+1, pause, or replan?"`
+4. If the user does not override, default is `proceed`. The default is non-blocking — wait at most 60 s for an explicit pause / replan; otherwise auto-continue.
+
+Single-wave plans (≤6 WPs) skip this entirely.
+
+### Brief-from-source (F4)
+
+Every Developer / Reviewer / QA spawn payload's `goal` and `constraints` MUST be assembled by `Read` of the source design / PRD / audit file VERBATIM for the relevant section — never paraphrase from Lead context memory.
+
+Why: field debrief observed Reviewer flagging "3 design discrepancies" in DB-1 that were all artefacts of a Lead paraphrase, not the design.md content. The Developer correctly rejected the paraphrased brief and re-read design.md §9.2/§9.3. The post-judge reconciliation note then had to walk back all three findings.
+
+Procedure: before constructing each spawn payload, the Lead calls `Read(<source-doc>, offset=<section-start>, limit=<section-length>)` and pastes the quoted text into the payload as `constraints: ["<source-section-verbatim-block>"]` plus `source_refs: ["<file>:<line-range>"]`. The teammate is then required by `developer-protocol.md` Self-verification step 6 to coverage-check the diff against this verbatim block, so paraphrase drift is caught at the gate.
+
 ## Pipeline Enforcement
 
 **Enforces the mandatory pipeline** — every task goes through all required stages in order. No stage is ever skipped or combined. If any agent attempts to bypass a stage, the Lead blocks immediately.
@@ -30,6 +55,56 @@ The Lead MUST verify each gate transition:
 
 The Lead validates every spawn payload against `plugin/schemas/spawn-payload.schema.json` before invoking the `Agent` tool. The Lead validates every return contract (received as the `Agent` call's return value) against `plugin/schemas/return-contract.schema.json` before passing data to the next stage. Validation failures are surfaced as a `[lead] G7 schema violation: <details>` diagnostic and the Lead re-spawns the originating agent with a corrected prompt. Per `subagent-isolation.md`.
 
+## File-channel transport — first-class, not fallback (v0.3.11)
+
+Per Anthropic Agent Teams docs, team coordination tools (`SendMessage`, `TaskUpdate`, `TaskList`) are *supposed* to be always available to every teammate even when the subagent definition restricts other tools. In field practice (alpha.31 / alpha.35 / alpha.36), the runtime augmentation does not always attach to every teammate's tool surface, and `lead ← teammate` `SendMessage` replies are not reliably surfaced into the Lead's context. The official advice is to fall back to file-system signalling — which is the same primitive the task list itself is built on (`~/.claude/tasks/{team-name}/`).
+
+The Lead therefore treats the file-channel as a **first-class transport**, not an ad-hoc workaround. It is wired automatically by the `team-gate-reconciliation.py` hook on `TaskCompleted` and `TeammateIdle` events.
+
+### Envelope path
+
+```
+.ai-assets-memory/sessions/<sid>/team-envelopes/
+    TaskCompleted-<task_id>-<ts>.json
+    TeammateIdle-<task_id>-<ts>.json
+```
+
+The hook writes a JSON envelope at every gate transition containing the event, the task ID, the teammate name, and a read-only `git status --short` + `git diff --stat` snapshot. The envelope is atomic-written (`.json.tmp` → `os.replace`) so the Lead's `Monitor` never sees a partial read. See `plugin/hooks/scripts/team-gate-reconciliation.py` for the schema.
+
+### Lead consumption pattern
+
+At team-create time, the Lead starts a single `Monitor` on the envelope directory with the matcher `.*-WP-N-.*\.json$` per active WP, expanding the pattern when new WPs claim:
+
+```text
+Monitor({
+  scope: ".ai-assets-memory/sessions/<sid>/team-envelopes/",
+  pattern: "*.json",
+  on_event: "lead-handle-team-envelope"
+})
+```
+
+When `TaskCompleted` lands the Lead reads the envelope, compares `disk_state.changed_files` to the WP's `state_slice.active_files`, and either:
+- accepts the handoff (next gate's teammate is nudged via `SendMessage`)
+- or, if the teammate is in alpha.31 sub-case (c) silent-but-complete, the envelope is the ground-truth evidence that the work landed even though the G7 envelope never arrived.
+
+The Lead still requires a G7 return contract for the schema-validated handoff — this file-channel does NOT replace G7. It is the **liveness probe** that lets the Lead distinguish "teammate is genuinely idle" from "teammate did the work but the bus dropped the message".
+
+### Cross-teammate signalling
+
+Teammates that need to communicate without depending on `SendMessage` reliability MAY write their own envelopes into the same directory using `Bash(printf '%s' '<json>' > .ai-assets-memory/sessions/<sid>/team-envelopes/<role>-<topic>-<ts>.json.tmp && mv ... ...json)`. The Lead's `Monitor` picks them up the same way. The Reviewer's `findings-<wp>.json` and the Developer's `ready-for-review-<wp>.json` are the two canonical cross-teammate envelopes. Specification of the cross-teammate envelope schemas lives in `developer-protocol.md` "File-channel envelopes" and `reviewer-protocol.md` "Findings envelope (file-channel)".
+
+### When to fall back to file-channel exclusively (alpha.36)
+
+If for two consecutive `TaskCompleted` events the corresponding G7 envelope did not arrive in the Lead's context within 60 s but a `disk_state.changed_files` snapshot did land in the team-envelopes directory, this is **alpha.36 — silent lead-bound bus**. The teammate's `SendMessage` returns to the lead are being dropped. Recovery:
+
+1. The Lead stops waiting for G7 envelopes via the bus and treats the file-channel envelope as the canonical liveness signal.
+2. For each gate transition, the Lead sends one `SendMessage(<teammate>, "deliver findings now — write G7 envelope to .ai-assets-memory/sessions/<sid>/team-envelopes/G7-<role>-<wp>.json then return verdict in your next response")`.
+3. The teammate writes the G7 envelope via `Bash` to the file-channel and additionally posts the verdict in its next conversation turn (verdict-in-response — same pattern as `eval-judge` and alpha.35 4d).
+4. The Lead reads both, validates the file-channel G7 against `return-contract.schema.json`, and proceeds.
+5. Record one line in `REVIEW-LOG.md` "Liveness events": `alpha.36: lead-bound bus dropped <N> consecutive G7 envelopes; switched to file-channel exclusively; <M> envelopes recovered from disk`.
+
+Do NOT silently downgrade to Path A on alpha.36 — the team is still alive and producing work; only the upstream bus from teammates to lead is broken. File-channel keeps the pipeline running in Path B.
+
 ## Path B Liveness — Explicit Hand-off + Watchdog
 
 Applies to Path B (Agent Teams) only. In alpha `in-process` mode any teammate — Developer, Reviewer, or QA — can go silently idle: their task stays `in_progress` (or sits at `completed` without a G7 envelope on the bus) while no transcript activity, no further tool calls, and no return arrive. The Lead MUST NOT rely on implicit pull alone, and MUST NOT assume Developer hand-offs are immune (alpha.31 generalised the flake to all roles).
@@ -38,7 +113,15 @@ The procedure below applies symmetrically to Developer, Reviewer, and QA. Read `
 
 1. **Explicit hand-off (push).** As soon as the upstream task transitions (Lead → Developer at WP start; Developer → Reviewer at DEV completion; Reviewer → QA at REVIEW approval) the Lead sends a direct message to the next teammate naming the task and the changed files: `"WP-N <dev|review|qa> claim now. Changed files: <paths>. Return G7 envelope when done."` The `dependsOn` auto-claim stays as a backup, not the primary trigger.
 
-2. **Liveness watchdog.** ~90 seconds after the hand-off the Lead checks the teammate task: if it is still `pending` / `in_progress` with no transcript activity and no file reads, the Lead sends a second nudge with the same payload plus `"Teammate appears idle — please confirm receipt and start <dev|review|qa>."` After another ~90 seconds, a third and final nudge. Maximum 2 retry nudges after the initial hand-off.
+2. **Liveness watchdog — evidence-based, not time-based (v0.3.11).** The legacy 90 s × 2 cadence was tuned for visible-transcript work and produced false positives during genuine deep work (Read sequences, schema parsing, test runs). The watchdog now keys on **evidence absence**, not wall-clock:
+
+   - **First check at ~180 s after the hand-off** (or whenever the next `TeammateIdle` envelope lands, whichever first). Inputs: latest envelope from `.ai-assets-memory/sessions/<sid>/team-envelopes/` for this teammate, plus `git status --short` for the WP's `active_files`.
+     - Any evidence of progress (envelope timestamp newer than hand-off, OR `git status` shows any of `active_files` modified, OR the teammate task transitioned `pending` → `in_progress`) → reset the watchdog clock for another ~180 s window. Do NOT nudge.
+     - No evidence on any of the three signals → send first nudge with the same hand-off payload plus `"Teammate appears idle — please confirm receipt and start <dev|review|qa>. If your TaskUpdate/SendMessage tools are unavailable, write a status line to .ai-assets-memory/sessions/<sid>/team-envelopes/status-<role>-<wp>.json via Bash and the Lead will pick it up."`
+   - **Second check at ~180 s after first nudge.** Same evidence inputs. No progress → second nudge (and final). Total max wait: ~540 s (9 min) before escalation, but ANY of the three evidence signals collapses the timer to zero and grants another full window.
+   - **Hard ceiling: 25 minutes wall-clock from the original hand-off** regardless of evidence (caps a teammate that is producing micro-progress but never converging).
+
+   This replaces the v0.3.5–v0.3.10 90 s × 2 cadence. Idle notifications alone (without other evidence) are NOT a "no progress" signal — alpha runtime emits `idle_notification` pings even when the teammate is mid-tool-call. Filter them out unless they are the ONLY thing the teammate has produced.
 
    **Stale-`blockedBy` recovery (v0.3.9, alpha.31 secondary symptom).** If the silent teammate's task shows `blockedBy: [<upstream-id>]` and `<upstream-id>` is already `completed`, the panel state is stale and the teammate may be reading it as "still blocked". `TaskUpdate` has no `removeBlockedBy` operation. Recovery: the Lead deletes the stuck downstream task and re-creates it with no `blockedBy` (preserving description, owner, and a sentinel metadata field linking to the original task ID for audit). Record one line in `REVIEW-LOG.md` "Liveness events": `stale-blockedBy: task <new-id> replaces <old-id>; upstream <upstream-id> was completed but blockedBy did not auto-clear`. Run this BEFORE nudge #1 if the symptom is observed, not after — the teammate may engage immediately once the panel state is consistent.
 
@@ -105,7 +188,28 @@ The procedure below applies symmetrically to Developer, Reviewer, and QA. Read `
    4. Abort WP-N and skip to the next WP (lead reports the gap)
    ```
 
-   Only a user-approved option 3 is a legitimate per-task Path A fallback. Only a user-approved option 4 skips a WP. The remainder of the pipeline continues in Path B.
+   **4d. Reviewer silent — transcript shows complete findings (alpha.35, v0.3.10):**
+
+   This sub-case applies when the Reviewer's transcript (Shift+↓) shows substantive review content with an explicit verdict (and often prose asking the Lead to "relay envelopes" or "update tasks on my behalf"), but the task stays `in_progress` and no G7 envelope arrives — a strong signal that the team-bus tool surface (`TaskUpdate` / `SendMessage`) is missing from the Reviewer's runtime augmentation, not that the Reviewer is genuinely idle. Recovery uses the verdict-in-response fallback (same pattern as `eval-judge`), NOT the generic escalation prompt:
+   1. Lead pushes ONE targeted `SendMessage(<reviewer-id>, "deliver findings now — return verdict (approved | changes_requested) and per-file finding list in your next response; do not attempt TaskUpdate")`.
+   2. Lead reads the Reviewer's conversation reply, writes the G7-equivalent envelope into `REVIEW-LOG.md`, and closes the Reviewer task with the verdict in the task summary.
+   3. If `verdict: changes_requested`, apply the standard fix-round handling (insert developer follow-up task, re-point review/QA dependencies per `path-selection-rules.md` Step 3).
+   4. Record one line in `REVIEW-LOG.md` "Liveness events": `alpha.35: reviewer <name> findings delivered via SendMessage conversation reply; verdict <verdict>; task <id> closed by Lead`.
+
+   Hard rule for 4d: do NOT grant `TaskUpdate` / `TaskList` to the Reviewer as a recovery — that would break read-only role isolation (a Reviewer with task-write access can self-close its own task and effectively self-approve, defeating the gate). The verdict-in-response fallback is the only legitimate recovery for alpha.35. If the Reviewer cannot reply via the conversation bus either (no transcript activity at all), escalate as 4c instead.
+
+   Only a user-approved option 3 is a legitimate per-task Path A fallback. Only a user-approved option 4 skips a WP. 4d is NOT a Path A fallback — it stays in Path B with the Reviewer delivering verdict-in-response. The remainder of the pipeline continues in Path B.
+
+   **4e. First respawn failed — auto-offer per-task Path A (v0.3.11, F6).** If the user approved option 2 (respawn the teammate) at any of 4a/4b/4c/4d AND the respawned teammate ALSO fails the watchdog with the same symptom within one full watchdog window (~180 s evidence-free), the Lead does NOT loop a second respawn — `respawn-curing-respawn` is the documented field-failure mode of every 4* option. Instead, the Lead surfaces a tightened menu auto-defaulting to per-task Path A:
+
+   ```text
+   [lead] Path B <role> respawn-after-respawn failed on WP-N (same symptom as first respawn). Auto-fallback default: per-task Path A for this WP only — remainder stays in Path B. Other options:
+   1. Run WP-N <role> via per-task Agent fallback (DEFAULT, applied in 30 s without explicit response)
+   2. Abort WP-N and skip
+   3. Wait one more watchdog cycle (last resort)
+   ```
+
+   Default-to-option-1 is the structural shift from v0.3.10 — passive waiting on a known-bad runtime is the most expensive failure mode the user reported in the v22 debrief. The 30 s auto-apply preserves user-veto without blocking on user input that may not arrive promptly.
 
 5. **Logging.** Every nudge, every disk-state reconciliation, and every escalation choice MUST be recorded in `REVIEW-LOG.md` (free-form Notes or a "Liveness events" line per affected WP) so future runs can spot systemic flake. Include role, WP, nudge count, disk-state sub-case (`a`/`b`/`c` for Developer), and the user's chosen option.
 
@@ -117,6 +221,17 @@ The procedure below applies symmetrically to Developer, Reviewer, and QA. Read `
 - **Never skip the watchdog for Developer hand-offs.** Pre-v0.3.7 wording exempted Developer transitions from the watchdog on the assumption they were "already explicit"; alpha.31 invalidated that. Run the same 90s × 2 nudge cadence for every transition.
 
 This procedure was extended in v0.3.7 from the v0.3.5 Reviewer/QA-only watchdog to also cover Developer silent-idle, after recurring observation of the "developer silent but acceptance criteria met on disk" sub-flake.
+
+## TaskCreate API workaround — single-batch deps (v0.3.11, F7)
+
+Path B `TaskCreate` does not accept `addBlockedBy` / `addBlocks` on creation — dependencies are a second-step `TaskUpdate` call. For a 4-WP plan that means 4 (DEV) + 4 (REVIEW) + 4 (QA) = 12 creates + 8 `TaskUpdate` deps = 20 round-trips for the bootstrap alone. This is acceptable cost, but it MUST be issued as a single batched message of independent tool calls rather than serially:
+
+1. **Batch 1 (parallel-safe).** All `TaskCreate` calls for every WP × stage, no dependencies. Issue all of them in one assistant message so the harness executes them in parallel.
+2. **Batch 2 (parallel-safe).** All `TaskUpdate(taskId=<x>, addBlockedBy=[<y>])` calls in a single assistant message — these only mutate the dependency graph and are independent of each other.
+
+Total wall-time impact drops from "20× serial round-trips" to "2× parallel batches" — ~5 s vs. ~45 s on a fresh team-create.
+
+`TaskUpdate` also has no `removeBlockedBy` operation. To clear a stale `blockedBy` after the upstream task is `completed` but the panel state hasn't refreshed, the procedure is **delete + recreate** the downstream task with no `blockedBy`, preserving description + owner + a sentinel metadata field linking to the original task ID for audit. See alpha.31 stale-`blockedBy` recovery above.
 
 ## Post-judge reconciliation (judge-based workflows only)
 

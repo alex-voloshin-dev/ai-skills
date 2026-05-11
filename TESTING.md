@@ -11,7 +11,7 @@ python3 plugin/dev/validate.py
 # Expected: 23 pass / 0 warn / 0 fail
 ```
 
-It checks JSON syntax, Python parsing, manifest required fields + userConfig shape, structural counts (agents=26, skills=53, rules=12, hooks=18, rubrics=45, calibration samples=270, etc.), agent/skill frontmatter, hook lib imports, hooks.json command resolution, calibration sample counts, eval runners, and g1g2 attack-surface fixtures.
+It checks JSON syntax, Python parsing, manifest required fields + userConfig shape, structural counts (agents=26, skills=73, rules=12, hooks=19, events=14, rubrics=45, calibration samples=270, etc.), agent/skill frontmatter, hook lib imports, hooks.json command resolution, calibration sample counts, eval runners, and g1g2 attack-surface fixtures.
 
 The plugin also ships two eval runners:
 
