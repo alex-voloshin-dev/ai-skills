@@ -97,58 +97,24 @@ No RALF — audit is pass-once.
 
 ## OWASP coverage (G3)
 
-Eval rubric (`plugin/eval/judge-rubrics/security-audit.md`) MUST verify coverage of:
-
-### OWASP Top 10 Web Application Security Risks (2021 / latest)
-1. Broken access control
-2. Cryptographic failures
-3. Injection
-4. Insecure design
-5. Security misconfiguration
-6. Vulnerable and outdated components
-7. Identification and authentication failures
-8. Software and data integrity failures
-9. Security logging and monitoring failures
-10. Server-side request forgery
-
-### OWASP GenAI / LLM Top 10 (2025) — for any AI/LLM component
-- LLM01 prompt injection (direct + indirect)
-- LLM02 sensitive info disclosure
-- LLM03 supply-chain vulnerabilities (model + data)
-- LLM04 data + model poisoning
-- LLM05 improper output handling
-- LLM06 excessive agency
-- LLM07 system prompt leakage
-- LLM08 vector + embedding weaknesses
-- LLM09 misinformation
-- LLM10 unbounded consumption
+Eval rubric (`plugin/eval/judge-rubrics/security-audit.md`) MUST verify coverage of: OWASP Web Top 10 (2021) + OWASP GenAI/LLM Top 10 (2025) — see `@owasp-coverage`.
 
 If the audit target includes any AI/LLM component (agent harness, prompt template, LLM API integration, RAG pipeline), the GenAI Top 10 IS in scope by default.
 
-## Methodology — SAST / DAST / SCA / IAST distinction
+## Methodology — SAST / DAST / SCA / IAST
 
-This audit combines four complementary approaches, each with a different surface:
+| Approach | Surface | Tools |
+|---|---|---|
+| **SAST** (static) | Source code at rest — dangerous APIs, taint paths, hardcoded secrets | Semgrep, CodeQL, SonarQube, Snyk Code |
+| **DAST** (dynamic) | Running app — injection, auth bypass, header issues | OWASP ZAP, Burp Suite, Nuclei |
+| **SCA** (composition) | Dependencies — known CVEs in libs + base images | osv-scanner, Snyk, Trivy, Grype, Dependabot |
+| **IAST** (interactive) | Running app + instrumentation — runtime data-flow | Contrast Security, Seeker |
 
-| Approach | Stage | What it sees | Tools |
-|---|---|---|---|
-| **SAST** (Static Application Security Testing) | Source code at rest | Pattern-match dangerous APIs, taint paths, hard-coded secrets | Semgrep, CodeQL (GitHub), SonarQube, Snyk Code |
-| **DAST** (Dynamic Application Security Testing) | Running application | Real HTTP/API behaviour: injection, auth bypass, header issues | OWASP ZAP, Burp Suite, Nuclei |
-| **SCA** (Software Composition Analysis) | Dependencies | Known CVEs in third-party libs and base images | osv-scanner, Snyk, Dependency-Track, Trivy, Grype, Dependabot |
-| **IAST** (Interactive AST) | Running app + instrumentation | Runtime data-flow with code context | Contrast Security, Seeker |
+`security-engineer` covers SAST + SCA + secret scanning. DAST runs only when an instance is reachable (typically follow-up against staging). IAST is mention-only.
 
-The audit's `security-engineer` covers SAST + SCA + secret scanning. DAST is run only when an instance is reachable (typically as a follow-up against staging). IAST is rare in our typical engagements; mention as available but not default.
+## Supply chain
 
-## Supply chain — SBOM + SLSA + EPSS/KEV
-
-For 2025/2026 compliance baseline:
-
-- **SBOM**: generate with [Syft](https://github.com/anchore/syft) (`syft <repo> -o cyclonedx-json`); consume with [Grype](https://github.com/anchore/grype). [Dependency-Track](https://dependencytrack.org) for continuous monitoring; [GUAC](https://docs.guac.sh) to graph SBOMs + attestations + vulnerabilities.
-- **SLSA** ([slsa.dev](https://slsa.dev)): build-provenance attestation. Level 2 is the practical baseline. GitHub Actions + [SLSA GitHub Generator](https://github.com/slsa-framework/slsa-github-generator) reach L2 with minimal config.
-- **Sigstore Cosign**: sign release artefacts (`cosign sign-blob`); verify at deploy (`cosign verify-attestation <image>`).
-- **EPSS** (Exploit Prediction Scoring System) + **CISA KEV** (Known Exploited Vulnerabilities): use to prioritize SCA findings — KEV-listed CVEs are confirmed in-the-wild; EPSS ≥ 0.5 indicates high near-term exploitation likelihood. Both gate "must fix before merge". Free APIs at first.org/data and CISA. `grype` consumes both natively.
-- **EO 14028** (US, 2021) and **EU Cyber Resilience Act** (2024+) both mandate SBOMs for software shipped to government / EU markets.
-
-Cite the v2025 OWASP LLM PDF: [genai.owasp.org/llm-top-10/](https://genai.owasp.org/llm-top-10/) for traceability.
+SBOM tooling + SLSA levels + Cosign + EPSS/KEV patterns — see `@supply-chain-security`.
 
 ## G7 spawn payloads
 

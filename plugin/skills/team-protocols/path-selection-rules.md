@@ -67,7 +67,15 @@ Observed failure modes (do NOT repeat any of these):
 
   When tmux/iTerm2 is unavailable (e.g., Windows host without WSL), Path B still works in `in-process` display mode. The Lead MUST pass `teammate-mode in-process` in the team-creation prompt and proceed. Do NOT downgrade to Path A.
 
-- **alpha.31 — `in-process` teammate-idle flake (any role, including Developer)**: in `teammate-mode in-process`, any teammate (Reviewer, QA, **and Developer**) can silently stop after claiming a task — no transcript activity, no file reads, no return. For the Developer this manifests in two sub-shapes: (i) classic idle (no edits on disk) and (ii) "silent-but-complete" — real edits land on disk, acceptance criteria appear met, but the G7 return envelope never arrives, blocking the schema-validated handoff to the Reviewer. This is a known flake of the alpha Agent Teams API and is **NOT** a valid reason to downgrade the whole session to Path A. Mitigation lives in `lead-protocol.md` "Path B Liveness — Explicit Hand-off + Watchdog": the Lead pushes an explicit hand-off message at every stage transition (including Developer hand-off, contrary to the v0.3.5 wording that exempted it), runs a ~90s watchdog with up to 2 retry nudges, performs a read-only disk-state reconciliation when the silent role is the Developer, and escalates to the user after 3 nudges with a role-specific menu. A per-task Agent fallback (this WP only, remainder stays in Path B) is permitted **only** when the user explicitly picks that option from the escalation prompt — never as a silent automatic downgrade. The Lead MUST NEVER synthesize a G7 envelope on the Developer's behalf, even when disk state proves the work is done — re-spawn or per-task fallback is the only legitimate recovery.
+- **alpha.31 — `in-process` teammate-idle flake (any role, including Developer)**: in `teammate-mode in-process`, any teammate (Reviewer, QA, **and Developer**) can silently stop after claiming a task — no transcript activity, no file reads, no return. For the Developer this manifests in two sub-shapes: (i) classic idle (no edits on disk) and (ii) "silent-but-complete" — real edits land on disk, acceptance criteria appear met, but the G7 return envelope never arrives, blocking the schema-validated handoff to the Reviewer. **Secondary symptom (v0.3.9)**: a downstream task may continue to display `blockedBy: [<upstream-id>]` even after the upstream task transitions to `completed`. This is a state-display flake, not real blocking — but a teammate that reads the panel as authoritative may decline to self-claim. Treat persistent `blockedBy` on a `completed` upstream as a strong alpha.31 indicator and apply the stale-`blockedBy` recovery in `lead-protocol.md` "Path B Liveness". This is a known flake of the alpha Agent Teams API and is **NOT** a valid reason to downgrade the whole session to Path A. Mitigation lives in `lead-protocol.md` "Path B Liveness — Explicit Hand-off + Watchdog": the Lead pushes an explicit hand-off message at every stage transition (including Developer hand-off, contrary to the v0.3.5 wording that exempted it), runs a ~90s watchdog with up to 2 retry nudges, performs a read-only disk-state reconciliation when the silent role is the Developer, and escalates to the user after 3 nudges with a role-specific menu. A per-task Agent fallback (this WP only, remainder stays in Path B) is permitted **only** when the user explicitly picks that option from the escalation prompt — never as a silent automatic downgrade. The Lead MUST NEVER synthesize a G7 envelope on the Developer's behalf, even when disk state proves the work is done — re-spawn or per-task fallback is the only legitimate recovery.
+
+- **alpha.33 — team-wide silent idle (v0.3.9, observed in field feedback)**: in `teammate-mode in-process`, two or more teammates can be simultaneously silent past the first 90-s watchdog window — typically Developer ran but Reviewer + QA never engaged at all (no transcript, no file reads, no task transitions). This is distinct from alpha.31 (one role) and from the "Agent Teams not enabled" hard block (team-create succeeded; the team is alive but the roles never auto-claim). Most common root cause: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset OR the runtime equivalent of team-runtime auto-claim is disabled, but `TeamCreate` itself returned success. Mitigation: when ≥ 2 teammates fail the first 90-s watchdog window, the Lead skips the second nudge cycle and surfaces a whole-team escalation prompt — options (1) wait, (2) `TeamDelete` + re-`TeamCreate`, (3) per-task Path A fallback for every silent role this WP (remainder stays in Path B), (4) abort WP. Serial 3 × 4.5 min watchdog cycles waste 13+ min before a decision point — alpha.33 short-circuits that. Fast-fail escape valve below (v0.3.9) catches the most common variant earlier.
+
+- **alpha.33-fast-fail (v0.3.9) — zero-activity escape valve**: if EVERY teammate produces no activity (no transcripts, no file reads, no task transitions on any task) within the first 90 seconds after `TeamCreate` + initial `TaskCreate` round, this is a hard technical block in spirit — the team failed to engage at all. The Lead MUST surface the alpha.33 whole-team escalation prompt immediately, with option (3) "Path A per-task fallback for the entire current wave" expanded to "Path A for the remainder of the workflow" as an additional choice. This is NOT a rationalised downgrade per alpha.26/27 — total team silence is a documented Path B failure, not a path-selection preference. Document the chosen path in `REVIEW-LOG.md` "Liveness events" with the timestamps so future runs can detect a runtime-config drift.
+
+- **alpha.34 — `shutdown_request` non-response + `TeamDelete`-on-active recovery (v0.3.10, observed in field feedback)**: in `teammate-mode in-process`, a teammate that is already silent-idle (alpha.31 / alpha.33) cannot acknowledge a `shutdown_request` either, because the team-runtime augmentation that adds `SendMessage` / `TaskUpdate` / `shutdown_response` is the same surface that has stalled. Symptom: the Lead issues `shutdown_request` after the WP completes, gets no acknowledgement from the silent role(s), and the documented "clean shutdown then `TeamDelete`" sequence stalls. Recovery: `TeamDelete` while teammates are still active is the documented recovery, NOT a leak — the runtime tears down the panel and frees the slots. The "TeamDelete fails on active teammates" warning in pre-v0.3.10 docs is wrong for the silent-idle path; it only applies when teammates are responsive and actively writing. After `TeamDelete`, the panel may continue to emit a tail of `idle_notification` JSON messages for several seconds from the torn-down teammates — these are runtime artefacts on a closed bus and the Lead MUST ignore them (do not parse, do not react). Record one line in `REVIEW-LOG.md` "Liveness events": `alpha.34: silent-idle <N>/<M> teammates; TeamDelete-on-active used to recover; <K> tail idle_notifications ignored`. Stranded `~/.claude/teams/<team-name>/` directories from `TeamDelete`-on-active are an alpha runtime artefact — the cleanup cron sweeps them; do not block the workflow on this.
+
+- **alpha.32 — tool-capability mismatch (read-only teammate, write workflow)**: a teammate spawned with a subagent definition whose `tools:` list lacks `Write` / `Edit` cannot produce a file output on its own. In Path B, the teammate's `dependsOn` task auto-claim succeeds, but the workflow body it was given (e.g. "write PRD.md") is physically un-executable — the teammate silently idles or returns prose to the Lead that the Lead must then write itself. **As of plugin v0.3.8, this class is largely closed**: ten producer agents (`product-manager`, `marketing-strategist`, `ui-ux-designer`, `system-architect`, `solution-architect`, `cloud-architect`, `devops-architect`, `security-engineer`, `content-writer`, `content-designer`) now ship with `Write` / `Edit` and an explicit "Write scope (docs/design artifacts only)" hard rule that forbids touching application/infrastructure code. The remaining intentionally read-only roles are `eval-judge` (verdict-in-response — Lead writes `REVIEW-LOG.md` from the judge's structured return), `memory-curator` (already has its own minimal `Write`), and any reviewer roles spawned with explicit `disallowedTools: ["Write","Edit"]` at spawn time (e.g. `software-engineer` as Path B Reviewer per `developer-protocol.md`). For those: the Lead writes the file from the teammate's fenced-block return. Continuing into a Path B team with predictable tool-capability mismatch on the writable producers is now a stale-cache / outdated-prompt issue, not an alpha flake — re-read the role-capability cache below before declaring alpha.32.
 
 Path B's value is user-facing UX, not parallelism:
 
@@ -86,6 +94,72 @@ These benefits apply EVEN when work is sequential AND when tmux is unavailable. 
 - "split-pane mode unavailable" — INVALID, that's an optional enhancement; in-process mode always works
 - "Windows host" / "no Unix tools" — INVALID, Agent Teams is platform-independent in `in-process` mode
 
-The ONLY valid Path A trigger is a hard technical block detected during Path B Step 1 (team-create natural language returns "Agent Teams not enabled" / "experimental flag not set" / equivalent — typically because `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var is unset). In that case, fall back silently and continue — do not re-ask the user.
+Valid Path A triggers (hard technical blocks detected at or before Path B Step 1):
+
+1. Team-create natural language returns "Agent Teams not enabled" / "experimental flag not set" / equivalent — typically because `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var is unset.
+2. The Lead is itself running inside a subagent that has no team primitives.
+3. **Pre-spawn tool-capability check (alpha.32) fails for the whole team** — every candidate `subagent_type` for a writing role lacks `Write` / `Edit` AND the workflow cannot be restructured to write in the Lead's main thread. In this case the team cannot fulfil its workflow contract, so Path B is not actionable for this run. Partial mismatches (only some roles read-only) are handled per role per the alpha.32 entry above, not by a whole-session downgrade.
+4. **alpha.33-fast-fail — total-team zero-activity within 90 s of team-create + first TaskCreate**. `TeamCreate` succeeded but no teammate emitted any activity. This is observable, not theoretical — see the alpha.33 entry above. Per-role nudge cycles cannot recover total-team silence, so a user-approved whole-workflow Path A fallback is legitimate here. Document the trigger in `REVIEW-LOG.md` "Liveness events" with timestamps.
+
+In cases (1) and (2), fall back silently and continue. Case (3) and (4) surface user-facing escalation prompts before falling back. All other downgrade rationales remain invalid.
 
 Display-mode unavailability is NEVER a valid Path A trigger. Always default to `teammate-mode in-process` if tmux/iTerm2 is uncertain.
+
+## Pre-spawn tool-capability check (alpha.32 mitigation)
+
+Before issuing the Path B team-create prompt, the Lead MUST verify each teammate's `subagent_type` has tools sufficient for the work it will be assigned. As of plugin v0.3.8 most producers ship with `Write` / `Edit` — the check is fast and almost always passes, but is still mandatory to catch (a) stale subagent-type references, (b) the intentional read-only roles (`eval-judge`, Reviewer-lock), (c) edge-case roles with niche tool sets.
+
+Procedure:
+
+1. For each teammate planned in the team-create prompt, identify the produced artefact (PRD.md, ARCHITECTURE.md, REVIEW-LOG.md, …) and the action verb (write / edit / review / score).
+2. Read the `tools:` frontmatter of `plugin/agents/<subagent-name>.md` for each role. (Cached map above — refresh from disk if the agent file has changed since the cache annotation date.)
+3. Compare required action against tool capability:
+
+   | Action | Required tool | Typical outcome | If missing |
+   |---|---|---|---|
+   | Write a new file | `Write` | All 10 producer agents have it as of v0.3.8 | (a) pick a different role with `Write`, OR (b) restructure: teammate returns prose to Lead, Lead writes file in main thread, OR (c) per-role Path A fallback |
+   | Edit an existing file | `Edit` | Same set has Edit | as above |
+   | Run tests, lint, build | `Bash` | Developer roles + architect roles + security have it | pick a role with `Bash` or fall back |
+   | Read-only review / score | `Read` | Always present | no action needed |
+
+4. Two roles require explicit prompt clauses even though the cache shows their state correctly:
+   - **`eval-judge`** (NO Write by design): team-create prompt MUST say `"judge returns the scored verdict in a fenced JSON block; Lead writes REVIEW-LOG.md from the structured return."` This is the verdict-in-response pattern, not an alpha flake.
+   - **`software-engineer` as Path B Reviewer**: team-create prompt MUST add `disallowedTools: ["Write","Edit"]` at spawn time so the Reviewer cannot self-apply fixes.
+
+5. If mitigation is (c) per-role Path A fallback, the team-create prompt omits that teammate and the Lead spawns it via `Agent({...})` for its wave only — the rest of the team stays in Path B.
+
+6. If every writing role would need mitigation (c), the whole team is non-viable in Path B — declare a hard technical block per the third valid Path A trigger above and fall back to Path A for the whole run. With v0.3.8 producer capabilities this should be essentially unreachable for the standard `/feature-design`, `/develop`, `/team-bugfix`, `/refactor`, `/migrate` workflows.
+
+### Role-capability cache (plugin agents, alpha.32 reference)
+
+This table mirrors `plugin/agents/<name>.md` frontmatter as of plugin v0.3.8. Re-read from disk if older than the current plugin version.
+
+| Agent | Tools | Write-capable | Notes |
+|---|---|---|---|
+| `product-manager` | Read, Grep, Glob, Write, Edit | YES | Writes PRD.md, FEATURES.md, user stories directly (docs scope only per Hard Rule 4) |
+| `marketing-strategist` | Read, Grep, Glob, Write, Edit | YES | Writes MARKET-ANALYSIS.md, positioning briefs directly (marketing scope only) |
+| `ui-ux-designer` | Read, Grep, Glob, Write, Edit | YES | Writes UX-FLOW.md, wireframes, design-token specs directly (design scope only) |
+| `system-architect` | Read, Grep, Glob, Bash, Write, Edit | YES | Writes ARCHITECTURE.md, C4 diagrams directly (architecture scope only) |
+| `solution-architect` | Read, Grep, Glob, Bash, Write, Edit | YES | Writes ADRs, OpenAPI specs, threat models directly (design scope only) |
+| `cloud-architect` | Read, Grep, Glob, Bash, Write, Edit | YES | Writes cloud-architecture docs, landing-zone blueprints (docs scope only — NOT deployable Terraform/Helm) |
+| `devops-architect` | Read, Grep, Glob, Bash, Write, Edit | YES | Writes CI/CD architecture docs, runbooks (docs scope only — NOT shipped `.github/workflows/`) |
+| `security-engineer` | Read, Grep, Glob, Bash, Write, Edit | YES | Writes SECURITY-REPORT.md, RISKS.md, threat models directly (security-docs scope only — NOT fixes to app code) |
+| `content-writer` | Read, Grep, Glob, Write, Edit | YES | Writes user-facing markdown docs, API reference, release notes |
+| `content-designer` | Read, Grep, Glob, Write, Edit | YES | Writes page-content drafts, hero/CTA copy, conversion briefs |
+| `db-engineer` | Read, Grep, Glob, Bash, Write, Edit | YES | Writes DATA-MODEL.md and migration code directly |
+| `qa-engineer` | Read, Grep, Glob, Bash, Write, Edit | YES | Writes acceptance criteria and test code directly |
+| Every `*-engineer` developer (java, python, frontend, mobile, ml, data, devops, sre) | Read, Grep, Glob, Bash, Write, Edit | YES | Writes code directly |
+| `seo-engineer`, `software-engineer` | Read, Grep, Glob, Bash, Write, Edit | YES | Writes code and docs directly |
+| `eval-judge` | Read, Grep, Glob | NO | INTENTIONALLY read-only — returns scored verdict in response; Lead writes `REVIEW-LOG.md` from the structured return |
+| `software-engineer` spawned as Path B Reviewer | (above) + `"do not Write/Edit"` directive in the team-create prose | prose-only at spawn | The team-create natural-language prompt CANNOT pass structured `disallowedTools` — the read-only directive is policy-only. Runtime enforcement is unavailable in current Agent Teams team-create. The Lead MUST verify the Reviewer's G7 return: `result.files_changed` MUST be `[]`; non-empty is a role-isolation violation per `lead-protocol.md` "Gate Verification — Reviewer file-change check" |
+| `prompt-engineer` | Read, Grep, Glob, Bash | NO | Advisory role — does not produce files in current workflows |
+| `memory-curator` | Read, Write | YES | Tightly scoped to L4/L5 learnings files only |
+| `claude-code-guide` | Read, Bash, WebFetch, WebSearch | NO | Read-only knowledge agent |
+
+Two patterns remain alpha.32-relevant:
+
+1. **`eval-judge` and similar verdict-in-response roles**: the team-create prompt MUST include: `"<role> returns the scored verdict in a fenced JSON block in its final message — the Lead writes the log file in the main thread."` This is normal for evaluator roles; not a defect.
+
+2. **Reviewer locks via spawn-time `disallowedTools`**: when spawning `software-engineer` as a Path B Reviewer, the team-create prompt MUST pass `disallowedTools: ["Write","Edit"]` so the Reviewer cannot self-apply fixes. The role-capability cache above shows the spawn-time effective tools, not the agent-definition tools.
+
+For all other producers, write-capability is intrinsic and no fenced-block restructure is needed — the teammate writes its assigned artefact directly. Removing the legacy "Bash heredoc forbidance" clauses from team-create prompts is now safe for these producers.

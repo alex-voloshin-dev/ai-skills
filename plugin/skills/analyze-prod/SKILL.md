@@ -8,53 +8,51 @@ allowed-tools: Read, Grep, Glob, Bash
 
 # Analyze Production Environment
 
-Systematic analysis of the production environment. Collects cluster status, pod health, database metrics, logs, and diagnoses issues. Works standalone or as an entry point for production bugfixing.
+Systematic production-environment analysis. Collects cluster status, pod health, database metrics, logs, and diagnoses issues. Standalone or as the entry point for production bugfixing.
 
-**Cloud platform detection**: Read `CLAUDE.md` to identify which cloud platform is used. Consult `cloud-platforms` skill and load the corresponding reference module (GCP, Azure, or AWS) for platform-specific CLI commands.
+**Cloud platform detection**: Read `CLAUDE.md` to identify the cloud platform, then load the matching reference module (GCP / Azure / AWS) from `@cloud-platforms`.
 
-**⚠️ SAFETY: This workflow runs READ-ONLY commands only. No mutations (scale, delete, restart, deploy) without explicit user approval at Step 6.**
+**⚠️ SAFETY: READ-ONLY commands only. No mutations (scale, delete, restart, deploy) without explicit user approval at Step 6.**
 
 ## 1. Clarify the Scope
 
 Ask the user:
 
-- **What is the problem or question?** (e.g., "pods crashlooping", "high latency on /api/orders", "DB connections exhausted", "general health check")
-- **Which service(s) are affected?** (deployment name, namespace, or "all")
-- **Cloud environment?** (project/subscription/account + cluster name)
-- **When did the issue start?** (deploy, config change, traffic spike, or unknown)
-- **Is there an active incident?** (P1–P4 severity, or no incident)
+- **Problem / question?** (e.g., "pods crashlooping", "high latency on /api/orders", "DB connections exhausted", "general health check")
+- **Affected service(s)?** (deployment name, namespace, or "all")
+- **Cloud environment?** (project / subscription / account + cluster name)
+- **When did it start?** (deploy, config change, traffic spike, or unknown)
+- **Active incident?** (P1–P4 severity, or none)
 
-If invoked as part of a bugfix/incident flow — extract context from the parent conversation instead of asking.
+If invoked as part of a bugfix / incident flow, extract context from the parent conversation instead.
 
 ## 2. Apply Appropriate Role
 
-Select and apply the role based on the problem type:
+Select role by problem type:
 
-| Problem Type | Primary Role | Rationale |
-|---|---|---|
-| Pod crashes, restarts, health check failures | `Agent(sre-engineer)` | Reliability, K8s troubleshooting, SLO impact |
-| High latency, error rate spikes, SLO burn | `Agent(sre-engineer)` | Observability, SLI/SLO analysis |
-| Managed DB issues (connections, replication, CPU) | `Agent(sre-engineer)` | Database reliability, capacity |
-| Networking, ingress, DNS, connectivity | `Agent(sre-engineer)` + `Agent(devops-engineer)` | Network diagnostics + infra config |
-| Deployment failures, rollback needed | `Agent(devops-engineer)` | CI/CD, Helm, K8s deployment |
-| Terraform/infra drift, resource config | `Agent(devops-engineer)` | IaC, cloud resource management |
-| Application errors visible in logs | Stack-specific role | `Agent(java-engineer)`, `Agent(python-engineer)`, `Agent(frontend-engineer)` |
-| General / unclear | `Agent(sre-engineer)` | SRE debugging methodology as default for prod |
+| Problem Type | Primary Role |
+|---|---|
+| Pod crashes, restarts, health-check failures | `Agent(sre-engineer)` |
+| High latency, error-rate spikes, SLO burn | `Agent(sre-engineer)` |
+| Managed DB issues (connections, replication, CPU) | `Agent(sre-engineer)` |
+| Networking, ingress, DNS, connectivity | `Agent(sre-engineer)` + `Agent(devops-engineer)` |
+| Deployment failures, rollback needed | `Agent(devops-engineer)` |
+| Terraform / infra drift, resource config | `Agent(devops-engineer)` |
+| Application errors in logs | Stack-specific (`Agent(java-engineer)` / `Agent(python-engineer)` / `Agent(frontend-engineer)`) |
+| General / unclear | `Agent(sre-engineer)` |
 
-Announce the applied role(s) to the user. If this is a P1/P2 incident, always apply `Agent(sre-engineer)`.
+Announce the applied role(s). For P1/P2 incidents, always apply `Agent(sre-engineer)`.
 
 ## 3. Establish Context
 
-Before collecting data, establish the environment context:
-
 ### 3a. Cloud Platform Context
 
-Detect platform from `CLAUDE.md` and verify authentication. Consult `cloud-platforms` skill for platform-specific auth verification commands:
+Detect platform from `CLAUDE.md` and verify authentication via `@cloud-platforms`:
 - **GCP**: `gcloud config get-value project` + `gcloud auth list`
 - **Azure**: `az account show` + `az aks list`
 - **AWS**: `aws sts get-caller-identity` + `aws eks list-clusters`
 
-Confirm the active project/subscription/account matches the user's target.
+Confirm the active project / subscription / account matches the user's target.
 
 ### 3b. Kubernetes Cluster
 
@@ -64,13 +62,13 @@ kubectl config current-context
 kubectl cluster-info
 ```
 
-Also run platform-specific cluster list command from `cloud-platforms` skill to verify cluster status.
+Run the platform-specific cluster list command from `@cloud-platforms` to verify cluster status.
 
 **Record**: Cluster name, location, version, node count, current kubectl context.
 
 ## 4. Collect Production Snapshot
 
-Run the following **read-only** diagnostic commands. Present results as a structured summary.
+Run the following **read-only** diagnostics. Present results as a structured summary.
 
 ### 4a. Node Health
 
@@ -80,7 +78,7 @@ kubectl get nodes -o wide
 kubectl top nodes
 ```
 
-**Flag**: Nodes in `NotReady` state, high CPU/memory utilization (>80%), version skew between nodes.
+**Flag**: `NotReady` nodes, CPU/memory >80%, version skew.
 
 ### 4b. Pod Status
 
@@ -92,10 +90,7 @@ kubectl get pods -n <namespace> -o wide --sort-by='.status.startTime'
 kubectl get pods -n <namespace> --field-selector=status.phase!=Running
 ```
 
-**Flag**:
-- Pods in `CrashLoopBackOff`, `Error`, `Pending`, `ImagePullBackOff`
-- Pods with high restart counts (>3 in last hour)
-- Pods not matching expected replica count (check `kubectl get deployments`)
+**Flag**: `CrashLoopBackOff` / `Error` / `Pending` / `ImagePullBackOff`, restart count >3 in last hour, replica count mismatch (`kubectl get deployments`).
 
 ### 4c. Pod Details (for problematic pods)
 
@@ -105,7 +100,7 @@ kubectl logs --tail=200 --timestamps <pod-name> -n <namespace>
 kubectl logs --previous --tail=50 <pod-name> -n <namespace>
 ```
 
-**Look for**: OOMKilled (exit code 137), application exceptions, connection errors, startup failures, readiness probe failures.
+**Look for**: OOMKilled (exit 137), app exceptions, connection errors, startup failures, readiness probe failures.
 
 ### 4d. Resource Usage
 
@@ -119,16 +114,7 @@ kubectl get hpa -n <namespace>
 
 ### 4e. Managed Database Health
 
-Run platform-specific database diagnostic commands from `cloud-platforms` skill:
-- **GCP**: `gcloud sql instances list` + `gcloud sql instances describe`
-- **Azure**: `az postgres flexible-server show` or `az sql server list`
-- **AWS**: `aws rds describe-db-instances`
-
-**Key metrics** (from cloud monitoring or CLI):
-- CPU utilization, memory utilization, disk usage
-- Active connections vs max connections
-- Replication lag (if HA/read replicas)
-- Failed connections count
+DB diagnostic commands per cloud — see `@cloud-platforms`. **Key metrics**: CPU / memory / disk utilization, active vs max connections, replication lag (HA / read replicas), failed connection count.
 
 ### 4f. Networking and Ingress
 
@@ -148,59 +134,32 @@ kubectl get endpoints -n <namespace>
 kubectl get events -n <namespace> --sort-by='.lastTimestamp' --field-selector type!=Normal
 ```
 
-**Record**: Warning/Error events — especially `FailedScheduling`, `OOMKilled`, `FailedMount`, `Unhealthy`, `BackOff`.
+**Record**: Warning / Error events — especially `FailedScheduling`, `OOMKilled`, `FailedMount`, `Unhealthy`, `BackOff`.
 
 ### 4h. Observability Methodology
 
-Pick a named industry-canonical method per problem class — gives analysis a vocabulary handle and signal coverage:
-
-- **Four Golden Signals** (Google SRE, user-facing): Latency (p50/p95/p99, success + failed separate), Traffic (RPS), Errors (% by type), Saturation. [SRE Book Ch. 6](https://sre.google/sre-book/monitoring-distributed-systems/).
-- **RED** (Wilkie, microservices): Rate, Errors, Duration. [RED](https://thenewstack.io/monitoring-microservices-red-method/).
-- **USE** (Gregg, resources): Utilization, Saturation, Errors. [USE](https://brendangregg.com/usemethod.html).
-
-| Problem | Method |
-|---|---|
-| Slow API | RED — Duration p99 tail |
-| 5xx spike | Golden Signals — Errors + Saturation |
-| OOMKilled / crashloop | USE — memory/CPU saturation |
-| Customer-reported latency | RED + tracing on slowest 1% |
-| Node/disk pressure | USE on resource axis |
+Observability methodology (Golden Signals / RED / USE / Distributed Tracing) — see `@observability-methods`. Pick a named method per problem class, then cross-reference SLI metrics, error-budget burn, and active alerts against that method's signals.
 
 ### 4i. Production Telemetry Surface
 
-Identify the stack (`CLAUDE.md`, helm charts, `prometheus-operator` CRDs, OTel collector) and query directly:
-
-| Stack | Where | Common queries |
-|---|---|---|
-| **Prometheus + Grafana** | Dashboards, Alertmanager | `rate(http_requests_total[5m])`, `histogram_quantile(0.99, ...bucket[5m])`, `up == 0` |
-| **Datadog** | APM, Service Catalog, Logs | `service:x error_rate`, `@http.status_code:5*`, anomaly monitors |
-| **Honeycomb** | Tracing + BubbleUp | `WHERE service.name=x \| HEATMAP duration_ms`, BubbleUp on slow traces |
-| **New Relic** | APM + Distributed Tracing | `SELECT percentile(duration,50,95,99) FROM Transaction WHERE appName='x'` |
-| **Sentry** | Issues filtered to release | error patterns + breadcrumbs (FE/mobile) |
-| **OTel + Tempo / Jaeger** | Tempo / Jaeger UI | trace search by `service.name`, `trace.id` |
-
-Cross-reference SLI metrics, error-budget burn, and active alerts against the method's signals.
-
-### 4j. Distributed Tracing
-
-For latency or cross-service failures, a single trace through 5–7 services is the canonical root-cause path. Storage: Tempo / Jaeger / Zipkin. Instrumentation: OpenTelemetry SDK. Search by `service.name`, `trace.id`, or slow-trace heatmap. Span attrs: HTTP route, DB query, external API, retries.
+Telemetry stack patterns + per-vendor queries — see `@telemetry-stacks`. Identify the stack from `CLAUDE.md`, helm charts, `prometheus-operator` CRDs, or the OTel collector config, then query directly using the vendor patterns documented there.
 
 ## 5. Analyze Findings
 
 Using the applied role's expertise:
 
-1. **Correlate** the user's problem with collected data
-2. **Identify root cause** using the role's debugging methodology
-3. **Assess SLO impact** (if `Agent(sre-engineer)` active): error budget consumed, burn rate
+1. **Correlate** the user's problem with collected data.
+2. **Identify root cause** using the role's debugging methodology.
+3. **Assess SLO impact** (when `Agent(sre-engineer)` is active): error budget consumed, burn rate.
 
 <common_prod_issues>
-- **Pod CrashLoopBackOff**: OOM (check limits), app startup failure (check logs), missing config/secret, failed dependency (DB not reachable)
-- **High latency**: Database slow queries, connection pool exhaustion, CPU throttling (check requests vs limits), upstream dependency timeout
-- **Managed DB connection exhaustion**: Too many connections from pods, connection leak in app, pool size misconfigured, proxy/pooler not configured
-- **Pods Pending**: Insufficient cluster resources (node autoscaler max reached), node affinity/taint mismatch, PVC not bound
-- **5xx errors**: Application exception (check logs), upstream timeout, readiness probe failing (traffic to unhealthy pod), resource exhaustion
-- **Deployment stuck**: Image pull error (wrong tag, registry auth), failed readiness probe, PDB blocking rollout, insufficient quota
-- **Network unreachable**: NetworkPolicy blocking traffic, service selector mismatch, DNS resolution failure, VPC/firewall rule
+- **CrashLoopBackOff**: OOM (check limits), app startup failure, missing config/secret, failed dependency (DB unreachable)
+- **High latency**: DB slow queries, connection-pool exhaustion, CPU throttling (requests vs limits), upstream timeout
+- **DB connection exhaustion**: too many connections from pods, app leak, pool misconfig, no pooler / proxy
+- **Pods Pending**: insufficient cluster resources (autoscaler max), affinity/taint mismatch, PVC not bound
+- **5xx errors**: app exception, upstream timeout, readiness probe failing, resource exhaustion
+- **Deployment stuck**: image pull error, readiness probe failure, PDB blocking rollout, insufficient quota
+- **Network unreachable**: NetworkPolicy block, service selector mismatch, DNS failure, VPC / firewall rule
 </common_prod_issues>
 
 ## 6. Present Diagnosis
@@ -210,20 +169,14 @@ Structure the diagnosis:
 ```
 ## Production Environment Summary
 - Cloud: [GCP/Azure/AWS] | Project/Sub/Account: [id] | Cluster: [name] ([location])
-- Nodes: [count] ([healthy]/[total]) | K8s version: [version]
-- Managed DB: [instance] ([state], [tier])
+- Nodes: [count] ([healthy]/[total]) | K8s: [version] | Managed DB: [instance] ([state], [tier])
 
 ## SLO Impact (if applicable)
-- SLO: [target] | Current: [actual] | Error budget: [remaining]%
-- Burn rate: [Nx] | Time to budget exhaustion: [duration]
+- SLO: [target] | Current: [actual] | Error budget: [remaining]% | Burn rate: [Nx] | Time to exhaustion: [duration]
 
 ## Findings
 ### [Issue 1: title]
-- **Symptom**: what was observed
-- **Evidence**: specific log lines, metrics, pod status
-- **Root cause**: why it's happening
-- **Severity**: P1 (outage) / P2 (degraded) / P3 (minor) / P4 (cosmetic)
-- **Blast radius**: affected users, services, regions
+- **Symptom / Evidence / Root cause / Severity (P1–P4) / Blast radius**
 
 ## Recommendations
 1. [Immediate mitigation] — [command] ⚠️ REQUIRES APPROVAL
@@ -237,30 +190,26 @@ Structure the diagnosis:
 
 **⚠️ All production mutations require explicit user approval.**
 
-Based on the diagnosis:
+- **Immediate mitigation** (rollback, restart, scale): present the exact command, wait for approval, execute, verify.
+- **Application code fix**: transition to a stack-specific role. Fix, test locally (optionally `/analyze-local`), deploy via normal CI/CD.
+- **Infrastructure fix** (Terraform, Helm, K8s config): apply via PR with `Agent(devops-engineer)` — never direct apply.
+- **Root cause unclear**: propose additional diagnostics (increased log verbosity, tracing, profiling, query analysis).
 
-- **Immediate mitigation** (rollback, restart, scale): Present the exact command. Wait for user approval. Execute and verify
-- **Application code fix**: Transition to stack-specific role. Fix code, test locally (optionally `/analyze-local`), then deploy through normal CI/CD
-- **Infrastructure fix** (Terraform, Helm, K8s config): Apply with `Agent(devops-engineer)` patterns via PR, never direct apply
-- **Root cause unclear**: Propose additional diagnostics (increase log verbosity, tracing, profiling, query analysis)
-
-After any fix, re-run relevant diagnostic commands from Step 4 to verify resolution.
+After any fix, re-run relevant Step 4 commands to verify resolution.
 
 ## 8. Summary
 
-Present the completed analysis:
-
 - **Problem**: original report / incident ID
 - **Severity**: P1–P4
-- **Role(s) applied**: which roles were used
-- **Root cause**: what was found
+- **Role(s) applied**
+- **Root cause**
 - **SLO impact**: error budget consumed
-- **Fix applied**: what was changed (or "investigation only — no fix applied")
+- **Fix applied** (or "investigation only — no fix applied")
 - **Verification**: confirmation the issue is resolved
-- **Action items**: postmortem (if P1/P2), prevention measures, monitoring improvements
+- **Action items**: postmortem (if P1/P2), prevention, monitoring improvements
 
 ## Integration
 
 - **Called by**: `/bugfix` (production environment diagnostics)
 - **Roles**: `Agent(sre-engineer)`, `Agent(devops-engineer)`
-- **Skills**: `cloud-platforms` skill (platform-specific CLI commands, managed service diagnostics)
+- **Skills**: `@cloud-platforms` (platform-specific CLI commands, managed service diagnostics), `@observability-methods` (Golden Signals / RED / USE / Tracing), `@telemetry-stacks` (Prometheus / Datadog / Honeycomb / New Relic / Sentry / OTel queries)

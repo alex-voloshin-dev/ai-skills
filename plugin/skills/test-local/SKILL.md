@@ -11,6 +11,8 @@ Full QA cycle for local development environments. Verifies test infrastructure, 
 
 **Key difference from `/run-tests`**: This workflow manages the full local test environment lifecycle (setup → test → report → cleanup). `/run-tests` is a lightweight sub-workflow that only executes and analyzes tests.
 
+Per-stack test runners and commands — see `@test-runners-by-stack`.
+
 ## 1. Define Scope
 
 Read `TESTING.md` at the project root (and per-service `TESTING.md` in monorepos) for test infrastructure, commands, credentials, and organization. This is the authoritative source for how to test the project.
@@ -38,16 +40,7 @@ If invoked by another workflow — extract scope from parent context.
 
 ## 3. Detect Project Stack
 
-Read `CLAUDE.md` and scan project files to determine:
-
-| Signal | Stack | Test Runner | Container Tool |
-|---|---|---|---|
-| `package.json` + vitest/jest | TypeScript/JS | `npx vitest` / `npx jest` | Testcontainers-node |
-| `package.json` + playwright | TypeScript/JS (E2E) | `npx playwright test` | Playwright containers |
-| `pom.xml` / `build.gradle` | Java | `mvn test` / `gradle test` | Testcontainers-java |
-| `pyproject.toml` / `pytest.ini` | Python | `pytest` | Testcontainers-python |
-| `go.mod` | Go | `go test ./...` | Testcontainers-go |
-| `*.csproj` | .NET | `dotnet test` | Testcontainers-dotnet |
+Read `CLAUDE.md` and scan project files to determine the stack and matching runner. Detection signals, runners, and Testcontainers tools — see `@test-runners-by-stack`.
 
 Also detect:
 
@@ -59,172 +52,50 @@ Also detect:
 
 Before running tests, verify the local environment is ready.
 
-### 4a. Docker Daemon
+**4a. Docker daemon** — run `docker version` (turbo). If not running, notify user and stop; container-backed tests will fail.
 
-```
-// turbo
-docker version --format "Client: {{.Client.Version}} | Server: {{.Server.Version}}"
-```
+**4b. Port conflicts** — check ports needed by test services using `lsof -i :<port>` (macOS/Linux), `ss -tulnp | grep :<port>` (Linux), or `netstat -ano | findstr ":<port>"` (Windows). Common test ports: 5432 (PostgreSQL), 6379 (Redis), 27017 (MongoDB), 9092 (Kafka), 3306 (MySQL). Report which process holds any conflicting port and suggest resolution.
 
-If Docker is not running — notify user and stop. Tests requiring containers will fail.
+**4c. Environment variables** — verify root `.env` exists and contains `test_` prefixed variables (e.g., `test_user`, `test_db_host`); compare with `.env.example` and flag missing test variables. Read only `.env.example` for reference — never log or output actual `.env` values.
 
-### 4b. Port Conflicts
-
-Check that ports needed by test services are available. Use the platform-appropriate command:
-
-```
-// turbo
-# macOS / Linux:
-lsof -i :<port>          # OR: ss -tulnp 2>/dev/null | grep :<port>
-# Windows (PowerShell or cmd):
-netstat -ano | findstr ":<port>"
-```
-
-Common test ports: 5432 (PostgreSQL), 6379 (Redis), 27017 (MongoDB), 9092 (Kafka), 3306 (MySQL).
-
-If conflicts found — report which process holds the port. Suggest resolution.
-
-### 4c. Environment Variables
-
-Check for test-specific environment configuration:
-
-- Root `.env` — verify it exists and contains `test_` prefixed variables (e.g., `test_user`, `test_db_host`)
-- Compare with `.env.example` — flag missing test variables
-- Read only `.env.example` for reference — never log or output actual `.env` values
-
-### 4d. Dependencies
-
-Verify project dependencies are installed:
-
-| Stack | Check Command |
-|---|---|
-| Node.js | `node_modules/` exists, `package-lock.json` up to date |
-| Java | `mvn dependency:resolve -q` |
-| Python | Virtual env active, `pip check` |
-| Go | `go mod verify` |
-
-If dependencies are stale — suggest `npm install` / `pip install -r requirements.txt` / etc.
+**4d. Dependencies** — verify installation using the per-stack check command (see `@test-runners-by-stack`). If stale, suggest the stack-appropriate install command (`npm install` / `pip install -r requirements.txt` / etc.).
 
 ## 5. Provision Test Infrastructure
 
 Based on project config, set up test dependencies.
 
-### 5a. Testcontainers (preferred)
+**5a. Testcontainers (preferred)** — no manual setup; containers start/stop per test suite. Verify Docker daemon (Step 4a), any `.testcontainers.properties` config, and that required images are available or pullable.
 
-If the project uses Testcontainers — no manual setup needed. Testcontainers starts/stops containers automatically per test suite. Verify:
-
-- Docker daemon is running (Step 4a)
-- Testcontainers config exists (`.testcontainers.properties` if needed)
-- Required images are available (or will be pulled automatically)
-
-### 5b. Docker Compose
-
-If the project uses `docker-compose.test.yml` or similar:
+**5b. Docker Compose** — for `docker-compose.test.yml` or similar:
 
 ```
 docker compose -f docker-compose.test.yml up -d
-```
-
-Wait for services to be healthy:
-
-```
 docker compose -f docker-compose.test.yml ps
 ```
 
-Check health status. If any service is unhealthy — collect logs and diagnose using `Agent(devops-engineer)`.
+Wait for healthy status. If any service is unhealthy — collect logs and diagnose using `Agent(devops-engineer)`.
 
-### 5c. Seed Data
+**5c. Seed data** — locate seed scripts (check `CLAUDE.md`, `package.json` scripts, `Makefile`, `scripts/`), run them after infrastructure is ready, and verify success.
 
-If the project has seed scripts for test data:
-
-1. Locate seed scripts (check `CLAUDE.md`, `package.json` scripts, `Makefile`, `scripts/` directory)
-2. Run seed scripts after infrastructure is ready
-3. Verify seed completed successfully
-
-### 5d. No Infrastructure Needed
-
-If the project uses only mocks/stubs for unit tests — skip to Step 6.
+**5d. No infrastructure** — if the project uses only mocks/stubs for unit tests, skip to Step 6.
 
 ## 6. Run Tests
 
-Execute tests in pyramid order: unit → integration → E2E. Stop at first failing level unless user requested full suite.
+Execute tests in pyramid order: unit → integration → E2E. Stop at first failing level unless user requested full suite. Per-stack unit / integration / E2E / specialized commands — see `@test-runners-by-stack`.
 
 **Test runner stdout > 2000 tokens normalized by `tool-output-normalize.py` hook (G2)** before injection — large multi-suite outputs become envelope metadata + top-k extracted failures rather than raw dumps.
 
-### 6a. Unit Tests
+**6a. Unit tests** — fast (< 2 min), high pass rate. If unit tests fail, fix before proceeding. Delegate to `/run-tests` for analysis and auto-fix (Step 3–4 of that workflow).
 
-```
-// turbo
-<unit-test-command>
-```
+**6b. Integration tests** — run only if unit tests pass (or user explicitly requested). Moderate speed (< 10 min). Tests interact with real dependencies (DB, APIs via containers).
 
-**Expected**: Fast (< 2 min), high pass rate. If unit tests fail — fix before proceeding.
+**6c. E2E tests** — run only if integration tests pass (or user explicitly requested). Prerequisites: application running locally (dev server or Docker), E2E config pointing at local URL, browser binaries installed (Playwright: `npx playwright install`).
 
-For failures — delegate to `/run-tests` for analysis and auto-fix (Step 3-4 of that workflow).
-
-### 6b. Integration Tests
-
-Run only if unit tests pass (or user explicitly requested):
-
-```
-<integration-test-command>
-```
-
-**Expected**: Moderate speed (< 10 min). Tests interact with real dependencies (DB, APIs via containers).
-
-Common integration test patterns by stack:
-
-| Stack | Command | Notes |
-|---|---|---|
-| Vitest/Jest | `npx vitest run --project integration` | If workspace configured |
-| pytest | `pytest tests/integration/ -v` | Or `pytest -m integration` |
-| Maven | `mvn verify -pl <module>` | Failsafe plugin for ITs |
-| Go | `go test -tags=integration ./...` | Build tag separation |
-
-### 6c. E2E Tests
-
-Run only if integration tests pass (or user explicitly requested):
-
-```
-<e2e-test-command>
-```
-
-**Prerequisites**:
-- Application must be running locally (dev server or Docker)
-- E2E test config must point to local URL
-- Browser binaries installed (Playwright: `npx playwright install`)
-
-Common E2E commands:
-
-| Stack | Command |
-|---|---|
-| Playwright | `npx playwright test` |
-| Cypress | `npx cypress run` |
-| pytest + Selenium | `pytest tests/e2e/ -v` |
-
-### 6d. Specialized Tests (optional)
-
-If user requested or project has them:
-
-| Type | When | Command Pattern |
-|---|---|---|
-| **Performance** | Pre-release, after optimization | `k6 run tests/load/script.js` |
-| **Security** | Pre-release, after auth changes | `npm audit` / OWASP ZAP scan |
-| **Accessibility** | UI changes | `npx playwright test --grep @a11y` or axe-core |
+**6d. Specialized tests (optional)** — performance, security, and accessibility — run only when user requests or project has them configured. Commands listed in `@test-runners-by-stack`.
 
 ## 7. Coverage Analysis
 
-After all tests pass, run coverage analysis:
-
-| Stack | Command |
-|---|---|
-| Vitest | `npx vitest run --coverage` |
-| Jest | `npx jest --coverage` |
-| pytest | `pytest --cov=<package> --cov-report=term-missing` |
-| Go | `go test -coverprofile=coverage.out ./... && go tool cover -func=coverage.out` |
-| Maven | `mvn jacoco:report` |
-
-Compare against `test-strategy` skill targets:
+After all tests pass, run the per-stack coverage command (see `@test-runners-by-stack`) and compare against `test-strategy` skill targets:
 
 | Metric | Target | Hard Minimum | Status |
 |---|---|---|---|
@@ -312,7 +183,7 @@ Testcontainers handles its own cleanup automatically — verify no orphaned cont
 ## Integration
 
 - **Roles**: `Agent(qa-engineer)` (primary), stack-specific roles (test fixes), `Agent(devops-engineer)` (infra issues)
-- **Skills**: `test-strategy` skill (test patterns, coverage targets)
+- **Skills**: `test-strategy` skill (test patterns, coverage targets), `test-runners-by-stack` (per-stack commands)
 - **Sub-workflows**: `/run-tests` (test execution and auto-fix for failures)
 - **Called by**: `/develop` (pre-commit testing), `/bugfix` (verify fix)
 - **Follow-up**: `/pre-commit` (quality gate), `/create-pr` (submit changes)

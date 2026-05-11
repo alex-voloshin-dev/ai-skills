@@ -10,17 +10,7 @@ Base protocols for coordinating a team of named subagents in Claude Code. This s
 
 ## CRITICAL — orchestration skills MUST NOT use `context: fork`
 
-Per Anthropic Claude Code docs:
-
-> "Subagents cannot spawn other subagents."
-
-When a workflow skill has `context: fork` in its frontmatter, Claude Code runs the entire skill body inside a **forked subagent** (typically `general-purpose`). Inside that subagent, the `Agent` tool is unavailable — and the orchestration pipeline this protocol defines cannot execute. The skill will detect the missing primitive and either HALT or fall back to inline single-agent work, leaving the user wondering why the multi-agent pipeline never ran.
-
-**Rule**: any skill that follows this protocol (spawns Developer / Reviewer / QA via the `Agent` tool) MUST NOT have `context: fork` in its frontmatter. The skill must run in the main conversation thread to retain access to the `Agent` tool.
-
-Confirmed alpha.25 failure mode: `develop` / `team-bugfix` / `feature-design` initially shipped with `context: fork` (intent: isolate skill body from main context). User ran `/ai-assets:develop`, Claude Code forked into a `general-purpose` subagent, the subagent had no `Agent` tool, the skill correctly identified this and refused to do the work inline. Fix: removed `context: fork` from all three orchestration skills. They now run in the main thread where `Agent` is available.
-
-`feature-dev` (single-agent fallback that does the work itself, no spawning) keeps `context: fork` — that's correct, it doesn't need to orchestrate.
+Per Anthropic Claude Code docs, "subagents cannot spawn other subagents." Any skill that spawns Developer / Reviewer / QA via the `Agent` tool MUST NOT declare `context: fork` — forking pushes the skill body into a subagent that has no `Agent` tool, and the pipeline collapses (alpha.25). Only single-agent fallbacks like `feature-dev` can keep `context: fork`.
 
 ## Execution Model
 
@@ -28,9 +18,11 @@ You are the Lead. You run in the main conversation thread and coordinate the tea
 
 **Hard invariant**: every agent role MUST run as a NAMED subagent spawned via `Agent`, with its own isolated context. The Lead (main thread) NEVER executes Developer / Reviewer / QA work inline with `Bash`/`Read`/`Edit`. If you skip the spawn and do the work directly in the main thread, you have violated this protocol — the user loses the ability to inspect each role independently and the pipeline gates collapse to procedural-only enforcement.
 
-> **Common failure mode (observed alpha.23):** the skill body describes roles ("Agent 1 — Developer", "Agent 2 — Reviewer") but never issues a literal `Agent(...)` call. The model treats the description as documentation and proceeds inline with `Bash`/`Read`/`Edit`. The fix: every role-spawn step in this protocol contains an explicit `Agent({...})` invocation example that the workflow MUST execute, not paraphrase.
+> Observed alpha.23 failure mode: the skill describes roles in prose but never issues a literal `Agent(...)` call, and the model proceeds inline with `Bash`/`Read`/`Edit`. Every role-spawn step in this protocol contains an explicit `Agent({...})` invocation example that the workflow MUST execute, not paraphrase. Literal templates + G7 payload + role-by-role spawn map live in [`spawn-pattern.md`](./spawn-pattern.md).
 
-> The literal `Agent({...})` invocation template, the JSON G7 spawn-payload example, the validate-and-pass-through pattern, and the role-by-role spawn map (which `subagent_type` per role) live in [`spawn-pattern.md`](./spawn-pattern.md). Load it when authoring a workflow skill that needs to spawn DEV/REVIEW/QA — it carries the executable templates.
+## Pre-flight tool load (Path B only, v0.3.9)
+
+Before issuing the Path B team-create prompt, if `TeamCreate` / `TaskCreate` / `TaskUpdate` / `SendMessage` / `TeamDelete` / `TaskStop` / `Monitor` schemas are not already in the active toolset, the Lead loads them in a single batched call: `ToolSearch(query: "select:TeamCreate,TaskCreate,TaskUpdate,SendMessage,TeamDelete,TaskStop,Monitor")`. This avoids the mid-workflow latency observed when each tool is fetched on first use (the harness defers tool schemas — calling an unloaded tool raises `InputValidationError`). Skip this step if the Lead has already loaded these tools earlier in the session.
 
 ## Two Paths — Subagents OR Agent Teams
 
@@ -38,7 +30,7 @@ Two execution paths are supported. Both preserve the DEV → REVIEW → QA gate 
 
 **MANDATORY default: Path B (Agent Teams).** Path B MUST be selected for every multi-agent workflow. It gives the user a visual team panel, Shift+↓ to switch context into any teammate, dedicated transcript per role, and a shared task list with `dependsOn`. Path A is **fallback-only** and may be selected ONLY when Path B Step 1 returns a hard technical block (defined below). Any other downgrade is a protocol violation — there is **no silent fallback** for non-technical reasons.
 
-**Hard technical block** = the natural-language team creation in Path B Step 1 actually fails (Anthropic Agent Teams API not exposed in the current Claude Code session, typically because `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is not set, or the Lead is itself running inside a subagent that has no access to team primitives). In that case — and ONLY in that case — silently fall back to Path A and continue without re-asking the user.
+**Hard technical block** = a documented Path A trigger in `path-selection-rules.md`: (1) team-create returns "Agent Teams not enabled" / equivalent (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` unset or Lead inside a subagent); (2) Pre-spawn tool-capability check (alpha.32) shows every writing role lacks `Write`/`Edit` AND Lead-writes-file restructure is unsafe. Partial mismatches are handled per role per alpha.32. In these cases only, fall back silently to Path A.
 
 **Invalid reasons to downgrade Path B → Path A** (these are protocol violations — never use them):
 - "the pipeline is sequential, parallelism doesn't help" — Path B's value is UX, not parallelism
@@ -57,6 +49,8 @@ The full anti-rationalization checklist with observed failure modes (alpha.26 / 
 Lead drives via natural language. Each teammate is a full Claude Code session with switchable context. User can Shift+↓ to switch teammates, Enter for transcripts, and Ctrl+T for the shared task list. This is the path the workflow MUST use unless a hard technical block at Step 1 forces Path A.
 
 **Path B Liveness — Explicit Hand-off + Watchdog (v0.3.7).** Any teammate (Developer, Reviewer, QA) can silently idle in alpha `in-process` mode — including the Developer's "silent-but-complete" sub-flake where edits land on disk and acceptance criteria appear met but the G7 envelope never arrives. The Lead MUST push an explicit hand-off message at every stage transition (Developer included), run a ~90 s watchdog with up to 2 retry nudges, perform a read-only disk-state reconciliation when the silent role is the Developer, and escalate to the user after 3 nudges with a role-specific menu (per `lead-protocol.md` "Path B Liveness — Explicit Hand-off + Watchdog"). Per-task `Agent` fallback is permitted **only** on user-approved escalation, never as silent session-wide downgrade. The Lead MUST NEVER synthesize a G7 envelope on a teammate's behalf, even when disk state proves the work is done.
+
+**Pre-spawn tool-capability check (v0.3.8, alpha.32).** Before team-create, the Lead verifies each teammate's `subagent_type` has tools sufficient for its workflow output. As of v0.3.8 ten producer roles ship with `Write` / `Edit` so the check almost always passes — it remains mandatory to catch the two intentional read-only patterns: `eval-judge` (verdict-in-response) and `software-engineer` spawned as Reviewer with `disallowedTools: ["Write","Edit"]` at spawn time. Full procedure + role-capability cache: `path-selection-rules.md` "Pre-spawn tool-capability check".
 
 ### Path A — Subagents (technical-block fallback only, sequential)
 

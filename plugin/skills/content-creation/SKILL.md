@@ -5,11 +5,9 @@ context: fork
 argument-hint: "<content type: blog-post | page | landing | email | other>"
 ---
 
-# /content-creation — Content Authoring + Tools
+# /content-creation — Content Authoring Workflow
 
-Two functions in one skill:
-- **Workflow:** 8-step blog-post pipeline (research → brief → write → GEO → humanize → SEO → review → publish)
-- **Knowledge base:** AI text + image generation tools, quality gates, copywriting patterns, content sync procedures
+8-step blog-post pipeline (research → brief → write → GEO → humanize → SEO → review → publish) plus a lighter Page/Landing/Email variant. Research methodology and AI text-generation prompt templates live in `@content-tools` (the knowledge skill) — load when running research or drafting copy.
 
 ## When to use
 
@@ -17,7 +15,7 @@ Two functions in one skill:
 - Page content (headlines, body, CTAs): `/content-creation page "<page>"`
 - Landing page copy: `/content-creation landing "<page>"`
 - Email campaign body (delegate to `/marketing email` for full email): `/content-creation email "<purpose>"`
-- Generating visuals with AI: see "AI Image Generation" companion (`content-tools-guide.md`)
+- Generating visuals with AI: see companion `image-and-integration-workflows.md`
 - Optimizing existing content: invoke this skill with the existing path
 
 ## Not for
@@ -25,7 +23,7 @@ Two functions in one skill:
 - Designing UI components or layouts → `/ui-ux-design`
 - Technical documentation → `/docs-pack` (user docs) or `Agent(content-writer)` directly (internal)
 - SEO audit → `/seo-review`
-- Marketing strategy → `/marketing init`
+- Marketing strategy → `/marketing-init`
 - Frontend implementation → `Agent(frontend-engineer)`
 
 ## Workflow A: Blog Post (full 8-step pipeline)
@@ -42,10 +40,9 @@ Ask the user (or extract from context): action (new / update / series), topic + 
 
 ### Step 2: Research and Content Brief
 
-`Agent(product-manager)`:
-Web research (3–5 top-ranking articles, angle/depth/gaps), competitive analysis (what competitors cover + market gaps), data/statistics (recent citable points), keyword research (primary + 2–3 secondary, search intent), existing-content audit (related posts + cross-link opportunities).
+`Agent(product-manager)`. Apply research methodology from `@content-tools`: web research (3–5 top-ranking articles, angle/depth/gaps), competitive content audit (what competitors cover + market gaps), data/statistics gathering with fact-check (recent citable points), keyword research (primary + 2–3 secondary, search intent), existing-content audit (related posts + cross-link opportunities).
 
-Produce a **Content Brief** using the template in [`content-tools-guide.md`](./content-tools-guide.md) → "Content Research Workflows": working title + angle, target audience + search intent, outline (H2 sections + content), key data points + sources, cross-link opportunities, visual needs, word-count target.
+Produce a **Content Brief** using the Blog Content Brief Template in `@content-tools`: working title + angle, target audience + search intent, outline (H2 sections + content), key data points + sources, cross-link opportunities, visual needs, word-count target.
 
 Present to user. **Wait for approval.** Adjust outline per feedback.
 
@@ -122,7 +119,7 @@ Eight gates — each must pass before publish:
 
 ## AI Tool References
 
-For AI text generation (ChatGPT / Claude / Gemini / Jasper / Copy.ai), image generation (Midjourney v7 / GPT-Image-1 / Flux 1.1 Pro / Ideogram / Stable Diffusion / Leonardo), video / motion (Sora 2 / Runway / Kling / Luma / Synthesia / Loom), stock assets (Unsplash / Pexels / Undraw / Storyset / Lottie / Noun Project), and design tooling (Rive / Spline) — see companion [`content-tools-guide.md`](./content-tools-guide.md) for the full tool matrix with best-for + integration notes.
+For AI text-generation prompt templates (headline / value-prop / feature-to-benefit / FAQ / social-proof patterns) — see `@content-tools` knowledge skill. For image generation (Midjourney v7 / GPT-Image-1 / Flux 1.1 Pro / Ideogram / Stable Diffusion / Leonardo), video/motion (Sora 2 / Runway / Kling / Luma / Synthesia / Loom), stock assets (Unsplash / Pexels / Undraw / Storyset / Lottie / Noun Project), and design tooling (Rive / Spline) — see companion `image-and-integration-workflows.md`.
 
 ## G7 spawn payloads
 
@@ -139,7 +136,7 @@ Blog post output goes to the project's blog directory (NOT to `.ai-assets-memory
 
 ## Companions
 
-- **`content-tools-guide.md`** — AI text + image tool matrices, prompt patterns, content brief template
+- **`@content-tools`** — research workflows + AI text-generation prompt templates (knowledge skill, sibling to this one)
 - **`page-content-patterns.md`** — Blog Post pattern, page-level templates
 - **`about-pricing-and-layout-patterns.md`** — about, pricing, layout patterns
 - **`image-and-integration-workflows.md`** — visual content workflows + integration

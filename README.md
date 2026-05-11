@@ -1,6 +1,6 @@
 # ai-assets
 
-> Vendor-agnostic agentic-dev tooling: 26 agents, 53 skills, and 45 eval
+> Vendor-agnostic agentic-dev tooling: 26 agents, 73 skills, and 45 eval
 > rubrics that work across Claude Code, Codex, and Windsurf.
 
 Engineering teams adopting AI coding agents hit the same wall: ad-hoc
@@ -164,7 +164,7 @@ ai-assets/
 ├── plugin/                  # Claude Code plugin (canonical for Claude Code)
 │   ├── .claude-plugin/      # Plugin manifest + 13 userConfig knobs
 │   ├── agents/              # 26 specialized agents
-│   ├── skills/              # 53 skills (32 user-invocable workflows)
+│   ├── skills/              # 73 skills (32 context: fork + 4 main-thread orchestrators + 37 knowledge skills)
 │   ├── rules/               # 12 cross-cutting policies
 │   ├── hooks/               # 18 hook scripts across 13 lifecycle events
 │   ├── eval/                # 45 rubrics + 270 calibration samples + Tier 1/2 runner

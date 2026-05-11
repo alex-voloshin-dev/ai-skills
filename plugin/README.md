@@ -84,7 +84,7 @@ The repo's `.claude-plugin/marketplace.json` already declares the registry. Loca
 
 ## What's inside today (v0.3.7)
 
-- **53 skills** covering the full SDLC plus marketing and content. 32 are user-invocable: 28 with `context: fork` plus 4 main-thread orchestrators (`develop`, `feature-design`, `bugfix`, `team-bugfix`) that retain Agent-spawn capability.
+- **73 skills** covering the full SDLC plus marketing and content. 36 are user-invocable: 32 with `context: fork` plus 4 main-thread orchestrators (`develop`, `feature-design`, `bugfix`, `team-bugfix`) that retain Agent-spawn capability. The remaining 37 are knowledge skills (`disable-model-invocation: true`) loaded as context by workflows or agents — Single-Responsibility split per the May 2026 `/plugin-skill-audit` refactor (split fat workflows, extract per-stack tooling tables, thin engineer agents via the `prompt-engineer` pattern).
 - **26 specialized agents** — cloud architect, security engineer, all major language engineers, content/marketing roles, 4 orchestrators.
 - **18 hooks** across 13 lifecycle events — security guardrails, untrusted-content wrapping, session memory flush, RALF loop control, per-iteration token meter (v0.1.6), subagent depth guard (v0.1.7), `.committed/` allowlist enforcement.
 - **12 rules** — security, memory discipline, RALF budget, untrusted-content wrapping, etc.

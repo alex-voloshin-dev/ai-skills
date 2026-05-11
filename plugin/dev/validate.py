@@ -83,19 +83,35 @@ FORBIDDEN_AGENT_FIELDS = {"permissionMode", "hooks", "mcpServers"}
 
 EXPECTED_COUNTS = {
     "agents": 26,
-    "skills": 53,                # +1 plugin-skill-audit (companion to plugin-skill-create)
+    "skills": 73,                # 53 baseline + 20 from P2/P3/P4 audit refactor:
+                                 #   P2 splits: +marketing-init, +marketing-strategy,
+                                 #   +architecture-design, +architecture-analyze,
+                                 #   +architecture-evolve, +content-tools
+                                 #   P3 knowledge extractions: +terraform-procedures,
+                                 #   +helm-procedures, +gitops-detection,
+                                 #   +test-runners-by-stack, +release-tools-by-stack,
+                                 #   +observability-methods, +telemetry-stacks,
+                                 #   +owasp-coverage, +supply-chain-security
+                                 #   P4.2 agent-thinning skills: +python-fastapi-patterns,
+                                 #   +react-nextjs-patterns, +sql-database-patterns,
+                                 #   +spring-jpa-patterns, +design-system-patterns
     "rules": 12,
     "hooks": 18,                 # excludes _lib.py (16 + ralph-iter-meter v0.1.6 + subagent-depth-guard v0.1.7)
     "events": 13,
     "rubrics": 45,               # 17 base + 4 meta-tools (P1.D) + 24 per-skill workflow rubrics (audit B coverage push)
     "calibration_samples": 270,  # 6 per rubric × 45
-    "user_invocable_skills": 28, # skills with `context: fork` frontmatter
-                                 # (after v0.3.2: /bugfix joined the
-                                 # main-thread orchestrators with /develop,
-                                 # /team-bugfix, /feature-design — they run
-                                 # in main thread to retain Agent spawn
-                                 # capability; total user-invocable = 32 =
-                                 # 28 fork + 4 main-thread orchestrators)
+    "user_invocable_skills": 32, # skills with `context: fork` frontmatter.
+                                 # P2 split bumped this by +4 (marketing-init,
+                                 # architecture-design, architecture-analyze,
+                                 # architecture-evolve) but P2.1 also turned
+                                 # marketing-strategy + content-tools into
+                                 # `disable-model-invocation: true` knowledge
+                                 # skills (net not counted here). All P3/P4
+                                 # extractions are knowledge skills (not
+                                 # context: fork). Total user-invocable = 32
+                                 # context-fork + 4 main-thread orchestrators
+                                 # (/develop, /team-bugfix, /feature-design,
+                                 # /bugfix) = 36 user-invocable surface.
     "user_docs": 15,
     "schemas": 2,
     "output_styles": 2,

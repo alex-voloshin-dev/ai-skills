@@ -15,7 +15,7 @@ ai-assets/
 │   ├── .claude-plugin/
 │   │   └── plugin.json      # manifest + 13 userConfig knobs
 │   ├── agents/              # 26 specialized agents
-│   ├── skills/              # 53 skills (32 user-invocable)
+│   ├── skills/              # 73 skills (32 user-invocable + 4 main-thread orchestrators)
 │   ├── rules/               # 12 guardrail rules
 │   ├── hooks/               # 18 hooks across 13 lifecycle events
 │   ├── schemas/             # 2 JSON Schemas (G7 spawn + return)

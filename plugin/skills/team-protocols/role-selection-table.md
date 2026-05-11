@@ -24,6 +24,8 @@ Detect each subproject's tech stack from its `CLAUDE.md` or `AGENTS.md` and map 
 
 If a subproject does not match any pattern, fall back to `software-engineer`.
 
+**Read-only investigation roles** — for "find / locate / inventory" tasks that need no edits, prefer the Claude Code built-in `Explore` agent over a domain-specific role. Reasons: (a) `Explore` is optimised for multi-file recon (file-by-name lookup, grep across the tree, "where is X defined / which files reference Y"); (b) it has only read tools (no Write/Edit/Bash) so it cannot accidentally mutate state; (c) it returns excerpts under a smaller context budget than a domain-specific spawn. Pick a domain-specific role only when the recon question genuinely requires domain knowledge (JPA entity graph traversal, Spring DI graph, K8s manifest semantics). For "list every file that touches X" or "find the line where Y is defined", `Explore` is the right tool.
+
 ## subagent_type Resolution
 
 `subagent_type` MUST match a plugin-shipped agent name in `plugin/agents/<name>.md` OR a built-in Claude Code agent (`Explore`, `Plan`, `general-purpose`). The 26 plugin-shipped agents are:

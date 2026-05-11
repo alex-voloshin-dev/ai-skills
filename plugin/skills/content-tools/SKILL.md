@@ -1,10 +1,18 @@
-# Content Tools Guide
+---
+name: content-tools
+description: Content research workflows and AI text-generation prompt templates — topic research, data/fact gathering, existing-content audit, blog content brief template, and AI-text patterns for headline generation, value propositions, feature-to-benefit translation, FAQ generation, social proof. Use as the reusable knowledge layer for /content-creation and /marketing email + social-post operations.
+disable-model-invocation: true
+---
 
-Detailed workflows for AI content generation tools, prompting techniques, and integration with external services. Use alongside `Agent(content-designer)` role and `content-creation` skill.
+# Content Tools — Research + AI-Text Patterns
+
+Reusable knowledge skill for content workflows. Topic research methodology, fact-gathering procedures, content brief template, and AI text-generation prompt templates. Used by `/content-creation` and `/marketing` operations that produce blog posts, page content, landing pages, or email copy.
+
+Image-generation workflows live in the companion file `image-and-integration-workflows.md` in the legacy `/content-creation/` directory; load that file when generating visuals.
 
 ## Content Research Workflows
 
-Systematic research phase before content creation. Applies to blog posts, articles, and public-facing content.
+Systematic research phase before content creation. Applies to blog posts, articles, landing pages, and other public-facing content.
 
 ### Topic Research
 
@@ -60,7 +68,7 @@ Systematic research phase before content creation. Applies to blog posts, articl
 
 ### Blog Content Brief Template
 
-Use this brief specifically for blog posts (the general Content Brief Template below applies to landing pages):
+Use this brief specifically for blog posts (the general Content Brief Template applies to landing pages — see `page-content-patterns.md` in `/content-creation`):
 
 ```markdown
 # Blog Content Brief: [Working Title]
@@ -110,6 +118,7 @@ Use this brief specifically for blog posts (the general Content Brief Template b
 **Goal**: Generate multiple headline variants for A/B testing.
 
 **Prompt template**:
+
 ```
 You are a conversion copywriter. Write 10 headline variants for [page type].
 
@@ -127,6 +136,7 @@ Format: Number each variant. After all 10, mark top 3 with rationale.
 ### Value Proposition Writing
 
 **Prompt template**:
+
 ```
 Write a value proposition for [product] following this structure:
 
@@ -147,6 +157,7 @@ Tone: [brand voice description]
 ### Feature-to-Benefit Translation
 
 **Prompt template**:
+
 ```
 Convert these product features into user benefits.
 
@@ -167,6 +178,7 @@ Format: Table with columns: Feature | Benefit | Emotional Hook | One-liner
 ### FAQ Generation
 
 **Prompt template**:
+
 ```
 Generate FAQ entries for [product/feature page].
 
@@ -187,6 +199,7 @@ Format as structured FAQ suitable for JSON-LD schema markup.
 ### Social Proof Copy
 
 **Prompt template**:
+
 ```
 Write social proof copy based on these customer results:
 
@@ -203,6 +216,22 @@ Generate:
 Tone: Authentic, specific, not salesy. Include real numbers where available.
 ```
 
-## AI Image Generation Workflows
+## When each pattern applies
 
-See [image-and-integration-workflows.md](image-and-integration-workflows.md) for AI image generation, external service integration, MCP integration, content briefs, and measurement workflows.
+| Pattern | Used by |
+|---|---|
+| Topic Research | `/content-creation` Step 2 (Research and Brief), `/marketing trend-research` |
+| Data and Fact Gathering | `/content-creation` Step 2, `/marketing trend-research` |
+| Existing Content Audit | `/content-creation` Step 2 (cross-link planning) |
+| Blog Content Brief Template | `/content-creation blog-post` Step 2 deliverable |
+| Headline Generation | `/content-creation` Step 3 (drafts), `/marketing social-post` |
+| Value Proposition Writing | `/content-creation page` + `landing`, `/marketing-init` Step 3 (messaging) |
+| Feature-to-Benefit Translation | `/content-creation page`, `/marketing-init` Step 3 |
+| FAQ Generation | `/content-creation` Step 4 (GEO/AEO), `/marketing` content pages |
+| Social Proof Copy | `/content-creation page` + `landing` |
+
+## Integration
+
+- **Used by**: `/content-creation` (blog + page workflows), `/marketing` (email, social-post, content-repurpose operations)
+- **Companion knowledge**: `@geo-writer` (structure pass after drafting), `@humanizer` (voice cleanup pass)
+- **Image workflows**: see `plugin/skills/content-creation/image-and-integration-workflows.md` (image-generation tools and external service integration live alongside /content-creation; not in this knowledge skill)

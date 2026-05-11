@@ -87,7 +87,7 @@ Compile findings into a structured bug report (Summary, Severity, Environment, E
 
 Per `@team-protocols/path-selection-rules.md`: Path B (Agent Teams) is MANDATORY default — visual team panel, Shift+↓ context-switching, dedicated transcript per role. Path A (sequential subagents) is fallback-only.
 
-Detection is implicit — go to Path B Step 1 directly, no Bash env-var check. The ONLY valid Path A trigger is a literal "Agent Teams not enabled" / equivalent technical error from team-creation. Display-mode, platform, "small bug", "sequential pipeline", "single-stack", "Windows host", or "no tmux" — NEVER valid Path A triggers (Path B has `in-process` mode that works in any terminal). **No silent fallback for non-technical reasons** — rationalised downgrades violate alpha.27.
+Detection is implicit — go to Path B Step 1 directly, no Bash env-var check. Valid Path A triggers are documented in `@team-protocols/path-selection-rules.md` (env-var unset, lead-in-subagent, whole-team alpha.32, alpha.33-fast-fail). Display-mode, platform, "small bug", "sequential pipeline", "single-stack", "Windows host", or "no tmux" — NEVER valid Path A triggers. **No silent fallback for non-technical reasons** — rationalised downgrades violate alpha.27.
 
 The FIRST sentence when announcing the path MUST be one of:
 

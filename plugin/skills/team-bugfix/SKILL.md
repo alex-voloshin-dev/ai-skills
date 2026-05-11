@@ -51,13 +51,9 @@ Read the audit document provided as the argument. Extract the list of tasks/issu
 
 ## Choose execution path
 
-Per `@team-protocols` "Two Paths" section: this skill supports Path A (Subagents) and Path B (Agent Teams). **Path B is the default preference** — visual team panel + Shift+↓ context-switching + dedicated transcript per role.
+Per `@team-protocols/path-selection-rules.md`: **Path B (Agent Teams) is the MANDATORY default** — visual team panel, Shift+↓ context-switching, dedicated transcript per role. Path A (Subagents) is fallback-only — used ONLY on a hard technical block at Path B Step 1 ("Agent Teams not enabled" / `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` unset).
 
-**Detection is implicit, not explicit.** No Bash env-var check. Go to Path B Step 1 directly; if team-creation natural language fails ("Agent Teams not enabled" or equivalent), silently fall back to Path A and continue.
-
-**Invalid reasons to downgrade Path B → Path A** (do NOT use these): "audit pipeline is sequential", "Path A is simpler", "fewer tools to manage", "tmux/iTerm2 not available", "Windows host". Path B's value is UX, not parallelism — and Agent Teams supports `in-process` display mode that works in any terminal (Windows included) with NO extra setup. tmux is needed ONLY for optional split-pane display. The ONLY valid Path A trigger is a hard technical block at Path B Step 1 (team-creation natural language returns "Agent Teams not enabled" or equivalent — typically `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var unset).
-
-**No silent fallback for non-technical reasons.** Either Path B Step 1 actually fails technically → silent Path A fallback, OR Path B works → stay on Path B (defaulting to `teammate-mode in-process` if tmux/iTerm2 uncertain).
+Detection is implicit — go to Path B Step 1 directly (no Bash env-var check). On technical failure, fall back silently to Path A. **No silent fallback for non-technical reasons** — audit pipeline being sequential, "simpler", "fewer tools", tmux/iTerm2 absence, Windows host are all invalid Path A triggers (`in-process` display mode works in every terminal). Full anti-rationalization list in `@team-protocols/path-selection-rules.md`.
 
 ## Mandatory Pipeline — DEV → REVIEW → QA (both paths)
 
@@ -85,23 +81,13 @@ The Lead validates incoming HANDOFF messages against return-contract schema befo
 
 ## Step 0 — ATTEMPT Path B FIRST (literal, mandatory)
 
-Before reading the Path A section below, you MUST attempt Path B Step 1 (jump straight to "Path B — Agent Teams" further down). Do NOT pre-emptively pick Path A based on:
+Before reading the Path A section below, you MUST attempt Path B Step 1 (jump straight to "Path B — Agent Teams" further down) — see `@team-protocols/path-selection-rules.md` for the full anti-rationalization list (absence of CLAUDE.md / git, single-stack, "small feature", Windows host, no tmux, sequential pipeline, document ordering — all invalid Path A triggers).
 
-- absence of CLAUDE.md / git repo
-- single-stack project
-- "small" or "simple" feature
-- Windows host
-- "no tmux available"
-- pipeline being mostly sequential
-- the fact that Path A appears earlier in this document
-
-The ONLY way to land on Path A is: try Path B Step 1's natural-language team-creation, get back a literal "Agent Teams not enabled" / "experimental flag not set" / equivalent technical error, THEN fall back. Announcing "going Path A because empty project / Windows / no git" is a violation of this protocol.
-
-When you announce the chosen path to the user, the FIRST sentence MUST be either:
-- "Attempting Path B (Agent Teams) team-create..." (then either Path B works, or you receive the technical error and fall back)
+When announcing the chosen path, the FIRST sentence MUST be one of:
+- "Attempting Path B (Agent Teams) team-create..."
 - (after fallback) "Agent Teams API returned: <verbatim error>. Falling back to Path A."
 
-Saying "I'll proceed via Path A" without the above sequence is forbidden.
+Saying "I'll proceed via Path A" without first attempting Path B Step 1 is forbidden.
 
 ## Path B — Agent Teams (PREFERRED — try this FIRST)
 

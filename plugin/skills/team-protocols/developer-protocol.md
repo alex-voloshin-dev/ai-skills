@@ -19,6 +19,10 @@ BEFORE sending to review, MUST self-verify changes on disk:
 3. If new files were created — verify they exist and contain expected content
 4. If edits were made — read the changed files and confirm the changes are there
 5. Do NOT trust tool output alone — always verify the actual file state
+6. **Coverage check against the spawn payload (v0.3.9).** Walk every entry in `state_slice.active_files`, the literal `goal`, and each item in `constraints`. For each, mark whether it is addressed by the diff. Flag deviations in the G7 envelope:
+   - **Any file in `active_files` not touched** → emit `risks: [{type: "partial_coverage", file: "<path>", reason: "<why not touched>"}]`. If the file is genuinely not in scope, say so explicitly; if it is in scope but skipped, the Lead will re-spawn before review.
+   - **Any literal constraint value changed without explicit rationale** (timeout values, identifiers, ports, file paths, etc. — e.g. spawn said `270000`, diff has `1740000`) → emit `risks: [{type: "constraint_deviation", constraint: "<key>", spawn_value: "<X>", actual_value: "<Y>", rationale: "<why>"}]`. Missing rationale is a Lead-reject signal — the Lead cannot tell intentional override from drift without it.
+   The Lead rejects returns that silently deviate from the spawn payload — surfacing the deviation in `risks` is what turns drift into a discussable trade-off instead of a Lead-side nudge cost.
 
 ## Handoff Format (G7 return contract — MANDATORY)
 

@@ -20,7 +20,9 @@ Three-wave parallel-then-sequential pipeline that turns a feature idea into a ve
 
 - Internal refactors → `/refactor`
 - Hotfixes → `/bugfix`
-- Existing feature refinement when you already have a PRD → `/develop`
+- **Complete** existing PRD that just needs implementation → `/develop`
+
+If the target repo already has a **partial** design pack (PRD exists but no design/AC/data-model), `/feature-design` still applies — see "Repo-local conventions + partial-pack mode" in Step 0.
 
 ## Invocation
 
@@ -59,48 +61,41 @@ Concrete starter templates with worked examples (Two-factor auth feature). Produ
 
 ## Agent roster
 
-| Agent | Model | Effort | Wave | Role |
+| Agent | Model | Wave | Tools | Writes its own file? |
 |---|---|---|---|---|
-| `feature-design-lead` | Opus | xhigh | (orchestrator) | Orchestrates waves, enforces gates, writes IMPLEMENTATION-PLAN |
-| `product-manager` | inherit | medium | 1 | PRD from idea + context slice |
-| `marketing-strategist` | inherit | medium | 1 | MARKET-ANALYSIS, GTM angle |
-| `system-architect` | inherit | high | 1 | ARCHITECTURE skeleton |
-| `ui-ux-designer` | inherit | medium | 2 | UX-FLOW + wireframes + accessibility |
-| `db-engineer` | inherit | high | 2 | DATA-MODEL if schema change needed |
-| `security-engineer` | sonnet | high | 2 | Security section for RISKS |
-| `qa-engineer` | inherit | medium | 2 | Acceptance criteria review |
-| `product-manager` (reviewer) | inherit | medium | 3 | Fresh-eyes cross-check |
-| `eval-judge` | haiku | low | 3 | Score against feature-design rubric |
+| `feature-design-lead` | Opus | (orchestrator) | Task | — |
+| `product-manager` | inherit | 1 | Read, Grep, Glob, Write, Edit | YES — writes `PRD.md` |
+| `marketing-strategist` | inherit | 1 | Read, Grep, Glob, Write, Edit | YES — writes `MARKET-ANALYSIS.md` (skip if not public-facing) |
+| `system-architect` | inherit | 1 | + Bash | YES — writes `ARCHITECTURE.md` |
+| `ui-ux-designer` | inherit | 2 | Read, Grep, Glob, Write, Edit | YES — writes `UX-FLOW.md` |
+| `db-engineer` | inherit | 2 | + Bash | YES — writes `DATA-MODEL.md` |
+| `security-engineer` | sonnet | 2 | + Bash | YES — writes its section of `RISKS.md` |
+| `qa-engineer` | inherit | 2 | + Bash | YES — writes its acceptance-criteria section |
+| `product-manager` (reviewer) | inherit | 3 | (same as Wave 1) | YES — writes `feedback.md` |
+| `system-architect` (reviewer) | inherit | 3 | (same as Wave 1) | YES — writes `architecture-review.md` |
+| `eval-judge` | haiku | 3 | Read, Grep, Glob (intentionally read-only) | NO — returns verdict; Lead writes `REVIEW-LOG.md` from the structured return |
 
-## Choose execution path
+**Capability note (v0.3.8):** 9 of 10 producer roles ship with `Write` / `Edit` (Write scope = docs/design only). They write design artefacts directly — only `eval-judge` is verdict-in-response. Full cache: `@team-protocols/path-selection-rules.md`. Verbatim team-create prompt: [`path-b-team-create.md`](./path-b-team-create.md).
 
-Per `@team-protocols` "Two Paths" section: this skill supports Path A (Subagents) and Path B (Agent Teams). **Path B is the default preference** — visual team panel + Shift+↓ + per-role transcript. The 3-wave pipeline maps to a shared task list with `dependsOn` enforcing wave gates structurally.
+## Step 0a — Repo-local conventions + partial-pack mode (MANDATORY pre-pipeline)
 
-**Detection is implicit, not explicit.** No Bash env-var check. Go to Path B Step 1 (team creation) directly; if it fails technically ("Agent Teams not enabled" or equivalent), silently fall back to Path A and continue.
+Before announcing the path, the Lead detects (a) repo-local feature-doc conventions (`features/CLAUDE.md`, `docs/CLAUDE.md` overriding the default `docs/features/<id>/` layout), (b) any pre-existing PRD that puts the run into partial-pack mode, and (c) whether the repo requires a single consolidated `design.md` instead of separate `ARCHITECTURE/UX-FLOW/DATA-MODEL/RISKS` files. Full procedure including the mode-decision table, consolidate-vs-split rules, and judge-optional rules: [`step-0a-conventions.md`](./step-0a-conventions.md). Load it when actually running `/feature-design` against any non-trivial repo.
 
-**Invalid reasons to downgrade Path B → Path A** (do NOT use these): "design waves are mostly sequential", "Path A is simpler", "tmux/iTerm2 not available", "Windows host". Path B's value is UX even for sequential work — and Agent Teams supports `in-process` display mode that works in any terminal (Windows included) with NO extra setup. tmux is needed ONLY for optional split-pane display. The ONLY valid Path A trigger is a hard technical block at Path B Step 1 (team-creation natural language returns "Agent Teams not enabled" or equivalent — typically `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var unset).
+Announce: `"Step 0a: <path-pattern>; Mode: <standard | partial-pack | partial-pack-realign | consolidated | route-to-develop>; Input PRD: <path | none>; Judge: <required | optional | skipped>."`
 
-**No silent fallback for non-technical reasons.** Either Path B Step 1 actually fails → silent Path A fallback, OR Path B works → stay on Path B (defaulting to `teammate-mode in-process` if tmux/iTerm2 uncertain).
+## Choose execution path (Step 0 — Pre-spawn check + path selection)
 
-## Step 0 — ATTEMPT Path B FIRST (literal, mandatory)
+Per `@team-protocols/path-selection-rules.md`: Path B (Agent Teams) is the default; Path A is selected on a hard technical block. The 3-wave pipeline maps to a shared task list with `dependsOn` enforcing wave gates structurally.
 
-Before reading the Path A section below, you MUST attempt Path B Step 1 (jump straight to "Path B — Agent Teams" further down). Do NOT pre-emptively pick Path A based on:
+**Pre-spawn tool-capability check (MANDATORY):** read `plugin/agents/<role>.md` frontmatter `tools:` for every roster member AT AUDIT TIME (not from cache) — stale-cache alpha.32 has been observed. Confirm `eval-judge` is verdict-in-response and the team-create prompt is `path-b-team-create.md` verbatim.
 
-- absence of CLAUDE.md / git repo
-- single-stack project
-- "small" or "simple" feature
-- Windows host
-- "no tmux available"
-- pipeline being mostly sequential
-- the fact that Path A appears earlier in this document
+Detection of Path B availability is implicit — no Bash env-var check. Announce one of:
 
-The ONLY way to land on Path A is: try Path B Step 1's natural-language team-creation, get back a literal "Agent Teams not enabled" / "experimental flag not set" / equivalent technical error, THEN fall back. Announcing "going Path A because empty project / Windows / no git" is a violation of this protocol.
-
-When you announce the chosen path to the user, the FIRST sentence MUST be either:
-- "Attempting Path B (Agent Teams) team-create..." (then either Path B works, or you receive the technical error and fall back)
+- "Attempting Path B (Agent Teams) team-create..."
 - (after fallback) "Agent Teams API returned: <verbatim error>. Falling back to Path A."
+- (alpha.33-fast-fail — `TeamCreate` ok, total team silent ≥ 90 s) "Path B team-wide silent idle. Falling back to Path A per alpha.33 escape valve."
 
-Saying "I'll proceed via Path A" without the above sequence is forbidden.
+Invalid Path A triggers (sequential waves, tmux/iTerm2 absence, Windows host, single-stack, small feature) remain forbidden — **no silent fallback for non-technical reasons**. Full list + alpha.33 procedure: `@team-protocols/path-selection-rules.md`.
 
 ## Pipeline (Path B — Agent Teams, PREFERRED — try this FIRST)
 
@@ -108,27 +103,7 @@ Per `@team-protocols` "Dual-Path Detection → Path B" section. The Lead drives 
 
 ### Step 1 — create the team
 
-```text
-Create an agent team named "<feature-slug>-design-team" with these teammates, each using subagent definitions from the ai-assets plugin:
-
-Wave 1 (parallel drafts):
-- "pm" (ai-assets:product-manager) — PRD.md author
-- "marketing" (ai-assets:marketing-strategist) — MARKET-ANALYSIS.md author (skip if not public-facing)
-- "sysarch" (ai-assets:system-architect) — ARCHITECTURE.md author
-
-Wave 2 (parallel domain reviews):
-- "ux" (ai-assets:ui-ux-designer) — UX-FLOW.md + wireframes (reads wave-1 PRD + ARCHITECTURE)
-- "db" (ai-assets:db-engineer) — DATA-MODEL.md (reads wave-1 PRD + ARCHITECTURE)
-- "sec" (ai-assets:security-engineer) — security section in RISKS.md (reads all wave-1)
-- "qa-design" (ai-assets:qa-engineer) — acceptance criteria review (reads PRD + ARCHITECTURE)
-
-Wave 3 (sequential cross-check):
-- "pm-review" (ai-assets:product-manager) — fresh PM-reviewer reading all wave-1 + wave-2 outputs → feedback.md
-- "sysarch-review" (ai-assets:system-architect) — architecture-review.md
-- "judge" (ai-assets:eval-judge) — scores against feature-design.md rubric → REVIEW-LOG.md
-
-Use **teammate-mode `in-process`** by default (works in any terminal including Windows without WSL — no tmux/iTerm2 required). Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available and they prefer it. If unsure: `in-process` is the safe choice.
-```
+The verbatim team-create prompt lives in [`path-b-team-create.md`](./path-b-team-create.md). Load it when actually executing Path B Step 1 — copy the verbatim prompt and substitute `<feature-slug>`. Do NOT shorten or paraphrase: the prompt encodes the v0.3.8 producer-writes-its-own-file pattern, the `eval-judge` verdict-in-response pattern, and the HTML-escape forbidance clause.
 
 ### Step 2 — populate the shared task list with wave gates
 
@@ -143,7 +118,11 @@ Wave-2 tasks `dependsOn` all wave-1 tasks. Wave-3 tasks `dependsOn` all wave-2 t
 
 ### Step 4 — finalize + cleanup
 
-After rubric passes: Lead writes IMPLEMENTATION-PLAN.md in main thread (not a teammate task), records L4 memory write, then asks: "Clean up the team."
+After the judge returns a verdict the Lead MUST:
+
+1. **Post-judge reconciliation** per `@team-protocols/lead-protocol.md`. Judge findings against files Lead-edited since the judge's read must be reconciled; re-spawn judge if ≥ 2 stale findings or the verdict would flip.
+2. On PASS: write IMPLEMENTATION-PLAN.md in main thread (not a teammate task); record L4 memory write.
+3. **Team cleanup** per `@team-protocols/lead-protocol.md`: `shutdown_request` to every teammate, then `TeamDelete`. Skipping `TeamDelete` strands the team in `~/.claude/teams/<team-name>/`.
 
 ## Pipeline (Path A — Subagents fallback, only if Path B Step 1 returned a technical error)
 

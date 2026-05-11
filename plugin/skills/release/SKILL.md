@@ -13,24 +13,9 @@ Structured workflow for preparing a release. Bumps version, generates changelog,
 
 ### 0a. Detect existing release tooling — route first, build inline second
 
-Before running the inline release flow, check whether the repo already has release tooling configured. If so, route to it; the team's choice supersedes anything inline below.
+Release tool detection + per-tool version-bump + changelog commands — see `@release-tools-by-stack`.
 
-| Marker file present | Tool | Run command / path |
-|---|---|---|
-| `release-please-config.json` or `.release-please-manifest.json` | [release-please](https://github.com/googleapis/release-please) (Google) | Releases happen via the GitHub Action on PR merge. Check for an open release-please PR; review and merge it instead of cutting manually. |
-| `.releaserc*` (`.json`/`.yml`/`.js`) or `release.config.js` | [semantic-release](https://semantic-release.gitbook.io) | Releases happen in CI on push to release branch. Verify the next release will fire; do not bump manually. |
-| `.changeset/` directory + `.changeset/config.json` | [Changesets](https://github.com/changesets/changesets) (monorepo Node) | `npx changeset version` to bump per-package; `npx changeset publish` to release. |
-| `.goreleaser.yaml` / `.goreleaser.yml` | [GoReleaser](https://goreleaser.com) | `goreleaser release --clean` (CI usually drives it on tag push). |
-| `Cargo.toml` with `[workspace.metadata.release]` or local `release.toml` | [cargo-release](https://github.com/crate-ci/cargo-release) | `cargo release <level>` (e.g., `cargo release minor`). |
-| `jreleaser.yml` | [JReleaser](https://jreleaser.org) (JVM polyglot) | `jreleaser release` (Maven/Gradle plugins also available). |
-
-If a tool is detected:
-1. Inspect its config for current state (next version, release branch, prerelease suffixes).
-2. Run its release command (or open a PR / merge a release-please PR depending on tool).
-3. Skip Steps 1–6 below; the tool handles version bump + changelog + tag.
-4. Continue at Step 7 (Memory Write) so the release is recorded in `runs.jsonl`.
-
-If no tool is detected, continue to Step 0b.
+If a tool is detected, run its release command and skip Steps 1–6, then continue at Step 7 (Memory Write). If no tool is detected, continue to Step 0b.
 
 ### 0b. Read project context
 
@@ -76,26 +61,11 @@ Classify commits since last release:
 
 ### 3a. Monorepo / per-package versioning
 
-If `.changeset/` directory or `pnpm-workspace.yaml` / `lerna.json` / `nx.json` is present, the repo uses per-package versioning. Different bump strategy:
-
-- **Changesets** (`.changeset/`): for each affected package, run `npx changeset` to record an intent file (`<random>.md` with package name + bump type + summary). Then `npx changeset version` rewrites all affected `package.json` versions and the changelogs. Then `npx changeset publish` (or via CI) tags + publishes.
-- **Lerna**: `npx lerna version <minor|patch|major>` (or `--conventional-commits` to derive bumps from commit history). `npx lerna publish from-package` to release.
-- **Nx release**: `npx nx release` (replaces lerna for Nx workspaces 17+).
-
-For monorepos, the rest of this skill (Steps 3b onward) applies per-package only when the team has decided to handle one package outside the workspace tooling.
+If `.changeset/` directory or `pnpm-workspace.yaml` / `lerna.json` / `nx.json` is present, the repo uses per-package versioning — route to Changesets / Lerna / Nx. See `@release-tools-by-stack` for per-tool monorepo commands.
 
 ### 3b. Single-package version bump
 
-Update version in project files:
-
-| Stack | Files to Update |
-|---|---|
-| Node.js | `package.json` (`version` field) |
-| Java/Maven | `pom.xml` (`<version>`) |
-| Java/Gradle | `build.gradle` (`version`) |
-| Python | `pyproject.toml` (`version`) |
-| .NET | `*.csproj` (`<Version>`) |
-| Go | Git tag only (no version file) |
+Update version in the per-stack project file (Node.js `package.json`, Maven `pom.xml`, Gradle `build.gradle`, Python `pyproject.toml`, .NET `*.csproj`, Go = git tag only). See `@release-tools-by-stack` for the full per-stack file table.
 
 ## 4. Generate Changelog
 

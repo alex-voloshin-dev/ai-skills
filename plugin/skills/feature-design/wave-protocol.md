@@ -41,3 +41,15 @@ The wave-by-wave Path A pipeline ASCII tree for `/feature-design`. Loaded from `
    Memory write: L4 designs/<feature-id>.md (summary + decisions)
    Final report: TodoList check + token totals + handoff hint to `/develop`
 ```
+
+## Subagent type selection (Path A)
+
+Always prefer the specialised `ai-assets:<role>` subagent_type — the role agent's frontmatter `description`, `model`, `effort`, and body system-prompt carry domain knowledge (GEO structure for `marketing-strategist`, OWASP framing for `security-engineer`, WCAG checklist for `ui-ux-designer`, etc.) that the Lead would otherwise have to inline manually.
+
+`subagent_type: "general-purpose"` is a last-resort fallback when the specialised role definition is unavailable in the current plugin installation (alpha runtime missing the subagent registry, plugin not loaded, role removed in a future plugin version). When it IS used:
+
+- The Lead MUST inline the role's domain knowledge in the spawn prompt — copy the relevant Hard Rules + reference-skill pointers from `plugin/agents/<role>.md` into the prompt body.
+- The Lead MUST log `subagent-type: general-purpose (fallback for <intended-role>)` in `REVIEW-LOG.md` so the design pack provenance is auditable.
+- This is a degraded-mode signal — surface it in the final report and recommend that the next run use the specialised role once the runtime issue is resolved.
+
+`general-purpose` is NEVER an appropriate choice when the specialised role is available — even if the role's body is short, the framing in `description` (which is what the model selector keys off) is load-bearing.

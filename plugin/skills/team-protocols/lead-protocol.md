@@ -24,6 +24,7 @@ The Lead MUST verify each gate transition:
 - A task CANNOT advance to the next stage until the previous stage produces its required output
 - If the Developer reports "no changes needed" — the Reviewer STILL must confirm this independently
 - If any agent declares a task complete without all stages — the Lead blocks and forces the correct flow
+- **Reviewer file-change check (v0.3.9)**: when the Reviewer's G7 return arrives, the Lead verifies `result.files_changed` is `[]` (empty). A non-empty list is a role-isolation violation — the Reviewer self-applied a fix instead of returning `verdict: changes_requested`. Reject the return, re-spawn the Reviewer with a stronger read-only directive ("do NOT use Write or Edit under any circumstance; if you would change a file, set verdict: changes_requested and describe the change in `feedback`"), and record the violation in `REVIEW-LOG.md` "Liveness events". This check exists because Path B team-create cannot pass structured `disallowedTools` — the read-only constraint is prose-only at spawn time per `path-selection-rules.md` role-capability cache.
 
 ## G7 Schema Validation
 
@@ -38,6 +39,22 @@ The procedure below applies symmetrically to Developer, Reviewer, and QA. Read `
 1. **Explicit hand-off (push).** As soon as the upstream task transitions (Lead → Developer at WP start; Developer → Reviewer at DEV completion; Reviewer → QA at REVIEW approval) the Lead sends a direct message to the next teammate naming the task and the changed files: `"WP-N <dev|review|qa> claim now. Changed files: <paths>. Return G7 envelope when done."` The `dependsOn` auto-claim stays as a backup, not the primary trigger.
 
 2. **Liveness watchdog.** ~90 seconds after the hand-off the Lead checks the teammate task: if it is still `pending` / `in_progress` with no transcript activity and no file reads, the Lead sends a second nudge with the same payload plus `"Teammate appears idle — please confirm receipt and start <dev|review|qa>."` After another ~90 seconds, a third and final nudge. Maximum 2 retry nudges after the initial hand-off.
+
+   **Stale-`blockedBy` recovery (v0.3.9, alpha.31 secondary symptom).** If the silent teammate's task shows `blockedBy: [<upstream-id>]` and `<upstream-id>` is already `completed`, the panel state is stale and the teammate may be reading it as "still blocked". `TaskUpdate` has no `removeBlockedBy` operation. Recovery: the Lead deletes the stuck downstream task and re-creates it with no `blockedBy` (preserving description, owner, and a sentinel metadata field linking to the original task ID for audit). Record one line in `REVIEW-LOG.md` "Liveness events": `stale-blockedBy: task <new-id> replaces <old-id>; upstream <upstream-id> was completed but blockedBy did not auto-clear`. Run this BEFORE nudge #1 if the symptom is observed, not after — the teammate may engage immediately once the panel state is consistent.
+
+   **Team-wide silent idle (v0.3.9, alpha.33).** If ≥ 2 teammates are simultaneously silent past the first 90-s window, OR if NO teammate produced any activity within the first 90 s after team-create + initial TaskCreate (alpha.33-fast-fail), the Lead SKIPS the second nudge cycle and goes directly to a whole-team escalation prompt:
+
+   ```text
+   [lead] Path B team-wide silent idle (alpha.33): <N>/<M> teammates produced no activity in 90s.
+   Likely cause: CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS unset or team-runtime auto-claim disabled, despite TeamCreate returning success. Options:
+   1. Wait longer (single watchdog cycle, +90 s)
+   2. TeamDelete + re-TeamCreate (fresh team, same workflow)
+   3. Per-task Path A fallback for every silent role this WP — remainder stays in Path B
+   4. Path A for the remainder of the workflow (whole-workflow fallback, alpha.33 escape valve)
+   5. Abort the current WP and skip
+   ```
+
+   Only a user-approved option 3 or 4 is a legitimate Path A fallback. Option 4 is allowed ONLY under alpha.33 / alpha.33-fast-fail — never as a silent rationalised downgrade.
 
 3. **Developer-specific check before escalation — disk-state reconciliation.** When the silent role is the **Developer**, before declaring an idle flake the Lead MUST check whether work has actually landed on disk:
 
@@ -100,6 +117,33 @@ The procedure below applies symmetrically to Developer, Reviewer, and QA. Read `
 - **Never skip the watchdog for Developer hand-offs.** Pre-v0.3.7 wording exempted Developer transitions from the watchdog on the assumption they were "already explicit"; alpha.31 invalidated that. Run the same 90s × 2 nudge cadence for every transition.
 
 This procedure was extended in v0.3.7 from the v0.3.5 Reviewer/QA-only watchdog to also cover Developer silent-idle, after recurring observation of the "developer silent but acceptance criteria met on disk" sub-flake.
+
+## Post-judge reconciliation (judge-based workflows only)
+
+Applies to workflows where an `eval-judge` teammate produces a scored verdict (`/feature-design`, `/develop` RALF loops, `/refactor` test-equivalence gate). The Lead MUST treat the judge verdict as a snapshot-in-time reading and reconcile it against the current on-disk state of the design pack before declaring final pass / fail.
+
+Procedure:
+
+1. After the judge returns its verdict + scores, the Lead re-reads every file the judge cited as failing (typically those flagged with severity ≥ medium or any dimension score < 4).
+2. For each cited issue, the Lead checks whether the file still contains the cited problem:
+   - **Still present** → judge was correct; the workflow needs another RALF iteration or an explicit fix.
+   - **Already fixed** (the fix landed between the judge's read and now — common when the Lead applied a quick Edit during judge execution) → record this as a judge-stale-read finding in `REVIEW-LOG.md`, increment the issue's resolution counter, and DO NOT count the issue against the final score.
+3. If any cited issues turn out to be judge-stale-reads, the Lead appends a `## Lead Reconciliation Note` block to `REVIEW-LOG.md` listing each judge-cited issue, its actual on-disk state, and the adjusted dimension score where applicable. The reconciliation note is authoritative for those specific findings; the original judge verdict remains the canonical source for every finding NOT in the reconciliation note.
+4. **Preferred alternative — re-spawn the judge.** If the count of judge-stale-read findings is ≥ 2 OR the resulting adjusted score would change the pass / fail verdict, the Lead re-spawns the judge on the current file state instead of writing a reconciliation note. A re-spawn is a clean source-of-truth; a reconciliation note is an annotation. Pick reconciliation only when (a) judge-stale-reads are isolated (≤ 1 finding) AND (b) the verdict does not flip from FAIL to PASS or vice versa.
+5. Token budget for the reconciliation pass is bounded — the Lead reads ≤ N cited files (N = number of judge findings, no other reads), no Bash, no Edit. If the budget exceeds 20K tokens of Lead context, re-spawn the judge instead.
+
+This procedure was added in v0.3.8 after `/feature-design` observed the judge reading file content before a Lead-side Edit landed, producing a stale FAIL verdict that did not match the converged design pack. Without reconciliation the Lead had to either silently override the judge (mutes the eval signal) or re-run RALF (wastes tokens converging an already-converged pack).
+
+## Team cleanup checklist (Path B only)
+
+After a Path B run finishes (PASS verdict accepted, IMPLEMENTATION-PLAN handed off, or user-approved abort), the Lead MUST close out the team:
+
+1. Send `shutdown_request` to every teammate. Wait for shutdown acknowledgement per teammate.
+2. If any teammate continues to emit `idle_notification` after shutdown_request, treat as a known alpha bus-flush flake — ignore subsequent notifications for that teammate name. Record one line in `REVIEW-LOG.md` "Liveness events" noting the post-shutdown idle pings so future runs can spot systemic flake.
+3. Call `TeamDelete` for the team name. The team artefact persists in `~/.claude/teams/<team-name>/` until this call — leaving it strands a team config across sessions.
+4. Print final cleanup line: `"[lead] Team <team-name> shut down; <N> teammates dismissed; team artefact removed."`
+
+Cleanup is NOT optional. Skipping `TeamDelete` was observed in /feature-design alpha runs leaving stale `~/.claude/teams/<feature>-design-team/` directories that user-facing tooling later flagged as "active teams" even though their teammates were dead. Always call `TeamDelete` from the Lead, never from a teammate.
 
 ## Escalation
 

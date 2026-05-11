@@ -23,24 +23,11 @@ Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify:
 
 Before running `terraform apply` or `helm upgrade` directly, check whether the repo's infra changes flow through a controller. If so, the change is a git PR, not an imperative command.
 
-| Marker | System | Implication |
-|---|---|---|
-| `argocd/` directory or `Application` / `ApplicationSet` CRDs in Git | [Argo CD](https://argo-cd.readthedocs.io) (GitOps) | Push manifest changes to git; Argo CD reconciles. Do NOT `helm upgrade` directly — it will be reverted on next sync. Use `argocd app sync` or `kubectl argo rollouts promote` only when intentionally bypassing the loop. |
-| `kustomization.yaml` + Flux `HelmRelease` / `Kustomization` CRDs | [Flux](https://fluxcd.io) (GitOps) | Push to git; Flux reconciles. Manual override: `flux reconcile kustomization <name>`. |
-| `atlantis.yaml` (root) | [Atlantis](https://www.runatlantis.io) | Plans run in PR comments via `atlantis plan` / `atlantis apply`. Do NOT run `terraform apply` locally — Atlantis is the apply gate. |
-| `terraform { cloud { ... } }` block in `.tf` files | [Terraform Cloud / HCP Terraform](https://cloud.hashicorp.com/products/terraform) | Plans/applies run in HCP Terraform UI/API. Local `terraform apply` is disabled by the cloud backend. |
-| `.spacelift/` directory | [Spacelift](https://spacelift.io) | Stacks orchestrate plans/applies. Local apply forbidden. |
-| `.env0/` or env0 stack tags | [env0](https://www.env0.com) | Same as Spacelift — managed apply layer. |
-
-If a GitOps/orchestrator is detected:
-1. Plan the change as a git PR against the manifest repo.
-2. After PR approval and merge, the controller reconciles automatically (GitOps) or runs the apply (Atlantis/HCP/Spacelift).
-3. Skip the local `terraform apply` / `helm upgrade` steps below.
-4. Verify reconciliation via the controller's status (e.g., `argocd app get <name>`, `flux get kustomizations`, Atlantis PR comment, HCP run page).
+GitOps platform detection (Argo / Flux / Atlantis / HCP / Spacelift / env0) — see `@gitops-detection`.
 
 ### 0b. Detect Terraform fork
 
-If `.terraform-version` or `tofu.lock.hcl` indicates [OpenTofu](https://opentofu.org) (HashiCorp BSL fork, 2023+), substitute `tofu` for `terraform` in all commands below — flag semantics are identical for the operations covered here.
+OpenTofu fork detection + command substitution rules — see `@terraform-procedures`.
 
 ### 0c. Policy-as-code gate (when configured)
 
@@ -72,51 +59,11 @@ Before making changes, capture the current state:
 
 ### 3a. Terraform State (if applicable)
 
-```
-// turbo
-terraform validate
-terraform fmt -check -recursive
-```
-
-Modern pre-plan suite (run when configs are present):
-```
-// turbo
-tflint                              # if .tflint.hcl present
-tfsec . --soft-fail                 # if tfsec.yml or .tfsec/ present
-checkov -d . --soft-fail            # if .checkov.yml present
-terraform-docs markdown table .     # regenerate docs if terraform-docs.yml present
-```
-
-Review relevant `.tf` files and current state:
-```
-// turbo
-terraform plan -out=tfplan -detailed-exitcode
-# Exit codes: 0=no changes, 1=error, 2=changes proposed
-```
-
-### 3a-bis. Terraform State Operations (use with extreme caution)
-
-Second-most-fragile area after `destroy`. Always backup state before any of these:
-
-```
-terraform state list                                # enumerate resources
-terraform state show <addr>                         # inspect a resource
-terraform state mv <src> <dst>                      # rename / refactor
-terraform state rm <addr>                           # remove from state (resource still exists in cloud)
-terraform import <addr> <id>                        # adopt an existing cloud resource
-```
-
-For module refactoring without state surgery, prefer `moved {}` blocks (TF v1.1+) and `removed {}` blocks (TF v1.7+) — they encode the rename in `.tf` files instead of imperative state ops.
-
-`-target=<resource>` for partial-apply is an anti-pattern except in emergencies (state drift between resources causes surprising future plans).
+Terraform state operations + plan/apply lifecycle + OpenTofu compatibility — see `@terraform-procedures`.
 
 ### 3b. Helm State (if applicable)
 
-```
-// turbo
-helm list -n <namespace>
-helm get values <release-name> -n <namespace>
-```
+Helm diff + atomic upgrade + rollback procedures — see `@helm-procedures`.
 
 ### 3c. Kubernetes State (if applicable)
 
@@ -158,88 +105,24 @@ kubectl apply --dry-run=client -f <manifest>
 
 ## 5. Plan Review — MANDATORY BEFORE APPLY
 
-### 5a. Terraform Plan
+Generate the plan/diff for the tool in use and present a summary table to the user.
 
-```
-terraform plan -out=tfplan
-```
+- **Terraform**: see `@terraform-procedures` for `terraform plan -out=tfplan` and the plan-summary format (Add / Change / Destroy table, destroy/replace highlight, data-loss flag).
+- **Helm**: see `@helm-procedures` for `helm diff upgrade` and the diff-summary format (per-object Action / Key Changes table, critical-changes highlight, downtime flag).
+- **Kubectl**:
+  ```
+  kubectl diff -f <manifest>
+  ```
 
-Present the plan summary:
-
-```
-## Terraform Plan Summary
-| Action  | Count | Resources |
-|---------|-------|-----------|
-| Add     | X     | [list]    |
-| Change  | X     | [list]    |
-| Destroy | X     | [list]    |
-
-⚠️ DESTROY/REPLACE resources:
-- [resource] — [reason]
-
-Data loss risk: [yes/no]
-Estimated cost impact: [if applicable]
-```
-
-### 5b. Helm Diff
-
-```
-helm diff upgrade <release> <chart-path> -n <namespace> -f <values-file>
-```
-
-Present the diff summary:
-
-```
-## Helm Diff Summary
-| Object | Action | Key Changes |
-|--------|--------|-------------|
-| Deployment/X | changed | replicas: 1→2, image: v1→v2 |
-| Service/Y | added | port 8080 |
-| Secret/Z | changed | keys modified |
-
-⚠️ Critical changes:
-- [deployment restart expected]
-- [secret reference changed]
-
-Downtime risk: [yes/no]
-```
-
-### 5c. Kubectl Dry-Run
-
-```
-kubectl diff -f <manifest>
-```
-
-**⚠️ STOP. Present plan/diff summary and request APPROVE before proceeding to Step 6.**
+**WARNING — STOP. Present plan/diff summary and request APPROVE before proceeding to Step 6.**
 
 ## 6. Apply — REQUIRES EXPLICIT APPROVE
 
 Only after the user explicitly approves:
 
-**Terraform:**
-```
-terraform apply tfplan
-```
-
-**Helm:**
-```
-helm upgrade <release> <chart-path> -n <namespace> -f <values-file> \
-  --atomic --timeout 5m --wait
-# --atomic auto-rolls back on failure (recommended for prod)
-# --timeout matches your readiness-probe budget
-# --wait blocks until all resources reach Ready (otherwise upgrade returns immediately)
-```
-
-If using `helm-diff` plugin (recommended for production previews; install once with `helm plugin install https://github.com/databus23/helm-diff`):
-
-```
-helm diff upgrade <release> <chart-path> -n <namespace> -f <values-file>
-```
-
-**Kubectl:**
-```
-kubectl apply -f <manifest>
-```
+- **Terraform**: `terraform apply tfplan` (see `@terraform-procedures`)
+- **Helm**: `helm upgrade ... --atomic --timeout 5m --wait` (see `@helm-procedures`)
+- **Kubectl**: `kubectl apply -f <manifest>`
 
 **Rules:**
 - Never auto-run apply/upgrade commands
@@ -269,22 +152,9 @@ If production — monitor SLIs for 5–10 minutes after apply.
 
 Document the rollback before considering the change complete:
 
-**Terraform:**
-```
-# Revert the .tf file changes and re-apply
-terraform plan -out=tfplan-rollback
-terraform apply tfplan-rollback
-```
-
-**Helm:**
-```
-helm rollback <release> <previous-revision> -n <namespace>
-```
-
-**Kubectl:**
-```
-kubectl rollout undo deployment/<name> -n <namespace>
-```
+- **Terraform**: revert `.tf` files and re-apply — see `@terraform-procedures`
+- **Helm**: `helm rollback <release> <previous-revision> -n <namespace>` — see `@helm-procedures`
+- **Kubectl**: `kubectl rollout undo deployment/<name> -n <namespace>`
 
 ## 9. Summary
 
@@ -308,6 +178,7 @@ For multi-step infra changes that may need iterative reconciliation (e.g., Terra
 ## Integration
 
 - **Roles**: `Agent(devops-engineer)` (primary), `Agent(sre-engineer)` (review), `Agent(cloud-architect)` (cloud design review), `Agent(devops-architect)` (CI/CD pipeline architecture)
+- **Knowledge skills**: `@terraform-procedures`, `@helm-procedures`, `@gitops-detection`, `@cloud-platforms`
 - **Preceded by**: `/plan` (infra work stream), `/architecture` (cloud architecture design)
 - **Followed by**: `/deploy-staging`, `/deploy-production`
 - **Rules**: `ralph-budget` (caps for iterative reconciliation per "RALF Loop" section)
