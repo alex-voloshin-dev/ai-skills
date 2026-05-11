@@ -4,7 +4,7 @@ A reusable team-of-agents plugin for the full software development lifecycle. Dr
 
 **Project-agnostic by design.** Operations live in this plugin; project-specific context (brand, conventions, terminology) lives in the target repo's `CLAUDE.md` / `AGENTS.md` / `marketing/MARKETING.md` and is read at runtime.
 
-## Status — v0.3.7
+## Status — v0.3.10
 
 Current release. The plugin is the canonical Claude Code delivery format for this repository (the legacy `.claude/` mirror was retired in v0.2.0). Codex and Windsurf packages remain alongside for those runtimes; parity is enforced between Codex and Windsurf only.
 
@@ -82,7 +82,7 @@ The repo's `.claude-plugin/marketplace.json` already declares the registry. Loca
 
 `/ralph` (power-user RALF entry) · `/eval` (skill/agent evaluator) · `/plugin-doctor` (self-diagnostic) · `/memory-init` · `/memory-recall` · `/learnings-write` · `/context-load` · `/subagent-spawn` · `/plugin-skill-create`
 
-## What's inside today (v0.3.7)
+## What's inside today (v0.3.10)
 
 - **73 skills** covering the full SDLC plus marketing and content. 36 are user-invocable: 32 with `context: fork` plus 4 main-thread orchestrators (`develop`, `feature-design`, `bugfix`, `team-bugfix`) that retain Agent-spawn capability. The remaining 37 are knowledge skills (`disable-model-invocation: true`) loaded as context by workflows or agents — Single-Responsibility split per the May 2026 `/plugin-skill-audit` refactor (split fat workflows, extract per-stack tooling tables, thin engineer agents via the `prompt-engineer` pattern).
 - **26 specialized agents** — cloud architect, security engineer, all major language engineers, content/marketing roles, 4 orchestrators.

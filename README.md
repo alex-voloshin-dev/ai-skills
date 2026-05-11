@@ -190,7 +190,7 @@ ai-assets/
 
 ## Status
 
-- **Latest version:** 0.3.7 (see [`plugin/CHANGELOG.md`](./plugin/CHANGELOG.md) for history)
+- **Latest version:** 0.3.10 (see [`plugin/CHANGELOG.md`](./plugin/CHANGELOG.md) for history)
 - **License:** [MIT](./LICENSE)
 - **Maintainer:** Alex Voloshin
   ([@alex-voloshin-dev](https://github.com/alex-voloshin-dev)) — MS CS in progress

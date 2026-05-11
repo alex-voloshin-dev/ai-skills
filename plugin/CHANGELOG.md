@@ -6,6 +6,58 @@ All notable changes to the `ai-assets` plugin. Format: [Keep a Changelog](https:
 
 Phase 2 implementation in progress per `../plugin-design/04-MIGRATION-CHECKLIST.md`. Following batches will populate the skeleton.
 
+## [0.3.10] — 2026-05-10 — Path B unblock pass: producer-writes + alpha.33/34 + ground-truth discipline
+
+Three-version pass (0.3.8 + 0.3.9 + 0.3.10) consolidated into one release entry. Closes the most-expensive Path B failure modes observed in field feedback: read-only producer silent-idle (alpha.32), team-wide silent idle when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset despite `TeamCreate` success (alpha.33 / alpha.33-fast-fail), `shutdown_request` non-response from silent teammates (alpha.34), Reviewer self-applying fixes because Path B team-create cannot pass structured `disallowedTools`, Developer spec-drift (skipped files, silently changed constraint values), and producer hallucination of repo structure that doesn't exist.
+
+### Producer agents — Write/Edit + Ground-truth discipline (0.3.8 / alpha.34)
+
+Ten producer agents gain `Write` / `Edit` and an explicit "Write scope (docs/design artifacts only)" hard rule: `product-manager`, `marketing-strategist`, `ui-ux-designer`, `system-architect`, `solution-architect`, `cloud-architect`, `devops-architect`, `security-engineer`, `content-writer`, `content-designer`. Scope restricted to documentation paths (`docs/`, `features/`, `marketing/`, ADR / OpenAPI / threat-model directories, feature-design pack directories) — application source code, infrastructure code (Terraform/Helm/Dockerfiles/K8s manifests), CI workflows, and migration scripts remain off-limits per each agent's body. Result: Path B producers self-claim and write their own artefact directly. No fenced-block prose return, no Lead-writes-file restructure, no Bash-heredoc race condition.
+
+Each producer also adds two Hard Rules:
+- **Ground-truth from repo (alpha.34)**: before describing existing code structure, file layout, schema, UI sections, or API surface, the agent MUST `Read` or `Grep` the cited source files. No inference from PRD wording or naming conventions. Closes the field-observed P0 class where agents wrote believable-sounding sections that did not exist in the code.
+- **Length caps are binding**: spawn-prompt length caps override the agent's default verbosity. Deviations surface in `risks`.
+
+`eval-judge` remains intentionally read-only (verdict-in-response pattern — Lead writes `REVIEW-LOG.md` from the structured return).
+
+### Path B fallback model (0.3.9 / alpha.33 + alpha.33-fast-fail)
+
+`plugin/skills/team-protocols/path-selection-rules.md`:
+- New **alpha.33** entry: two-or-more-teammates simultaneously silent past the first 90-s watchdog window. Lead skips serial nudge cycles and surfaces a whole-team escalation prompt (5 options including `TeamDelete` + re-`TeamCreate`, per-task Path A, whole-workflow Path A).
+- New **alpha.33-fast-fail** entry: total-team zero-activity within 90 s of `TeamCreate` + initial `TaskCreate`. Classified as a hard technical block; whole-workflow Path A is the documented escape valve. Typical cause: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` unset on the host despite `TeamCreate` returning success.
+- **alpha.31** extended with secondary symptom: persistent `blockedBy: [<completed-id>]` panel state. Treat as alpha.31 indicator and run the stale-`blockedBy` recovery in `lead-protocol.md`.
+- Role-capability cache rewritten to reflect v0.3.8 producer state; `software-engineer` as Reviewer now honestly marked "prose-only at spawn time" since Path B team-create cannot pass structured `disallowedTools`.
+
+`plugin/skills/team-protocols/lead-protocol.md`:
+- **Reviewer file-change check (v0.3.9)**: Gate Verification step that rejects Reviewer G7 returns with non-empty `result.files_changed`. Closes the role-isolation gap caused by Path B's missing structured-`disallowedTools` surface.
+- **Stale-`blockedBy` recovery (v0.3.9)**: delete + recreate task procedure (since `TaskUpdate` has no `removeBlockedBy`). Run before nudge #1 to unblock teammates that read the panel as authoritative.
+- **Team-wide silent idle escalation prompt (v0.3.9, alpha.33)**: five-option whole-team menu. Option 4 (whole-workflow Path A) is the only path to that downgrade.
+
+`plugin/skills/team-protocols/developer-protocol.md`:
+- **Self-Verification step 6 — Coverage check against spawn payload (v0.3.9)**: walk `state_slice.active_files`, `goal`, `constraints`; flag `partial_coverage` and `constraint_deviation` in `risks` if the diff silently deviates. Closes the field-observed "Developer skipped 2 of 4 files" / "Developer changed 270000 to 1740000 without rationale" classes.
+
+### feature-design — Step 0a + producer-writes pattern + concurrent-write avoidance (0.3.8 / 0.3.10)
+
+- New `feature-design/step-0a-conventions.md` sibling: detect repo-local feature-doc conventions (`features/CLAUDE.md`, `docs/CLAUDE.md` overriding default `docs/features/<id>/` layout), partial-pack mode (PRD exists), and consolidate-or-split decision (single `design.md` vs separate `ARCHITECTURE/UX-FLOW/DATA-MODEL/RISKS`). Five-mode decision table; judge optional in partial-pack mode.
+- `feature-design/path-b-team-create.md` rewritten under v0.3.8 producer-writes pattern: every producer writes its own file directly; only `eval-judge` returns verdict-in-response. Removes the fenced-block / Bash-heredoc-forbidance scaffolding that v0.3.7 needed for read-only producers.
+- **Concurrent-write avoidance (v0.3.10)**: Wave-3 reviewers each write their own file (`feedback.md`, `architecture-review.md`); Lead writes `REVIEW-LOG.md` ONCE after the judge returns, collating both reviewer files plus judge verdict. Eliminates the field-observed race on shared `REVIEW-LOG.md` appends.
+- **TeamCreate ≠ auto-claim caveat (v0.3.9)**: explicit clause that `TeamCreate` returning success does not imply teammates will self-claim; 90 s no-activity = alpha.33-fast-fail = Path A escape valve.
+
+### Plugin-wide
+
+- `plugin/skills/team-protocols/SKILL.md`: pre-flight `ToolSearch(select:TeamCreate,TaskCreate,TaskUpdate,SendMessage,TeamDelete,TaskStop,Monitor)` batched call before Path B Step 1. Eliminates mid-workflow latency from deferred tool schemas.
+- `plugin/skills/team-protocols/role-selection-table.md`: read-only investigation note — prefer `Explore` over domain-specific roles for "find / locate / inventory" tasks.
+- `plugin/skills/bugfix/SKILL.md`: stale "ONLY valid Path A trigger" claim replaced with reference to `path-selection-rules.md` actual trigger list (4 valid triggers, not 1).
+- **Skill count refactor**: long SKILL.md bodies (analyze-prod, architecture, infra-change, marketing, security-audit, test-local, content-creation) extracted to sibling resource files. 22 new skill directories created (architecture-analyze/design/evolve, content-tools, design-system-patterns, gitops-detection, helm-procedures, marketing-init/strategy, observability-methods, owasp-coverage, python-fastapi-patterns, react-nextjs-patterns, release-tools-by-stack, spring-jpa-patterns, sql-database-patterns, supply-chain-security, telemetry-stacks, terraform-procedures, test-runners-by-stack). Total skills: 53 → 73; user-invocable: 32 → 36 (32 `context: fork` + 4 main-thread orchestrators).
+
+### Files affected
+
+`plugin/.claude-plugin/plugin.json` (version `0.3.7` → `0.3.10`), `.claude-plugin/marketplace.json` (same), `README.md`, `plugin/README.md`, `PARITY.md` (skill counts refreshed); 10 producer agents; team-protocols (`SKILL.md`, `path-selection-rules.md`, `lead-protocol.md`, `developer-protocol.md`, `role-selection-table.md`); feature-design (`SKILL.md`, `path-b-team-create.md` [new], `step-0a-conventions.md` [new], `eval-and-ralf.md`, `wave-protocol.md`); `bugfix/SKILL.md`; 22 new skill directories under `plugin/skills/`.
+
+### Validator + Tier 1
+
+`python plugin/dev/validate.py`: 23 pass / 0 warn / 0 fail. All SKILL.md within 12,000-char cap (top bracket: plan/bugfix 11971, develop 11944, feature-design 11907, team-protocols 11119).
+
 ## [0.3.7] — 2026-05-09 — Path B Liveness extended to Developer silent-idle
 
 Recurring observation that the v0.3.5 watchdog covered only Reviewer/QA, but the same alpha.31 in-process silent-idle flake also hits the **Developer** — including a "silent-but-complete" sub-shape where edits actually land on disk and acceptance criteria look met, yet no G7 return envelope ever arrives. The Lead is then stuck without a schema-validated handoff path. Each session was inventing its own escalation menu.
