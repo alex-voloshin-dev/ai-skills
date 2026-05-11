@@ -41,7 +41,7 @@ The Claude Code plugin (`plugin/`) is a first-class artifact with its own intern
 
 This was the v0.2.0 transition: before v0.2.0, the repo enforced three-way parity across `.claude/ + .codex/ + .windsurf/`. The `.claude/` package was retired because the plugin format superseded it with native plugin primitives (manifest, eval framework, schemas, namespaced skills, hook lifecycle events) that the legacy folder layout couldn't carry.
 
-For Claude Code asset coverage, see [plugin/README.md](plugin/README.md) — 26 agents, 53 skills (32 user-invocable), 18 hooks across 13 lifecycle events, 12 rules, 45 eval rubrics + 270 calibration samples, 2 schemas, 13 userConfig knobs.
+For Claude Code asset coverage, see [plugin/README.md](plugin/README.md) — 26 agents, 73 skills (36 user-invocable: 32 `context: fork` + 4 main-thread orchestrators), 18 hooks across 13 lifecycle events, 12 rules, 45 eval rubrics + 270 calibration samples, 2 schemas, 13 userConfig knobs.
 
 ## Current parity status (Codex ↔ Windsurf)
 
@@ -100,7 +100,7 @@ The plugin carries capabilities that are intentionally not mirrored to Codex/Win
 | Untrusted-content wrapping (G1) | Depends on PostToolUse event piping |
 | 45 eval rubrics + 270 calibration samples + Tier 1/Tier 2/g1g2 runners | Plugin-internal eval framework (rubrics + Haiku judge calibration) |
 | `team-protocols`, `team-bugfix`, `develop`, `feature-design`, `bugfix` orchestration | Depend on Claude Code's Agent tool + optional Agent Teams flag |
-| 53 skills × 32 user-invocable | Plugin-namespaced via `ai-assets:` prefix per Anthropic spec |
+| 73 skills × 36 user-invocable (32 `context: fork` + 4 main-thread orchestrators) | Plugin-namespaced via `ai-assets:` prefix per Anthropic spec |
 
 Codex and Windsurf carry the simpler 4 carry-over hooks (security/audit only) plus the shared skill+role corpus.
 

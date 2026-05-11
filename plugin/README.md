@@ -23,7 +23,7 @@ The local validator (`python3 plugin/dev/validate.py`) passes 23 checks against 
 | Hooks | 18 | Across 13 lifecycle events; includes ralph-iter-meter (v0.1.6) and subagent-depth-guard (v0.1.7) |
 | Agents | 26 | 22 normalized roles + 4 orchestrators |
 | Rules | 12 | Security, memory discipline, RALF budget, untrusted-content wrapping, etc. |
-| Skills | 53 | 32 user-invocable (28 with `context: fork` + 4 main-thread orchestrators); rest are background knowledge loaded as context |
+| Skills | 73 | 36 user-invocable (32 with `context: fork` + 4 main-thread orchestrators); rest are background knowledge loaded as context |
 | JSON schemas | 2 | G7 spawn payload + return contract |
 | Memory templates | 6 | In `memory/templates/` (`pii-patterns.txt` lives at `hooks/scripts/pii-patterns.txt` so `_lib.py` can load it) |
 | Eval rubrics | 45 | 17 base + 4 meta-tools + 24 per-skill workflow rubrics |
