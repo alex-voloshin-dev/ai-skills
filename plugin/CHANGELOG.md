@@ -6,6 +6,17 @@ All notable changes to the `ai-assets` plugin. Format: [Keep a Changelog](https:
 
 Next release in planning.
 
+## [0.3.13] — 2026-05-13 — `/feedback` dual MD+JSON output parity
+
+Closes the open contract dependency surfaced in v0.3.12: `/plugin-author fix-feedback` now consumes a canonical JSON written next to the Markdown report, eliminating the degraded `--md` fallback for fresh reports.
+
+- **`plugin/skills/feedback/output-schema.json` (new)** — JSON Schema 2020-12 (`schema_version: "1"`) for the canonical `/feedback` output. Fields: `meta` (ts, tool_version, window_days, project_path, plugin_filter, sessions_scanned, malformed_lines, classifier_version, report_md_path), `verdict` ∈ `GREEN|YELLOW|RED|INSUFFICIENT_DATA`, aggregated `findings[]` (one per unique `(source_kind, source_identity, signature)` with stable `f-NNN` id, severity, count, first/last seen, up to 3 ≤ 400-char excerpts, optional `asset_hint` / `suggested_action` / `owner_role_hint`), and `groups[]` indexing finding_ids by source_kind. Resource file inside the skill — does NOT count toward `plugin/schemas/` totals.
+- **`plugin/skills/feedback/scripts/collect_session_data.py`** — added `to_canonical()` adapter that projects the legacy aggregation shape into the canonical schema, plus CLI flags `--out-json <path>` (atomic write with `*.tmp` + rename), `--report-md-path <path>` (echoed into `meta.report_md_path`), `--tool-version <label>` (e.g. `ai-assets@0.3.13`), and `--stdout {legacy,canonical}` (default `legacy` for back-compat with the Markdown renderer). Validated with `jsonschema` against the new schema on both empty and non-empty findings sets.
+- **`plugin/skills/feedback/SKILL.md`** — new Behavior step "6a. Paired canonical JSON output" documenting full MD↔JSON parity; new Hard rule "Paired JSON parity"; Worker-script section updated with the new CLI flags; Integration section points downstream consumers at the JSON schema.
+- **`plugin/skills/plugin-author/feedback-parser.md`** — "Open contract dependency" notice retired; replaced with "Contract status: live since v0.3.13". Markdown fallback remains for legacy reports.
+
+Smoke-tested on this repo's own session logs: `--days 30 --plugin all --severity all` produced `verdict=RED` with 2 aggregated findings, full `jsonschema.validate()` pass; empty-findings case produced `verdict=GREEN` with `sessions_scanned=4`, schema-valid empty arrays. `validate.py` after this release: 25 pass, 0 warn, 0 fail (no count changes — the schema lives inside the skill folder).
+
 ## [0.3.12] — 2026-05-13 — DX consolidation: `/plugin-author` umbrella + Sprint 1–4 hardening pass
 
 This release bundles the audit-2026-05-13 hardening sprints (hooks, G7 contract, runtime resilience, observability) with the new DX umbrella `/plugin-author` that gives the plugin a single entry point for asset authoring and maintenance.

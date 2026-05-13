@@ -152,6 +152,6 @@ python3 plugin/skills/plugin-author/scripts/parse_feedback_report.py \
   --from .ai-assets-memory/feedback/feedback-2026-05-13-0910.json
 ```
 
-## Open contract dependency
+## Contract status
 
-The schema above is the target. The worker `plugin/skills/feedback/scripts/collect_session_data.py` currently emits a similar shape but uses different field names in places (`event_class` vs `source_kind`, `error_signature` vs `signature`). A separate WP in the review pass aligns the worker output to this schema and adds the `.json` companion next to the `.md` write site. Until that lands, `/plugin-author fix-feedback` MUST run on `--md` (degraded path) and surface the parity warning.
+Live since v0.3.13. The worker `plugin/skills/feedback/scripts/collect_session_data.py` writes the canonical JSON next to the Markdown via `--out-json <stem>.json`; shape is validated against `plugin/skills/feedback/output-schema.json` (`schema_version: "1"`). `/plugin-author fix-feedback` prefers the `.json` companion by default; the `--md` path remains as a degraded fallback for legacy reports that pre-date v0.3.13.

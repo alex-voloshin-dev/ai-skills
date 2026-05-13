@@ -109,6 +109,14 @@ Render both reports from the shared template in `templates/extended-template.md`
 - **Extended (file):** every group, every evidence excerpt, full recommendations table
 - **Brief (stdout):** top 5 groups by occurrence count + top 3 recommendations + path to the extended report
 
+#### 6a. Paired canonical JSON output (v0.3.13+)
+
+Every `/feedback` run also writes a machine-readable counterpart of the Markdown report at the same stem, e.g. `feedback-2026-05-13-0910.json` next to `feedback-2026-05-13-0910.md`. The JSON conforms to `plugin/skills/feedback/output-schema.json` (schema_version `"1"`) and has **full parity** with the MD: every finding present in the Markdown appears in the JSON with the same severity, source kind, identity, signature, count, first/last seen, and up to 3 evidence excerpts (≤ 400 chars each). The JSON also carries `meta.report_md_path` pointing back at the paired MD for traceability.
+
+Invocation contract: call the worker with `--out-json <stem>.json --report-md-path <stem>.md --tool-version <ai-assets@VERSION>`. The worker writes the JSON atomically (`*.tmp` + rename) so a half-written file is never visible to a downstream reader. Schema-validate using the bundled schema (`output-schema.json`) when `jsonschema` is available.
+
+The JSON is the canonical contract for `/plugin-author fix-feedback --from <stem>.json`. Reparsing the Markdown is a degraded fallback only (per `plugin-author/feedback-parser.md`), and downstream consumers MUST prefer the JSON whenever it exists.
+
 Sections in both:
 
 1. **Executive Summary** — verdict (GREEN/YELLOW/RED), window, sessions analyzed, total findings, top failure signature
@@ -133,14 +141,14 @@ Last line of stdout is always `Extended report: <absolute-path-to-on-disk-report
 
 ## Worker script
 
-`scripts/collect_session_data.py` is the deterministic parser. It accepts the same flags as the skill and emits a single JSON object on stdout: `{"meta": {...}, "findings": [...], "groups": [...]}`. The skill body calls the worker, then renders Markdown from the JSON using `templates/extended-template.md` and `templates/brief-template.md`.
+`scripts/collect_session_data.py` is the deterministic parser. By default it emits the legacy aggregation shape on stdout (`{"meta": ..., "findings": [raw events], "groups": [aggregated]}`) for the Markdown renderer. With `--stdout canonical` it emits the canonical schema (schema_version `"1"`) instead. With `--out-json <path>` it atomically writes the canonical JSON to a file in addition to whatever it streams on stdout. The skill body always passes `--out-json` and `--report-md-path` so the paired `.json` lands next to the `.md` per the parity contract above.
 
 The worker MUST:
 
 - Stream-parse line by line (sessions can be hundreds of MB)
-- Skip malformed JSON lines but increment a counter; surface counter in the report header
+- Skip malformed JSON lines but increment a counter; surface counter in the report header (and in `meta.malformed_lines` of the canonical JSON)
 - Mask any value matching `(?i)(api[_-]?key|secret|token|password|credential)[\"'\s:=]+[^\s\"']+` → `<redacted>`
-- Be invocable as `python3 plugin/skills/feedback/scripts/collect_session_data.py --days 7 --project <abs-path>` from the plugin tree
+- Be invocable as `python3 plugin/skills/feedback/scripts/collect_session_data.py --days 7 --project <abs-path> --out-json <stem>.json --report-md-path <stem>.md --tool-version 'ai-assets@<ver>'` from the plugin tree
 
 ## Templates
 
@@ -154,6 +162,7 @@ Both files include placeholders the skill substitutes at render time.
 - **Read-only** — never modify session JSONL files
 - **Never echo secrets** — apply the redaction regex above before printing or writing
 - **Deterministic output path** — when `--out` is not given, use `.ai-assets-memory/feedback/feedback-<YYYY-MM-DD>-<HHMM>.md` so re-runs do not overwrite each other
+- **Paired JSON parity** — every MD write MUST be paired with a JSON write at the same stem. If the JSON write fails, surface the error to the user; do not silently leave a MD-only report (downstream `/plugin-author fix-feedback` would fall back to degraded MD parsing)
 - **English-only** per repo CLAUDE.md
 - **No absolute user-machine paths in templates** — substitute at runtime only
 - **Last stdout line is the report path** — never print anything after it
@@ -176,8 +185,8 @@ Both files include placeholders the skill substitutes at render time.
 ## Integration
 
 - **Reads**: `~/.claude/projects/<sanitized-cwd>/*.jsonl`
-- **Writes**: extended report (path per `--out` or default), `.ai-assets-memory/feedback/feedback.log`
-- **Downstream consumer**: `/plugin-author fix-feedback --from <report>` ingests a `/feedback` output and produces a fix-cycle (one WP per finding, DEV → REVIEW → QA pipeline) — see `plugin/skills/plugin-author/feedback-parser.md` for the consumed shape.
+- **Writes**: paired Markdown + canonical JSON reports at the same stem (e.g. `feedback-2026-05-13-0910.{md,json}`), plus a one-line summary append to `.ai-assets-memory/feedback/feedback.log`
+- **Downstream consumer**: `/plugin-author fix-feedback --from <report>.json` ingests the canonical JSON and produces a fix-cycle (one WP per finding, DEV → REVIEW → QA pipeline) — see `plugin/skills/plugin-author/feedback-parser.md` for the consumed shape. Markdown reparse via `--md` is degraded fallback only.
 - **Companion**: `/plugin-doctor` (live plugin diagnostic), `/eval` (rubric-based skill quality), `/bugfix` (file a fix once a finding is confirmed)
-- **Schema**: paired Markdown + JSON output per run (full parity); JSON is the canonical input for `/plugin-author fix-feedback` (Markdown reparse is degraded fallback only). The JSON shape lives next to `scripts/collect_session_data.py` (and is the planned `plugin/skills/feedback/output-schema.json` — separate WP).
+- **Schema**: `plugin/skills/feedback/output-schema.json` (JSON Schema 2020-12, `schema_version: "1"`). The worker validates against it implicitly by construction; downstream consumers SHOULD validate via `jsonschema` when available.
 - **Hooks**: none required; `/feedback` is read-only and runs in the main thread

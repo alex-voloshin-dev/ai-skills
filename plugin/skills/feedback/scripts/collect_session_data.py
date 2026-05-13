@@ -362,6 +362,104 @@ def collect(
     return {"meta": meta, "findings": findings, "groups": groups_list}
 
 
+# ------------- canonical output (v0.3.13+) -------------
+#
+# The legacy `collect()` shape lists *raw event* findings plus an aggregated
+# `groups` array. Canonical schema (`plugin/skills/feedback/output-schema.json`,
+# schema_version="1") inverts that: `findings` are aggregated (one per unique
+# tuple) with a `count`, `excerpts[]`, severity bands, and stable `f-NNN` ids;
+# `groups` becomes a thin index of `finding_ids` per axis. This is the shape
+# `/plugin-author fix-feedback` consumes as the JSON parity counterpart of the
+# Markdown report.
+
+SCHEMA_VERSION = "1"
+
+SEVERITY_ORDER = ("info", "warn", "error")  # ascending
+
+
+def _verdict(canonical_findings: list[dict], sessions_scanned: int) -> str:
+    if not canonical_findings:
+        return "INSUFFICIENT_DATA" if sessions_scanned == 0 else "GREEN"
+    sev_set = {f["severity"] for f in canonical_findings}
+    if "error" in sev_set:
+        return "RED"
+    if "warn" in sev_set:
+        return "YELLOW"
+    return "GREEN"
+
+
+def to_canonical(
+    legacy: dict,
+    *,
+    tool_version: str = "ai-assets@unknown",
+    report_md_path: str = "",
+) -> dict:
+    """Project the legacy worker output into the canonical schema.
+
+    Canonical `findings` are built from legacy `groups` (already aggregated)
+    so count, first/last_seen, severity, and signature flow through cleanly.
+    Excerpts are pulled from legacy `findings` by `evidence_ids` (up to 3 per
+    finding, ≤ 400 chars each).
+    """
+    legacy_meta = legacy.get("meta", {})
+    legacy_groups = legacy.get("groups", [])
+    legacy_events = legacy.get("findings", [])
+    events_by_id = {e["id"]: e for e in legacy_events if "id" in e}
+
+    canonical_findings: list[dict] = []
+    for idx, g in enumerate(legacy_groups, start=1):
+        excerpts: list[dict] = []
+        for ev_id in g.get("evidence_ids", []):
+            ev = events_by_id.get(ev_id)
+            if not ev:
+                continue
+            ex_text = ev.get("excerpt", "") or ""
+            if len(ex_text) > 400:
+                ex_text = ex_text[:400]
+            excerpts.append({
+                "session_id": ev.get("session_id", ""),
+                "timestamp": ev.get("ts", "") or "",
+                "excerpt": ex_text,
+            })
+        canonical_findings.append({
+            "finding_id": f"f-{idx:03d}",
+            "severity": g.get("severity", "warn"),
+            "source_kind": g.get("kind", "system"),
+            "source_identity": g.get("source", "") or "unknown",
+            "signature": g.get("signature", "") or "unknown",
+            "count": int(g.get("count", 1)),
+            "first_seen": g.get("first_seen", "") or "",
+            "last_seen": g.get("last_seen", "") or "",
+            "excerpts": excerpts,
+        })
+
+    by_kind: dict[str, list[str]] = {}
+    for f in canonical_findings:
+        by_kind.setdefault(f["source_kind"], []).append(f["finding_id"])
+    canonical_groups = [
+        {"by": "source_kind", "name": k, "finding_ids": v}
+        for k, v in sorted(by_kind.items())
+    ]
+
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "meta": {
+            "ts": legacy_meta.get("now", "") or "",
+            "tool_version": tool_version,
+            "window_days": int(legacy_meta.get("window_days", 0)),
+            "project_path": legacy_meta.get("project_path", "") or "",
+            "plugin_filter": legacy_meta.get("plugin_filter", "") or "",
+            "sessions_scanned": int(legacy_meta.get("sessions_scanned", 0)),
+            "malformed_lines": int(legacy_meta.get("lines_skipped_malformed", 0)),
+            "classifier_version": legacy_meta.get("classifier_version", "unknown"),
+            "report_md_path": report_md_path or "",
+        },
+        "verdict": _verdict(canonical_findings, int(legacy_meta.get("sessions_scanned", 0))),
+        "findings": canonical_findings,
+        "groups": canonical_groups,
+    }
+
+
 # ------------- cli -------------
 
 def _parse_args() -> argparse.Namespace:
@@ -372,13 +470,47 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--severity", choices=["all", "warn", "error"], default="warn")
     p.add_argument("--max-sessions", type=int, default=100)
     p.add_argument("--home", type=str, default=str(Path.home()))
+    p.add_argument(
+        "--out-json",
+        type=str,
+        default=None,
+        help="If set, atomically write the canonical schema (see plugin/skills/feedback/output-schema.json) "
+             "to this path. Paired with the Markdown report written by the skill.",
+    )
+    p.add_argument(
+        "--report-md-path",
+        type=str,
+        default="",
+        help="Absolute path of the paired Markdown report, embedded into the canonical JSON meta for traceability.",
+    )
+    p.add_argument(
+        "--tool-version",
+        type=str,
+        default="ai-assets@unknown",
+        help="Plugin version label, embedded into canonical JSON meta (e.g. `ai-assets@0.3.13`).",
+    )
+    p.add_argument(
+        "--stdout",
+        choices=["legacy", "canonical"],
+        default="legacy",
+        help="Shape to emit on stdout. `legacy` (default) preserves backward compat for the Markdown renderer. "
+             "`canonical` emits the schema-validated shape — useful for `/plugin-author fix-feedback` pipes.",
+    )
     return p.parse_args()
+
+
+def _atomic_write_json(path_str: str, payload: dict) -> None:
+    p = Path(path_str)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    tmp = p.with_suffix(p.suffix + ".tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    tmp.replace(p)
 
 
 def main() -> int:
     args = _parse_args()
     sev_floor = {"all": "info", "warn": "warn", "error": "error"}[args.severity]
-    out = collect(
+    legacy = collect(
         project_path=args.project,
         days=args.days,
         plugin_filter=args.plugin,
@@ -386,6 +518,17 @@ def main() -> int:
         max_sessions=args.max_sessions,
         home=Path(args.home),
     )
+
+    canonical = to_canonical(
+        legacy,
+        tool_version=args.tool_version,
+        report_md_path=args.report_md_path,
+    )
+
+    if args.out_json:
+        _atomic_write_json(args.out_json, canonical)
+
+    out = canonical if args.stdout == "canonical" else legacy
     json.dump(out, sys.stdout, ensure_ascii=False, indent=2)
     sys.stdout.write("\n")
     return 0

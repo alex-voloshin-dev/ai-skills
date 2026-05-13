@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alex-voloshin-dev/ai-assets/blob/main/plugin/skills/feedback/output-schema.json",
+  "title": "feedback output schema (canonical)",
+  "description": "Canonical machine-readable counterpart of the /feedback Markdown report. Written alongside `feedback-YYYY-MM-DD-HHMM.md` as `feedback-YYYY-MM-DD-HHMM.json` with full content parity. Consumed by `/plugin-author fix-feedback --from <path>.json` to build a fix-cycle plan. Reparsing the Markdown is a degraded fallback only — this JSON is the contract.",
+  "type": "object",
+  "required": ["schema_version", "meta", "verdict", "findings", "groups"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1",
+      "description": "Schema version. Bump on backward-incompatible changes only."
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "ts",
+        "tool_version",
+        "window_days",
+        "project_path",
+        "plugin_filter",
+        "sessions_scanned",
+        "malformed_lines",
+        "classifier_version",
+        "report_md_path"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "ts": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 UTC timestamp when the run started."
+        },
+        "tool_version": {
+          "type": "string",
+          "description": "ai-assets plugin version that produced this report, e.g. `ai-assets@0.3.13`."
+        },
+        "window_days": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "`--days N` window scanned. `0` means all sessions."
+        },
+        "project_path": {
+          "type": "string",
+          "description": "Absolute path of the project whose session logs were scanned."
+        },
+        "plugin_filter": {
+          "type": "string",
+          "description": "`--plugin NAME` filter applied (e.g. `ai-assets`); `all` means no filter."
+        },
+        "sessions_scanned": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of session JSONL files actually parsed."
+        },
+        "malformed_lines": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of JSONL lines skipped due to JSON parse errors."
+        },
+        "classifier_version": {
+          "type": ["integer", "string"],
+          "description": "Worker classifier version (see `CLASSIFIER_VERSION` in `collect_session_data.py`)."
+        },
+        "report_md_path": {
+          "type": "string",
+          "description": "Path to the paired Markdown report. Empty string when no MD is being written."
+        }
+      }
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["GREEN", "YELLOW", "RED", "INSUFFICIENT_DATA"],
+      "description": "Overall health verdict. RED if any error finding; YELLOW if any warn (and no errors); GREEN if all info or no findings; INSUFFICIENT_DATA when sessions_scanned == 0."
+    },
+    "findings": {
+      "type": "array",
+      "description": "Aggregated findings. Each entry represents a unique (source_kind, source_identity, signature) tuple with a count and up to 3 representative excerpts.",
+      "items": {
+        "type": "object",
+        "required": [
+          "finding_id",
+          "severity",
+          "source_kind",
+          "source_identity",
+          "signature",
+          "count",
+          "first_seen",
+          "last_seen",
+          "excerpts"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "finding_id": {
+            "type": "string",
+            "pattern": "^f-[0-9]{3,}$",
+            "description": "Stable id within this report, e.g. `f-001`. Reused by `/plugin-author fix-cycles/<stamp>.json` to mark closed findings."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warn", "info"]
+          },
+          "source_kind": {
+            "type": "string",
+            "enum": ["hook", "subagent", "skill", "command", "system", "assistant"]
+          },
+          "source_identity": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Hook script name, subagent name, skill name, command name, or system event subtype."
+          },
+          "signature": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Normalized error string with absolute paths masked to `<path>` and numbers collapsed — so recurring failures collapse into one finding."
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of raw events that collapsed into this finding."
+          },
+          "first_seen": {
+            "type": "string",
+            "description": "ISO-8601 timestamp of the earliest occurrence (empty when unknown)."
+          },
+          "last_seen": {
+            "type": "string",
+            "description": "ISO-8601 timestamp of the latest occurrence (empty when unknown)."
+          },
+          "excerpts": {
+            "type": "array",
+            "maxItems": 3,
+            "description": "Up to 3 representative raw event excerpts (≤ 400 chars each).",
+            "items": {
+              "type": "object",
+              "required": ["session_id", "timestamp", "excerpt"],
+              "additionalProperties": false,
+              "properties": {
+                "session_id": { "type": "string" },
+                "timestamp":  { "type": "string" },
+                "excerpt":    { "type": "string", "maxLength": 400 }
+              }
+            }
+          },
+          "asset_hint": {
+            "type": "string",
+            "description": "Optional path to the plugin asset most likely responsible (e.g. `plugin/hooks/scripts/subagent-depth-guard.py`). When absent, `/plugin-author` resolves it from (source_kind, source_identity)."
+          },
+          "suggested_action": {
+            "type": "string",
+            "description": "Optional remediation hint surfaced by the worker."
+          },
+          "owner_role_hint": {
+            "type": "string",
+            "description": "Optional DEV role suggestion (e.g. `python-engineer`, `prompt-engineer`). Honored by `/plugin-author fix-feedback` when set."
+          }
+        }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "description": "Index of finding_ids grouped by an axis (currently `source_kind`). Lets downstream tools batch related findings without re-scanning the findings array.",
+      "items": {
+        "type": "object",
+        "required": ["by", "name", "finding_ids"],
+        "additionalProperties": false,
+        "properties": {
+          "by":   { "type": "string", "enum": ["source_kind"] },
+          "name": { "type": "string" },
+          "finding_ids": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^f-[0-9]{3,}$" }
+          }
+        }
+      }
+    }
+  }
+}
