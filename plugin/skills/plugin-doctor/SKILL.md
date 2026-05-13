@@ -16,6 +16,7 @@ Shipped commands:
 ```
 /plugin-doctor                          # default smoke test (Tier 1 linters)
 /plugin-doctor --calibrate-judge        # opt-in: judge calibration vs samples
+/plugin-doctor --show-recent-errors     # top-5 hooks by ERROR/WARN count (audit WP-4.2)
 ```
 
 Planned (not yet shipped):
@@ -57,6 +58,33 @@ ERROR: Insufficient calibration samples at plugin/eval/calibration/<rubric>/.
 ```
 
 Requires `ANTHROPIC_API_KEY` and the `anthropic` Python SDK; without them the run reports `DRY-RUN ONLY` and skips real judge calls. Default sample plan (seed 42): 10 rubrics × 2 samples = 20 judge calls. Override with `--seed`, `--sample-rubrics`, `--samples-per-rubric` on `runner.py`.
+
+### `--show-recent-errors` (recent-errors dashboard)
+
+Surfaces the top hooks ranked by `ERROR + WARNING` count in `.ai-assets-memory/errors.log` over the last 7 days (default window). Ranking is `ERROR * 10 + WARNING` so a hook with a few ERRORs ranks above a hook with many INFO-level WARNINGs. For each hook the dashboard shows the top 3 `issue` strings and counts so the root cause of a noisy hook is one glance away.
+
+Invocation:
+
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/dev/recent-errors.py [--days N] [--top K] [--json]
+```
+
+Run from the project root (the script defaults to `<cwd>/.ai-assets-memory/errors.log`). No LLM cost; fail-open on missing log or parse errors. Typical output (real f4ai data, 7-day window):
+
+```
+Recent errors — last 7 day(s) (since 2026-05-06T13:40:33Z)
+  Total events: 5918
+  Distinct hooks: 7
+
+Top 5 hooks by severity (ERROR weighted 10x):
+  1. tool-output-normalize             ERR=0    WARN=5356 INFO=0
+       └ wrap_marker_missing_before_normalize     x 5356
+  2. subagent-stop-learnings           ERR=351  WARN=0    INFO=0
+       └ return_contract_validation_failed        x 351
+  …
+```
+
+Use `--json` for machine-readable output (e.g. CI dashboards). Use `--days 1` for a same-day triage view.
 
 ## Other modes (planned, not yet shipped)
 

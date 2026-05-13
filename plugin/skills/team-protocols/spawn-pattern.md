@@ -69,7 +69,7 @@ Every Developer / Reviewer / QA role-step in a workflow follows this exact patte
 Agent({
   description: "WP-3 implementation (java-engineer)",
   subagent_type: "ai-assets:java-engineer",
-  prompt: "You are the Developer subagent for work package WP-3. Read the developer protocol at plugin/skills/team-protocols/developer-protocol.md before starting. Your G7 spawn payload:\n\n<JSON-from-step-1>\n\nWhen done, return a G7 return contract (per plugin/schemas/return-contract.schema.json) summarizing files changed, tests added, and any risks.",
+  prompt: "You are the Developer subagent for work package WP-3. Read the developer role card at plugin/skills/team-protocols/role-cards/developer-card.md before starting (slim card — do NOT read lead-protocol.md or path-selection-rules.md, those are lead-only). Your G7 spawn payload:\n\n<JSON-from-step-1>\n\nWhen done, return a G7 return contract (per plugin/schemas/return-contract.schema.json) summarizing files changed, tests added, and any risks.",
   isolation: "worktree"   // optional — gives the Developer an isolated git worktree for safer parallel work
 })
 ```

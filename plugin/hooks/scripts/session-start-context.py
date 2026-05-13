@@ -65,11 +65,17 @@ def main() -> None:
     sid = session_id_from_input(data)
     session_dir = cwd / ".ai-assets-memory" / "sessions" / sid
 
-    # Initialize session token meter
+    # Initialize session token meter. `cwd_at_start` lets post-context-compact
+    # teammates compare current `pwd` against the session anchor and detect the
+    # cwd-drift sub-flake (audit §2.8) before issuing relative paths.
     try:
         _lib.update_token_meter(
             session_dir,
-            {"session_started_at": _lib.iso_now(), "session_id": sid},
+            {
+                "session_started_at": _lib.iso_now(),
+                "session_id": sid,
+                "cwd_at_start": str(cwd),
+            },
         )
     except Exception:
         pass  # Fail open

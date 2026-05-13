@@ -19,6 +19,96 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _lib  # noqa: E402
 
 
+# Sandbox paths where forced-recursive delete is allowed. v0.3.12 (closes
+# audits/2026-05-13 §2.7). Without these, `rm -rf /tmp/hook-test/...`
+# inside the plugin's own self-tests gets blocked, forcing the user to fall
+# out of the agent into a shell. We still block `rm -rf /` and any path that
+# does not start with one of the sandbox prefixes below.
+SANDBOX_PATH_PATTERNS = [
+    # Match the sandbox root directory OR a path inside it.
+    # `/tmp`, `/tmp/`, `/tmp/foo`, `/tmp/foo/bar` all match. `/tmpfoo` doesn't.
+    re.compile(r"(?:^|\s)/tmp(?:/[^\s]*)?(?:\s|$)", re.IGNORECASE),
+    re.compile(r"(?:^|\s)/var/tmp(?:/[^\s]*)?(?:\s|$)", re.IGNORECASE),
+    re.compile(r"(?:^|\s)\$\{?TMPDIR\}?(?:/[^\s]*)?(?:\s|$)", re.IGNORECASE),
+    re.compile(r"(?:^|\s)~/\.cache(?:/[^\s]*)?(?:\s|$)"),
+    re.compile(r"(?:^|\s)\$HOME/\.cache(?:/[^\s]*)?(?:\s|$)"),
+]
+
+
+def _target_is_sandbox(target: str, sandbox_cwd: str | None) -> bool:
+    """Check whether a single rm target resolves to a sandbox path.
+
+    `sandbox_cwd` is the cwd inferred from any preceding `cd <path>` in the
+    same shell chain (None if no `cd` was seen, or the cd target was not
+    itself a sandbox path). A relative rm target with a sandbox cwd counts
+    as a sandbox target — that's the common pattern in the audit:
+    `cd /tmp && rm -rf hook-test`.
+    """
+    # Pad with both leading and trailing space so SANDBOX_PATH_PATTERNS
+    # (which anchor on whitespace boundaries) match an isolated target.
+    candidate = " " + target + " "
+    if any(p.search(candidate) for p in SANDBOX_PATH_PATTERNS):
+        return True
+    # Relative target inheriting a sandbox cwd
+    if sandbox_cwd is not None and not target.startswith("/") and not target.startswith("~"):
+        return True
+    return False
+
+
+def _rm_targets_only_sandbox(command: str) -> bool:
+    """Return True if every non-flag argument to `rm` lives under a sandbox
+    path. Used to gate the Filesystem dangerous-delete findings.
+
+    Tracks `cd <path>` segments in the same shell chain so relative rm
+    targets after `cd /tmp` are recognised as sandbox-resident.
+    """
+    import shlex
+    try:
+        tokens = shlex.split(command, posix=True)
+    except ValueError:
+        return False
+
+    sandbox_cwd: str | None = None
+    seen_rm = False
+    targets: list[str] = []
+    i = 0
+    while i < len(tokens):
+        tok = tokens[i]
+        # Reset cwd at shell separator
+        if tok in {"&&", "||", ";", "|"}:
+            if seen_rm:
+                # Multiple rm's separated — only check the first rm's targets.
+                break
+            i += 1
+            continue
+        if not seen_rm:
+            if tok == "cd" and i + 1 < len(tokens):
+                next_tok = tokens[i + 1]
+                if any(p.search(" " + next_tok) for p in SANDBOX_PATH_PATTERNS):
+                    sandbox_cwd = next_tok
+                else:
+                    sandbox_cwd = None
+                i += 2
+                continue
+            if tok == "rm" or tok.endswith("/rm"):
+                seen_rm = True
+            i += 1
+            continue
+        # collecting rm targets
+        if tok.startswith("-"):
+            i += 1
+            continue
+        targets.append(tok)
+        i += 1
+
+    if not targets:
+        return False
+    for tgt in targets:
+        if not _target_is_sandbox(tgt, sandbox_cwd):
+            return False
+    return True
+
+
 DANGEROUS_PATTERNS = [
     ("Filesystem", re.compile(r"\brm\s+(-[a-zA-Z]*f[a-zA-Z]*\s+)?(-[a-zA-Z]*r[a-zA-Z]*\s+)?/(?!\S*\.)", re.IGNORECASE), "Recursive delete from root"),
     ("Filesystem", re.compile(r"\brm\s+-[a-zA-Z]*r[a-zA-Z]*f[a-zA-Z]*\s", re.IGNORECASE), "Forced recursive delete"),
@@ -42,11 +132,25 @@ DANGEROUS_PATTERNS = [
 ]
 
 
+RM_SUPPRESSIBLE_DESCRIPTIONS = {
+    "Forced recursive delete",
+    "Recursive delete from root",  # over-fires on /tmp/x (the (?!\S*\.) quirk)
+}
+
+
 def check_command(command: str) -> list[tuple[str, str]]:
     findings = []
+    sandbox_only_rm = _rm_targets_only_sandbox(command)
     for category, pattern, description in DANGEROUS_PATTERNS:
-        if pattern.search(command):
-            findings.append((category, description))
+        if not pattern.search(command):
+            continue
+        # v0.3.12 §2.7: suppress rm-finding when every target is under a
+        # sandbox path (/tmp, /var/tmp, ~/.cache, $TMPDIR) — or under a
+        # `cd <sandbox>` cwd in the same shell chain. Truly dangerous
+        # rm's (no sandbox prefix, no cd prelude) stay blocked.
+        if description in RM_SUPPRESSIBLE_DESCRIPTIONS and sandbox_only_rm:
+            continue
+        findings.append((category, description))
     return findings
 
 

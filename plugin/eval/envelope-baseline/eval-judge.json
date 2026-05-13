@@ -1,0 +1,26 @@
+{
+  "trace_id": "wf-20260513-feature-design-judge-001",
+  "subagent_role": "eval-judge",
+  "status": "ok",
+  "tokens_used": {"input": 14200, "output": 680},
+  "tool_calls": 4,
+  "result": {
+    "summary": "rubric=security-soundness; score_overall=4.4 / 5.0; pass=true. Strong on API key handling and secret rotation; one dimension on input validation slightly under target.",
+    "rubric_name": "security-soundness",
+    "score_overall": 4.4,
+    "scores_per_dimension": {
+      "input_validation": 3.8,
+      "authn_authz": 4.6,
+      "api_key_handling": 4.7,
+      "secret_rotation": 4.5,
+      "audit_logging": 4.4
+    },
+    "pass": true,
+    "fail_reason": null
+  },
+  "evidence": [
+    {"artefact_id": "docs/features/auth-v2/SECURITY.md", "quote": "All API keys rotate every 90 days; rotation is automated via the secret-manager hook.", "span": "lines 12-14"}
+  ],
+  "risks": [],
+  "next_actions": []
+}

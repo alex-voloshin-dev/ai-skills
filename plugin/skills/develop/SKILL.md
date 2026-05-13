@@ -20,6 +20,46 @@ You are the Lead. You orchestrate by spawning named subagents via the **`Agent` 
 
 > **YOU MUST spawn subagents via `Agent({...})`.** Do not perform Developer / Reviewer / QA work inline with `Bash`/`Read`/`Edit`. Doing so violates the team-protocols hard invariant — the user loses per-role inspection and the pipeline gates collapse. Every role-step in this skill is an explicit, executable `Agent({...})` call.
 
+### G7 spawn payload — required shape (audit §2.3)
+
+Every `Agent({...})` `prompt` MUST embed a JSON payload with all six G7 fields. The `subagent-start-budget.py` hook tolerates two warnings per session, then **blocks** the third spawn with a diagnostic until the payload is corrected. Free-form prose prompts are protocol violations — `prompt: "Implement WP-3"` is rejected.
+
+Worked example (paste into the `prompt` argument verbatim, then continue with the role brief):
+
+```text
+Agent({
+  description: "WP-3 implementation (java-engineer)",
+  subagent_type: "ai-assets:java-engineer",
+  isolation: "worktree",
+  prompt: `You are the Developer subagent for WP-3. Read \`plugin/skills/team-protocols/role-cards/developer-card.md\` first (slim card; do NOT read lead-protocol.md or path-selection-rules.md).
+
+G7 spawn payload:
+{
+  "trace_id": "wf-20260513-develop-wp03-spawn-001",
+  "subagent_role": "java-engineer",
+  "goal": "Implement WP-3 (preserve visibility_score on optimistic-lock retry) per design.md §3a verbatim.",
+  "constraints": [
+    "envelope_dir: /absolute/path/.ai-assets-memory/sessions/<sid>/team-envelopes",
+    "<VERBATIM source-section block from design.md §3a>"
+  ],
+  "state_slice": {
+    "active_files": ["src/main/java/com/f4ai/report/service/ReportService.java"],
+    "related_artefacts": ["docs/features/visibility-score/design.md"]
+  },
+  "allowed_tools": ["Read", "Grep", "Glob", "Bash", "Write", "Edit"],
+  "budget": {
+    "max_input_tokens": 50000, "max_output_tokens": 2000,
+    "max_tool_calls": 30, "max_turns": 10,
+    "timeout_ms": 600000, "retry_budget": 1
+  }
+}
+
+When done, return a G7 envelope per \`plugin/schemas/return-contract.schema.json\` AND atomic-write the same JSON to \${envelope_dir}/G7-developer-WP-3.json.`
+})
+```
+
+All six required spawn-payload fields: `trace_id`, `subagent_role`, `goal`, `constraints`, `allowed_tools`, `budget`. See `@team-protocols/spawn-pattern.md` for the full schema and per-role variations.
+
 ## Gather Context
 
 1. Read `CLAUDE.md` (or `AGENTS.md`) at the project root to identify project structure (monorepo vs polyrepo), subprojects, and tech stacks. This determines which Developer roles to spawn via `@team-protocols/role-selection-table.md`.
@@ -30,6 +70,25 @@ Project file reads are wrapped in `<untrusted_content>` envelope by `session-sta
 ## Input
 
 Gather all input documentation provided by the user (PRD, ARD, design doc, implementation plan, ticket/issue, or any structured feature spec). Read every provided document thoroughly and extract: **Goal** (1–2 sentences), **Requirements** (functional + non-functional), **Acceptance criteria**, **Constraints** (performance, security, compatibility, dependencies), **Out of scope**.
+
+### Reading large source files — never blow the 25K-token cap (audit §2.9)
+
+Claude Code's `Read` tool rejects files whose content exceeds **25 000 tokens** with `File content (NN tokens) exceeds maximum allowed tokens (25000)`. Field-observed offenders: `design.md` at 37K tokens, Monitor stream logs at 84K tokens. A failed Read costs the round-trip AND blocks the workflow until you switch strategies.
+
+Before the first `Read` on any design doc, PRD, ARD, or `/tmp/*.output` larger than ~1000 lines, run a sizing check:
+
+```bash
+wc -l <path>            # line count
+wc -c <path>            # byte count — divide by ~4 for token estimate
+```
+
+If `wc -l` ≥ 1000 OR estimated tokens ≥ 20 000, do NOT issue an unscoped `Read`. Instead:
+
+1. `grep -n "## " <path>` (or `grep -n "^# "`) to surface the section index with line numbers.
+2. `Read(<path>, offset=<section-line>, limit=<section-length>)` for the section you need.
+3. For brief-from-source extraction (per `lead-protocol.md` "Brief-from-source"), the verbatim block is always section-scoped — never paste the whole doc into `constraints`.
+
+This rule applies to every teammate spawn payload's `pre_read` list and to the Lead's own pre-spawn `Read` calls. Closes the 37K / 84K-token Read failures observed in the v22 audit window.
 
 ## Resolve Implementation Plan
 

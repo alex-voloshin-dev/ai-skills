@@ -1,8 +1,7 @@
 ---
 name: plugin-skill-audit
-description: Audit, validate, and update existing skills inside the ai-assets plugin (under plugin/skills/). Checks frontmatter against the agentskills.io specification, body length, progressive-disclosure structure, cross-reference integrity, eval-case wiring, and ai-assets plugin conventions (H5 trigger pattern, third-person description, kebab-case names). Use when reviewing a skill before merge, after batch edits to plugin/skills/, when triaging discovery or activation issues, or when migrating older skills to current conventions. Companion to /plugin-skill-create — that skill scaffolds new skills, this one audits and repairs existing ones.
-context: fork
-argument-hint: "[<skill-name> | --all] [--fix] [--strict] [--check spec|body|refs|eval|all]"
+description: Internal procedure for `/plugin-author audit`. Audit, validate, and update existing skills inside the ai-assets plugin (under `plugin/skills/`). Checks frontmatter against the agentskills.io specification, body length, progressive-disclosure structure, cross-reference integrity, eval-case wiring, and ai-assets plugin conventions. No longer slash-invocable — call `/plugin-author audit [<name> | --all] [--deep] [--strict] [--fix]` instead. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill (the safe-fix table and audit checks are the cached digest of upstream spec rules).
+disable-model-invocation: true
 ---
 
 # /plugin-skill-audit — Plugin Skill Auditor
@@ -194,8 +193,11 @@ When `--fix` runs, a second block lists every applied fix with the line range to
 
 ## Integration
 
+- **Status**: internal procedure document for `/plugin-author audit`. Not slash-invocable (frontmatter `disable-model-invocation: true`). The umbrella reads this file directly; `ai-assets:prompt-engineer` pre-reads it before any plugin-asset DEV or REVIEW pass (the safe-fix table + check groups are the cached digest of the upstream spec).
+- **Reachable via**: `/plugin-author audit [<skill-name> | --all] [--deep] [--strict] [--fix] [--check spec|body|refs|eval|all]`
 - **Reads**: `plugin/skills/<name>/SKILL.md`, sibling resource files, `plugin/eval/cases/<name>/`, `plugin/eval/judge-rubrics/<name>.md`, `plugin/eval/config.json`, `plugin/.claude-plugin/plugin.json`
-- **Writes**: stdout report; `.ai-assets-memory/plugin-skill-audit.log`; (only with `--fix`) targeted edits to `SKILL.md`
-- **Companion**: `/plugin-skill-create` (scaffold new skills), `/plugin-doctor` (whole-plugin diagnostic), `eval/runner.py --tier 1`
-- **Spec reference**: https://agentskills.io/specification , https://agentskills.io/skill-creation/best-practices , https://agentskills.io/skill-creation/optimizing-descriptions
-- **Codex/Windsurf analog**: `.agents/skills/asset-validation/` + `.codex/checklists/codex-asset-review.md` (parity-tracked in `review/parity-matrix.md`)
+- **Writes**: stdout report; `.ai-assets-memory/plugin-skill-audit.log`; (only with `--fix`) targeted edits per the safe-fix table.
+- **Companion procedure**: `plugin/skills/plugin-skill-create/SKILL.md` — scaffold rules applied by `/plugin-author create`.
+- **Whole-plugin diagnostic**: `/plugin-doctor`.
+- **Spec reference**: https://agentskills.io/specification , https://agentskills.io/skill-creation/best-practices , https://agentskills.io/skill-creation/optimizing-descriptions , https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices
+- **Codex/Windsurf analog**: `.agents/skills/asset-validation/` + `.codex/checklists/codex-asset-review.md` (parity-tracked in `review/parity-matrix.md`).

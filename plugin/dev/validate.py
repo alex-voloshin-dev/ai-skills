@@ -13,9 +13,9 @@ Code itself:
   4. Manifest required fields per Anthropic plugin spec
   5. Manifest userConfig shape — every entry must have type/title/description/default
   6. Structural counts cross-checked against README claims
-     (agents=26, skills=52, rules=12, hooks=16, events=13, rubrics=17,
-      calibration samples=102, commands=10, user docs=14, schemas=2,
-      output styles=2, userConfig knobs=12)
+     (agents=26, skills=75, rules=12, hooks=19, events=14, rubrics=47,
+      calibration samples=282, user docs=16, schemas=2,
+      output styles=2, userConfig knobs=13)
   7. Agent frontmatter — required `name` + `description`; FORBIDDEN
      fields per Anthropic security boundary: `permissionMode`, `hooks`,
      `mcpServers`
@@ -54,6 +54,7 @@ import ast
 import json
 import os
 import re
+import subprocess
 import sys
 import yaml
 from dataclasses import dataclass, field
@@ -84,7 +85,7 @@ FORBIDDEN_AGENT_FIELDS = {"permissionMode", "hooks", "mcpServers"}
 
 EXPECTED_COUNTS = {
     "agents": 26,
-    "skills": 73,                # 53 baseline + 20 from P2/P3/P4 audit refactor:
+    "skills": 75,                # 53 baseline + 22 P2/P3/P4 refactor + DX umbrellas:
                                  #   P2 splits: +marketing-init, +marketing-strategy,
                                  #   +architecture-design, +architecture-analyze,
                                  #   +architecture-evolve, +content-tools
@@ -96,24 +97,25 @@ EXPECTED_COUNTS = {
                                  #   P4.2 agent-thinning skills: +python-fastapi-patterns,
                                  #   +react-nextjs-patterns, +sql-database-patterns,
                                  #   +spring-jpa-patterns, +design-system-patterns
+                                 #   v0.3.12 DX umbrella: +plugin-author (consolidator)
+                                 #   v0.3.12 user-invocable add: +feedback
+                                 #   (session-log analyzer for plugin reliability)
     "rules": 12,
     "hooks": 19,                 # excludes _lib.py (16 + ralph-iter-meter v0.1.6 + subagent-depth-guard v0.1.7 + team-gate-reconciliation v0.3.11)
     "events": 14,                # +TeammateIdle (v0.3.11, Path B liveness)
-    "rubrics": 45,               # 17 base + 4 meta-tools (P1.D) + 24 per-skill workflow rubrics (audit B coverage push)
-    "calibration_samples": 270,  # 6 per rubric × 45
-    "user_invocable_skills": 32, # skills with `context: fork` frontmatter.
-                                 # P2 split bumped this by +4 (marketing-init,
-                                 # architecture-design, architecture-analyze,
-                                 # architecture-evolve) but P2.1 also turned
-                                 # marketing-strategy + content-tools into
-                                 # `disable-model-invocation: true` knowledge
-                                 # skills (net not counted here). All P3/P4
-                                 # extractions are knowledge skills (not
-                                 # context: fork). Total user-invocable = 32
-                                 # context-fork + 4 main-thread orchestrators
-                                 # (/develop, /team-bugfix, /feature-design,
-                                 # /bugfix) = 36 user-invocable surface.
-    "user_docs": 15,
+    "rubrics": 47,               # 17 base + 4 meta-tools (P1.D) + 24 per-skill workflow rubrics (audit B coverage push) + feedback (v0.3.12) + plugin-author (v0.3.12 DX umbrella)
+    "calibration_samples": 282,  # 6 per rubric × 47
+    "user_invocable_skills": 31, # skills with `context: fork` frontmatter.
+                                 # v0.3.12 DX consolidation: -2 (plugin-skill-create
+                                 # and plugin-skill-audit absorbed by /plugin-author;
+                                 # both now disable-model-invocation: true). The new
+                                 # /plugin-author is a main-thread orchestrator (no
+                                 # context: fork) and counts toward the main-thread
+                                 # bucket, not this one. Total user-invocable surface
+                                 # = 31 context-fork + 5 main-thread orchestrators
+                                 # (/develop, /team-bugfix, /feature-design, /bugfix,
+                                 # /plugin-author) = 36 unchanged.
+    "user_docs": 16,             # +plugin-author.md (v0.3.12 DX umbrella)
     "schemas": 2,
     "output_styles": 2,
     "userConfig_knobs": 13,
@@ -526,6 +528,61 @@ def check_agent_frontmatter(report: Report) -> None:
         report.add("agent_frontmatter", "pass", f"{len(files)} agents OK")
 
 
+def check_envelope_baseline(report: Report) -> None:
+    """Per audit §WP-4.3: ship a 5-envelope regression suite that exercises
+    `block-secrets-in-code.py` against canonical G7 return envelopes. Any
+    failure means a secrets-regex tightening has re-introduced the §2.6
+    false-positive on valid envelopes.
+    """
+    runner = PLUGIN_ROOT / "eval" / "envelope-baseline" / "runner.py"
+    if not runner.is_file():
+        report.add("envelope_baseline", "fail", f"runner missing: {runner}")
+        return
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(runner)],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        report.add("envelope_baseline", "fail", f"runner crashed: {exc}")
+        return
+    if proc.returncode == 0:
+        last_line = proc.stdout.strip().splitlines()[-1] if proc.stdout else "passed"
+        report.add("envelope_baseline", "pass", last_line)
+    else:
+        tail = (proc.stdout or proc.stderr).strip().splitlines()[-3:]
+        report.add("envelope_baseline", "fail", " | ".join(tail))
+
+
+def check_agent_g7_section(report: Report) -> None:
+    """Per audit 2026-05-13 §2.2 / WP-2.1: every agents/*.md MUST contain a
+    `## G7 Return Contract — MANDATORY` section so the role's system prompt
+    carries the schema reference. The 26-violations-in-one-session field
+    failure was the Lead receiving plain-text returns instead of G7 envelopes.
+    """
+    files = _glob("agents/*.md")
+    marker = "## G7 Return Contract — MANDATORY"
+    missing = []
+    for p in files:
+        try:
+            text = p.read_text(encoding="utf-8")
+        except OSError as exc:
+            missing.append(f"{p.name}: read error: {exc}")
+            continue
+        if marker not in text:
+            missing.append(p.name)
+    if missing:
+        report.add("agent_g7_section", "fail", "; ".join(missing))
+    else:
+        report.add(
+            "agent_g7_section",
+            "pass",
+            f"{len(files)} agents carry the G7 contract section",
+        )
+
+
 def check_skill_frontmatter(report: Report) -> None:
     files = _glob("skills/*/SKILL.md")
     fail = []
@@ -554,7 +611,7 @@ def check_orchestration_dual_path(report: Report) -> None:
     and Agent Teams (when CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1) paths. Verify
     each orchestration skill body contains the detection bash block + both Path
     A and Path B sections."""
-    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix"}
+    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix", "plugin-author"}
     issues = []
     for name in ORCHESTRATION_SKILLS:
         p = PLUGIN_ROOT / "skills" / name / "SKILL.md"
@@ -598,7 +655,7 @@ def check_orchestration_skills_no_fork(report: Report) -> None:
     NOT have `context: fork` — that would run them in a forked subagent where
     the Agent tool is unavailable. Confirmed alpha.25 failure mode.
     """
-    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix"}
+    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix", "plugin-author"}
     issues = []
     for name in ORCHESTRATION_SKILLS:
         p = PLUGIN_ROOT / "skills" / name / "SKILL.md"
@@ -797,6 +854,8 @@ CHECKS = [
     # check_manifest is special - returns the manifest for downstream checks
     check_no_schema_comment,
     check_agent_frontmatter,
+    check_agent_g7_section,
+    check_envelope_baseline,
     check_skill_frontmatter,
     check_orchestration_skills_no_fork,
     check_orchestration_dual_path,

@@ -38,6 +38,7 @@ These skills rely on Claude Code's native multi-agent spawning capability, which
 | `team-protocols` | Shared protocols for Claude Code's Agent tool with named subagent spawning. Codex and Windsurf lack runtime multi-agent primitives. |
 | `team-bugfix` | Multi-agent coordinated bugfix workflow using Claude Code's parallel Agent spawning. No equivalent runtime primitive exists. |
 | `team-dev` | Multi-agent coordinated feature development workflow using Claude Code's parallel Agent spawning with developer/reviewer/QA pipeline. No equivalent runtime primitive exists. |
+| `plugin-author` (v0.3.12) | Umbrella DX workflow for authoring/auditing/fixing ai-assets plugin assets — operates exclusively on `plugin/skills/`, `plugin/agents/`, `plugin/rules/`, `plugin/hooks/`, `plugin/eval/`, `plugin/schemas/`. Codex (`.codex/`) and Windsurf (`.windsurf/`) have different runtime structure and do not use this layout; their analogous tooling lives in `.agents/skills/asset-validation/` + `.codex/checklists/codex-asset-review.md`. Absorbed and hid `/plugin-skill-create` and `/plugin-skill-audit` as user-facing slash commands (now `disable-model-invocation: true` internal procedure docs). |
 
 ### Rules and Guardrails
 
@@ -61,6 +62,23 @@ These skills rely on Claude Code's native multi-agent spawning capability, which
 - Windsurf stores template and checklist material as supporting resources inside relevant skills instead of a separate top-level primitive
 
 ## Change Log
+
+### 2026-05-13: /plugin-author umbrella + prompt-engineer DEV expansion (v0.3.12, plugin-only)
+
+Added the `/plugin-author` main-thread orchestrator that absorbs `/plugin-skill-create` and `/plugin-skill-audit` as user-facing slash commands. Both legacy skills remain on disk as internal procedure docs (`disable-model-invocation: true`) and are reached via the umbrella's `create` and `audit` operations. Added a new `fix-feedback` operation that ingests `/feedback` reports (JSON preferred, `.md` is degraded fallback).
+
+Expanded `plugin/agents/prompt-engineer.md` to act as both DEV and REVIEW for prompt assets (skills, agents, rules, rubrics, calibration samples): added `Write, Edit` tools with a scoped Hard Rule limiting writes to `plugin/skills/*`, `plugin/agents/*.md`, `plugin/rules/*.md`, `plugin/eval/judge-rubrics/*.md`, `plugin/eval/calibration/**`. New "Plugin Asset Authoring" section references agentskills.io spec + Anthropic Agent Skills best-practices.
+
+| Asset | Claude | Codex | Windsurf |
+|---|---|---|---|
+| `/plugin-author` umbrella | `plugin/skills/plugin-author/` (new) | NOT MIRRORED — Claude-only by design (operates on Claude plugin asset layout) | NOT MIRRORED |
+| `/plugin-skill-create` | `plugin/skills/plugin-skill-create/` — now `disable-model-invocation: true` | `.agents/skills/plugin-skill-create/` — no parity action (already plugin-only) | `.windsurf/skills/plugin-skill-create/` — no parity action |
+| `/plugin-skill-audit` | `plugin/skills/plugin-skill-audit/` — now `disable-model-invocation: true` | (no Codex/Windsurf equivalent) | (no Codex/Windsurf equivalent) |
+| `prompt-engineer` role | `plugin/agents/prompt-engineer.md` — DEV+REVIEW for prompt-assets, +Write/Edit tools, +Plugin Asset Authoring section | `.codex/roles/prompt-engineer.md` — **drift**: not yet updated; no Plugin Asset Authoring guidance | `.windsurf/rules/roles/prompt-engineer.md` — **drift**: not yet updated |
+| `feedback/SKILL.md` output | Markdown + JSON (parity required) — JSON schema lives in `plugin/skills/feedback/` (separate WP) | N/A | N/A |
+| Counts (`plugin/dev/validate.py`) | rubrics 46→47, calibration_samples 276→282, user_invocable_skills 33→31 (−2 absorbed), skills 75 (unchanged), main-thread orchestrators 4→5 | N/A | N/A |
+
+**Parity drift recorded:** the `prompt-engineer` role expansion is Claude-only for now. The Codex `.codex/roles/prompt-engineer.md` and Windsurf `.windsurf/rules/roles/prompt-engineer.md` still describe a read-only advisor role and do not reference plugin-asset authoring or the agentskills.io specification. This is an intentional partial-parity state — the new responsibility is plugin-asset-specific and only relevant inside Claude Code, since Codex and Windsurf packages do not maintain a `plugin/` layout. Track if/when a generic "skill-asset authoring" responsibility needs to land in `.codex/roles/` and `.windsurf/rules/roles/`.
 
 ### 2026-04-19: product-mgmt → product, feature-plan → plan, multi-reviewer loops
 

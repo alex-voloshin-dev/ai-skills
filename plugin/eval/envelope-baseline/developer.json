@@ -1,0 +1,20 @@
+{
+  "trace_id": "wf-20260513-develop-wp03-spawn-001",
+  "subagent_role": "java-engineer",
+  "status": "ok",
+  "tokens_used": {"input": 38421, "output": 1872},
+  "tool_calls": 14,
+  "result": {
+    "summary": "Implemented optimistic-lock retry preserving visibility_score; 8 unit tests added. Coverage check against active_files clean; no token-tracking deviation observed.",
+    "files_changed": [
+      "src/main/java/com/example/report/service/ReportService.java",
+      "src/test/java/com/example/report/service/ReportServiceTest.java"
+    ],
+    "diff_size_lines": 142
+  },
+  "evidence": [
+    {"artefact_id": "src/main/java/com/example/report/service/ReportService.java", "quote": "if (existing.getVisibilityScore() != null) { updated.setVisibilityScore(existing.getVisibilityScore()); }", "span": "lines 87-89"}
+  ],
+  "risks": [],
+  "next_actions": ["reviewer: confirm visibility_score is also preserved on the upsert path"]
+}

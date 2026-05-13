@@ -54,10 +54,19 @@ def main() -> None:
                 break
 
     if not output_text:
+        # Still emit marker so tool-output-normalize.py does not flag a false
+        # "wrap_marker_missing" handshake error. The wrap pass ran; it just had
+        # nothing to wrap. Per v0.3.12 hardening (closes audits/2026-05-13 §2.1).
+        _lib.emit_wrap_marker()
         _lib.allow()
 
     # Skip if under threshold (per untrusted-content-wrapping rule "≤200 tokens skip wrap")
     if len(output_text) <= CHAR_THRESHOLD:
+        # Emit marker on the skip-path too. The downstream normalize hook needs
+        # to know "wrap ran and decided not to wrap" vs. "wrap never ran". Per
+        # v0.3.12 hardening (closes audits/2026-05-13 §2.1 — 724 false WARNINGs
+        # per 2 days from skip-path missing marker handshake).
+        _lib.emit_wrap_marker()
         _lib.allow()
 
     # Determine source label

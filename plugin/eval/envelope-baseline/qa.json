@@ -1,0 +1,24 @@
+{
+  "trace_id": "wf-20260513-develop-wp03-qa-001",
+  "subagent_role": "qa-engineer",
+  "status": "ok",
+  "tokens_used": {"input": 21800, "output": 1140},
+  "tool_calls": 18,
+  "result": {
+    "summary": "qa_verdict: pass — integration + smoke green. Authorization header / bearer token contract tests cover happy + null + expired paths.",
+    "files_changed": [
+      "src/test/java/com/example/auth/BearerTokenContractTest.java"
+    ],
+    "qa_verdict": "pass",
+    "test_results": [
+      {"suite": "AuthFilterIntegrationTest", "passed": 14, "failed": 0, "skipped": 0},
+      {"suite": "BearerTokenContractTest", "passed": 7, "failed": 0, "skipped": 0},
+      {"suite": "ReportServiceSmoke", "passed": 5, "failed": 0, "skipped": 0}
+    ]
+  },
+  "evidence": [
+    {"artefact_id": "src/test/java/com/example/auth/BearerTokenContractTest.java", "quote": "given().header(\"Authorization\", \"Bearer \" + validToken).get(\"/api/report\").then().statusCode(200);", "span": "lines 22-25"}
+  ],
+  "risks": ["low_test_coverage_on_revoked_token_path"],
+  "next_actions": []
+}

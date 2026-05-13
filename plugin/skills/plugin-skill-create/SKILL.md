@@ -1,8 +1,7 @@
 ---
 name: plugin-skill-create
-description: Scaffold a new skill INSIDE the ai-assets plugin (under plugin/skills/) with H5 frontmatter, eval test-case stub, and memory-write points pre-wired. Conforms to the agentskills.io specification (https://agentskills.io/specification) and plugin conventions. Narrower than Anthropic's general skill-creator — this scaffolds plugin-convention-aligned skills only. Use when extending the plugin with a new workflow or companion.
-context: fork
-argument-hint: "<skill-name> [--invocable] [--type knowledge|workflow|companion]"
+description: Internal procedure for `/plugin-author create`. Scaffolds a new skill INSIDE the ai-assets plugin (under `plugin/skills/`) with H5 frontmatter, eval test-case stub, and memory-write points pre-wired. Conforms to the agentskills.io specification (https://agentskills.io/specification) and ai-assets plugin conventions. No longer slash-invocable — call `/plugin-author create <name>` instead. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill.
+disable-model-invocation: true
 ---
 
 # /plugin-skill-create — Plugin-Convention Skill Scaffold
@@ -150,13 +149,13 @@ Every scaffolded skill MUST satisfy the agentskills.io specification + ai-assets
 
 ## Integration
 
+- **Status**: internal procedure document for `/plugin-author create`. Not slash-invocable (frontmatter `disable-model-invocation: true`). The umbrella reads this file directly when scaffolding a new asset; `ai-assets:prompt-engineer` pre-reads it before any plugin-asset DEV pass.
+- **Reachable via**: `/plugin-author create <name> [--type workflow|knowledge|companion] [--agent-spawn] [--ralph]`
 - **Writes to**: `plugin/skills/<name>/`, `plugin/eval/cases/<name>/`, `plugin/eval/judge-rubrics/<name>.md`
 - **References**:
   - agentskills.io specification — https://agentskills.io/specification
   - agentskills.io best practices — https://agentskills.io/skill-creation/best-practices
   - agentskills.io description optimization — https://agentskills.io/skill-creation/optimizing-descriptions
-  - Anthropic skill-creator best-practices — https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices
+  - Anthropic Agent Skills best-practices — https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices
 - **Templates**: H5 frontmatter pattern, G7 schemas (if `--agent-spawn`), `ralph-budget.md` defaults (if `--ralph`)
-- **Companions**:
-  - `/plugin-skill-audit` — audits and updates existing scaffolded skills against the same agentskills.io rules
-  - upstream `skill-creator` — general (non-plugin) skill scaffolding
+- **Companion procedure**: `plugin/skills/plugin-skill-audit/SKILL.md` — audit + safe-fix discipline applied by `/plugin-author audit`.

@@ -44,6 +44,23 @@ Based on the environment, delegate to the appropriate diagnostic sub-workflow (t
 
 The sub-workflow applies the diagnostic role (`Agent(sre-engineer)` / `Agent(devops-engineer)`), collects environment snapshot, and presents diagnosis. **If it resolves the issue at the infra layer** — skip to Step 9 (Summary). **If the root cause is in application code** — continue to Step 3 with the collected evidence.
 
+## 2b. Reading large source files — never blow the 25K-token cap (audit §2.9)
+
+Claude Code's `Read` tool rejects files whose content exceeds **25 000 tokens** (e.g. a 37K-token `design.md` or an 84K-token Monitor stream log). A failed Read costs the round-trip AND can stall the workflow. Before the first `Read` on any large evidence file (logs, stack traces, dumps, design docs > ~1000 lines):
+
+```bash
+wc -l <path>            # line count
+wc -c <path>            # byte count — divide by ~4 for token estimate
+```
+
+If `wc -l` ≥ 1000 OR estimated tokens ≥ 20 000:
+
+1. `grep -n "<symbol or error>" <path>` to locate the relevant span.
+2. `Read(<path>, offset=<line>, limit=<window>)` for that span only.
+3. For dump or trace files, prefer `tail -n 500` / `head -n 500` via `Bash` rather than full `Read`.
+
+This rule applies to every teammate spawn's `pre_read` list and to the Lead's own evidence-collection reads.
+
 ## 3. Detect Stack and Pick Developer Role
 
 Determine the affected service's tech stack to choose the right Developer `subagent_type` for the pipeline:

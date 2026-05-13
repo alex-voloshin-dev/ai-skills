@@ -23,7 +23,21 @@ SECRET_PATTERNS = [
     ("AWS Access Key", re.compile(r"AKIA[0-9A-Z]{16}", re.IGNORECASE)),
     ("AWS Secret Key", re.compile(r"(?i)(aws_secret_access_key|aws_secret)\s*[=:]\s*['\"]?[A-Za-z0-9/+=]{40}")),
     ("Generic API Key", re.compile(r"(?i)(api[_-]?key|apikey)\s*[=:]\s*['\"]?[A-Za-z0-9_\-]{20,}")),
-    ("Generic Secret", re.compile(r"(?i)(secret|token|password|passwd|pwd)\s*[=:]\s*['\"]?[A-Za-z0-9_\-!@#$%^&*]{8,}")),
+    # Generic Secret narrowed in v0.3.12 (closes audits/2026-05-13 §2.6).
+    # Old pattern matched any `token: <8+ chars>` JSON key, false-positiving on
+    # G7 envelope fields like `tokens_used: 12345` or `trace_id: "wf-xxx-token-..."`.
+    # New pattern requires:
+    #   - whole-word keyword (no `tokens_used`, `tokens_in`, `tokens_out`, `trace_id`)
+    #   - value length >= 20 (was 8) — short values are almost always counters / flags
+    #   - high-entropy alphabet (base64 / hex) — pure decimals are not secrets
+    ("Generic Secret", re.compile(
+        r"(?i)\b(secret|token|password|passwd|pwd)\b"
+        r"(?!s_used|s_in|s_out|s_remaining)"  # exclude G7 envelope metric fields
+        r"\s*[=:]\s*['\"]?"
+        r"(?=[A-Za-z0-9_\-!@#$%^&*+/=]*[A-Za-z])"  # at least one letter (excludes pure ints)
+        r"(?=[A-Za-z0-9_\-!@#$%^&*+/=]*[0-9A-Z])"  # at least one digit or uppercase (entropy)
+        r"[A-Za-z0-9_\-!@#$%^&*+/=]{20,}"
+    )),
     ("Private Key Block", re.compile(r"-----BEGIN\s+(RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----")),
     ("GitHub Token", re.compile(r"gh[pousr]_[A-Za-z0-9_]{36,}")),
     ("GitHub Fine-Grained PAT", re.compile(r"github_pat_[A-Za-z0-9_]{22,}")),
@@ -31,7 +45,9 @@ SECRET_PATTERNS = [
     ("Slack Token", re.compile(r"xox[bporas]-[0-9a-zA-Z\-]+")),
     ("JWT Token", re.compile(r"eyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+")),
     ("Connection String", re.compile(r"(?i)(mongodb|postgres|mysql|redis|amqp|mssql)://[^\s'\"]{10,}")),
-    ("Bearer Token", re.compile(r"(?i)bearer\s+[A-Za-z0-9_\-\.]{20,}")),
+    # Bearer Token narrowed: placeholder-like values (e.g. `bearer <token>`,
+    # `bearer ${TOKEN}`, `bearer xxx...`) no longer match.
+    ("Bearer Token", re.compile(r"(?i)bearer\s+(?!<|\$\{|xxx|placeholder|your[_-])[A-Za-z0-9_\-\.]{20,}")),
     ("Stripe Key", re.compile(r"[sr]k_live_[A-Za-z0-9]{20,}")),
     ("GitLab Token", re.compile(r"glpat-[A-Za-z0-9_\-]{20,}")),
     ("npm Token", re.compile(r"npm_[A-Za-z0-9]{36,}")),
@@ -52,6 +68,17 @@ SKIP_FILENAMES = {
     "hooks.json", "package-lock.json", "yarn.lock",
 }
 
+# Path allowlist — these locations hold plugin-internal coordination artifacts
+# (G7 envelopes, team-channel files, normalized tool outputs) which contain
+# fields like `tokens_used`, `trace_id`, etc. that look like secrets to
+# pattern-based scanners but never are. v0.3.12 (closes audits/2026-05-13 §2.6).
+ENVELOPE_PATH_PATTERNS = [
+    re.compile(r"\.ai-assets-memory/"),
+    re.compile(r"/team-envelopes/"),
+    re.compile(r"(^|/)tmp/.*envelope"),  # /tmp/v22-envelopes/ etc.
+    re.compile(r"(^|/)tmp/.*team-"),
+]
+
 
 def should_skip_file(file_path: str) -> bool:
     path_lower = file_path.lower().replace("\\", "/")
@@ -63,7 +90,37 @@ def should_skip_file(file_path: str) -> bool:
             return True
     if "/test" in path_lower and ("fixture" in path_lower or "mock" in path_lower):
         return True
+    # v0.3.12: plugin-internal coordination artifacts (G7 envelopes etc.).
+    for pat in ENVELOPE_PATH_PATTERNS:
+        if pat.search(path_lower):
+            return True
     return False
+
+
+def looks_like_json_envelope(text: str) -> bool:
+    """Cheap JSON-content sniff. Content that parses as a JSON object and
+    contains G7-envelope-typical keys is plugin coordination data, not code.
+
+    v0.3.12 (closes audits/2026-05-13 §2.6) — adds a content-level fallback
+    when the path allowlist alone does not catch a write (e.g., reviewer
+    writing to an ad-hoc location). Fail-safe: returns False on any parse
+    error, so a malformed-JSON write still gets scanned for secrets.
+    """
+    text = text.strip()
+    if not text.startswith("{"):
+        return False
+    try:
+        import json as _json
+        obj = _json.loads(text)
+    except (ValueError, TypeError):
+        return False
+    if not isinstance(obj, dict):
+        return False
+    g7_marker_fields = {
+        "trace_id", "status", "tokens_used", "result",
+        "subagent_role", "goal", "constraints", "allowed_tools", "budget",
+    }
+    return bool(g7_marker_fields & set(obj.keys()))
 
 
 def scan_for_secrets(text: str) -> list[tuple[str, str]]:
@@ -88,8 +145,13 @@ def main():
     all_findings = []
     for edit in tool_info.get("edits", []):
         new_string = edit.get("new_string", "")
-        if new_string:
-            all_findings.extend(scan_for_secrets(new_string))
+        if not new_string:
+            continue
+        # v0.3.12 §2.6: skip G7 envelope JSON writes (path allowlist did not
+        # catch this path, but content is structured plugin data, not code).
+        if looks_like_json_envelope(new_string):
+            continue
+        all_findings.extend(scan_for_secrets(new_string))
 
     if all_findings:
         unique = list(set(all_findings))

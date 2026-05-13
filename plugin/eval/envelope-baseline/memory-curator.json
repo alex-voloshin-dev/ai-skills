@@ -1,0 +1,25 @@
+{
+  "trace_id": "wf-20260513-precompact-curator-001",
+  "subagent_role": "memory-curator",
+  "status": "ok",
+  "tokens_used": {"input": 6800, "output": 320},
+  "tool_calls": 3,
+  "result": {
+    "summary": "Wrote 2 new entries to L4 .ai-assets-memory/learnings.md; deduped 1 against existing; redacted 0 PII matches.",
+    "target_layer": "L4",
+    "target_path": ".ai-assets-memory/learnings.md",
+    "entries_written": [
+      "Session token storage policy (HttpOnly + SameSite + Secure)",
+      "Bearer token rotation cadence — 90 days production / 30 days staging"
+    ],
+    "entries_deduped": [
+      {"candidate": "API key handling", "existing": "API key handling and rotation", "resolution": "kept_existing"}
+    ],
+    "pii_redactions_count": 0
+  },
+  "evidence": [
+    {"artefact_id": ".ai-assets-memory/sessions/abc/runs.jsonl", "quote": "decision: Sessions issue tokens with HttpOnly; rotation: 90 days", "span": "lines 47-52"}
+  ],
+  "risks": [],
+  "next_actions": []
+}

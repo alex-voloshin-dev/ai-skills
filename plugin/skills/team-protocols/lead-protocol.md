@@ -11,6 +11,47 @@ Rules for the Lead / Orchestrator agent in a multi-agent team. The Lead runs in 
 - Follows the plan order (from audit doc, implementation plan, or bug report)
 - Asks questions if the team encounters a blocker
 
+## Pre-read discipline — pass role cards, NOT full protocols (v0.3.12, audit §2.11)
+
+Every Developer / Reviewer / QA spawn payload's `pre_read` list MUST point at the slim **role card**, not the full protocol file. Role cards live at:
+
+- `plugin/skills/team-protocols/role-cards/developer-card.md` (~5.3K chars)
+- `plugin/skills/team-protocols/role-cards/reviewer-card.md` (~5.6K chars)
+- `plugin/skills/team-protocols/role-cards/qa-card.md` (~5.4K chars)
+
+Each card is self-contained: role purpose, 5 hard rules, self-verification checklist, G7 return contract, file-channel envelope fallback (alpha.31/35/36), and a single-line pointer to the deeper protocol file when the card is silent.
+
+Why: in v0.3.11 the average teammate pre-read was ~10K chars and the 95th percentile hit ~21K chars (audit §2.11) because the Lead was passing the full `developer-protocol.md` + `reviewer-protocol.md` + fragments of `lead-protocol.md` + `path-selection-rules.md` per spawn. The full protocols include lead-only alpha-runtime recovery procedures (watchdog, stale-blockedBy, alpha.33 team-wide idle, etc.) that the teammate does not need and that contaminate the teammate's context. Role cards drop per-spawn pre-read to ≤7K and exclude lead-only content by construction.
+
+Hard rules:
+
+1. **Spawn payload `pre_read` MUST be exactly one role card** for the teammate's role — never the full `<role>-protocol.md` file, never the lead-protocol or path-selection-rules.
+2. **Teammates MUST NOT read `lead-protocol.md` or `path-selection-rules.md`.** Those files contain Lead-side recovery procedures (watchdog timing, escalation menus, alpha-runtime sub-cases) that are out of scope for teammate execution. The role cards include a "Do NOT read" reminder in their final section.
+3. **The full `developer-protocol.md` / `reviewer-protocol.md` remain canonical for edge cases.** When a teammate needs guidance the role card does not cover, the card explicitly points to the expanded protocol file. The card is the entry point; the protocol file is the reference.
+4. **Lead's own pre-read is unchanged.** The Lead continues to read `lead-protocol.md`, `path-selection-rules.md`, `spawn-pattern.md`, and `g7-contracts.md` end-to-end — those documents are the Lead's operating manual.
+
+## Pre-flight — envelope directory bootstrap (v0.3.12)
+
+**Before issuing the first `Agent` spawn in any Path B (or Path A team-create) workflow, the Lead MUST create the team-envelopes directory.** Closes audits/2026-05-13 §2.5 — `team-gate-reconciliation.py` and teammate disk-channel writers all assume this directory already exists; without it the first envelope write fails with `FileNotFoundError` and the whole hand-off chain stalls.
+
+Mandatory first step (idempotent — safe to re-run):
+
+```bash
+SID="${CLAUDE_SESSION_ID:-$(date -u +%Y%m%dT%H%M%SZ)}"
+ENV_DIR=".ai-assets-memory/sessions/${SID}/team-envelopes"
+mkdir -p "${ENV_DIR}"
+# Surface the absolute path so teammate spawn payloads can pass it through.
+realpath "${ENV_DIR}"
+```
+
+Rules:
+
+1. The canonical slug is the Lead's `${CLAUDE_SESSION_ID}` (a UUID). Human-readable workflow names (`v22-wave2-...`, `hero-it3`, etc.) MAY be appended as a suffix on a sibling symlink for operator readability, but the canonical write path is the UUID-keyed directory.
+2. Every spawn payload MUST include the **absolute** envelope-directory path in `constraints` (e.g. `"envelope_dir: /absolute/path/.ai-assets-memory/sessions/<uuid>/team-envelopes"`). Never pass the relative path alone — teammates that run with a different `cwd` (post-context-compact especially) will resolve it against the wrong root.
+3. The Lead verifies the directory exists with one `Bash(ls -la "${ENV_DIR}")` before the first spawn. If `ls` returns non-zero, the pre-flight failed; the Lead halts and surfaces the failure to the user before spawning anything.
+
+This step runs in addition to — and BEFORE — the wave-sizing / brief-from-source pre-flight checks below.
+
 ## Pre-flight — wave sizing and brief-from-source (v0.3.11)
 
 Before issuing the first spawn, the Lead runs two sanity checks. Both close field-observed failure modes from the v0.3.10 debrief.

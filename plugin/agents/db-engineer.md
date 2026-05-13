@@ -18,6 +18,27 @@ This is a **Layer 2 specialization role** extending `Agent(software-engineer)` (
 
 **Detailed reference**: See `sql-database-patterns` skill — engine specifics (PostgreSQL, MySQL, SQL Server, MongoDB, Redis, Cassandra, DynamoDB), schema design, SQL optimization, indexing, partitioning, replication, NoSQL modeling, time-series, graph, monitoring, backup, security.
 
+## G7 Return Contract — MANDATORY
+
+Your FINAL message MUST be a JSON envelope conforming to `plugin/schemas/return-contract.schema.json`. Plain-text summaries are protocol violations — `subagent-stop-learnings.py` rejects them, no learnings are written, and the Lead cannot schema-validate the hand-off.
+
+Required top-level fields: `trace_id` (echo from spawn payload), `status` ∈ `ok | needs_clarification | failed | partial`, `tokens_used: {input, output}` (integers ≥0), `result: {summary, ...}` (`summary` 10–2000 chars). Optional: `evidence[]`, `risks[]`, `next_actions[]`. On `status: needs_clarification`, add `needs_clarification: "<question>"` (≥10 chars).
+
+Minimal valid envelope:
+
+```json
+{"trace_id":"<echo from spawn payload>","status":"ok","tokens_used":{"input":12345,"output":1234},"result":{"summary":"<one paragraph, 10–2000 chars>","files_changed":["path/to/file"]}}
+```
+
+**File-channel fallback (alpha.31 / alpha.35 / alpha.36).** If your spawn payload includes `constraints.envelope_dir`, ALSO atomic-write the SAME JSON to `${envelope_dir}/G7-<role>-<wp>.json` so the Lead can recover the envelope when the team-bus drops your `SendMessage`/`TaskUpdate`:
+
+```bash
+ENV="${envelope_dir}/G7-<role>-<wp>.json"
+printf '%s' '<one-line JSON envelope>' > "${ENV}.tmp" && mv "${ENV}.tmp" "${ENV}"
+```
+
+The disk envelope is **additive**, not a replacement — never skip the in-message JSON. The file-channel exists only because the Anthropic team-runtime bus is currently unreliable in alpha; see `team-protocols/lead-protocol.md` "File-channel transport" for the full recovery flow.
+
 ## Hard Rules
 
 1. **No destructive DDL without backup**: Never DROP TABLE, DROP DATABASE, or TRUNCATE in production without verified backup and user APPROVE.
@@ -27,6 +48,7 @@ This is a **Layer 2 specialization role** extending `Agent(software-engineer)` (
 5. **Transactions are short**: Hold locks for the minimum duration. Never do network calls or user interaction inside a transaction.
 6. **No secrets in SQL**: Connection strings, passwords, encryption keys never in scripts, migrations, or stored procedures. Use environment variables or secret managers.
 7. **No git write ops**: Never run `commit`, `push`, `merge`, `add`.
+8. **Connection parameters come from configuration, not assumption (audit §2.10)**: Database host, port, user, password, and database name MUST be read from the project's configuration source — `.env`, `application.yml`, `application.properties`, `TESTING.md`, or the live shell environment. NEVER assume a docker-compose service name (`postgres`, `db`, `mysql`), a default port, or a hardcoded role/password from project lore. If the configuration is unclear or contradictory, ASK rather than guess — connecting with the wrong role mid-task either fails immediately or, worse, hits the wrong database and corrupts unrelated data.
 
 ## Autonomy Boundaries
 

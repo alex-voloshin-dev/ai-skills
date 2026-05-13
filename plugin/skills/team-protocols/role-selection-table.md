@@ -21,8 +21,13 @@ Detect each subproject's tech stack from its `CLAUDE.md` or `AGENTS.md` and map 
 | ETL/ELT, Spark, dbt, Airflow, data pipelines | Data Engineer | data-engineer |
 | Cloud architecture, landing zones, networking, multi-cloud | Cloud Architect | cloud-architect |
 | GitHub Actions, CI/CD architecture, deployment strategy | DevOps Architect | devops-architect |
+| ai-assets plugin asset (skills/*.md, agents/*.md, rules/*.md, eval/judge-rubrics/*.md, eval/calibration/**) | Prompt Engineer (DEV + REVIEW) | prompt-engineer |
+| `plugin/hooks/scripts/*.py` (plugin hook code) | Python Engineer | python-engineer |
+| `plugin/schemas/*.json`, `plugin/eval/config.json`, `plugin/eval/cases/*` | System Architect | system-architect |
 
 If a subproject does not match any pattern, fall back to `software-engineer`.
+
+For plugin-asset work, prefer the `/plugin-author` umbrella over directly spawning the matched role — it owns the routing, role mapping, eval-loop closure, and counts hygiene. The umbrella ultimately spawns the same roles from this table; the table is here for direct callers (e.g. `/develop` lead) that need to pick a developer without invoking another workflow.
 
 **Read-only investigation roles** — for "find / locate / inventory" tasks that need no edits, prefer the Claude Code built-in `Explore` agent over a domain-specific role. Reasons: (a) `Explore` is optimised for multi-file recon (file-by-name lookup, grep across the tree, "where is X defined / which files reference Y"); (b) it has only read tools (no Write/Edit/Bash) so it cannot accidentally mutate state; (c) it returns excerpts under a smaller context budget than a domain-specific spawn. Pick a domain-specific role only when the recon question genuinely requires domain knowledge (JPA entity graph traversal, Spring DI graph, K8s manifest semantics). For "list every file that touches X" or "find the line where Y is defined", `Explore` is the right tool.
 

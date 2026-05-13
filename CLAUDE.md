@@ -15,13 +15,13 @@ ai-assets/
 │   ├── .claude-plugin/
 │   │   └── plugin.json      # manifest + 13 userConfig knobs
 │   ├── agents/              # 26 specialized agents
-│   ├── skills/              # 73 skills (32 user-invocable + 4 main-thread orchestrators)
+│   ├── skills/              # 75 skills (31 user-invocable + 5 main-thread orchestrators)
 │   ├── rules/               # 12 guardrail rules
-│   ├── hooks/               # 18 hooks across 13 lifecycle events
+│   ├── hooks/               # 19 hooks across 14 lifecycle events
 │   ├── schemas/             # 2 JSON Schemas (G7 spawn + return)
-│   ├── eval/                # 45 rubrics + 270 calibration samples + Tier 1/2 runners + g1g2 attack-surface
-│   ├── docs/                # 15 user docs (1 getting-started + 10 workflows + 4 concepts)
-│   └── dev/validate.py      # local validator (23 checks)
+│   ├── eval/                # 47 rubrics + 282 calibration samples + Tier 1/2 runners + g1g2 attack-surface
+│   ├── docs/                # 16 user docs (1 getting-started + 11 workflows + 4 concepts)
+│   └── dev/validate.py      # local validator (25 checks)
 ├── .agents/skills/          # 39 skills (shared by Codex + Windsurf)
 ├── .codex/                  # Codex runtime package
 │   ├── roles/               # 22 role definitions
@@ -69,7 +69,7 @@ After editing plugin files in the same Claude Code session, reload without resta
 /reload-plugins
 ```
 
-All 32 user-invocable skills appear in `/help` under the `ai-assets:` namespace.
+All 31 forked + 5 main-thread orchestrator skills (= 36 user-invocable surface) appear in `/help` under the `ai-assets:` namespace.
 
 ### Skill Format
 

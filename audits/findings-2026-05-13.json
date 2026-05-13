@@ -1,0 +1,455 @@
+{
+  "ai_assets_invocations": {
+    "ai-assets": 146,
+    "develop": 19,
+    "java-engineer": 53,
+    "db-engineer": 21,
+    "software-engineer": 68,
+    "qa-engineer": 59,
+    "feature-design": 2,
+    "system-architect": 2,
+    "ui-ux-designer": 2,
+    "security-engineer": 2,
+    "product-manager": 3,
+    "42872c33-e351-4412-88a0-fdc9f24d1da9": 3,
+    "bugfix": 8,
+    "frontend-engineer": 17,
+    "python-engineer": 7,
+    "devops-engineer": 5,
+    "ml-engineer": 4,
+    "AGENT:frontend-engineer": 4,
+    "AGENT:software-engineer": 6,
+    "code-review": 3,
+    "AGENT:java-engineer": 2,
+    "AGENT:db-engineer": 2,
+    "qa": 3,
+    "test-strategy": 3,
+    "AGENT:qa-engineer": 4,
+    "plugin": 116,
+    "AGENT:product-manager": 1,
+    "marketing-strategist": 1,
+    "AGENT:marketing-strategist": 1,
+    "seo-engineer": 1,
+    "AGENT:seo-engineer": 1,
+    "content-writer": 1,
+    "AGENT:content-writer": 1,
+    "plugin-skill-audit": 3,
+    "learnings": 1,
+    "changelog": 2,
+    "compare": 1,
+    "testing": 5
+  },
+  "tool_errors_per_skill": {
+    "qa-engineer": [
+      "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>",
+      "File does not exist. Note: your current working directory is /home/avav25/dev/code/f4ai/f4ai-report-service.",
+      "Exit code 123",
+      "File does not exist. Note: your current working directory is /home/avav25/dev/code/f4ai/f4ai-report-service.",
+      "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>",
+      "Exit code 2\nls: cannot access '/home/avav25/dev/code/f4ai/f4ai-report-service/mvnw': No such file or directory",
+      "Exit code 2\nls: cannot access '/home/avav25/dev/code/f4ai/.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-developer-BE-5.json': No such file or directory\n/home/avav25/dev/code/f4ai/.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-developer-BE-6.json",
+      "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>",
+      "File does not exist. Note: your current working directory is /home/avav25/dev/code/f4ai/f4ai-report-service.",
+      "<tool_use_error>Error: No such tool available: SendMessage. SendMessage exists but is not enabled in this context. Use one of the available tools instead.</tool_use_error>",
+      "Permission to use Bash with command git add \\\n  f4ai-report-service/src/main/java/ai/friendly4/reportservice/config/JacksonHardeningConfig.java \\\n  f4ai-report-service/src/main/java/ai/friendly4/reportservice/parameters/analysis/MicrodataTypeExtractor.java \\\n  f4ai-report-service/src/main/java/ai/fr",
+      "The user doesn't want to proceed with this tool use. The tool use was rejected (eg. if it was a file edit, the new_string was NOT written to the file). STOP what you are doing and wait for the user to tell you how to proceed.\n\nNote: The user's next message may contain a correction or preference. Pay",
+      "Exit code 1\nenv file /home/avav25/dev/code/f4ai/f4ai-user-service/.env.docker not found: stat /home/avav25/dev/code/f4ai/f4ai-user-service/.env.docker: no such file or directory",
+      "Exit code 2",
+      "Exit code 2\npsql: error: connection to server on socket \"/var/run/postgresql/.s.PGSQL.5432\" failed: FATAL:  role \"postgres\" does not exist",
+      "Exit code 2\npsql: error: connection to server on socket \"/var/run/postgresql/.s.PGSQL.5432\" failed: FATAL:  role \"f4ai_admin\" does not exist",
+      "Exit code 143\nTerminated",
+      "Exit code 143\nTerminated",
+      "Exit code 1\nTraceback (most recent call last):\n  File \"<string>\", line 9, in <module>\nKeyError: 'CLASS_NAME'",
+      "Exit code 7\n000",
+      "Exit code 1\n[INFO] Scanning for projects...\n[INFO] \n[INFO] ------------------< ai.friendly4:f4ai-report-service >------------------\n[INFO] Building F4AI Report Service 1.0.0-SNAPSHOT\n[INFO]   from pom.xml\n[INFO] --------------------------------[ jar ]---------------------------------\n[INFO] \n[INFO] "
+    ],
+    "ai-assets": [
+      "Exit code 2\npsql: error: connection to server on socket \"/var/run/postgresql/.s.PGSQL.5432\" failed: FATAL:  role \"f4ai\" does not exist",
+      "Exit code 2\n=== future-dated demotion (lines 82-99) ===\n\n        Set<String> strong = properties.isEnabled() ? STRONG_SOURCES_V22 : STRONG_SOURCES_LEGACY;\n        // SEC design.md \u00a73.1 line 157: future-dated strong signals (> now+24h) are demoted\n        // to weak source. Filter them out before mos",
+      "<tool_use_error>File has been modified since read, either by the user or by a linter. Read it again before attempting to write it.</tool_use_error>",
+      "File content (37705 tokens) exceeds maximum allowed tokens (25000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file.",
+      "Exit code 1\nls: cannot access '.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/': No such file or directory\n---\n=== G7-qa-BE-3.json ===\nTraceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nFileNotFoundError: [Errno 2] No such file or directory: '.ai-assets-me",
+      "Exit code 1\nTraceback (most recent call last):\n  File \"<string>\", line 8, in <module>\nTypeError: 'NoneType' object is not subscriptable\nverdict: changes_requested\nsummary: WP-BE-11 changes_requested \u2014 1 MAJOR (3 of 4 spec-named injection prefixes MISSING: System:, <system>, [INST] \u2014 these target the",
+      "File does not exist. Note: your current working directory is /home/avav25/dev/code/f4ai.",
+      "Exit code 2\n/mnt/c/ProgramData/chocolatey/lib/maven/apache-maven-3.9.11/bin/mvn\nmvnw not found",
+      "Exit code 1\nenv file /home/avav25/dev/code/f4ai/f4ai-ui-service/.env not found: stat /home/avav25/dev/code/f4ai/f4ai-ui-service/.env: no such file or directory",
+      "Exit code 1\nenv file /home/avav25/dev/code/f4ai/f4ai-user-service/.env.docker not found: stat /home/avav25/dev/code/f4ai/f4ai-user-service/.env.docker: no such file or directory",
+      "Exit code 1\n\n> f4ai-playwright@0.0.0 test:public:local\n> playwright test --project public-local --grep @smoke\n\n\nRunning 26 tests using 6 workers\n\n  -   1 [public-local] \u203a tests/public/blog-da-r018.spec.ts:40:7 \u203a Blog post /blog/da-r-018-ai-citation (FR-7) @smoke \u203a FR-7 \u2014 blog post returns HTTP 200 @",
+      "Permission to use Bash with command sudo -n apt-get install -y libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 libatspi2.0-0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2 2>&1 has been denied.",
+      "Exit code 2\nplaywright.config.ts(183,9): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Object literal may only specify known properties, and 'reducedMotion' does not exist in type 'UseOptions<PlaywrightTestOptions & CustomProperties<unknown>, Playwrig",
+      "File content (37705 tokens) exceeds maximum allowed tokens (25000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file.",
+      "Exit code 2\npsql: error: connection to server on socket \"/var/run/postgresql/.s.PGSQL.5432\" failed: FATAL:  role \"postgres\" does not exist",
+      "<tool_use_error>Blocked: sleep 25 followed by: docker ps --filter \"name=f4ai-report\" --format \"table {{.Names}}\\t{{.Status}}\". To wait for a condition, use Monitor with an until-loop (e.g. `until <check>; do sleep 2; done`). To wait for a command you started, use run_in_background: true. Do not chai",
+      "<tool_use_error>Task bywnczlve is not running (status: completed)</tool_use_error>",
+      "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>"
+    ],
+    "frontend-engineer": [
+      "Exit code 1\n/bin/bash: line 1: cd: f4ai-ui-service: No such file or directory"
+    ],
+    "db-engineer": [
+      "Exit code 1\n0"
+    ],
+    "software-engineer": [
+      "PreToolUse:Write hook error: [python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-secrets-in-code.py]: BLOCKED: Potential secrets detected in /tmp/v22-envelopes/review-20.json:\n  - Generic Secret: token\n\nUse environment variables or a secrets manager instead of hardcoding secrets.\n",
+      "<tool_use_error>Found 2 matches of the string to replace, but replace_all is false. To replace all occurrences, set replace_all to true. To replace only one occurrence, please provide more context to uniquely identify the instance.\nString: ]</tool_use_error>"
+    ],
+    "java-engineer": [
+      "<tool_use_error>No task found with ID: bk88tyy3s</tool_use_error>"
+    ],
+    "changelog": [
+      "File does not exist. Note: your current working directory is /home/avav25/dev/code/ai-assets."
+    ],
+    "plugin": [
+      "PreToolUse:Bash hook error: [python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-dangerous-commands.py]: BLOCKED: Dangerous command detected:\n  Command: cd /tmp && rm -rf hook-test && mkdir hook-test && cd hook-test && git init -q && touch existing.txt && git add . && git -c user.email=t@t -c user.nam"
+    ],
+    "testing": [
+      "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>"
+    ]
+  },
+  "rubric_fails": [
+    {
+      "session": "-home-avav25-dev-code-f4ai/cfa802d6-eeb7-4bfb-b366-b41fbcd13236.jsonl",
+      "skill_context": "42872c33-e351-4412-88a0-fdc9f24d1da9",
+      "snippet": "{\"file_path\": \"/tmp/ai_assets_audit.py\", \"content\": \"#!/usr/bin/env python3\\n\\\"\\\"\\\"Mechanical audit of Claude Code sessions for ai-assets plugin issues.\\n\\nScans all session JSONL files modified in the last 2 days, extracts:\\n- ai-assets skill/agent invocations\\n- tool errors / is_error blocks\\n- hook failures\\n- subagent results (RALF kills, contract violations, \\\"RUBRIC_FAILED\\\" markers)\\n- excessive retries on same tool/file\\n- token-heavy / time-heavy spawns\\n\\\"\\\"\\\"\\nimport json\\nimport os\\n"
+    }
+  ],
+  "hook_failures": [],
+  "subagent_failures": [],
+  "agent_excessive_iter": [],
+  "denied_tools": [
+    {
+      "session": "-home-avav25-dev-code-f4ai/dd31984d-f93b-47d9-859b-e3feccef51fb.jsonl",
+      "snippet": "nothing added to commit but untracked files present (use \"git add\" to track)\navav25@avav25pc:~/dev/code/f4ai/f4ai-ui-service$ git status\nOn branch main\nYour branch is up to date with 'origin/main'.\n\nChanges not staged for commit:\n  (use \"git add <file>...\" to update what will be committed)\n  (use \"g"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/dd31984d-f93b-47d9-859b-e3feccef51fb.jsonl",
+      "snippet": "\u041f\u043e\u043d\u044f\u043b \u0447\u0442\u043e \u043f\u0440\u043e\u0438\u0437\u043e\u0448\u043b\u043e: \u043f\u0440\u0438 \u043a\u043e\u043f\u0438\u043f\u0430\u0441\u0442\u0435 \u043c\u043d\u043e\u0433\u043e\u0441\u0442\u0440\u043e\u0447\u043d\u043e\u0439 \u043a\u043e\u043c\u0430\u043d\u0434\u044b bash \u0438\u043d\u0442\u0435\u0440\u043f\u0440\u0435\u0442\u0438\u0440\u043e\u0432\u0430\u043b \u043f\u0435\u0440\u0435\u043d\u043e\u0441\u044b \u043a\u0430\u043a \u0440\u0430\u0437\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u0438 \u2014 \u043f\u043e\u044d\u0442\u043e\u043c\u0443 \u0437\u0430\u0441\u0442\u0435\u0439\u0434\u0436\u0438\u043b\u0441\u044f \u0442\u043e\u043b\u044c\u043a\u043e `JacksonHardeningConfig.java`, \u0430 \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u0443\u0442\u0438 \u043f\u043e\u043f\u044b\u0442\u0430\u043b\u0441\u044f \u0432\u044b\u043f\u043e\u043b\u043d\u0438\u0442\u044c \u043a\u0430\u043a \u043a\u043e\u043c\u0430\u043d\u0434\u044b (`Permission denied`). \u0422\u0430\u043a\u0436\u0435 \u0432\u0438\u0436\u0443, \u0447\u0442\u043e \u0432 \u0442\u0432\u043e\u0451\u043c worktree \u0442\u0435\u043f\u0435\u0440\u044c \u0435\u0441\u0442\u044c \u0438 unrelated modifie"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/7cabefde-2c38-470c-b272-ab36cfc1ee63.jsonl",
+      "snippet": "nothing added to commit but untracked files present (use \"git add\" to track)\navav25@avav25pc:~/dev/code/f4ai/f4ai-ui-service$ git status\nOn branch main\nYour branch is up to date with 'origin/main'.\n\nChanges not staged for commit:\n  (use \"git add <file>...\" to update what will be committed)\n  (use \"g"
+    },
+    {
+      "session": "subagents/agent-aa2fe4084a356b094.jsonl",
+      "snippet": "Base directory for this skill: /home/avav25/.claude/plugins/cache/ai-assets/ai-assets/0.3.11/skills/analyze-local\n\n# Analyze Local Docker Environment\n\nSystematic analysis of the local Docker environment. Collects container status, logs, networking, resource usage, and diagnoses issues. Works standal"
+    }
+  ],
+  "interrupted": [
+    {
+      "session": "-home-avav25-dev-code-f4ai/7cabefde-2c38-470c-b272-ab36cfc1ee63.jsonl",
+      "snippet": "[Request interrupted by user]"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/7cabefde-2c38-470c-b272-ab36cfc1ee63.jsonl",
+      "snippet": "[Request interrupted by user for tool use]"
+    }
+  ],
+  "session_counts": {
+    "permission-mode": 925,
+    "queue-operation": 174,
+    "user": 3652,
+    "attachment": 957,
+    "ai-title": 221,
+    "assistant": 5812,
+    "system": 455,
+    "file-history-snapshot": 99,
+    "last-prompt": 909,
+    "agent-setting": 690
+  },
+  "permission_denied": [],
+  "sessions_seen": [
+    "-home-avav25-dev-code-ai-assets/42872c33-e351-4412-88a0-fdc9f24d1da9.jsonl",
+    "-home-avav25-dev-code-aic/2f59a101-8059-4d47-8495-57b244eb3702.jsonl",
+    "-home-avav25-dev-code-alex-voloshin-dev/8d67b03c-b2f4-4b50-bb87-0ee898863e97.jsonl",
+    "-home-avav25-dev-code-f4ai/020681cf-b493-4ac5-a484-7ce992b243f4.jsonl",
+    "-home-avav25-dev-code-f4ai/11ba0d22-63ef-4612-8686-b36cec1cfe0c.jsonl",
+    "-home-avav25-dev-code-f4ai/3e5bbf07-e627-458e-be81-859a2e3552b0.jsonl",
+    "-home-avav25-dev-code-f4ai/42afe44a-7c77-46a8-8bad-ca2bcf6904df.jsonl",
+    "-home-avav25-dev-code-f4ai/42c9ded9-c6f5-4524-b2de-93109bede621.jsonl",
+    "-home-avav25-dev-code-f4ai/466dd3ef-4f64-4613-a972-6cccdc96a1ec.jsonl",
+    "-home-avav25-dev-code-f4ai/4f26232a-44cc-4768-99fe-75fbc85618aa.jsonl",
+    "-home-avav25-dev-code-f4ai/6497dc2d-6d0c-4b3e-a20e-0ccb00e2daf3.jsonl",
+    "-home-avav25-dev-code-f4ai/7043fd0a-ea70-4675-868c-a913b7f800a3.jsonl",
+    "-home-avav25-dev-code-f4ai/73ef823e-008d-4826-b447-6c05a619af2d.jsonl",
+    "-home-avav25-dev-code-f4ai/745d98d1-c619-457f-ac76-c09d002b9aff.jsonl",
+    "-home-avav25-dev-code-f4ai/75d69aec-01c6-442f-9d18-e8c066cb6267.jsonl",
+    "-home-avav25-dev-code-f4ai/7cabefde-2c38-470c-b272-ab36cfc1ee63.jsonl",
+    "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+    "-home-avav25-dev-code-f4ai/8f185166-6c63-4f13-acb9-6ad2c81b3ab3.jsonl",
+    "-home-avav25-dev-code-f4ai/9bc50f52-561b-413e-9087-00eb1cd502c1.jsonl",
+    "-home-avav25-dev-code-f4ai/a803bd97-bc56-45dc-a54b-7879cc4cf074.jsonl",
+    "-home-avav25-dev-code-f4ai/b27051c4-4b33-4865-8294-33e11abdea83.jsonl",
+    "-home-avav25-dev-code-f4ai/bc43b65f-faef-4042-81df-90ef70074208.jsonl",
+    "-home-avav25-dev-code-f4ai/bebcb5d1-908b-4aa8-b801-5e9c4097929f.jsonl",
+    "-home-avav25-dev-code-f4ai/c5ddbac9-8adc-4656-8248-97330b5c01a6.jsonl",
+    "-home-avav25-dev-code-f4ai/cfa802d6-eeb7-4bfb-b366-b41fbcd13236.jsonl",
+    "-home-avav25-dev-code-f4ai/d8f52fc2-921f-4f53-91f2-a1452410e575.jsonl",
+    "-home-avav25-dev-code-f4ai/da9b96fa-8d94-4d49-8a49-f5fac35b11b1.jsonl",
+    "-home-avav25-dev-code-f4ai/dd31984d-f93b-47d9-859b-e3feccef51fb.jsonl",
+    "-home-avav25-dev-code-f4ai/e6f23aa0-507c-4ff9-84a2-5b74222730de.jsonl",
+    "-home-avav25-dev-code-f4ai/ff1d199a-2d31-4f27-b58c-b8017a8425eb.jsonl",
+    "subagents/agent-a3345d54ed98c0668.jsonl",
+    "subagents/agent-a37cfb42567ac38d9.jsonl",
+    "subagents/agent-a6e74d46998214b2b.jsonl",
+    "subagents/agent-a7fa79e077db8070e.jsonl",
+    "subagents/agent-a8458ea62252b3aca.jsonl",
+    "subagents/agent-a887eb337269fa78c.jsonl",
+    "subagents/agent-aa2fe4084a356b094.jsonl",
+    "subagents/agent-abf0be8ed146e7b88.jsonl",
+    "subagents/agent-ae7f0b2d7ee5de646.jsonl"
+  ],
+  "isError_messages": [
+    {
+      "session": "-home-avav25-dev-code-aic/2f59a101-8059-4d47-8495-57b244eb3702.jsonl",
+      "skill_context": null,
+      "snippet": "PreToolUse:Bash hook error: [python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-dangerous-commands.py]: BLOCKED: Dangerous command detected:\n  Command: git fetch origin main && git push --force-with-lease origin main\n\n  Reasons:\n    - [Git] Force push (rewrite remote history)\n\nThis command may cause irreversible damage. Review and run manually if intended.\n"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/11ba0d22-63ef-4612-8686-b36cec1cfe0c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/11ba0d22-63ef-4612-8686-b36cec1cfe0c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "File does not exist. Note: your current working directory is /home/avav25/dev/code/f4ai/f4ai-report-service."
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/11ba0d22-63ef-4612-8686-b36cec1cfe0c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 123"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/11ba0d22-63ef-4612-8686-b36cec1cfe0c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 2\nls: cannot access '/home/avav25/dev/code/f4ai/f4ai-report-service/mvnw': No such file or directory"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/11ba0d22-63ef-4612-8686-b36cec1cfe0c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 2\nls: cannot access '/home/avav25/dev/code/f4ai/.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-developer-BE-5.json': No such file or directory\n/home/avav25/dev/code/f4ai/.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-developer-BE-6.json"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/11ba0d22-63ef-4612-8686-b36cec1cfe0c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "<tool_use_error>Error: No such tool available: SendMessage. SendMessage exists but is not enabled in this context. Use one of the available tools instead.</tool_use_error>"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/75d69aec-01c6-442f-9d18-e8c066cb6267.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Exit code 2\npsql: error: connection to server on socket \"/var/run/postgresql/.s.PGSQL.5432\" failed: FATAL:  role \"f4ai\" does not exist"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/75d69aec-01c6-442f-9d18-e8c066cb6267.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Exit code 2\n=== future-dated demotion (lines 82-99) ===\n\n        Set<String> strong = properties.isEnabled() ? STRONG_SOURCES_V22 : STRONG_SOURCES_LEGACY;\n        // SEC design.md \u00a73.1 line 157: future-dated strong signals (> now+24h) are demoted\n        // to weak source. Filter them out before most-recent selection; track the flag.\n        boolean futureDatedDetected = false;\n        List<FreshnessSignalCollector.DatedSignal> validStrong;\n        if (properties.isEnabled()) {\n            Instant futureThreshold = now.plusSeconds(86_400);\n            validStrong = new ArrayList<>();\n         "
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/75d69aec-01c6-442f-9d18-e8c066cb6267.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "<tool_use_error>File has been modified since read, either by the user or by a linter. Read it again before attempting to write it.</tool_use_error>"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/ff1d199a-2d31-4f27-b58c-b8017a8425eb.jsonl",
+      "skill_context": "frontend-engineer",
+      "snippet": "Exit code 1\n/bin/bash: line 1: cd: f4ai-ui-service: No such file or directory"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/c5ddbac9-8adc-4656-8248-97330b5c01a6.jsonl",
+      "skill_context": null,
+      "snippet": "Exit code 7\nVersion 1.57.0\n---\ncurl: (7) Failed to connect to localhost port 8082 after 0 ms: Couldn't connect to server\nui:8082 HTTP 000"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/c5ddbac9-8adc-4656-8248-97330b5c01a6.jsonl",
+      "skill_context": null,
+      "snippet": "<tool_use_error>Cancelled: parallel tool call Bash(cd /home/avav25/dev/code/f4ai/f4ai-playw\u2026) errored</tool_use_error>"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/c5ddbac9-8adc-4656-8248-97330b5c01a6.jsonl",
+      "skill_context": null,
+      "snippet": "File content (84750 tokens) exceeds maximum allowed tokens (25000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file."
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/b27051c4-4b33-4865-8294-33e11abdea83.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "File content (37705 tokens) exceeds maximum allowed tokens (25000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file."
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/b27051c4-4b33-4865-8294-33e11abdea83.jsonl",
+      "skill_context": "db-engineer",
+      "snippet": "Exit code 1\n0"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/d8f52fc2-921f-4f53-91f2-a1452410e575.jsonl",
+      "skill_context": "software-engineer",
+      "snippet": "PreToolUse:Write hook error: [python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-secrets-in-code.py]: BLOCKED: Potential secrets detected in /tmp/v22-envelopes/review-20.json:\n  - Generic Secret: token\n\nUse environment variables or a secrets manager instead of hardcoding secrets.\n"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/dd31984d-f93b-47d9-859b-e3feccef51fb.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Permission to use Bash with command git add \\\n  f4ai-report-service/src/main/java/ai/friendly4/reportservice/config/JacksonHardeningConfig.java \\\n  f4ai-report-service/src/main/java/ai/friendly4/reportservice/parameters/analysis/MicrodataTypeExtractor.java \\\n  f4ai-report-service/src/main/java/ai/friendly4/reportservice/parameters/analysis/SchemaOrgVocab.java \\\n  f4ai-report-service/src/main/java/ai/friendly4/reportservice/parameters/processors/AnswerBlockProcessor.java \\\n  f4ai-report-service/src/main/java/ai/friendly4/reportservice/parameters/processors/AnswerBlockScanner.java \\\n  f4ai-repor"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/6497dc2d-6d0c-4b3e-a20e-0ccb00e2daf3.jsonl",
+      "skill_context": "java-engineer",
+      "snippet": "<tool_use_error>No task found with ID: bk88tyy3s</tool_use_error>"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/3e5bbf07-e627-458e-be81-859a2e3552b0.jsonl",
+      "skill_context": null,
+      "snippet": "<tool_use_error>String to replace not found in file.\nString:               sx={{\n                fontSize: { xs: '2.5rem', md: '3.5rem' },\n                fontWeight: 'bold',\n                color: 'primary.main',\n              }}</tool_use_error>"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/3e5bbf07-e627-458e-be81-859a2e3552b0.jsonl",
+      "skill_context": null,
+      "snippet": "Exit code 1\nFAIL src/sections/home/__tests__/home-hero.test.tsx\n  \u25cf HomeHero \u2014 scan CTA button (Bug #1) \u203a renders the scan submit button with correct accessible name\n\n    TypeError: Cannot read properties of undefined (reading 'palette')\n\n      69 |           (theme) => ({\n      70 |             ...theme.mixins.textGradient(\n    > 71 |               `300deg, ${theme.vars.palette.primary.main} 0%, ${theme.vars.palette.warning.main} 25%, ${theme.vars.palette.primary.main} 50%, ${theme.vars.palette.warning.main} 75%, ${theme.vars.palette.primary.main} 100%`\n         |                             "
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/3e5bbf07-e627-458e-be81-859a2e3552b0.jsonl",
+      "skill_context": null,
+      "snippet": "Exit code 1\nwc: f4ai-ui-service/src/sections/home/home-hero.tsx: No such file or directory\nwc: f4ai-ui-service/src/sections/home/home-what-changed.tsx: No such file or directory\nwc: f4ai-ui-service/src/sections/home/__tests__/home-hero.test.tsx: No such file or directory\nwc: f4ai-ui-service/src/sections/home/__tests__/home-what-changed.test.tsx: No such file or directory\n0 total"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/42c9ded9-c6f5-4524-b2de-93109bede621.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Exit code 1\nls: cannot access '.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/': No such file or directory\n---\n=== G7-qa-BE-3.json ===\nTraceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nFileNotFoundError: [Errno 2] No such file or directory: '.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-qa-BE-3.json'\n=== G7-qa-BE-4.json ===\nTraceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nFileNotFoundError: [Errno 2] No such file or directory: '.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-qa"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/42c9ded9-c6f5-4524-b2de-93109bede621.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Exit code 1\nTraceback (most recent call last):\n  File \"<string>\", line 8, in <module>\nTypeError: 'NoneType' object is not subscriptable\nverdict: changes_requested\nsummary: WP-BE-11 changes_requested \u2014 1 MAJOR (3 of 4 spec-named injection prefixes MISSING: System:, <system>, [INST] \u2014 these target the most common LLM-protocol injection vectors per OWASP LLM01; only 'ignore' from spec implemented, plus 4 defensive additions disregard/override/you are/act as) + 3 NITs (SEC-3 mitigation #2 CategoryPathUtil whitelist regex not extended; no observability counter for sanitization events; SEC-3 #3 cros"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/7cabefde-2c38-470c-b272-ab36cfc1ee63.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "The user doesn't want to proceed with this tool use. The tool use was rejected (eg. if it was a file edit, the new_string was NOT written to the file). STOP what you are doing and wait for the user to tell you how to proceed.\n\nNote: The user's next message may contain a correction or preference. Pay close attention \u2014 if they explain what went wrong or how they'd prefer you to work, consider saving that to memory for future sessions."
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "File does not exist. Note: your current working directory is /home/avav25/dev/code/f4ai."
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Exit code 2\n/mnt/c/ProgramData/chocolatey/lib/maven/apache-maven-3.9.11/bin/mvn\nmvnw not found"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 1\nenv file /home/avav25/dev/code/f4ai/f4ai-user-service/.env.docker not found: stat /home/avav25/dev/code/f4ai/f4ai-user-service/.env.docker: no such file or directory"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 2"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 2\npsql: error: connection to server on socket \"/var/run/postgresql/.s.PGSQL.5432\" failed: FATAL:  role \"postgres\" does not exist"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 2\npsql: error: connection to server on socket \"/var/run/postgresql/.s.PGSQL.5432\" failed: FATAL:  role \"f4ai_admin\" does not exist"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 143\nTerminated"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 1\nTraceback (most recent call last):\n  File \"<string>\", line 9, in <module>\nKeyError: 'CLASS_NAME'"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 7\n000"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/8702ddbb-18a2-474b-b01b-d095aff4518c.jsonl",
+      "skill_context": "qa-engineer",
+      "snippet": "Exit code 1\n[INFO] Scanning for projects...\n[INFO] \n[INFO] ------------------< ai.friendly4:f4ai-report-service >------------------\n[INFO] Building F4AI Report Service 1.0.0-SNAPSHOT\n[INFO]   from pom.xml\n[INFO] --------------------------------[ jar ]---------------------------------\n[INFO] \n[INFO] --- jacoco:0.8.14:prepare-agent (prepare-agent-unit) @ f4ai-report-service ---\n[INFO] argLine set to -javaagent:/home/avav25/.m2/repository/org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar=destfile=/home/avav25/dev/code/f4ai/f4ai-report-service/target/jacoco.exec,excludes=ai/fr"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/7043fd0a-ea70-4675-868c-a913b7f800a3.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Exit code 1\nenv file /home/avav25/dev/code/f4ai/f4ai-ui-service/.env not found: stat /home/avav25/dev/code/f4ai/f4ai-ui-service/.env: no such file or directory"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/7043fd0a-ea70-4675-868c-a913b7f800a3.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Exit code 1\nenv file /home/avav25/dev/code/f4ai/f4ai-user-service/.env.docker not found: stat /home/avav25/dev/code/f4ai/f4ai-user-service/.env.docker: no such file or directory"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/7043fd0a-ea70-4675-868c-a913b7f800a3.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Exit code 1\n\n> f4ai-playwright@0.0.0 test:public:local\n> playwright test --project public-local --grep @smoke\n\n\nRunning 26 tests using 6 workers\n\n  -   1 [public-local] \u203a tests/public/blog-da-r018.spec.ts:40:7 \u203a Blog post /blog/da-r-018-ai-citation (FR-7) @smoke \u203a FR-7 \u2014 blog post returns HTTP 200 @smoke\n  -   2 [public-local] \u203a tests/public/blog-da-r018.spec.ts:45:7 \u203a Blog post /blog/da-r-018-ai-citation (FR-7) @smoke \u203a FR-7 \u2014 blog post word count is between 1000 and 1400 words @smoke\n  -   3 [public-local] \u203a tests/public/blog-da-r018.spec.ts:71:7 \u203a Blog post /blog/da-r-018-ai-citation (FR-7)"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/7043fd0a-ea70-4675-868c-a913b7f800a3.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Permission to use Bash with command sudo -n apt-get install -y libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 libatspi2.0-0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2 2>&1 has been denied."
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/da9b96fa-8d94-4d49-8a49-f5fac35b11b1.jsonl",
+      "skill_context": null,
+      "snippet": "Exit code 2\nplaywright.config.ts(183,9): error TS2769: No overload matches this call.\n  The last overload gave the following error.\n    Object literal may only specify known properties, and 'reducedMotion' does not exist in type 'UseOptions<PlaywrightTestOptions & CustomProperties<unknown>, PlaywrightWorkerOptions & CustomProperties<unknown>>'."
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/da9b96fa-8d94-4d49-8a49-f5fac35b11b1.jsonl",
+      "skill_context": null,
+      "snippet": "<tool_use_error>Cancelled: parallel tool call Bash(cd /home/avav25/dev/code/f4ai/f4ai-playw\u2026) errored</tool_use_error>"
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/9bc50f52-561b-413e-9087-00eb1cd502c1.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "File content (37705 tokens) exceeds maximum allowed tokens (25000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file."
+    },
+    {
+      "session": "-home-avav25-dev-code-f4ai/9bc50f52-561b-413e-9087-00eb1cd502c1.jsonl",
+      "skill_context": "software-engineer",
+      "snippet": "<tool_use_error>Found 2 matches of the string to replace, but replace_all is false. To replace all occurrences, set replace_all to true. To replace only one occurrence, please provide more context to uniquely identify the instance.\nString: ]</tool_use_error>"
+    },
+    {
+      "session": "subagents/agent-aa2fe4084a356b094.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "Exit code 2\npsql: error: connection to server on socket \"/var/run/postgresql/.s.PGSQL.5432\" failed: FATAL:  role \"postgres\" does not exist"
+    },
+    {
+      "session": "subagents/agent-aa2fe4084a356b094.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "<tool_use_error>Blocked: sleep 25 followed by: docker ps --filter \"name=f4ai-report\" --format \"table {{.Names}}\\t{{.Status}}\". To wait for a condition, use Monitor with an until-loop (e.g. `until <check>; do sleep 2; done`). To wait for a command you started, use run_in_background: true. Do not chain shorter sleeps to work around this block.</tool_use_error>"
+    },
+    {
+      "session": "subagents/agent-aa2fe4084a356b094.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "<tool_use_error>Task bywnczlve is not running (status: completed)</tool_use_error>"
+    },
+    {
+      "session": "subagents/agent-aa2fe4084a356b094.jsonl",
+      "skill_context": "ai-assets",
+      "snippet": "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>"
+    },
+    {
+      "session": "subagents/agent-abf0be8ed146e7b88.jsonl",
+      "skill_context": "changelog",
+      "snippet": "File does not exist. Note: your current working directory is /home/avav25/dev/code/ai-assets."
+    },
+    {
+      "session": "subagents/agent-abf0be8ed146e7b88.jsonl",
+      "skill_context": "plugin",
+      "snippet": "PreToolUse:Bash hook error: [python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-dangerous-commands.py]: BLOCKED: Dangerous command detected:\n  Command: cd /tmp && rm -rf hook-test && mkdir hook-test && cd hook-test && git init -q && touch existing.txt && git add . && git -c user.email=t@t -c user.name=t commit -q -m init && echo \"modified\" > existing\n\n  Reasons:\n    - [Filesystem] Forced recursive delete\n\nThis command may cause irreversible damage. Review and run manually if intended.\n"
+    },
+    {
+      "session": "subagents/agent-abf0be8ed146e7b88.jsonl",
+      "skill_context": "testing",
+      "snippet": "<tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>"
+    }
+  ],
+  "subagents_total": 9,
+  "subagents_with_errors": 2
+}
