@@ -6,6 +6,18 @@ All notable changes to the `ai-assets` plugin. Format: [Keep a Changelog](https:
 
 Next release in planning.
 
+## [0.3.15] — 2026-05-17 — agentskills.io authoring guidance integrated into skill-authoring logic
+
+`/plugin-author improve` run (5 WPs / 2 waves, every DEV→REVIEW→QA gate green; Path B with file-channel reconciliation through an intermittent alpha bus). Integrates the upstream agentskills.io authoring corpus (specification + best-practices + optimizing-descriptions + using-scripts + evaluating-skills) and de-duplicates the cached spec rules that had drifted between the create/audit procedures.
+
+- **`plugin/skills/prompt-engineering/skill-authoring-spec.md`** (new) — canonical cached digest of the agentskills.io specification + best-practices + using-scripts + evaluating-skills (exact limits preserved: `name` ≤64, `description` ≤1024, `compatibility` ≤500, body <500 lines / <5000 tokens, 3-level progressive disclosure, references one level deep). Single source of truth that ends the create↔audit spec-rule duplication.
+- **`plugin/skills/prompt-engineering/optimizing-descriptions.md`** (new) — description-optimization methodology digest (imperative/pushy phrasing, ~20 trigger queries 8-10/8-10, 0.5 trigger-rate threshold, 60/40 train/val split, 5-iteration loop). **Closes a real dangling-reference defect** — `plugin-author/SKILL.md` cited this file path while it did not exist.
+- **`plugin/skills/plugin-skill-create/SKILL.md`** — added a Scripts & dependencies authoring section (PEP 723 inline deps + `uv run`, version pinning, non-interactive requirement, `--help`, structured stdout/stderr, documented exit codes, idempotency, `--dry-run`, predictable output size, `compatibility` frontmatter) + fuller best-practice patterns; replaced the duplicated inline cached spec blocks with one-level digest citations (progressive disclosure).
+- **`plugin/skills/plugin-skill-audit/SKILL.md`** — new wired `scripts` check group (added to the `--check` enum, the step-2 run-groups list so it executes under `all`, and Integration), `compatibility` (1–500) validation, strengthened conservative safe-fix table; cached spec block now points at the digests.
+- **`plugin/skills/plugin-author/SKILL.md`** — `optimizing-descriptions.md` reference fixed (now resolves), both digests wired into the `audit --deep` review path and Reads(knowledge); zero change to the description/triggering surface.
+
+6 files (4 SKILL.md + 2 new resource digests), +140/-153 net (prose de-duplication offloaded to the digests; both edited SKILL.md files reclaimed ≥800 chars headroom). `validate.py`: `25 pass, 0 warn, 0 fail` — no count changes (resource files do not bump `EXPECTED_COUNTS`; skills=75, rubrics=47). `/plugin-doctor` 0 CRITICAL across all 4 affected skills; eval-loop closed (`/eval --skill plugin-author --tier 1` pass). Plugin scope only — Codex/Windsurf parity reflection deferred as a separate tracked change.
+
 ## [0.3.14] — 2026-05-17 — Path B reliability hardening (SESSION-RETROSPECTIVE 15-rec fix-cycle)
 
 Implements all 15 recommendations from the f4ai `/develop` Score-v2.2 session retrospective via `/plugin-author fix-feedback` (7 WPs / 2 waves, every DEV→REVIEW→QA gate green). The run self-validated: it hit the exact alpha.31/34/36 + `TeamDelete`-refuses-~3× failure modes these changes harden, and the file-channel-exclusive transport carried the whole pipeline.

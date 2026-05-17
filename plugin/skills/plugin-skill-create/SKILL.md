@@ -13,6 +13,8 @@ Generate `plugin/skills/<name>/SKILL.md` plus eval/case stub plus memory-hook sc
 3. **agentskills.io description optimization** — https://agentskills.io/skill-creation/optimizing-descriptions (trigger phrasing, what+when, keywords)
 4. **ai-assets plugin conventions** — H5 frontmatter trigger pattern, schema-validated frontmatter, `<untrusted_content>` G1 wrapping where applicable, G7 spawn payload format if the skill spawns subagents
 
+The cached, offline-authoritative form of (1)–(3) is `prompt-engineering/skill-authoring-spec.md` + `prompt-engineering/optimizing-descriptions.md` — read those first; re-fetch the live URLs only when network is available.
+
 ## When to use
 
 - Adding a new workflow skill to the plugin (e.g., a project-specific workflow)
@@ -101,29 +103,19 @@ The `TODO —` token is a hard guard: `plugin-skill-audit` fails (CRITICAL sever
 
 Every scaffolded skill MUST satisfy the agentskills.io specification + ai-assets conventions below. The audit counterpart `/plugin-skill-audit` enforces the same rules — anything this skill emits MUST pass `/plugin-skill-audit <name> --strict`.
 
-### agentskills.io specification (https://agentskills.io/specification)
+### agentskills.io spec, best-practices, scripts & description rules (cached digest)
 
-- **`name`**: 1–64 chars; lowercase a–z, digits, hyphens only; MUST NOT start or end with hyphen; MUST NOT contain consecutive hyphens (`--`); MUST equal the parent directory name
-- **`description`**: 1–1024 chars (hard limit); non-empty; describes BOTH what the skill does AND when to use it; includes trigger keywords; uses imperative phrasing
-- **Directory**: `SKILL.md` is required; optional `scripts/`, `references/`, `assets/` for progressive disclosure
-- **Body**: ≤ 5000 tokens AND ≤ 500 lines recommended; keep file references one level deep from `SKILL.md`
+The full cached rules live in two digests (read them before scaffolding — single source of truth, progressive disclosure; do NOT re-inline here):
 
-### agentskills.io best practices (https://agentskills.io/skill-creation/best-practices)
+- `prompt-engineering/skill-authoring-spec.md` — specification (frontmatter, naming, directory layout, 3-level progressive disclosure), best practices, using-scripts, and skill-output eval
+- `prompt-engineering/optimizing-descriptions.md` — the `description` triggering surface (imperative phrasing, user-intent, be-pushy, trigger eval, 1024 hard limit)
 
-- **Add what the agent lacks, omit what it knows** — no "what is a PDF" filler
-- **Pick a default, not a menu** — when multiple tools work, name one default and mention alternatives briefly
-- **Procedures over declarations** — teach how to approach a class of problems, not what to produce for one instance
-- **Match specificity to fragility** — flexible for tolerant tasks; prescriptive for fragile sequences
-- **Progressive disclosure** — long reference material moves to `references/`, with explicit "load when X" triggers in `SKILL.md`
-- **Gotchas section** when the skill has non-obvious environment-specific facts
-- **Validation loops** for multi-step workflows (do work → run validator → fix → repeat)
+Hard invariants every scaffold MUST satisfy (enforced by `/plugin-author audit --strict`):
 
-### agentskills.io description rules (https://agentskills.io/skill-creation/optimizing-descriptions)
-
-- **Imperative phrasing** — "Use this skill when…" not "This skill does…"
-- **User-intent focus** — describe what the user is trying to achieve, not internal mechanics
-- **Be pushy** — list contexts explicitly, including ones where the user does not name the domain directly
-- **Concise** — a few sentences to a short paragraph; well under the 1024-char hard limit
+- **`name`** 1–64 chars; lowercase a–z, digits, hyphens; no leading/trailing or consecutive (`--`) hyphens; MUST equal the parent directory name
+- **`description`** 1–1024 chars; non-empty; what + when; trigger keywords; imperative; no `TODO` token (audit CRITICAL)
+- **Body** ≤ 5000 tokens AND ≤ 500 lines recommended; file references one level deep from `SKILL.md`
+- **Scripts/deps** (only when `scripts/` is generated): no interactive prompts (agents run non-interactive shells); `--help` usage; structured data → stdout, diagnostics → stderr; pinned deps or inline PEP 723 / equivalent — see the digest's "Using scripts in skills" section
 
 ### ai-assets plugin conventions
 
@@ -134,6 +126,27 @@ Every scaffolded skill MUST satisfy the agentskills.io specification + ai-assets
 - **Plugin-only scope** — never scaffolds skills outside `plugin/skills/`. For project-local skills use upstream `skill-creator`
 - **English-only** per repo CLAUDE.md
 - **No absolute user-machine paths** in templates or examples
+
+## Best practices the scaffold bakes in
+
+Sourced from the digest (`prompt-engineering/skill-authoring-spec.md` best-practices) — the scaffold output and the author MUST apply, not just cite:
+
+- **Start from real expertise** — never generate a skill from generic LLM knowledge (produces vague generic procedures). Extract the pattern from a real completed task, or synthesize from project artifacts (runbooks, API specs, code-review comments, VCS history, real failure cases).
+- **Refine with real execution** — the first draft is a draft. Run against real tasks, feed ALL results back (not just failures), read execution traces; wasted steps ⇒ vague/inapplicable/duplicate instructions.
+- **Design coherent units** — one skill = one coherent capability. Too narrow ⇒ many skills per task; too broad ⇒ imprecise activation.
+- **Output-format templates** — emit a concrete template (agents pattern-match well); short inline, long → `assets/`, referenced.
+- **Checklists** for multi-step workflows; **plan-validate-execute** for batch/destructive ops (intermediate plan → validate vs source of truth → execute).
+- **Bundle on reinvention** — if traces show the agent re-deriving the same logic each run, ship a tested script in `scripts/`.
+
+## Scripts & dependencies (when the skill ships `scripts/`)
+
+Sourced from the digest's "Using scripts in skills" section:
+
+- **One-off runners** over committed code where possible: `uvx`/`pipx run` (Python), `npx`/`bunx` (Node), `deno run` (`--allow-*`), `go run`. **Pin versions** (`npx eslint@9.0.0`).
+- **Inline deps** — Python PEP 723 block + `uv run scripts/x.py`; pin via PEP 508; `requires-python`. State runtime-level prerequisites in the `compatibility` frontmatter field, not body prose.
+- **Non-interactive (HARD)** — no TTY-blocking prompts; input via flags/env/stdin; clear error+usage when a required input is missing.
+- **`--help`** documented per script; **structured output** (JSON/CSV/TSV) → stdout, progress/diagnostics → stderr.
+- **Documented exit codes** per failure type; **idempotency** ("create if not exists"); **`--dry-run`** for destructive/stateful ops; **predictable output size** (harnesses truncate ~10–30K chars — default to a summary, support `--offset`, or require `--output FILE|-`).
 
 ## Failure modes
 
@@ -153,6 +166,8 @@ Every scaffolded skill MUST satisfy the agentskills.io specification + ai-assets
 - **Reachable via**: `/plugin-author create <name> [--type workflow|knowledge|companion] [--agent-spawn] [--ralph]`
 - **Writes to**: `plugin/skills/<name>/`, `plugin/eval/cases/<name>/`, `plugin/eval/judge-rubrics/<name>.md`
 - **References**:
+  - `prompt-engineering/skill-authoring-spec.md` — cached spec + best-practices + scripts + eval digest (offline source of truth)
+  - `prompt-engineering/optimizing-descriptions.md` — cached description-triggering digest
   - agentskills.io specification — https://agentskills.io/specification
   - agentskills.io best practices — https://agentskills.io/skill-creation/best-practices
   - agentskills.io description optimization — https://agentskills.io/skill-creation/optimizing-descriptions

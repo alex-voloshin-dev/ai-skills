@@ -17,6 +17,7 @@ Comprehensive prompt engineering knowledge base. Provides actionable patterns, c
 - Designing multi-agent orchestration and handoff protocols
 - Optimizing prompt cost and latency
 - Creating or reviewing Claude Code AI assets (rules, workflows, skills — all are prompts)
+- Authoring or auditing a plugin skill — frontmatter spec, body length, progressive disclosure, scripts, eval (see `skill-authoring-spec.md`) or a mis-triggering / fuzzy description (see `optimizing-descriptions.md`)
 - Setting up prompt versioning and observability
 
 ## When NOT to Use
@@ -60,6 +61,8 @@ A prompt is not a string — it is a **system** composed of:
 | `prompt-versioning-and-providers.md` | Version-control patterns for prompts, prompt registry layout, provider differences (Anthropic / OpenAI / Google / open-source), portability tradeoffs |
 | `prompt-deployment-and-monitoring.md` | Production rollout patterns — staged release, canary, rollback, observability, cost/latency monitoring, drift detection, on-call runbook hooks |
 | `advanced-techniques-and-models.md` | Advanced techniques (self-consistency, tree-of-thought, ReAct, reflection) and model-specific patterns (Claude reasoning vs OpenAI, Gemini long context, Haiku/Sonnet/Opus selection) |
+| `skill-authoring-spec.md` | Cached agentskills.io digest — skill specification (frontmatter/naming/dirs/progressive disclosure), best practices, scripts, and skill-output eval. Read when authoring or auditing a plugin skill |
+| `optimizing-descriptions.md` | Cached agentskills.io digest — writing skill `description` triggering surface: imperative phrasing, trigger eval queries, train/val split, optimization loop. Read when a skill is mis-triggering or its description needs tuning |
 
 ## Integration
 
