@@ -2,7 +2,7 @@
 
 ## Overview
 
-Evaluates `/ai-assets-init` output — bootstrap of `.ai-assets-memory/` + CLAUDE.md scaffold + `.gitignore` rules. Five dimensions × five levels.
+Evaluates `/ai-skills-init` output — bootstrap of `.ai-skills-memory/` + CLAUDE.md scaffold + `.gitignore` rules. Five dimensions × five levels.
 
 ## Dimensions
 
@@ -66,5 +66,5 @@ No important files accidentally ignored; no critical files exposed by missing ru
 
 ## Calibration Reference
 
-- **Known-good:** `plugin/eval/calibration/ai-assets-init/good/*`
-- **Known-bad:** `plugin/eval/calibration/ai-assets-init/bad/*`
+- **Known-good:** `plugin/eval/calibration/ai-skills-init/good/*`
+- **Known-bad:** `plugin/eval/calibration/ai-skills-init/bad/*`

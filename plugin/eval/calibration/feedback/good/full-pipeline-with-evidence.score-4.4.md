@@ -1,13 +1,13 @@
-# /feedback — Brief Output (7-day window, ai-assets, 8 findings in 2 groups)
+# /feedback — Brief Output (7-day window, ai-skills, 8 findings in 2 groups)
 
 > Invocation: `/feedback`
 > Worker: `python3 plugin/skills/feedback/scripts/collect_session_data.py`
-> Extended saved to: `.ai-assets-memory/feedback/feedback-2026-05-13-0905.md`
+> Extended saved to: `.ai-skills-memory/feedback/feedback-2026-05-13-0905.md`
 
 # Plugin Feedback — Brief
 
 - Verdict: **YELLOW** · Window: 7d · Sessions: 11/11 · Findings: 8 (2 signatures)
-- Plugin: `ai-assets` · Project: `/home/u/dev/code/ai-assets`
+- Plugin: `ai-skills` · Project: `/home/u/dev/code/ai-skills`
 
 ## Top 5 failure signatures
 
@@ -25,9 +25,9 @@
 ## What to do next
 
 - For full evidence + sequence chains + per-finding context, open the extended report.
-- To narrow scope: `/feedback --plugin ai-assets --severity error --days 14`.
-- To dive into a specific session: `~/.claude/projects/-home-u-dev-code-ai-assets/<session-id>.jsonl`.
+- To narrow scope: `/feedback --plugin ai-skills --severity error --days 14`.
+- To dive into a specific session: `~/.claude/projects/-home-u-dev-code-ai-skills/<session-id>.jsonl`.
 
 ---
 
-_Saved to:_ `/home/u/dev/code/ai-assets/.ai-assets-memory/feedback/feedback-2026-05-13-0905.md`
+_Saved to:_ `/home/u/dev/code/ai-skills/.ai-skills-memory/feedback/feedback-2026-05-13-0905.md`

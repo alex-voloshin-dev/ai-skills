@@ -102,7 +102,7 @@ The `skill-creator` Skill (github.com/anthropics/skills) automates this loop.
 
 ---
 
-## ai-assets overlay (additive, never weaker than upstream)
+## ai-skills overlay (additive, never weaker than upstream)
 
 - Description in **third person** — first-person ("I help…") breaks discovery.
 - Every description carries the **`Use when …`** trigger pattern (H5

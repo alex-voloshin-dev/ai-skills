@@ -23,9 +23,9 @@ Announcement:
 ## Execution
 
 WP-1 (HEAVY single):
-- DEV: `ai-assets:prompt-engineer` re-read `feature-design/SKILL.md`, applied `optimizing-descriptions.md` checks (trigger keywords, third-person, imperative, contexts-as-list), applied `security-checklist.md` (OWASP LLM Top 10) since this skill reads user input.
+- DEV: `ai-skills:prompt-engineer` re-read `feature-design/SKILL.md`, applied `optimizing-descriptions.md` checks (trigger keywords, third-person, imperative, contexts-as-list), applied `security-checklist.md` (OWASP LLM Top 10) since this skill reads user input.
 - Findings: 2 description improvements (added "design pack", "from a 1-3 sentence idea" trigger phrases), 0 security issues, 1 calibration drift (rubric D3 Spearman 0.62 < 0.7 threshold).
-- DEV proposed diff, REVIEW (fresh `ai-assets:prompt-engineer` with `disallowedTools: ["Write","Edit"]`) verdict `approved` on description; flagged the rubric drift as a separate concern (cited Anti-Pattern: "split asset-kinds into separate WPs").
+- DEV proposed diff, REVIEW (fresh `ai-skills:prompt-engineer` with `disallowedTools: ["Write","Edit"]`) verdict `approved` on description; flagged the rubric drift as a separate concern (cited Anti-Pattern: "split asset-kinds into separate WPs").
 - Lead split into a follow-up WP for `eval-judge` to re-tune the rubric (separate fix-cycle, not in this audit run).
 - QA: behavioral re-test with 5 synthetic prompts confirmed new description triggers on intended cases, doesn't trigger on out-of-scope ones.
 
@@ -38,7 +38,7 @@ WP-1 (HEAVY single):
 
 ## Memory writes
 
-- `.ai-assets-memory/plugin-author/runs.log` appended with `{"op":"audit","target":"feature-design","wps":1,"gate_results":{"WP-1":"pass"},"follow_ups":["rubric-tune-feature-design"]}`.
+- `.ai-skills-memory/plugin-author/runs.log` appended with `{"op":"audit","target":"feature-design","wps":1,"gate_results":{"WP-1":"pass"},"follow_ups":["rubric-tune-feature-design"]}`.
 
 ## Final summary
 

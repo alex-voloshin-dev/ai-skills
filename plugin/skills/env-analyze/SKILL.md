@@ -57,7 +57,7 @@ Read-only diagnostic that produces a structured `ENV-REPORT.md` for the current 
 
 ## Output
 
-`<repo>/.ai-assets-memory/env-reports/<run-id>/ENV-REPORT.md` with tables:
+`<repo>/.ai-skills-memory/env-reports/<run-id>/ENV-REPORT.md` with tables:
 
 - Container/pod status (name, state, restarts, uptime)
 - Log excerpts (last 20 lines per service, error filter)
@@ -122,7 +122,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After analysis | `.ai-assets-memory/env-reports/<run-id>/baseline.json` — container states, resource usage, timestamps (for drift detection across runs) |
+| L4 | After analysis | `.ai-skills-memory/env-reports/<run-id>/baseline.json` — container states, resource usage, timestamps (for drift detection across runs) |
 
 ## Failure modes
 

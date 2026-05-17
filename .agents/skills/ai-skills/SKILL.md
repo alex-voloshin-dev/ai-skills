@@ -1,5 +1,5 @@
 ---
-name: ai-assets
+name: ai-skills
 description: Create, modify, validate, and analyze Codex-native AI assets such as AGENTS.md files, shared skills, roles, rules, operations, templates, and checklists.
 codex-roles:
   - prompt-engineer

@@ -12,7 +12,7 @@
 1. Read each section in order.
 2. Each numbered item is one atomic change to one file or one small group of files.
 3. After each batch (B1-B12 below), run the validation commands listed at end of the batch.
-4. Track progress: copy this checklist into `.ai-assets-memory/.committed/migration-progress.md` once `/ai-assets-init` exists; until then, track in a personal scratchpad.
+4. Track progress: copy this checklist into `.ai-skills-memory/.committed/migration-progress.md` once `/ai-skills-init` exists; until then, track in a personal scratchpad.
 5. On any validation failure: STOP, fix, re-validate, continue. Do not skip ahead.
 6. The legacy `.claude/`, `.codex/`, `.windsurf/`, `.agents/` directories MUST remain untouched throughout Phase 2 — they continue serving the user's existing workflows in parallel.
 
@@ -22,10 +22,10 @@
 
 Before any file write:
 
-- [ ] **PR0.** Confirm working directory is `C:\Users\avav2\dev\code\ai-assets\` (the same repo as legacy assets).
+- [ ] **PR0.** Confirm working directory is `C:\Users\avav2\dev\code\ai-skills\` (the same repo as legacy assets).
 - [ ] **PR1.** Confirm `plugin/` directory does NOT yet exist (idempotency check). If it does, abort and ask user.
 - [ ] **PR2.** Confirm Phase 1 design docs exist and are unchanged (compare `00-PHASE-1-PLAN.md` mtime against your last review checkpoint).
-- [ ] **PR3.** Create empty `.ai-assets-memory/` in the workspace root for plugin self-eval (NOT the user's target repo's memory; this is for testing the plugin against itself). Add to `.gitignore`.
+- [ ] **PR3.** Create empty `.ai-skills-memory/` in the workspace root for plugin self-eval (NOT the user's target repo's memory; this is for testing the plugin against itself). Add to `.gitignore`.
 - [ ] **PR4.** Verify `python3` available in shell (hooks need it) and `claude` CLI is installed (for `plugin validate`).
 
 ---
@@ -56,7 +56,7 @@ Before any file write:
    plugin/docs/workflows/
    plugin/docs/concepts/
    ```
-4. **B1.4.** `plugin/README.md` — short top-level README. Sections: What this plugin does (1 paragraph), Install (one-liner `claude plugin install <git-url>`), First run (`/ai-assets-init` then any workflow), Where to learn more (link to `plugin/docs/getting-started.md`).
+4. **B1.4.** `plugin/README.md` — short top-level README. Sections: What this plugin does (1 paragraph), Install (one-liner `claude plugin install <git-url>`), First run (`/ai-skills-init` then any workflow), Where to learn more (link to `plugin/docs/getting-started.md`).
 5. **B1.5.** `plugin/CHANGELOG.md` — Keep a Changelog format. Initial entry: `## [0.1.0-alpha] — 2026-04-26 — Initial scaffold`.
 6. **B1.6.** `plugin/hooks/hooks.json` — empty event mapping `{ "hooks": {} }` (events filled in B6).
 7. **B1.7.** `plugin/eval/config.json` — token-budget table from `02-EVAL-FRAMEWORK.md` §9 + Q4 decision.
@@ -65,7 +65,7 @@ Before any file write:
 ### Validation B1
 
 - [ ] `claude plugin validate ./plugin` succeeds (or warns only about empty `skills/`/`agents/` — that's expected pre-B2).
-- [ ] `cat plugin/.claude-plugin/plugin.json | jq .name` returns `"ai-assets"`.
+- [ ] `cat plugin/.claude-plugin/plugin.json | jq .name` returns `"ai-skills"`.
 - [ ] All 15 leaf directories exist (was 16 before removing unused `hooks/configs/` per Round 7 Issue C).
 
 ---
@@ -267,12 +267,12 @@ For each of: `data-engineer`, `db-engineer`, `devops-engineer`, `frontend-engine
     - Body: rubric-following protocol, structured score output, no extrapolation beyond rubric
 
 51. **B5.4.** `plugin/agents/memory-curator.md`
-    - Per §2.2 "Reviews session output (when triggered) and writes durable learnings to .ai-assets-memory/learnings.md …"
+    - Per §2.2 "Reviews session output (when triggered) and writes durable learnings to .ai-skills-memory/learnings.md …"
     - `model: haiku`, `effort: low`, `maxTurns: 10`, `max_output_tokens: 800`
-    - `tools: Read, Write` — write paths constrained at runtime by hook guard (NOT by frontmatter, since plugin agents can't have permissionMode). The constraint: `pre-tool-use-committed-write.py` (PreToolUse on Write|Edit) checks if writes target outside `.ai-assets-memory/*`; if yes, blocks with exit 2.
+    - `tools: Read, Write` — write paths constrained at runtime by hook guard (NOT by frontmatter, since plugin agents can't have permissionMode). The constraint: `pre-tool-use-committed-write.py` (PreToolUse on Write|Edit) checks if writes target outside `.ai-skills-memory/*`; if yes, blocks with exit 2.
     - **Operational contract (Round 6 HIGH-2):** memory-curator is **spawn-only**, NEVER user-invocable (no `user-invocable` frontmatter). Spawn payload constructed by `pre-compact-memory-flush.py` and `subagent-stop-learnings.py` with explicit fields:
       - `goal`: "extract durable learnings from session" or "review subagent output for patterns"
-      - `state_slice`: `.ai-assets-memory/sessions/<id>/` files (read-only)
+      - `state_slice`: `.ai-skills-memory/sessions/<id>/` files (read-only)
       - `allowed_tools`: ["Read", "Write"] with implicit hook-enforced path restriction
       - `budget`: `{max_input_tokens: 5000, max_output_tokens: 800, max_tool_calls: 10}`
     - Rule references: must follow `memory-discipline.md` (G1 via untrusted-content-wrapping when reading session state; PII filter on every write)
@@ -336,7 +336,7 @@ For each of: `data-engineer`, `db-engineer`, `devops-engineer`, `frontend-engine
 - `read_wrap_marker()` — reads marker emitted by tool-output-wrap.py for ordering enforcement (S6)
 - `emit_wrap_marker()` — emits marker for downstream hooks to assert
 - `read_token_meter()` / `update_token_meter()` — increment session token counter
-- `log_to(filename, entry)` — append JSON line to a `.ai-assets-memory/` log file
+- `log_to(filename, entry)` — append JSON line to a `.ai-skills-memory/` log file
 
 All 11 new hook scripts import from this module. Existing 4 hook scripts (carried from B2) optionally refactored to use it (out-of-scope for B2 minimum migration; can be done in Phase 4 hardening).
 
@@ -344,18 +344,18 @@ All 11 new hook scripts import from this module. Existing 4 hook scripts (carrie
 
 | # | Script | Event | Notes |
 |---|---|---|---|
-| 64 | `session-start-context.py` | `SessionStart` | Reads ≤8KB of CLAUDE.md/AGENTS.md/ARCHITECTURE.md, applies PII filter, applies G1 untrusted wrap, initializes session token meter at `.ai-assets-memory/sessions/<id>/token-meter.json`, detects locale |
-| 65 | `instructions-loaded-augment.py` | `InstructionsLoaded` | When CLAUDE.md or rule loads, supplements with `.ai-assets-memory/.committed/conventions.md` excerpt (G1 wrapped) |
+| 64 | `session-start-context.py` | `SessionStart` | Reads ≤8KB of CLAUDE.md/AGENTS.md/ARCHITECTURE.md, applies PII filter, applies G1 untrusted wrap, initializes session token meter at `.ai-skills-memory/sessions/<id>/token-meter.json`, detects locale |
+| 65 | `instructions-loaded-augment.py` | `InstructionsLoaded` | When CLAUDE.md or rule loads, supplements with `.ai-skills-memory/.committed/conventions.md` excerpt (G1 wrapped) |
 | 66 | `pre-compact-memory-flush.py` | `PreCompact` | **CRITICAL** — invokes memory-curator agent (Haiku, ≤5K tokens) to extract durable learnings to L4 BEFORE compaction destroys context |
 | 67 | `session-end-finalize.py` | `SessionEnd` | Summarizes runs.jsonl, archives sessions/<id>/, releases dangling RALF locks, updates eval baselines if a `/eval --baseline` ran |
 | 68 | `subagent-start-budget.py` | `SubagentStart` | Validates G7 spawn payload schema; checks session token meter against soft/hard caps; rejects spawn if cap exceeded |
-| 69 | `subagent-stop-learnings.py` | `SubagentStop` | Validates G7 return contract; if `userConfig.subagent_learnings_enabled`, captures non-trivial outputs for memory-curator. **Validation error path (Round 6 HIGH-4):** if return JSON malformed / missing required fields / unexpected status → log to `.ai-assets-memory/errors.log` (severity ERROR + trace_id + missing field name + expected schema), emit `validation_failed: true` event, fail-open (allow workflow to continue per §1.9), surface diagnostic to orchestrator via stderr. Orchestrator decides retry vs escalate. NEVER block parent workflow on validation failure |
-| 70 | `task-event-log.py` | `TaskCreated`, `TaskCompleted` | Writes structured TodoList events to `.ai-assets-memory/sessions/<id>/runs.jsonl` |
-| 71 | `tool-failure-log.py` | `PostToolUseFailure`, `StopFailure` | Logs to `.ai-assets-memory/errors.log`; separates failure path from success log |
-| 72 | `ralph-stop.py` | `Stop` | If `.ai-assets-memory/ralph/<run-id>/active.lock` exists: run oracle, check kill-on signal, check budgets, re-inject continuation prompt OR allow Stop |
+| 69 | `subagent-stop-learnings.py` | `SubagentStop` | Validates G7 return contract; if `userConfig.subagent_learnings_enabled`, captures non-trivial outputs for memory-curator. **Validation error path (Round 6 HIGH-4):** if return JSON malformed / missing required fields / unexpected status → log to `.ai-skills-memory/errors.log` (severity ERROR + trace_id + missing field name + expected schema), emit `validation_failed: true` event, fail-open (allow workflow to continue per §1.9), surface diagnostic to orchestrator via stderr. Orchestrator decides retry vs escalate. NEVER block parent workflow on validation failure |
+| 70 | `task-event-log.py` | `TaskCreated`, `TaskCompleted` | Writes structured TodoList events to `.ai-skills-memory/sessions/<id>/runs.jsonl` |
+| 71 | `tool-failure-log.py` | `PostToolUseFailure`, `StopFailure` | Logs to `.ai-skills-memory/errors.log`; separates failure path from success log |
+| 72 | `ralph-stop.py` | `Stop` | If `.ai-skills-memory/ralph/<run-id>/active.lock` exists: run oracle, check kill-on signal, check budgets, re-inject continuation prompt OR allow Stop |
 | 73 | `tool-output-wrap.py` (G1) | `PostToolUse` matcher `Read|Bash` for memory dirs and project files | Wraps outputs >200 tokens in `<untrusted_content>` envelope |
 | 74 | `tool-output-normalize.py` (G2) | `PostToolUse` matcher same as wrap, fires AFTER | Outputs >2000 tokens: extract → Haiku-summarize → annotate envelope; tracks `injected_tokens` against meter. **Self-enforcing order (Round 5 S6):** asserts wrap marker from previous hook via `_lib.read_wrap_marker()`; aborts with clear error if absent — protects against future hooks.json reorderings |
-| 74a | `pre-tool-use-committed-write.py` (Round 8 CRIT-1 — was missing from B8) | `PreToolUse` matcher `Write|Edit` | Validates writes targeting `.ai-assets-memory/.committed/*` against allowlist patterns from `${CLAUDE_PLUGIN_ROOT}/memory/templates/committed-allowlist.txt` + project extension `.ai-assets-memory/.committed/.allowlist-extensions.txt`. Blocks with exit 2 if write path doesn't match allowlist. Referenced by `03-MEMORY-ARCHITECTURE.md` §8 + `plugin/rules/memory-discipline.md` rule 6 |
+| 74a | `pre-tool-use-committed-write.py` (Round 8 CRIT-1 — was missing from B8) | `PreToolUse` matcher `Write|Edit` | Validates writes targeting `.ai-skills-memory/.committed/*` against allowlist patterns from `${CLAUDE_PLUGIN_ROOT}/memory/templates/committed-allowlist.txt` + project extension `.ai-skills-memory/.committed/.allowlist-extensions.txt`. Blocks with exit 2 if write path doesn't match allowlist. Referenced by `03-MEMORY-ARCHITECTURE.md` §8 + `plugin/rules/memory-discipline.md` rule 6 |
 
 ### `plugin/hooks/hooks.json` extension
 
@@ -368,7 +368,7 @@ All 11 new hook scripts import from this module. Existing 4 hook scripts (carrie
 - All scripts use `${CLAUDE_PLUGIN_ROOT}` for paths, never absolute, never relative-to-cwd
 - Read JSON from stdin
 - Exit 2 = block with reason on stdout; exit 0 = allow
-- Fail open on internal errors (per `00-PHASE-1-PLAN.md` §3.8 failure modes) — log to `.ai-assets-memory/hook-errors.log`, never block all tool use because of a buggy hook
+- Fail open on internal errors (per `00-PHASE-1-PLAN.md` §3.8 failure modes) — log to `.ai-skills-memory/hook-errors.log`, never block all tool use because of a buggy hook
 - Use the shared `_normalize_hook_input()` helper from existing scripts (carry pattern over)
 
 ### Validation B8
@@ -393,7 +393,7 @@ All 11 new hook scripts import from this module. Existing 4 hook scripts (carrie
 
 Per `03-MEMORY-ARCHITECTURE.md` §3 L1:
 
-79. **B9.3.** `plugin/memory/templates/ai-assets-memory.gitignore` — gitignore template that `/ai-assets-init` copies into target repo.
+79. **B9.3.** `plugin/memory/templates/ai-skills-memory.gitignore` — gitignore template that `/ai-skills-init` copies into target repo.
 80. **B9.4.** `plugin/memory/templates/committed-readme.md` — explains the `.committed/` contract.
 81. **B9.5.** `plugin/memory/templates/learnings-schema.md` — Markdown schema for learnings entries (entity-keyed, with provenance).
 82. **B9.6.** `plugin/memory/templates/conventions-schema.md` — Markdown schema for `.committed/conventions.md`.
@@ -439,7 +439,7 @@ Author skeleton-only versions (full rubric content in Phase 3). Each rubric file
 | 97 | `plugin/eval/judge-rubrics/security-audit.md` (skeleton with OWASP coverage dim per G3) |
 | 98 | `plugin/eval/judge-rubrics/docs-pack.md` (skeleton) |
 | 99 | `plugin/eval/judge-rubrics/env-analyze.md` (skeleton) |
-| 100 | `plugin/eval/judge-rubrics/ai-assets-init.md` (skeleton) |
+| 100 | `plugin/eval/judge-rubrics/ai-skills-init.md` (skeleton) |
 
 | # | Rubric file (cross-cutting, 7) |
 |---|---|
@@ -481,7 +481,7 @@ For each rubric in `plugin/eval/judge-rubrics/`, author 3 known-good and 3 known
 | 108g | security-audit | 3 good + 3 bad |
 | 108h | docs-pack | 3 good + 3 bad |
 | 108i | env-analyze | 3 good + 3 bad |
-| 108j | ai-assets-init | 3 good + 3 bad |
+| 108j | ai-skills-init | 3 good + 3 bad |
 | 108k | humanizer-compliance | 3 good + 3 bad |
 | 108l | code-quality | 3 good + 3 bad |
 | 108m | security-soundness | 3 good + 3 bad |
@@ -572,7 +572,7 @@ Each entry includes the workflow-spec section that authoritatively describes it.
 | 125 | spike | §/spike | Time-boxed exploration; ALWAYS-ASK before write to `.committed/decisions/` per Q4 |
 | 126 | security-audit | §/security-audit | OWASP coverage per G3; no effort estimate per Q2 |
 | 127 | docs-pack | §/docs-pack | User-facing docs (README, API ref, runbook); distinct from existing `docs` knowledge skill |
-| 128 | ai-assets-init | §/ai-assets-init | Bootstrap target repo; seeds `.ai-assets-memory/` from L1 templates |
+| 128 | ai-skills-init | §/ai-skills-init | Bootstrap target repo; seeds `.ai-skills-memory/` from L1 templates |
 
 Author each as a user-invocable skill (`context: fork` or `user-invocable: true`). Body follows the workflow spec template: Purpose / Invocation / Input / Output / Agent roster / Pipeline / Eval rubric pointer / RALF wiring / Memory writes / Failure modes / Observability events.
 
@@ -583,7 +583,7 @@ Author each as a user-invocable skill (`context: fork` or `user-invocable: true`
 | 129 | ralph | Standalone RALF entry point; rejects invocation if `--kill-on` missing per D12 |
 | 130 | eval | Wraps `eval/runner.py` with slash flags (`--skill`, `--tier`, `--all`, `--resume`, `--baseline`) |
 | 131 | plugin-doctor | Self-diagnostic; **`--calibrate-judge` is opt-in** per Round 4 O4 (not in default smoke run) |
-| 132 | memory-init | Creates `.ai-assets-memory/` skeleton from L1 templates |
+| 132 | memory-init | Creates `.ai-skills-memory/` skeleton from L1 templates |
 | 133 | memory-recall | Queries L4/L5 for relevant memory by topic |
 | 134 | learnings-write | Curated write to L4 (default) or L5 (`--global`); requires `userConfig.user_global_memory_enabled` for L5 |
 | 135 | context-load | Returns per-role project context slice (per `00-PHASE-1-PLAN.md` §3.12) |
@@ -600,7 +600,7 @@ Author each as a user-invocable skill (`context: fork` or `user-invocable: true`
 
 ### Files to author
 
-138. **B13.1.** `plugin/docs/getting-started.md` — 30-min tutorial: install, first run, `/ai-assets-init`, run a sample `/feature-design`, observe outputs. ~100-200 lines.
+138. **B13.1.** `plugin/docs/getting-started.md` — 30-min tutorial: install, first run, `/ai-skills-init`, run a sample `/feature-design`, observe outputs. ~100-200 lines.
 
 #### Per-workflow user docs (10 files for the 10 workflow slash commands)
 
@@ -615,7 +615,7 @@ Author each as a user-invocable skill (`context: fork` or `user-invocable: true`
 | 145 | `plugin/docs/workflows/spike.md` | /spike |
 | 146 | `plugin/docs/workflows/security-audit.md` | /security-audit |
 | 147 | `plugin/docs/workflows/docs-pack.md` | /docs-pack |
-| 148 | `plugin/docs/workflows/ai-assets-init.md` | /ai-assets-init |
+| 148 | `plugin/docs/workflows/ai-skills-init.md` | /ai-skills-init |
 
 Each user doc covers: when to use, how to invoke, what you get, common questions, examples. ~80-150 lines per file.
 
@@ -676,11 +676,11 @@ These 5 skills do NOT migrate. They remain in `.claude/skills/<name>/` for legac
 
 | Skill | Reason |
 |---|---|
-| ai-assets | Replaced by `plugin-doctor`. Content overlaps; new skill is plugin-aware. |
+| ai-skills | Replaced by `plugin-doctor`. Content overlaps; new skill is plugin-aware. |
 | asset-validation | Replaced by `plugin-doctor` (validation portion). |
 | ml-pipeline | Highly project-specific (ML/data pipeline patterns); revisit in v0.3 if generalisable. |
 | product | Overlaps with `product-manager` agent capabilities; agent does the work directly. |
-| project-init | Replaced by `ai-assets-init` (broader scope: bootstrap a target repo to be ai-assets-aware, not just project init). |
+| project-init | Replaced by `ai-skills-init` (broader scope: bootstrap a target repo to be ai-skills-aware, not just project init). |
 
 ---
 
@@ -701,7 +701,7 @@ These 5 skills do NOT migrate. They remain in `.claude/skills/<name>/` for legac
   - `ls plugin/memory/templates/*.md plugin/memory/templates/*.json plugin/memory/templates/*.txt 2>/dev/null | wc -l` → 7 (Round 5 S10 fix; pii-patterns.txt lives separately in hooks/scripts/)
   - `ls plugin/docs/getting-started.md plugin/docs/workflows/*.md plugin/docs/concepts/*.md | wc -l` → 14 (Round 5 S1 fix)
 - [ ] **V5.** No friendly4ai or owner-personal info anywhere: `grep -rE "friendly4|f4ai|@gmail|avav" plugin/` returns nothing.
-- [ ] **V6.** Manual smoke test: install plugin in a sample target repo (e.g., a small Python project), run `/ai-assets-init`, then `/feature-design "small example"`, observe waves spawn correctly and a design pack lands in `docs/features/`.
+- [ ] **V6.** Manual smoke test: install plugin in a sample target repo (e.g., a small Python project), run `/ai-skills-init`, then `/feature-design "small example"`, observe waves spawn correctly and a design pack lands in `docs/features/`.
 - [ ] **V7.** Tag plugin v0.1.0-alpha in git; write `CHANGELOG.md` entry.
 
 ---
@@ -712,7 +712,7 @@ If a batch fails or the resulting plugin misbehaves:
 
 1. **Within a batch:** revert the specific files via git; re-run validation.
 2. **Whole batch failure:** `rm -rf plugin/<subdir>` for the affected component, restart the batch from item 1.
-3. **Catastrophic failure (e.g., installer breaks Claude Code):** `claude plugin uninstall ai-assets`, `rm -rf plugin/`, fall back to the legacy `.claude/` setup which has been untouched throughout.
+3. **Catastrophic failure (e.g., installer breaks Claude Code):** `claude plugin uninstall ai-skills`, `rm -rf plugin/`, fall back to the legacy `.claude/` setup which has been untouched throughout.
 4. **Legacy still works.** Per D4, `.claude/`, `.codex/`, `.windsurf/`, `.agents/` are NEVER modified during Phase 2. The user's existing workflow stays available for the entire migration.
 
 ---

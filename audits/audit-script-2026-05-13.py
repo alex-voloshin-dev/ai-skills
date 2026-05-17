@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Mechanical audit of Claude Code sessions for ai-assets plugin issues.
+"""Mechanical audit of Claude Code sessions for ai-skills plugin issues.
 
 Scans all session JSONL files modified in the last 2 days, extracts:
-- ai-assets skill/agent invocations
+- ai-skills skill/agent invocations
 - tool errors / is_error blocks
 - hook failures
 - subagent results (RALF kills, contract violations, "RUBRIC_FAILED" markers)
@@ -20,7 +20,7 @@ from pathlib import Path
 ROOT = Path.home() / ".claude" / "projects"
 CUTOFF = datetime.now(timezone.utc) - timedelta(days=2)
 
-AI_ASSETS_RE = re.compile(r"ai-assets[:/]([a-z0-9\-]+)", re.IGNORECASE)
+AI_ASSETS_RE = re.compile(r"ai-skills[:/]([a-z0-9\-]+)", re.IGNORECASE)
 RUBRIC_FAIL_RE = re.compile(r"RUBRIC_FAILED|FAIL_RALF|G7\s*violation|contract\s*violation", re.IGNORECASE)
 ERR_HINT_RE = re.compile(r"error|failed|exception|traceback|denied|timeout|killed", re.IGNORECASE)
 
@@ -66,7 +66,7 @@ def get_text(content):
 
 def analyze():
     findings = {
-        "ai_assets_invocations": Counter(),
+        "ai_skills_invocations": Counter(),
         "tool_errors_per_skill": defaultdict(list),
         "rubric_fails": [],
         "hook_failures": [],
@@ -88,7 +88,7 @@ def analyze():
         if is_subagent:
             findings["subagents_total"] += 1
         had_err = False
-        seen_ai_assets_in_session = set()
+        seen_ai_skills_in_session = set()
         last_skill_for_session = None
         with open(jsonl, "rb") as f:
             for raw in f:
@@ -104,14 +104,14 @@ def analyze():
                 # Extract text for scanning
                 text = get_text(content) if content else ""
 
-                # Track ai-assets invocations
+                # Track ai-skills invocations
                 # 1) Skill name in content/text
                 for m in AI_ASSETS_RE.finditer(text):
                     skill = m.group(1).lower()
                     if skill in ("memory", "rules", "templates"):  # noise
                         continue
-                    findings["ai_assets_invocations"][skill] += 1
-                    seen_ai_assets_in_session.add(skill)
+                    findings["ai_skills_invocations"][skill] += 1
+                    seen_ai_skills_in_session.add(skill)
                     last_skill_for_session = skill
 
                 # 2) tool_use blocks
@@ -125,17 +125,17 @@ def analyze():
                             # Skill tool invocation
                             if name == "Skill":
                                 sk = (inp.get("skill") or "").lower()
-                                if sk.startswith("ai-assets:"):
-                                    findings["ai_assets_invocations"][sk.split(":",1)[1]] += 1
-                                    seen_ai_assets_in_session.add(sk.split(":",1)[1])
+                                if sk.startswith("ai-skills:"):
+                                    findings["ai_skills_invocations"][sk.split(":",1)[1]] += 1
+                                    seen_ai_skills_in_session.add(sk.split(":",1)[1])
                                     last_skill_for_session = sk.split(":",1)[1]
                             # Agent tool with subagent_type
                             if name == "Agent":
                                 stype = (inp.get("subagent_type") or "")
-                                if stype.startswith("ai-assets:"):
+                                if stype.startswith("ai-skills:"):
                                     role = stype.split(":",1)[1]
-                                    findings["ai_assets_invocations"][f"AGENT:{role}"] += 1
-                                    seen_ai_assets_in_session.add(f"AGENT:{role}")
+                                    findings["ai_skills_invocations"][f"AGENT:{role}"] += 1
+                                    seen_ai_skills_in_session.add(f"AGENT:{role}")
 
                         # is_error tool_result
                         if blk.get("type") == "tool_result" and blk.get("is_error"):
@@ -211,8 +211,8 @@ def main():
     print("=" * 80)
     print(f"\nSessions scanned: {len(f['sessions_seen'])}")
     print(f"Subagent transcripts: {f['subagents_total']} (with at least one tool_result is_error: {f['subagents_with_errors']})")
-    print("\n--- ai-assets invocations (skills/agents seen in transcripts) ---")
-    for k, v in f["ai_assets_invocations"].most_common():
+    print("\n--- ai-skills invocations (skills/agents seen in transcripts) ---")
+    for k, v in f["ai_skills_invocations"].most_common():
         print(f"  {v:5d}  {k}")
 
     print("\n--- tool errors per skill (top) ---")
@@ -248,10 +248,10 @@ def main():
         print(f"  {x['session']}: {x['snippet'][:280].replace(chr(10),' ')}")
 
     # Save raw json for follow-up
-    out = Path("/tmp/ai_assets_audit_findings.json")
+    out = Path("/tmp/ai_skills_audit_findings.json")
     serializable = {k: (v if not isinstance(v, set) else sorted(v))
                     for k, v in f.items()}
-    serializable["ai_assets_invocations"] = dict(f["ai_assets_invocations"])
+    serializable["ai_skills_invocations"] = dict(f["ai_skills_invocations"])
     serializable["tool_errors_per_skill"] = {k: v for k, v in f["tool_errors_per_skill"].items()}
     serializable["session_counts"] = dict(f["session_counts"])
     out.write_text(json.dumps(serializable, indent=2, default=str))

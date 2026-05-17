@@ -1,11 +1,11 @@
-# /ai-assets-init — Bootstrap a target repository
+# /ai-skills-init — Bootstrap a target repository
 
-One-time (or re-runnable) setup. Creates `CLAUDE.md` scaffold + `.ai-assets-memory/` tree + `.gitignore` rules. Idempotent.
+One-time (or re-runnable) setup. Creates `CLAUDE.md` scaffold + `.ai-skills-memory/` tree + `.gitignore` rules. Idempotent.
 
 ## When to use
 
-- First run of any ai-assets workflow on a fresh repo
-- Adopting the ai-assets plugin in an existing repo (new for the team)
+- First run of any ai-skills workflow on a fresh repo
+- Adopting the ai-skills plugin in an existing repo (new for the team)
 - After upgrading the plugin to a version that adds new memory paths or templates
 
 ## Not for
@@ -16,9 +16,9 @@ One-time (or re-runnable) setup. Creates `CLAUDE.md` scaffold + `.ai-assets-memo
 ## How to invoke
 
 ```bash
-/ai-assets-init
-/ai-assets-init --codebase-type python-flask
-/ai-assets-init --overwrite                  # rare; only when CLAUDE.md is empty/stale
+/ai-skills-init
+/ai-skills-init --codebase-type python-flask
+/ai-skills-init --overwrite                  # rare; only when CLAUDE.md is empty/stale
 ```
 
 | Flag | Default | Effect |
@@ -30,16 +30,16 @@ One-time (or re-runnable) setup. Creates `CLAUDE.md` scaffold + `.ai-assets-memo
 
 - `<repo>/CLAUDE.md` — scaffolded with codebase type, empty sections for you to fill (skipped if already exists)
 - `<repo>/AGENTS.md` — empty template listing the 26 plugin agents (skipped if exists)
-- `<repo>/.ai-assets-memory/` directory tree (per [`/memory-init`](feature-design.md))
-- `<repo>/.gitignore` — appended `.ai-assets-memory/` rule (preserved if already present)
+- `<repo>/.ai-skills-memory/` directory tree (per [`/memory-init`](feature-design.md))
+- `<repo>/.gitignore` — appended `.ai-skills-memory/` rule (preserved if already present)
 
 ## How it works
 
 1. **Auto-detect codebase type** — checks for Pipfile, package.json, pom.xml, go.mod, Cargo.toml, Gemfile, *.csproj
 2. **Generate CLAUDE.md scaffold** — Overview, Tech Stack (auto-filled), Directory Layout (detected), Key Decisions (blank), Constraints (blank), Getting Started (blank)
 3. **Generate AGENTS.md** — lists 26 plugin agents with brief role descriptions
-4. **Create .ai-assets-memory/ tree** — gitignore template, .committed/ subdir with allowlist, config.json stub, learnings.md template, workflow subdirs
-5. **Update root .gitignore** — adds `.ai-assets-memory/` rule + `.committed/` exception (negation)
+4. **Create .ai-skills-memory/ tree** — gitignore template, .committed/ subdir with allowlist, config.json stub, learnings.md template, workflow subdirs
+5. **Update root .gitignore** — adds `.ai-skills-memory/` rule + `.committed/` exception (negation)
 6. **Print summary** — files created vs skipped + next steps
 
 No RALF — scaffolding is one-pass + idempotent.
@@ -57,12 +57,12 @@ No — never without `--overwrite`. Default behavior on existing CLAUDE.md is to
 Defaults to `mixed` or `generic` with a warning. You can pass `--codebase-type <type>` to override.
 
 **What if I run this in the wrong directory?**
-The skill creates files relative to cwd. If you ran in the wrong dir, delete the new `CLAUDE.md` + `.ai-assets-memory/` and re-run in the right dir. Nothing destructive happened to your existing files.
+The skill creates files relative to cwd. If you ran in the wrong dir, delete the new `CLAUDE.md` + `.ai-skills-memory/` and re-run in the right dir. Nothing destructive happened to your existing files.
 
 **What's in `.committed/` and why?**
 `.committed/` is opt-in versioned memory: team-confirmed conventions, ADRs, eval baselines, security incident records. Allowlist-validated by `pre-tool-use-committed-write.py` hook — only files matching `committed-allowlist.txt` patterns are accepted.
 
-**Why is `.ai-assets-memory/` gitignored by default?**
+**Why is `.ai-skills-memory/` gitignored by default?**
 Most of it is session-local state that doesn't belong in version control. The `.committed/` subdir is the explicit exception — a curated subset of memory the team chooses to share.
 
 ## Examples
@@ -70,31 +70,31 @@ Most of it is session-local state that doesn't belong in version control. The `.
 ### First-time setup on a Python FastAPI project
 ```bash
 cd /path/to/my-fastapi-project
-/ai-assets-init
+/ai-skills-init
 ```
-Auto-detects `python-fastapi`. Creates CLAUDE.md scaffold, AGENTS.md, `.ai-assets-memory/` tree. Appends `.gitignore`.
+Auto-detects `python-fastapi`. Creates CLAUDE.md scaffold, AGENTS.md, `.ai-skills-memory/` tree. Appends `.gitignore`.
 
 ### Existing CLAUDE.md but missing memory tree
 ```bash
-/ai-assets-init
+/ai-skills-init
 ```
 Reports "skipped: CLAUDE.md (exists)" and proceeds to create just the memory tree. Idempotent.
 
 ### Force-refresh CLAUDE.md (rare)
 ```bash
-/ai-assets-init --overwrite
+/ai-skills-init --overwrite
 ```
 Overwrites CLAUDE.md. Use only when the existing file is empty or grossly stale; you'll lose any custom content.
 
 ### Specify codebase type explicitly
 ```bash
-/ai-assets-init --codebase-type java-spring
+/ai-skills-init --codebase-type java-spring
 ```
 Skip auto-detection. Use when auto-detection picks `mixed` but you want one specific scaffold.
 
 ## Related
 
-- [`/memory-init`](feature-design.md) — memory tree only (sub-step of `/ai-assets-init`)
+- [`/memory-init`](feature-design.md) — memory tree only (sub-step of `/ai-skills-init`)
 - [`/plugin-doctor`](feature-design.md) — verify plugin install + new repo setup
 - [Memory](../concepts/memory.md) — what gets created and why
 - [Getting Started](../getting-started.md) — full tutorial including this step

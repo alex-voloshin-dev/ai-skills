@@ -134,4 +134,4 @@ After the suite is green, run `mutmut run --paths-to-mutate legacy/payment.py`. 
 
 When `/refactor` triggers a characterization phase, the developer writes:
 - Tests under `tests/characterization/<module>/`.
-- A short note in `<repo>/.ai-assets-memory/refactor/<run-id>/CHARACTERIZATION.md` listing files covered, fixture sources, and the mutation score baseline. The team-lead reads this before approving the refactor plan.
+- A short note in `<repo>/.ai-skills-memory/refactor/<run-id>/CHARACTERIZATION.md` listing files covered, fixture sources, and the mutation score baseline. The team-lead reads this before approving the refactor plan.

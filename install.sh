@@ -50,8 +50,8 @@ echo "Installing AI assets into $HOME_DIR"
 # install the plugin from ./plugin/ via:
 #   claude --plugin-dir "$SCRIPT_DIR/plugin"
 # or after publishing:
-#   /plugin marketplace add alex-voloshin-dev/ai-assets
-#   /plugin install ai-assets@ai-assets
+#   /plugin marketplace add alex-voloshin-dev/ai-skills
+#   /plugin install ai-skills@ai-skills
 # See plugin/README.md for full install + usage.
 
 sync_dir "$SCRIPT_DIR/.agents" "$HOME_DIR/.agents"

@@ -8,7 +8,7 @@
   "samples_total": 102,
   "renames": [
     {
-      "rubric": "ai-assets-init",
+      "rubric": "ai-skills-init",
       "kind": "good",
       "old_filename": "nodejs-express-init.score-4.5.md",
       "new_filename": "nodejs-express-init.score-3.7.md",
@@ -17,7 +17,7 @@
       "delta": -0.8
     },
     {
-      "rubric": "ai-assets-init",
+      "rubric": "ai-skills-init",
       "kind": "good",
       "old_filename": "python-fastapi-init.score-4.6.md",
       "new_filename": "python-fastapi-init.score-4.4.md",
@@ -26,7 +26,7 @@
       "delta": -0.2
     },
     {
-      "rubric": "ai-assets-init",
+      "rubric": "ai-skills-init",
       "kind": "good",
       "old_filename": "python-fastapi-init.score-4.7.md",
       "new_filename": "python-fastapi-init.score-4.1.md",
@@ -35,7 +35,7 @@
       "delta": -0.6
     },
     {
-      "rubric": "ai-assets-init",
+      "rubric": "ai-skills-init",
       "kind": "bad",
       "old_filename": "silent-file-overwrite.score-1.6.md",
       "new_filename": "silent-file-overwrite.score-1.4.md",
@@ -44,7 +44,7 @@
       "delta": -0.2
     },
     {
-      "rubric": "ai-assets-init",
+      "rubric": "ai-skills-init",
       "kind": "bad",
       "old_filename": "silent-overwrite.score-1.6.md",
       "new_filename": "silent-overwrite.score-1.0.md",
@@ -53,7 +53,7 @@
       "delta": -0.6
     },
     {
-      "rubric": "ai-assets-init",
+      "rubric": "ai-skills-init",
       "kind": "bad",
       "old_filename": "wrong-framework-scaffold.score-1.7.md",
       "new_filename": "wrong-framework-scaffold.score-1.8.md",

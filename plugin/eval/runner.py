@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin eval harness.
+ai-skills plugin eval harness.
 
 Per 02-EVAL-FRAMEWORK.md §11. v0.1 implementation: Tier 1 only (linters,
 no LLM calls). Tier 2 + Tier 3 stubs return clear "not implemented in v0.1"
@@ -297,7 +297,7 @@ def run_tier_2(args) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(prog="runner.py", description="ai-assets plugin eval harness")
+    parser = argparse.ArgumentParser(prog="runner.py", description="ai-skills plugin eval harness")
     parser.add_argument("--tier", choices=["1", "2", "3"], default="1")
     parser.add_argument("--skill", help="(Tier 1) limit to one skill name")
     parser.add_argument("--rubric", help="(Tier 2) limit to one rubric name")

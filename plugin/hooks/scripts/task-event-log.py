@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: task-event-log
+ai-skills plugin hook: task-event-log
 Events: TaskCreated, TaskCompleted
 Exit code 0 = always allow.
 
-Logs TodoList events to .ai-assets-memory/sessions/<id>/runs.jsonl per
+Logs TodoList events to .ai-skills-memory/sessions/<id>/runs.jsonl per
 03-MEMORY-ARCHITECTURE.md L3 schema.
 """
 

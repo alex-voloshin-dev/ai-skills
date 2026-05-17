@@ -7,7 +7,7 @@ argument-hint: "<learning text>"
 
 # /learnings-write — Capture a Durable Learning
 
-Append a curated entry to `learnings.md` (L4 project, default) or `~/.claude/ai-assets/learnings.md` (L5 user-global, with `--global`). Spawns the `memory-curator` agent for dedupe, PII filter, schema validation per `learnings-schema.md`.
+Append a curated entry to `learnings.md` (L4 project, default) or `~/.claude/ai-skills/learnings.md` (L5 user-global, with `--global`). Spawns the `memory-curator` agent for dedupe, PII filter, schema validation per `learnings-schema.md`.
 
 ## When to use
 
@@ -69,9 +69,9 @@ Append a curated entry to `learnings.md` (L4 project, default) or `~/.claude/ai-
 
 | Layer | Trigger | Path |
 |---|---|---|
-| L4 (default) | Always | `<repo>/.ai-assets-memory/learnings.md` |
-| L4 (`.committed/`) | If user explicitly opts in via `--committed` flag | `<repo>/.ai-assets-memory/.committed/learnings.md` (allowlist-validated) |
-| L5 | Requires `--global` AND `userConfig.user_global_memory_enabled` | `~/.claude/ai-assets/learnings.md` |
+| L4 (default) | Always | `<repo>/.ai-skills-memory/learnings.md` |
+| L4 (`.committed/`) | If user explicitly opts in via `--committed` flag | `<repo>/.ai-skills-memory/.committed/learnings.md` (allowlist-validated) |
+| L5 | Requires `--global` AND `userConfig.user_global_memory_enabled` | `~/.claude/ai-skills/learnings.md` |
 
 ## Integration
 

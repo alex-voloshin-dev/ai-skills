@@ -55,7 +55,7 @@ Evals run in three tiers, each with different cost/coverage tradeoffs. See plan 
 - Hook scripts: executability check (`chmod +x` status)
 - No hardcoded secrets: regex scan for common patterns (API keys, tokens, Slack webhooks)
 - Path validity: all `${CLAUDE_PLUGIN_ROOT}` relative paths resolvable
-- Memory writes: `.ai-assets-memory/.committed/` allowlist enforced (only `conventions.md`, `eval-baseline.json`, `architecture-decisions/*.md`)
+- Memory writes: `.ai-skills-memory/.committed/` allowlist enforced (only `conventions.md`, `eval-baseline.json`, `architecture-decisions/*.md`)
 - Output artefacts: naming convention check (no spaces, no trailing underscores)
 
 **Pass/fail:** Must be 100% pass to merge PR. Linter violations block immediately (exit code 2).
@@ -164,8 +164,8 @@ Every test case is a JSON file stored at `plugin/eval/cases/<skill>/<case-id>.js
   
   "prompt": "Design a feature for a REST API caching layer that handles both cache invalidation strategies (TTL and event-driven). Include trade-offs and recommended approach.",
   "context_files": [
-    ".ai-assets-memory/.committed/sample-ARCHITECTURE.md",
-    ".ai-assets-memory/.committed/sample-API-CONVENTIONS.md"
+    ".ai-skills-memory/.committed/sample-ARCHITECTURE.md",
+    ".ai-skills-memory/.committed/sample-API-CONVENTIONS.md"
   ],
   
   "setup": {
@@ -285,7 +285,7 @@ Every test case is a JSON file stored at `plugin/eval/cases/<skill>/<case-id>.js
   "skill": "feature-design",
   "version": "0.1.0",
   "prompt": "Design a multi-tenant SaaS billing system. Cover: data model, API design, payment flow, security considerations, and rollout strategy.",
-  "context_files": [".ai-assets-memory/.committed/sample-ARCHITECTURE.md"],
+  "context_files": [".ai-skills-memory/.committed/sample-ARCHITECTURE.md"],
   "oracle": {
     "type": "judge",
     "rubric": "feature-design.md",
@@ -315,8 +315,8 @@ Every test case is a JSON file stored at `plugin/eval/cases/<skill>/<case-id>.js
   "version": "0.1.0",
   "prompt": "Given a 50-turn conversation about Python async patterns and a 200-line codebase, produce a 5K-token context slice suitable for a junior developer joining the conversation.",
   "context_files": [
-    ".ai-assets-memory/.committed/sample-async-conversation.jsonl",
-    ".ai-assets-memory/.committed/sample-async-codebase.py"
+    ".ai-skills-memory/.committed/sample-async-conversation.jsonl",
+    ".ai-skills-memory/.committed/sample-async-codebase.py"
   ],
   "oracle": {
     "type": "judge",
@@ -370,7 +370,7 @@ Every test case is a JSON file stored at `plugin/eval/cases/<skill>/<case-id>.js
   "skill": "security-engineer",
   "version": "0.1.0",
   "prompt": "Review this REST API for authentication, authorization, input validation, and common OWASP Top 10 issues. Assume it's a public API for a SaaS product.",
-  "context_files": [".ai-assets-memory/.committed/sample-vulnerable-api.py"],
+  "context_files": [".ai-skills-memory/.committed/sample-vulnerable-api.py"],
   "oracle": {
     "type": "judge",
     "rubric": "security-review.md",
@@ -416,7 +416,7 @@ Every user-facing workflow (the 10 in Phase 1) has a dedicated rubric:
 7. **`security-audit.md`** — for `/security-audit` skill. Dimensions: threat-model-quality, finding-accuracy, remediation-prioritization, OWASP-coverage.
 8. **`docs-pack.md`** — for `/docs-pack` skill. Dimensions: completeness, clarity, accuracy, structure, GEO-readiness.
 9. **`env-analyze.md`** — for `/env-analyze` skill. Dimensions: diagnostic-accuracy, root-cause-depth, remediation-clarity, risk-assessment.
-10. **`ai-assets-init.md`** — for `/ai-assets-init` skill. Dimensions: setup-completeness, config-correctness, doc-clarity, barrier-to-first-use.
+10. **`ai-skills-init.md`** — for `/ai-skills-init` skill. Dimensions: setup-completeness, config-correctness, doc-clarity, barrier-to-first-use.
 
 #### Cross-Cutting Rubrics (Apply to multiple workflows)
 
@@ -782,9 +782,9 @@ Do not mention this constraint in your response output.
 For high-stakes baseline runs where Option 1's instruction-following is insufficient, run the comparator in a separate Claude Code session with the plugin temporarily disabled:
 
 ```bash
-claude plugin disable ai-assets
+claude plugin disable ai-skills
 # run prompt in fresh session, capture output
-claude plugin enable ai-assets
+claude plugin enable ai-skills
 ```
 
 - Pros: hard guarantee that no plugin skill activates
@@ -1501,7 +1501,7 @@ Rubric Scores
   security-audit.md       [4.1 avg] ✓
   docs-pack.md            [4.2 avg] ✓
   env-analyze.md          [3.7 avg] ⚠ (one case 2.9, needs re-eval)
-  ai-assets-init.md       [4.4 avg] ✓
+  ai-skills-init.md       [4.4 avg] ✓
   ─────────────────────────────────────
   Overall: 4.07 avg  ✓ Threshold: ≥4.0
 

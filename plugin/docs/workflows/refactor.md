@@ -33,7 +33,7 @@ Plan and execute a refactor with mandatory test-equivalence gate via RALF.
 
 - Refactored code with public API preserved
 - Test suite passing (tests updated only if signatures genuinely change)
-- `<repo>/.ai-assets-memory/refactor/<run-id>/REFACTOR-LOG.md` — before/after + rationale
+- `<repo>/.ai-skills-memory/refactor/<run-id>/REFACTOR-LOG.md` — before/after + rationale
 - PR with diff + refactor log
 
 ## How it works

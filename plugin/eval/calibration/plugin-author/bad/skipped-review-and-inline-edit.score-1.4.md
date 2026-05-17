@@ -24,7 +24,7 @@ No G7 spawn payload appears anywhere in the transcript. No reviewer envelope. No
 - `validate.py` not run.
 - `/plugin-doctor` not run.
 - `/eval --skill docs-pack --tier 1` not run.
-- Memory entry omitted: `.ai-assets-memory/plugin-author/runs.log` not appended.
+- Memory entry omitted: `.ai-skills-memory/plugin-author/runs.log` not appended.
 - No final summary; the Lead ended with "done" and stopped.
 - `/feedback` re-run against the same window would still surface "docs-pack description audit" as a finding because no eval gate confirmed the change works.
 

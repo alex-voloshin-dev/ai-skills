@@ -95,4 +95,4 @@ Each branch corresponds to one node in the graph. Branches merge to `main` only 
 
 ## Output Artifact
 
-When applying Mikado in a `/refactor` run, write the graph to `<repo>/.ai-assets-memory/refactor/<run-id>/MIKADO.md` so the team-lead can resume across sessions and the reviewer can see the dependency reasoning.
+When applying Mikado in a `/refactor` run, write the graph to `<repo>/.ai-skills-memory/refactor/<run-id>/MIKADO.md` so the team-lead can resume across sessions and the reviewer can see the dependency reasoning.

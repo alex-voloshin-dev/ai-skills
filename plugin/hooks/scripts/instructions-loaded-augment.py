@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: instructions-loaded-augment
+ai-skills plugin hook: instructions-loaded-augment
 Event: InstructionsLoaded
 Exit code 0 = always allow.
 
 When CLAUDE.md or any rule file loads into context, supplement with relevant
-excerpt from .ai-assets-memory/.committed/conventions.md (if present). Wraps
+excerpt from .ai-skills-memory/.committed/conventions.md (if present). Wraps
 the supplement in <untrusted_content> envelope (G1) before injection.
 
 No-ops if .committed/conventions.md missing.
@@ -24,7 +24,7 @@ import _lib  # noqa: E402
 def main() -> None:
     _ = _lib.read_stdin_json()
     cwd = pathlib.Path.cwd()
-    conv_path = cwd / ".ai-assets-memory" / ".committed" / "conventions.md"
+    conv_path = cwd / ".ai-skills-memory" / ".committed" / "conventions.md"
     if not conv_path.exists():
         _lib.allow()
 

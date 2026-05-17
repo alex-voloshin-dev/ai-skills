@@ -17,7 +17,7 @@ Deploy applied. Smoke test passed. Done.
 3. **No risk assessment** (Step 1 of skill). Risk matrix not produced. Severity unknown.
 4. **No rollback plan documented**. If this deploy goes wrong, on-call has no pre-built command to roll back.
 5. **No staging verification mentioned**. Was /deploy-staging green for this version? No record.
-6. **No memory write**. `.ai-assets-memory/runs.jsonl` not updated; this deploy is invisible to subsequent /plugin-doctor runs and /analyze-prod incident retrospectives.
+6. **No memory write**. `.ai-skills-memory/runs.jsonl` not updated; this deploy is invisible to subsequent /plugin-doctor runs and /analyze-prod incident retrospectives.
 7. **No on-call paging**. PagerDuty not silenced; if a flap fires during deploy, the on-call gets paged for noise.
 8. **No smoke-suite discovery**. The skill says "Run the project's existing smoke suite (tests/smoke/, e2e/ with @smoke)". The output claims "Smoke test passed" but doesn't show what was run.
 

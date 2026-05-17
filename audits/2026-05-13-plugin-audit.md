@@ -1,13 +1,13 @@
-# ai-assets plugin — аудит работы за 2 дня
+# ai-skills plugin — аудит работы за 2 дня
 
 | Параметр | Значение |
 |---|---|
-| Версия плагина | `ai-assets@ai-assets` v0.3.11 (commit `99604ce3`) |
+| Версия плагина | `ai-skills@ai-skills` v0.3.11 (commit `99604ce3`) |
 | Окно анализа | 2026-05-11 11:07 UTC → 2026-05-13 13:00 UTC (≈48 ч) |
 | Целевой проект | `f4ai` (`/home/avav25/dev/code/f4ai`) |
-| Источники данных | 39 сессий Claude Code (`~/.claude/projects/**/*.jsonl`, ~43 МБ), `<project>/.ai-assets-memory/{errors,agent-actions}.log`, кэш плагина `~/.claude/plugins/cache/ai-assets/ai-assets/0.3.11/` |
-| Скрипт-аудитор | `/tmp/ai_assets_audit.py` |
-| Сырой findings JSON | `/tmp/ai_assets_audit_findings.json` |
+| Источники данных | 39 сессий Claude Code (`~/.claude/projects/**/*.jsonl`, ~43 МБ), `<project>/.ai-skills-memory/{errors,agent-actions}.log`, кэш плагина `~/.claude/plugins/cache/ai-skills/ai-skills/0.3.11/` |
+| Скрипт-аудитор | `/tmp/ai_skills_audit.py` |
+| Сырой findings JSON | `/tmp/ai_skills_audit_findings.json` |
 
 ---
 
@@ -19,7 +19,7 @@
 | 2 | Subagent return-contract нарушен (G7) — 26 ERROR | H | да | задокументирован как «alpha.36», не починен |
 | 3 | Spawn payload schema violation Lead'ом — 6 WARN | H | да | задокументирован, не починен |
 | 4 | `SendMessage` недоступен в subagent → fallback на disk | H | да | alpha.31/35/36 — known |
-| 5 | `.ai-assets-memory/sessions/<sid>/team-envelopes/` не создаётся вовремя — `ls`/`Read` падают | H | да | косвенно описан в lead-protocol |
+| 5 | `.ai-skills-memory/sessions/<sid>/team-envelopes/` не создаётся вовремя — `ls`/`Read` падают | H | да | косвенно описан в lead-protocol |
 | 6 | `block-secrets-in-code` блокирует G7 envelope JSON по слову `token` | H | да | не задокументирован |
 | 7 | `block-dangerous-commands` блокирует тестовую песочницу `/tmp/hook-test/...` | M | да | не задокументирован |
 | 8 | cwd дрейф после context-compact (java-dev / frontend) | M | да | не задокументирован |
@@ -64,7 +64,7 @@ devops-engineer     5
 
 ### 2.1 [H] `tool-output-normalize` — log spam 724 WARNING / 2 дня
 
-**Симптом.** В `<project>/.ai-assets-memory/errors.log` за окно зафиксировано **724 записи** одного типа:
+**Симптом.** В `<project>/.ai-skills-memory/errors.log` за окно зафиксировано **724 записи** одного типа:
 
 ```json
 {"ts":"2026-05-13T12:51:37Z","severity":"WARNING","hook":"tool-output-normalize",
@@ -165,7 +165,7 @@ but is not enabled in this context. Use one of the available tools instead.</too
 
 **Документированный статус.** Это alpha.31 / alpha.35 / alpha.36 — см. `team-protocols/path-selection-rules.md:78-88` и `lead-protocol.md:60-90`. Плагин знает, что Anthropic заявленный auto-augment `SendMessage`/`TaskUpdate` для teammate в Agent Teams runtime непостоянен.
 
-**Что плагин предписывает.** Fallback на disk-envelope: `Bash(printf '%s' '<json>' > .ai-assets-memory/sessions/<sid>/team-envelopes/<role>-<topic>-<ts>.json.tmp && mv ... ...json)`.
+**Что плагин предписывает.** Fallback на disk-envelope: `Bash(printf '%s' '<json>' > .ai-skills-memory/sessions/<sid>/team-envelopes/<role>-<topic>-<ts>.json.tmp && mv ... ...json)`.
 
 **Где плагин ломает свой же fallback.** См. 2.5 ↓ — sessionId, который видит teammate, **не совпадает** с тем, который Lead использовал при создании каталога.
 
@@ -181,15 +181,15 @@ but is not enabled in this context. Use one of the available tools instead.</too
 
 Конкретные пути (выборка):
 ```
-.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-developer-BE-5.json
-.ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-qa-BE-3.json
-.ai-assets-memory/sessions/hero-it3/team-envelopes/G7-developer-WP1.json
-.ai-assets-memory/sessions/ff1d199a-2d31-4f27-b58c-b8017a8425eb/team-envelopes/TaskCompleted-1-20260512T140003Z.json
+.ai-skills-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-developer-BE-5.json
+.ai-skills-memory/sessions/v22-wave2-20260511-153127/team-envelopes/G7-qa-BE-3.json
+.ai-skills-memory/sessions/hero-it3/team-envelopes/G7-developer-WP1.json
+.ai-skills-memory/sessions/ff1d199a-2d31-4f27-b58c-b8017a8425eb/team-envelopes/TaskCompleted-1-20260512T140003Z.json
 ```
 
 В сессии `42c9ded9` (`/develop` lead) Lead запустил Bash:
 ```
-ls .ai-assets-memory/sessions/v22-wave2-20260511-153127/team-envelopes/
+ls .ai-skills-memory/sessions/v22-wave2-20260511-153127/team-envelopes/
 → Exit code 1: No such file or directory
 === G7-qa-BE-3.json === Traceback (most recent call last):
   File "<string>", line 3, in <module>
@@ -204,7 +204,7 @@ FileNotFoundError: [Errno 2] No such file or directory
 Атомарный pattern `.json.tmp + mv` сам по себе работает (java-dev `11ba0d22` сделал 25 envelope writes успешно), но **только** когда каталог уже создан.
 
 **Что предлагается.**
-1. В Lead-протоколе (`lead-protocol.md`): `Bash(mkdir -p .ai-assets-memory/sessions/<sid>/team-envelopes/)` — обязательный шаг **до** любого `Agent` spawn в Path B.
+1. В Lead-протоколе (`lead-protocol.md`): `Bash(mkdir -p .ai-skills-memory/sessions/<sid>/team-envelopes/)` — обязательный шаг **до** любого `Agent` spawn в Path B.
 2. В spawn-payload teammate'а указывать абсолютный путь к каталогу envelopes, не относительный, не slug.
 3. Использовать `session_id` Lead'а (известный из `${CLAUDE_SESSION_ID}` env) как канонический slug, а человеко-читаемый префикс — суффиксом.
 
@@ -233,7 +233,7 @@ Use environment variables or a secrets manager instead of hardcoding secrets.
 
 **Что предлагается.**
 1. Заменить regex на более точный — исключить `tokens_used`, `tokens_in`, `tokens_out`, `bearer_*` (если оно с placeholder), и matchить только то, что реально похоже на секрет (≥ 20 символов, base64-/hex-alphabet).
-2. Добавить allowlist путей: `.ai-assets-memory/sessions/**`, `/tmp/*envelope*`, `/tmp/v22-envelopes/**` — это **служебные конверты плагина**, не код.
+2. Добавить allowlist путей: `.ai-skills-memory/sessions/**`, `/tmp/*envelope*`, `/tmp/v22-envelopes/**` — это **служебные конверты плагина**, не код.
 3. Хук должен пропускать `Write` где content начинается с `{` и парсится как JSON (не код по определению).
 
 ---
@@ -357,7 +357,7 @@ Lead просит teammate **прочитать 4-5 из них** в `Mandatory 
 
 ### 3.1 [L] `runs.jsonl` пишет нули по токенам/событиям
 
-В `<project>/.ai-assets-memory/runs.jsonl` каждая запись `SessionEnd`:
+В `<project>/.ai-skills-memory/runs.jsonl` каждая запись `SessionEnd`:
 ```json
 {"event":"SessionEnd","session_id":"42c9ded9-...","tokens_in_total":0,
  "tokens_out_total":0,"ralf_iter_total":0,"ralf_tokens_total":0,
@@ -410,7 +410,7 @@ Lead просит teammate **прочитать 4-5 из них** в `Mandatory 
 ### Спринт 1 — самосаботаж плагина (high impact, low effort)
 
 1. **Fix 2.1**: `tool-output-wrap.py` всегда эмитит маркер (даже на skip-path) → -724 WARNING в день.
-2. **Fix 2.6**: regex `Generic Secret` сужается + allowlist `.ai-assets-memory/**`, `/tmp/*envelope*`, JSON-skip → разблокирует Path B reviewers.
+2. **Fix 2.6**: regex `Generic Secret` сужается + allowlist `.ai-skills-memory/**`, `/tmp/*envelope*`, JSON-skip → разблокирует Path B reviewers.
 3. **Fix 2.7**: allowlist `/tmp/**`, `~/.cache/**` для `block-dangerous-commands` → не блокирует тестовые песочницы.
 4. **Fix 2.5**: `mkdir -p` каталога envelopes в `lead-protocol.md` как первый шаг team setup → разблокирует disk-envelope fallback.
 
@@ -441,7 +441,7 @@ Lead просит teammate **прочитать 4-5 из них** в `Mandatory 
 
 ```bash
 # Перегенерация JSON находок
-python3 /tmp/ai_assets_audit.py
+python3 /tmp/ai_skills_audit.py
 
 # Сводка ошибок из errors.log
 python3 -c "
@@ -450,7 +450,7 @@ from collections import Counter
 from pathlib import Path
 cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=2)
 hooks = Counter()
-for raw in open('/home/avav25/dev/code/f4ai/.ai-assets-memory/errors.log'):
+for raw in open('/home/avav25/dev/code/f4ai/.ai-skills-memory/errors.log'):
     try: d = json.loads(raw)
     except: continue
     ts = d.get('ts','')
@@ -492,7 +492,7 @@ print(hooks.most_common())"
 
 ---
 
-## 7. Изменения в `~/.ai-assets-memory/learnings.md` (предложение)
+## 7. Изменения в `~/.ai-skills-memory/learnings.md` (предложение)
 
 После починки добавить запись:
 
@@ -500,7 +500,7 @@ print(hooks.most_common())"
 ## 2026-05-13 — G7 envelope fallback paths
 
 When Path B SendMessage/TaskUpdate are unavailable (alpha.31/35/36):
-- Lead MUST `mkdir -p .ai-assets-memory/sessions/<canonical_session_id>/team-envelopes/`
+- Lead MUST `mkdir -p .ai-skills-memory/sessions/<canonical_session_id>/team-envelopes/`
   before any `Agent` spawn.
 - Use the Lead's `${CLAUDE_SESSION_ID}` as canonical slug, not human-readable team name.
 - Pass absolute path to teammate in spawn-payload.

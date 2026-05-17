@@ -1,6 +1,6 @@
 # Learnings Entry Schema (L4 + L5)
 
-> Plugin-shipped template. Read by `memory-curator` agent and `/learnings-write` skill. Documents the canonical format for entries appended to `.ai-assets-memory/learnings.md` (L4) or `~/.claude/ai-assets/learnings.md` (L5).
+> Plugin-shipped template. Read by `memory-curator` agent and `/learnings-write` skill. Documents the canonical format for entries appended to `.ai-skills-memory/learnings.md` (L4) or `~/.claude/ai-skills/learnings.md` (L5).
 
 ## Required Fields (from memory-validation.md)
 
@@ -89,7 +89,7 @@ When a new entry's name matches an existing entry, `memory-curator` agent applie
 3. more recently confirmed wins
 4. on ambiguity: ask user, do not silently merge
 
-Conflict resolution writes a log line to `.ai-assets-memory/redactions.log` with `winner_id`, `loser_id`, `reason`, `timestamp`, `trace_id`.
+Conflict resolution writes a log line to `.ai-skills-memory/redactions.log` with `winner_id`, `loser_id`, `reason`, `timestamp`, `trace_id`.
 
 ## Retention
 
@@ -99,4 +99,4 @@ Conflict resolution writes a log line to `.ai-assets-memory/redactions.log` with
 
 ## PII filter
 
-Every write through `memory-curator` agent passes through `apply_pii_filter()` from `_lib.py`. PII matches replaced with `[REDACTED:<pattern-name>]`. Audit log to `.ai-assets-memory/redactions.log`.
+Every write through `memory-curator` agent passes through `apply_pii_filter()` from `_lib.py`. PII matches replaced with `[REDACTED:<pattern-name>]`. Audit log to `.ai-skills-memory/redactions.log`.

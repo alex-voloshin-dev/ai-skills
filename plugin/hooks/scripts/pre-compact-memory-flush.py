@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: pre-compact-memory-flush
+ai-skills plugin hook: pre-compact-memory-flush
 Event: PreCompact
 Exit code 0 = always allow compaction.
 
@@ -33,7 +33,7 @@ def main() -> None:
     sid = str(data.get("session_id") or "unknown").replace(":", "-").replace(".", "-")
 
     cwd = pathlib.Path.cwd()
-    memory_root = cwd / ".ai-assets-memory"
+    memory_root = cwd / ".ai-skills-memory"
     flush_marker_path = memory_root / "pending-flush" / f"{sid}.json"
 
     try:
@@ -42,7 +42,7 @@ def main() -> None:
             "ts": _lib.iso_now(),
             "session_id": sid,
             "trigger": "PreCompact",
-            "session_dir": f".ai-assets-memory/sessions/{sid}/",
+            "session_dir": f".ai-skills-memory/sessions/{sid}/",
             "instructions": (
                 "memory-curator agent should read this marker on next spawn, "
                 "review session state files, extract durable learnings to L4 "

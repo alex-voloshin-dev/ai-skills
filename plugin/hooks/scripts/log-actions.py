@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: log-actions
+ai-skills plugin hook: log-actions
 Event: PostToolUse (matcher: .* — covers all tool calls)
 Exit code 0 = always allow.
 
 Logs Claude tool activity to the target repo's L4 memory log for traceability.
-Log file: .ai-assets-memory/agent-actions.log (cwd-relative, resolves to target repo).
+Log file: .ai-skills-memory/agent-actions.log (cwd-relative, resolves to target repo).
 Per 03-MEMORY-ARCHITECTURE.md L4 contract.
 
 Per Round 13 MED-A: refactored from B2 inline _normalize_hook_input duplicate
@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _lib  # noqa: E402
 
 
-LOG_FILE = os.path.join(".ai-assets-memory", "agent-actions.log")
+LOG_FILE = os.path.join(".ai-skills-memory", "agent-actions.log")
 MAX_LOG_SIZE = 10 * 1024 * 1024
 
 

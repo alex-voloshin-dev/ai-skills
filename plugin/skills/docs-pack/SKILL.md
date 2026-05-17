@@ -7,7 +7,7 @@ argument-hint: "<path> [--template api-reference|user-guide|runbook|architecture
 
 # /docs-pack — User-Facing Documentation Pack
 
-Generate a coherent set of user-facing docs for a module or feature. Output goes to `<repo>/docs/<module>/` (versioned in git, NOT in `.ai-assets-memory/`) — same convention exception as `/feature-design`: docs are versioned with the code, not with project memory.
+Generate a coherent set of user-facing docs for a module or feature. Output goes to `<repo>/docs/<module>/` (versioned in git, NOT in `.ai-skills-memory/`) — same convention exception as `/feature-design`: docs are versioned with the code, not with project memory.
 
 ## When to use
 
@@ -61,7 +61,7 @@ Files written to **`<repo>/docs/<module>/`** — versioned in git as project doc
 - `EXAMPLES.md` — code examples, use cases
 - (Optional) Mermaid diagrams for flows / architecture
 
-Memory writes (workflow run logs) go to L4 `.ai-assets-memory/docs/<module>/` separately.
+Memory writes (workflow run logs) go to L4 `.ai-skills-memory/docs/<module>/` separately.
 
 ## Agent roster
 
@@ -87,7 +87,7 @@ Memory writes (workflow run logs) go to L4 `.ai-assets-memory/docs/<module>/` se
 │  frontend-engineer for a React component, sre-engineer for runbooks):
 │  - Review accuracy, completeness, runnability of examples
 │  - Suggest improvements
-│  → feedback.md (in .ai-assets-memory/docs/<module>/)
+│  → feedback.md (in .ai-skills-memory/docs/<module>/)
 │
 ├─ content-writer revisions:
 │  └─ Address feedback, finalize
@@ -122,7 +122,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After complete | `.ai-assets-memory/docs/<module>/generation-summary.md` — what was documented, when, audience, files emitted |
+| L4 | After complete | `.ai-skills-memory/docs/<module>/generation-summary.md` — what was documented, when, audience, files emitted |
 
 ## Failure modes
 

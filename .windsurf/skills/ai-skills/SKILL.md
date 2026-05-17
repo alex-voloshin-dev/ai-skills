@@ -1,7 +1,7 @@
 ---
+name: ai-skills
 description: Create, modify, validate, and analyze Windsurf AI assets such as AGENTS.md files, Windsurf skills, templates, and supporting scripts. Use when building or maintaining the repository's Windsurf-specific AI component package.
 ---
-
 
 # AI Assets
 
@@ -36,7 +36,7 @@ Check for:
 
 - References to `AGENTS.md`
 - References to `.windsurf/skills/<name>/`
-- References to shared templates, checklists, or support resources under `.windsurf/skills/ai-assets/`
+- References to shared templates, checklists, or support resources under `.windsurf/skills/ai-skills/`
 - References to explicit support scripts such as `.windsurf/hooks/scripts/*`
 - Missing files
 - Orphaned assets

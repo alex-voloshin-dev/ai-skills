@@ -40,8 +40,8 @@ If there are no issues — return `status: ok`, `result.summary: "Task approved,
 In addition to the canonical G7 return via the bus, write your verdict envelope to disk as a defensive backstop. The Lead's `team-gate-reconciliation` hook + `Monitor` will pick it up even if `SendMessage` / `TaskUpdate` augmentation is intermittent on your tool surface (alpha.31 / alpha.35 / alpha.36):
 
 ```bash
-mkdir -p .ai-assets-memory/sessions/<sid>/team-envelopes
-cat > .ai-assets-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.json.tmp <<'JSON'
+mkdir -p .ai-skills-memory/sessions/<sid>/team-envelopes
+cat > .ai-skills-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.json.tmp <<'JSON'
 {
   "trace_id": "<spawn-trace_id>",
   "verdict": "approved" | "changes_requested",
@@ -53,15 +53,15 @@ cat > .ai-assets-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.jso
   "next_actions": []
 }
 JSON
-mv .ai-assets-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.json.tmp \
-   .ai-assets-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.json
+mv .ai-skills-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.json.tmp \
+   .ai-skills-memory/sessions/<sid>/team-envelopes/findings-reviewer-WP-N.json
 ```
 
 The `.tmp` → `mv` pattern is required so the Lead's `Monitor` never reads partial JSON. The `<sid>` is from the spawn payload's `state_slice.session_id`.
 
 This is in addition to, NOT instead of, the canonical G7 return via the bus. Both channels carry the same verdict. The file-channel is the liveness backstop.
 
-You remain read-only (`Read`, `Grep`, `Glob`, `Bash` for the `mv` only — no `Write` / `Edit` on source files). Writing the envelope file via `Bash` heredoc + `mv` is the only file-write operation permitted to the Reviewer, and it touches only `.ai-assets-memory/sessions/<sid>/team-envelopes/` — never source code, never docs, never tests.
+You remain read-only (`Read`, `Grep`, `Glob`, `Bash` for the `mv` only — no `Write` / `Edit` on source files). Writing the envelope file via `Bash` heredoc + `mv` is the only file-write operation permitted to the Reviewer, and it touches only `.ai-skills-memory/sessions/<sid>/team-envelopes/` — never source code, never docs, never tests.
 
 ## Findings delivery fallback (alpha.35)
 

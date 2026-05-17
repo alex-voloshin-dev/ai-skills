@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin — shared helper module for hook scripts.
+ai-skills plugin — shared helper module for hook scripts.
 
 Per Round 5 S2 + B8.0. All hook scripts (B2 carried + B8 new) import from
 this module. The 4 B2 carried hooks (block-*, log-actions) were refactored
@@ -23,13 +23,13 @@ Public API:
         Emit marker for downstream hooks to assert wrap was applied.
 
     read_token_meter(session_dir: pathlib.Path) -> dict
-        Read .ai-assets-memory/sessions/<id>/token-meter.json.
+        Read .ai-skills-memory/sessions/<id>/token-meter.json.
 
     update_token_meter(session_dir: pathlib.Path, delta: dict) -> dict
         Atomic increment of session token counters.
 
     log_to(filename: str, entry: dict, memory_root: pathlib.Path | None = None) -> None
-        Append JSON line to a file under .ai-assets-memory/.
+        Append JSON line to a file under .ai-skills-memory/.
 
     iso_now() -> str
         UTC ISO8601 timestamp (e.g., 2026-04-26T14:30:00Z).
@@ -59,7 +59,7 @@ PLUGIN_ROOT_ENV = "CLAUDE_PLUGIN_ROOT"
 WRAP_MARKER_ENV = "AI_ASSETS_WRAP_APPLIED"
 
 DEFAULT_PII_PATTERNS_PATH = "hooks/scripts/pii-patterns.txt"
-PROJECT_PII_EXTENSION = ".ai-assets-memory/.committed/pii-patterns.txt"
+PROJECT_PII_EXTENSION = ".ai-skills-memory/.committed/pii-patterns.txt"
 
 
 # ---------- Time ----------
@@ -316,7 +316,7 @@ def find_active_ralph(memory_root_path: pathlib.Path) -> pathlib.Path | None:
 
     Shared by ralph-stop.py (Stop event) and ralph-iter-meter.py (PostToolUse)
     so both hooks agree on whether a RALF iteration is currently in progress.
-    Returns None if no .ai-assets-memory/ralph/ exists or no run is active.
+    Returns None if no .ai-skills-memory/ralph/ exists or no run is active.
     """
     ralph_root = memory_root_path / "ralph"
     if not ralph_root.exists():
@@ -356,11 +356,11 @@ def estimate_tokens_from_chars(*texts: str) -> int:
 
 def memory_root() -> pathlib.Path:
     """L4 root in the target repo (cwd-relative)."""
-    return pathlib.Path.cwd() / ".ai-assets-memory"
+    return pathlib.Path.cwd() / ".ai-skills-memory"
 
 
 def log_to(filename: str, entry: dict, root: pathlib.Path | None = None) -> None:
-    """Append JSON line to a file under .ai-assets-memory/. Fail-open."""
+    """Append JSON line to a file under .ai-skills-memory/. Fail-open."""
     if root is None:
         root = memory_root()
     try:

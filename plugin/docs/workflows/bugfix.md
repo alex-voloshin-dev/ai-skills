@@ -100,7 +100,7 @@ Step 2 invokes `/analyze-prod` — finds K8s pod is OOMKilled at peak load. Bug 
 ```bash
 /bugfix "Test test_concurrent_order_creation flakes 30% of the time in CI"
 ```
-Step 7 RALF runs the regression test up to 6 times to converge on a stable repro. The fix likely involves a race condition (locking, idempotency, or test isolation). RALF state captured in `.ai-assets-memory/ralph/<run-id>/` for forensics.
+Step 7 RALF runs the regression test up to 6 times to converge on a stable repro. The fix likely involves a race condition (locking, idempotency, or test isolation). RALF state captured in `.ai-skills-memory/ralph/<run-id>/` for forensics.
 
 ## Related
 

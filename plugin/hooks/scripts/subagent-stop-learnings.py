@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: subagent-stop-learnings
+ai-skills plugin hook: subagent-stop-learnings
 Event: SubagentStop
 Exit code 0 = always allow.
 
@@ -9,7 +9,7 @@ Two responsibilities:
    Per R6 HIGH-4: on validation failure, log to errors.log, fail-open, surface
    diagnostic to orchestrator via stderr. NEVER block parent workflow.
 2. If userConfig.subagent_learnings_enabled = true, capture non-trivial
-   subagent outputs to .ai-assets-memory/sessions/<id>/subagent-reports/<name>-<id>.md
+   subagent outputs to .ai-skills-memory/sessions/<id>/subagent-reports/<name>-<id>.md
    for memory-curator to review later.
 """
 
@@ -85,7 +85,7 @@ def main() -> None:
     # including closure timestamps. The chain log persists across the session.
     if isinstance(return_payload, dict) and return_payload.get("trace_id"):
         try:
-            session_dir = pathlib.Path.cwd() / ".ai-assets-memory" / "sessions" / sid
+            session_dir = pathlib.Path.cwd() / ".ai-skills-memory" / "sessions" / sid
             session_dir.mkdir(parents=True, exist_ok=True)
             chain_path = session_dir / "spawn-chain.jsonl"
             with chain_path.open("a", encoding="utf-8") as f:
@@ -103,7 +103,7 @@ def main() -> None:
         tu = return_payload.get("tokens_used") or {}
         if isinstance(tu, dict):
             cwd = pathlib.Path.cwd()
-            session_dir = cwd / ".ai-assets-memory" / "sessions" / sid
+            session_dir = cwd / ".ai-skills-memory" / "sessions" / sid
             try:
                 _lib.update_token_meter(
                     session_dir,
@@ -135,7 +135,7 @@ def main() -> None:
             )
             redacted, _ = _lib.apply_pii_filter(content)
             try:
-                full_path = pathlib.Path.cwd() / ".ai-assets-memory" / report_path
+                full_path = pathlib.Path.cwd() / ".ai-skills-memory" / report_path
                 full_path.parent.mkdir(parents=True, exist_ok=True)
                 full_path.write_text(redacted, encoding="utf-8")
             except OSError:

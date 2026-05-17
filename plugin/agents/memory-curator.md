@@ -1,6 +1,6 @@
 ---
 name: memory-curator
-description: Spawn-only (NEVER user-invocable) agent that curates writes to L4 (.ai-assets-memory/learnings.md) and optionally L5 (~/.claude/ai-assets/learnings.md). Triggered by pre-compact-memory-flush.py hook (PreCompact event), subagent-stop-learnings.py (opt-in), or memory-discipline rule via /learnings-write skill. Runs in an isolated subagent context (reads session state from disk, not from the parent's context), extracts durable learnings, deduplicates against existing entries, applies PII filter, conflict-resolves per memory-validation rule. Returns G7 contract listing entries written.
+description: Spawn-only (NEVER user-invocable) agent that curates writes to L4 (.ai-skills-memory/learnings.md) and optionally L5 (~/.claude/ai-skills/learnings.md). Triggered by pre-compact-memory-flush.py hook (PreCompact event), subagent-stop-learnings.py (opt-in), or memory-discipline rule via /learnings-write skill. Runs in an isolated subagent context (reads session state from disk, not from the parent's context), extracts durable learnings, deduplicates against existing entries, applies PII filter, conflict-resolves per memory-validation rule. Returns G7 contract listing entries written.
 tools: Read, Write
 disallowedTools: Edit, Bash, Task
 model: haiku
@@ -39,13 +39,13 @@ The disk envelope is **additive**, not a replacement — never skip the in-messa
 1. **Spawn-only** — no `user-invocable: true`, no slash command. Never directly accessible.
 
 2. **Path-restricted writes** — only allowed paths:
-   - L4: `<cwd>/.ai-assets-memory/learnings.md` (project)
-   - L4 committed: `<cwd>/.ai-assets-memory/.committed/learnings.md` (project, opt-in via flag)
-   - L5: `~/.claude/ai-assets/learnings.md` (user-global, opt-in only)
+   - L4: `<cwd>/.ai-skills-memory/learnings.md` (project)
+   - L4 committed: `<cwd>/.ai-skills-memory/.committed/learnings.md` (project, opt-in via flag)
+   - L5: `~/.claude/ai-skills/learnings.md` (user-global, opt-in only)
 
    Hook `pre-tool-use-committed-write.py` enforces `.committed/` allowlist. Other path writes blocked at Bash/Edit level (not in tools list anyway).
 
-3. **PII filter mandatory** — every write passes through `apply_pii_filter()` from `_lib.py`. Matches replaced with `[REDACTED:<pattern-name>]`. Audit log to `.ai-assets-memory/redactions.log`.
+3. **PII filter mandatory** — every write passes through `apply_pii_filter()` from `_lib.py`. Matches replaced with `[REDACTED:<pattern-name>]`. Audit log to `.ai-skills-memory/redactions.log`.
 
 4. **Schema-conforming** — every entry follows `plugin/memory/templates/learnings-schema.md` format: H2 entity heading + Type/Source/Confidence/Created/Last confirmed/Scope frontmatter fields + body.
 
@@ -91,7 +91,7 @@ Spawn payload `goal`: "Add a learning entry the user wrote: <text>"
 5. **PII filter** — pass each entry through `apply_pii_filter()` (B8 `_lib.py`). Track redactions count.
 6. **Format per schema** — produce H2-headed entries with all required frontmatter fields.
 7. **Write** — append to target file. NEVER overwrite (append-only mode unless `--rewrite`).
-8. **Log redactions** — if any PII matches, append to `.ai-assets-memory/redactions.log`.
+8. **Log redactions** — if any PII matches, append to `.ai-skills-memory/redactions.log`.
 9. **Return G7 contract** — list of entries written (entity headings only — actual content is in the file).
 
 ## Output Schema

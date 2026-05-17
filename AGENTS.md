@@ -10,7 +10,7 @@ The legacy `.claude/` package was removed in v0.2.0 — `plugin/` fully replaces
 ## Quick Reference
 
 ```text
-ai-assets/
+ai-skills/
 ├── plugin/                  # Claude Code plugin — DO NOT MIRROR INTO .codex/
 ├── .agents/skills/          # 39 skills (shared between Codex and Windsurf)
 ├── .codex/                  # Codex runtime package (your home)

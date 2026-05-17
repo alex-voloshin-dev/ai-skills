@@ -28,16 +28,16 @@ Announcement printed:
 
 | WP | Description | DEV | REVIEW |
 |----|-------------|-----|--------|
-| WP-1 | Scaffold `release-notes/SKILL.md` per `plugin-skill-create/SKILL.md`, write first body draft. | ai-assets:prompt-engineer | ai-assets:prompt-engineer (fresh) |
-| WP-2 | Author 5-dim rubric in `plugin/eval/judge-rubrics/release-notes.md`. | ai-assets:eval-judge | ai-assets:prompt-engineer (fresh) |
-| WP-3 | Seed 6 calibration samples (3 good + 3 bad). | ai-assets:eval-judge | ai-assets:prompt-engineer (fresh) |
+| WP-1 | Scaffold `release-notes/SKILL.md` per `plugin-skill-create/SKILL.md`, write first body draft. | ai-skills:prompt-engineer | ai-skills:prompt-engineer (fresh) |
+| WP-2 | Author 5-dim rubric in `plugin/eval/judge-rubrics/release-notes.md`. | ai-skills:eval-judge | ai-skills:prompt-engineer (fresh) |
+| WP-3 | Seed 6 calibration samples (3 good + 3 bad). | ai-skills:eval-judge | ai-skills:prompt-engineer (fresh) |
 
 Wave sizing: 3 WPs ≤ 6 → single wave.
 
 ## Execution
 
 Team `plugin-author-create-2026-05-13-1010` created with `developer / reviewer / qa` teammates.
-File-channel backstop attached: `.ai-assets-memory/sessions/abc/team-envelopes/`.
+File-channel backstop attached: `.ai-skills-memory/sessions/abc/team-envelopes/`.
 `Monitor` started.
 
 WP-1: DEV returned G7 envelope status=ok; Reviewer verdict=approved; QA qa_verdict=pass.
@@ -54,7 +54,7 @@ WP-3: DEV returned G7 envelope status=ok; Reviewer approved; QA pass.
 
 ## Memory writes
 
-- L4: appended to `.ai-assets-memory/plugin-author/runs.log`:
+- L4: appended to `.ai-skills-memory/plugin-author/runs.log`:
   `{"ts":"2026-05-13T10:42:00Z","op":"create","target":"release-notes","wps":3,"gate_results":{"WP-1":"pass","WP-2":"pass-r2","WP-3":"pass"}}`
 - L5: not requested (no `--learnings` flag).
 

@@ -1,6 +1,6 @@
 # Reviewer Role Card
 
-Slim, teammate-only pre-read for the Reviewer subagent (`subagent_type: ai-assets:software-engineer`, `disallowedTools: ["Write", "Edit"]`). Read this in full before starting work — nothing else from `team-protocols/` is required for routine execution. The expanded reference lives in `reviewer-protocol.md`.
+Slim, teammate-only pre-read for the Reviewer subagent (`subagent_type: ai-skills:software-engineer`, `disallowedTools: ["Write", "Edit"]`). Read this in full before starting work — nothing else from `team-protocols/` is required for routine execution. The expanded reference lives in `reviewer-protocol.md`.
 
 ## Your role
 
@@ -49,7 +49,7 @@ ENV="${envelope_dir}/findings-reviewer-WP-N.json"
 mv "${ENV}.tmp" "${ENV}"
 ```
 
-If `envelope_dir` is absent from the spawn payload, fall back to `.ai-assets-memory/sessions/${sid}/team-envelopes/` where `${sid}` is `state_slice.session_id`; create the directory with `mkdir -p` first.
+If `envelope_dir` is absent from the spawn payload, fall back to `.ai-skills-memory/sessions/${sid}/team-envelopes/` where `${sid}` is `state_slice.session_id`; create the directory with `mkdir -p` first.
 
 The disk envelope is additive — never skip the in-message JSON.
 

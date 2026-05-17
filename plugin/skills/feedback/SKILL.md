@@ -1,13 +1,13 @@
 ---
 name: feedback
-description: Collect and analyze past Claude Code session logs for the ai-assets plugin to surface agent, subagent, skill, command, and hook errors, timeouts, unexpected exits, and other anomalies that point at plugin defects. Defaults to the last 7 days of sessions for the current project. Produces an extended Markdown report on disk plus a brief on-screen summary. Use when reviewing how the plugin behaved across recent runs, after a release to confirm reliability, before filing a plugin bug report, or when planning the next plugin improvement cycle.
+description: Collect and analyze past Claude Code session logs for the ai-skills plugin to surface agent, subagent, skill, command, and hook errors, timeouts, unexpected exits, and other anomalies that point at plugin defects. Defaults to the last 7 days of sessions for the current project. Produces an extended Markdown report on disk plus a brief on-screen summary. Use when reviewing how the plugin behaved across recent runs, after a release to confirm reliability, before filing a plugin bug report, or when planning the next plugin improvement cycle.
 context: fork
 argument-hint: "[--days N] [--project PATH] [--plugin NAME] [--out PATH] [--severity all|warn|error]"
 ---
 
 # /feedback — Plugin Session Feedback Analyzer
 
-Mine Claude Code session JSONL transcripts for evidence of how the ai-assets plugin behaved across recent sessions. Produces:
+Mine Claude Code session JSONL transcripts for evidence of how the ai-skills plugin behaved across recent sessions. Produces:
 
 1. An **extended report** saved to disk at a deterministic path.
 2. A **brief on-screen report** following the same template skeleton so users can scan it in the terminal.
@@ -32,10 +32,10 @@ Not for:
 ## Invocation
 
 ```text
-/feedback                                   # last 7 days, current project, plugin = ai-assets
+/feedback                                   # last 7 days, current project, plugin = ai-skills
 /feedback --days 14                         # last 14 days
 /feedback --project /path/to/other/repo     # analyze a different project's sessions
-/feedback --plugin ai-assets                # restrict findings to one plugin (default: ai-assets)
+/feedback --plugin ai-skills                # restrict findings to one plugin (default: ai-skills)
 /feedback --severity error                  # only blocking/error-level findings
 /feedback --out reports/feedback-2026-05.md # custom output path
 ```
@@ -46,9 +46,9 @@ Not for:
 |---|---|---|
 | `--days N` | `7` | Window of recent sessions to scan (mtime-based). `0` means "all sessions". |
 | `--project PATH` | current `$PWD` | Project whose session logs to read. Resolved to `~/.claude/projects/<sanitized-path>/`. |
-| `--plugin NAME` | `ai-assets` | Filter findings to events that mention this plugin name in hook paths, skill paths, or system events. `all` disables the filter. |
+| `--plugin NAME` | `ai-skills` | Filter findings to events that mention this plugin name in hook paths, skill paths, or system events. `all` disables the filter. |
 | `--severity LEVEL` | `warn` | One of `all`, `warn`, `error`. `warn` is the default — includes errors plus non-blocking warnings. |
-| `--out PATH` | `.ai-assets-memory/feedback/feedback-<YYYY-MM-DD>-<HHMM>.md` | Override the on-disk report path. Parent dir is created if missing. |
+| `--out PATH` | `.ai-skills-memory/feedback/feedback-<YYYY-MM-DD>-<HHMM>.md` | Override the on-disk report path. Parent dir is created if missing. |
 | `--max-sessions N` | `100` | Cap on number of session files parsed (oldest first; newest always included). |
 
 ## Behavior
@@ -61,7 +61,7 @@ Translate `--project` (or `$PWD`) to the Claude Code log path:
 ~/.claude/projects/<sanitized-cwd>/<session-id>.jsonl
 ```
 
-`<sanitized-cwd>` is the absolute project path with `/` replaced by `-` and a leading `-`. Example: `/home/u/repo/ai-assets` → `-home-u-repo-ai-assets`. If the directory does not exist, fail with a clear message and suggest `--project`.
+`<sanitized-cwd>` is the absolute project path with `/` replaced by `-` and a leading `-`. Example: `/home/u/repo/ai-skills` → `-home-u-repo-ai-skills`. If the directory does not exist, fail with a clear message and suggest `--project`.
 
 ### 2. Filter session files by recency
 
@@ -87,7 +87,7 @@ For every classified event, attach:
 
 - `sessionId`, `timestamp`, `cwd`, `gitBranch`, `version` (Claude Code version)
 - `source`: agent / subagent name, skill name, hook name, or command name (parsed from the event payload)
-- `pluginId`: derived from the path (e.g., `ai-assets` if the hook path contains `/plugins/cache/ai-assets/`)
+- `pluginId`: derived from the path (e.g., `ai-skills` if the hook path contains `/plugins/cache/ai-skills/`)
 - `severity`: `error` (blocking), `warn` (non-blocking), `info` (anomaly worth noting)
 - `excerpt`: ≤ 400-char verbatim slice of the event payload (no full payload to keep the report compact)
 - `surrounding_context`: previous and next 1 event in the same session (to show the lead-up and reaction)
@@ -113,7 +113,7 @@ Render both reports from the shared template in `templates/extended-template.md`
 
 Every `/feedback` run also writes a machine-readable counterpart of the Markdown report at the same stem, e.g. `feedback-2026-05-13-0910.json` next to `feedback-2026-05-13-0910.md`. The JSON conforms to `plugin/skills/feedback/output-schema.json` (schema_version `"1"`) and has **full parity** with the MD: every finding present in the Markdown appears in the JSON with the same severity, source kind, identity, signature, count, first/last seen, and up to 3 evidence excerpts (≤ 400 chars each). The JSON also carries `meta.report_md_path` pointing back at the paired MD for traceability.
 
-Invocation contract: call the worker with `--out-json <stem>.json --report-md-path <stem>.md --tool-version <ai-assets@VERSION>`. The worker writes the JSON atomically (`*.tmp` + rename) so a half-written file is never visible to a downstream reader. Schema-validate using the bundled schema (`output-schema.json`) when `jsonschema` is available.
+Invocation contract: call the worker with `--out-json <stem>.json --report-md-path <stem>.md --tool-version <ai-skills@VERSION>`. The worker writes the JSON atomically (`*.tmp` + rename) so a half-written file is never visible to a downstream reader. Schema-validate using the bundled schema (`output-schema.json`) when `jsonschema` is available.
 
 The JSON is the canonical contract for `/plugin-author fix-feedback --from <stem>.json`. Reparsing the Markdown is a degraded fallback only (per `plugin-author/feedback-parser.md`), and downstream consumers MUST prefer the JSON whenever it exists.
 
@@ -129,10 +129,10 @@ Sections in both:
 
 ### 7. Memory write
 
-Append one JSON-line summary to `.ai-assets-memory/feedback/feedback.log`:
+Append one JSON-line summary to `.ai-skills-memory/feedback/feedback.log`:
 
 ```json
-{"ts": "<iso>", "days": 7, "project": "<path>", "plugin": "ai-assets", "sessions_scanned": 14, "findings": 23, "verdict": "YELLOW", "report": ".ai-assets-memory/feedback/feedback-2026-05-13-0910.md"}
+{"ts": "<iso>", "days": 7, "project": "<path>", "plugin": "ai-skills", "sessions_scanned": 14, "findings": 23, "verdict": "YELLOW", "report": ".ai-skills-memory/feedback/feedback-2026-05-13-0910.md"}
 ```
 
 ### 8. Print the brief
@@ -148,7 +148,7 @@ The worker MUST:
 - Stream-parse line by line (sessions can be hundreds of MB)
 - Skip malformed JSON lines but increment a counter; surface counter in the report header (and in `meta.malformed_lines` of the canonical JSON)
 - Mask any value matching `(?i)(api[_-]?key|secret|token|password|credential)[\"'\s:=]+[^\s\"']+` → `<redacted>`
-- Be invocable as `python3 plugin/skills/feedback/scripts/collect_session_data.py --days 7 --project <abs-path> --out-json <stem>.json --report-md-path <stem>.md --tool-version 'ai-assets@<ver>'` from the plugin tree
+- Be invocable as `python3 plugin/skills/feedback/scripts/collect_session_data.py --days 7 --project <abs-path> --out-json <stem>.json --report-md-path <stem>.md --tool-version 'ai-skills@<ver>'` from the plugin tree
 
 ## Templates
 
@@ -161,31 +161,31 @@ Both files include placeholders the skill substitutes at render time.
 
 - **Read-only** — never modify session JSONL files
 - **Never echo secrets** — apply the redaction regex above before printing or writing
-- **Deterministic output path** — when `--out` is not given, use `.ai-assets-memory/feedback/feedback-<YYYY-MM-DD>-<HHMM>.md` so re-runs do not overwrite each other
+- **Deterministic output path** — when `--out` is not given, use `.ai-skills-memory/feedback/feedback-<YYYY-MM-DD>-<HHMM>.md` so re-runs do not overwrite each other
 - **Paired JSON parity** — every MD write MUST be paired with a JSON write at the same stem. If the JSON write fails, surface the error to the user; do not silently leave a MD-only report (downstream `/plugin-author fix-feedback` would fall back to degraded MD parsing)
 - **English-only** per repo CLAUDE.md
 - **No absolute user-machine paths in templates** — substitute at runtime only
 - **Last stdout line is the report path** — never print anything after it
-- **Plugin scope only by default** — when `--plugin ai-assets`, exclude events whose `source` is clearly user-code (e.g., bash commands, project test runs that are not invoked by plugin hooks)
+- **Plugin scope only by default** — when `--plugin ai-skills`, exclude events whose `source` is clearly user-code (e.g., bash commands, project test runs that are not invoked by plugin hooks)
 
 ## Failure modes
 
 - **Session dir missing:** report the resolved path, list nearby candidates, suggest `--project`
 - **Zero sessions in window:** still write a report with verdict `INSUFFICIENT_DATA`; brief is one line + path
 - **Malformed JSONL line:** count it, continue; surface counter in report header
-- **Permission denied on `.ai-assets-memory/feedback/`:** fall back to `/tmp/feedback-<ts>.md` and warn the user that the canonical path was unreachable
+- **Permission denied on `.ai-skills-memory/feedback/`:** fall back to `/tmp/feedback-<ts>.md` and warn the user that the canonical path was unreachable
 - **Worker crash:** print the worker traceback, exit 1, do NOT print a fake report-path line
 
 ## Memory writes
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | End of every run | Append one JSON line to `.ai-assets-memory/feedback/feedback.log` — timestamp, window, sessions scanned, finding count, verdict, report path |
+| L4 | End of every run | Append one JSON line to `.ai-skills-memory/feedback/feedback.log` — timestamp, window, sessions scanned, finding count, verdict, report path |
 
 ## Integration
 
 - **Reads**: `~/.claude/projects/<sanitized-cwd>/*.jsonl`
-- **Writes**: paired Markdown + canonical JSON reports at the same stem (e.g. `feedback-2026-05-13-0910.{md,json}`), plus a one-line summary append to `.ai-assets-memory/feedback/feedback.log`
+- **Writes**: paired Markdown + canonical JSON reports at the same stem (e.g. `feedback-2026-05-13-0910.{md,json}`), plus a one-line summary append to `.ai-skills-memory/feedback/feedback.log`
 - **Downstream consumer**: `/plugin-author fix-feedback --from <report>.json` ingests the canonical JSON and produces a fix-cycle (one WP per finding, DEV → REVIEW → QA pipeline) — see `plugin/skills/plugin-author/feedback-parser.md` for the consumed shape. Markdown reparse via `--md` is degraded fallback only.
 - **Companion**: `/plugin-doctor` (live plugin diagnostic), `/eval` (rubric-based skill quality), `/bugfix` (file a fix once a finding is confirmed)
 - **Schema**: `plugin/skills/feedback/output-schema.json` (JSON Schema 2020-12, `schema_version: "1"`). The worker validates against it implicitly by construction; downstream consumers SHOULD validate via `jsonschema` when available.

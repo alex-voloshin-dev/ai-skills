@@ -45,7 +45,7 @@ Continuation savings (vs replaying init context every iter): **(54822 - 10019) /
 
 ## Per-iter telemetry
 
-`.ai-assets-memory/ralph/ralph-2026-05-05-extract-validator/iter-{001..003}/tokens.json` + `summary.json`. Schema versioned (`v1`).
+`.ai-skills-memory/ralph/ralph-2026-05-05-extract-validator/iter-{001..003}/tokens.json` + `summary.json`. Schema versioned (`v1`).
 
 ## Final report
 

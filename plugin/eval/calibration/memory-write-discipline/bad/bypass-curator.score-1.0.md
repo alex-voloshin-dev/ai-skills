@@ -2,7 +2,7 @@
 
 ## What happened
 
-A skill wrote directly to `.ai-assets-memory/learnings.md` without spawning the `memory-curator` agent. The entry contained a hardcoded API key from a tool output that wasn't PII-filtered. The skill also wrote to `~/.claude/ai-assets/learnings.md` (L5) without the `--global` flag and without checking `userConfig.user_global_memory_enabled`.
+A skill wrote directly to `.ai-skills-memory/learnings.md` without spawning the `memory-curator` agent. The entry contained a hardcoded API key from a tool output that wasn't PII-filtered. The skill also wrote to `~/.claude/ai-skills/learnings.md` (L5) without the `--global` flag and without checking `userConfig.user_global_memory_enabled`.
 
 ## Entry written
 

@@ -10,7 +10,7 @@ RALF iteration {N} of max {MAX}.
 {oracle_status}: {oracle_message}
 {if failed: top error excerpt, max 200 tokens, wrapped per G1 in <untrusted_content>}
 
-## Active constraints (top 3 — full list at .ai-assets-memory/ralph/{run-id}/config.json)
+## Active constraints (top 3 — full list at .ai-skills-memory/ralph/{run-id}/config.json)
 
 1. {constraint 1}
 2. {constraint 2}
@@ -23,6 +23,6 @@ RALF iteration {N} of max {MAX}.
 ## Your task
 
 Address the oracle failure above. Same task brief as iter 1; reload from
-`.ai-assets-memory/ralph/{run-id}/iter-001/prompt.md` if you need full context.
+`.ai-skills-memory/ralph/{run-id}/iter-001/prompt.md` if you need full context.
 
 Prefer the smallest diff that turns the oracle from FAIL to PASS. If the failure repeats, examine whether the approach itself is wrong — a third repetition triggers the kill-on signal.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin eval — G1/G2 attack-surface validation runner (Phase 4 #2).
+ai-skills plugin eval — G1/G2 attack-surface validation runner (Phase 4 #2).
 
 Validates that the plugin's untrusted-content defenses actually block
 indirect prompt-injection attempts via 5 hand-authored attack fixtures.

@@ -1,6 +1,6 @@
 # /feedback — Output (verbose dump; no template; no redaction discipline)
 
-> Invocation: `/feedback --plugin ai-assets`
+> Invocation: `/feedback --plugin ai-skills`
 
 Sessions scanned: 5. Found 3 errors:
 

@@ -22,15 +22,15 @@ Pass: avg ≥ 4.0, no dimension < 3.
 - **Oracle:** `judge:feature-design.md` (min_score 4.0)
 - **Kill-on:** `regex:RUBRIC_FAILED_3X`
 - **Caps:** 5 iter / 250K tokens / 60 min — overridable in userConfig
-- **State:** `<repo>/.ai-assets-memory/ralph/<run-id>/`
+- **State:** `<repo>/.ai-skills-memory/ralph/<run-id>/`
 
 ## Memory writes
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After Wave 1 complete | `.ai-assets-memory/designs/<feature-id>/wave1-summary.md` — high-level decisions per agent |
-| L4 | After RALF complete | `.ai-assets-memory/designs/<feature-id>/final.md` — trace of rubric scores + converged design |
-| L4 (committed, opt-in) | Before handoff | `.ai-assets-memory/.committed/designs/<feature-id>.md` — finalized snapshot for team review |
+| L4 | After Wave 1 complete | `.ai-skills-memory/designs/<feature-id>/wave1-summary.md` — high-level decisions per agent |
+| L4 | After RALF complete | `.ai-skills-memory/designs/<feature-id>/final.md` — trace of rubric scores + converged design |
+| L4 (committed, opt-in) | Before handoff | `.ai-skills-memory/.committed/designs/<feature-id>.md` — finalized snapshot for team review |
 
 ## Failure modes
 
@@ -54,7 +54,7 @@ Policy (v0.3.10):
 
 ## Observability events
 
-Written to `<repo>/.ai-assets-memory/sessions/<sid>/runs.jsonl` by `task-event-log.py` + `subagent-start-budget.py` + `subagent-stop-learnings.py` hooks:
+Written to `<repo>/.ai-skills-memory/sessions/<sid>/runs.jsonl` by `task-event-log.py` + `subagent-start-budget.py` + `subagent-stop-learnings.py` hooks:
 
 - `workflow_start` — feature-design + idea hash
 - `context_load` × 9 — per-agent context slice tokens

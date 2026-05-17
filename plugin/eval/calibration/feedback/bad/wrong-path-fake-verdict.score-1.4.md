@@ -5,7 +5,7 @@
 # Plugin Feedback — Brief
 
 - Verdict: **GREEN** · Window: 7d · Sessions: 0/0 · Findings: 0 (0 signatures)
-- Plugin: `ai-assets` · Project: `/home/u/dev/code/ai-assets`
+- Plugin: `ai-skills` · Project: `/home/u/dev/code/ai-skills`
 
 ## Top 5 failure signatures
 

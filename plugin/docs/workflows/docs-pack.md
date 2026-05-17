@@ -36,7 +36,7 @@ Markdown files in `<repo>/docs/<module>/`:
 - `EXAMPLES.md` — code examples, use cases
 - (Optional) Mermaid diagrams for flows / architecture
 
-Output convention: docs go to `<repo>/docs/<module>/` per Round 4 N6 (versioned in git as project documentation), NOT to `.ai-assets-memory/`.
+Output convention: docs go to `<repo>/docs/<module>/` per Round 4 N6 (versioned in git as project documentation), NOT to `.ai-skills-memory/`.
 
 ## How it works
 

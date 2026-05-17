@@ -10,9 +10,9 @@ and emits a single JSON object on stdout:
   {
     "meta": {
       "window_days": 7,
-      "project_path": "/home/u/repo/ai-assets",
-      "log_dir": "/home/u/.claude/projects/-home-u-repo-ai-assets",
-      "plugin_filter": "ai-assets",
+      "project_path": "/home/u/repo/ai-skills",
+      "log_dir": "/home/u/.claude/projects/-home-u-repo-ai-skills",
+      "plugin_filter": "ai-skills",
       "severity_floor": "warn",
       "now": "<iso-utc>",
       "sessions_total": N,
@@ -36,7 +36,7 @@ Each finding has:
     "cli_version": "2.1.132",
     "kind": "hook|subagent|skill|command|assistant|system",
     "source": "ralph-stop.py" | "develop" | "/feedback" | ...,
-    "plugin_id": "ai-assets" | null,
+    "plugin_id": "ai-skills" | null,
     "severity": "error|warn|info",
     "signature": "<normalized-error-string>",
     "excerpt": "<<=400 chars verbatim with secrets redacted>",
@@ -165,7 +165,7 @@ def _detect_plugin_id(text: str) -> str | None:
     if m:
         return m.group(2)
     if "${CLAUDE_PLUGIN_ROOT}" in text:
-        return "ai-assets"  # heuristic; not strict
+        return "ai-skills"  # heuristic; not strict
     return None
 
 
@@ -391,7 +391,7 @@ def _verdict(canonical_findings: list[dict], sessions_scanned: int) -> str:
 def to_canonical(
     legacy: dict,
     *,
-    tool_version: str = "ai-assets@unknown",
+    tool_version: str = "ai-skills@unknown",
     report_md_path: str = "",
 ) -> dict:
     """Project the legacy worker output into the canonical schema.
@@ -466,7 +466,7 @@ def _parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Collect Claude Code session findings for /feedback.")
     p.add_argument("--days", type=int, default=7)
     p.add_argument("--project", type=str, default=os.getcwd())
-    p.add_argument("--plugin", type=str, default="ai-assets")
+    p.add_argument("--plugin", type=str, default="ai-skills")
     p.add_argument("--severity", choices=["all", "warn", "error"], default="warn")
     p.add_argument("--max-sessions", type=int, default=100)
     p.add_argument("--home", type=str, default=str(Path.home()))
@@ -486,8 +486,8 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument(
         "--tool-version",
         type=str,
-        default="ai-assets@unknown",
-        help="Plugin version label, embedded into canonical JSON meta (e.g. `ai-assets@0.3.13`).",
+        default="ai-skills@unknown",
+        help="Plugin version label, embedded into canonical JSON meta (e.g. `ai-skills@0.3.13`).",
     )
     p.add_argument(
         "--stdout",

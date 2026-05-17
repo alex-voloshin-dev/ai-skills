@@ -7,8 +7,8 @@
 Per project memory `project_feedback_parity_md_json.md`, every `/feedback` run writes two files with full parity:
 
 ```text
-.ai-assets-memory/feedback/feedback-YYYY-MM-DD-HHMM.md     # existing human-readable
-.ai-assets-memory/feedback/feedback-YYYY-MM-DD-HHMM.json   # new machine-readable counterpart
+.ai-skills-memory/feedback/feedback-YYYY-MM-DD-HHMM.md     # existing human-readable
+.ai-skills-memory/feedback/feedback-YYYY-MM-DD-HHMM.json   # new machine-readable counterpart
 ```
 
 Both files MUST list the same `findings` (same set, same severities, same signatures, same counts). The MD is for humans + audit trails; the JSON is consumed by `/plugin-author fix-feedback`. Reparsing the MD with regex is forbidden as the primary path — it is only the degraded fallback.
@@ -22,13 +22,13 @@ The `/feedback` worker `scripts/collect_session_data.py` already emits a JSON ob
   "schema_version": "1",
   "meta": {
     "ts": "2026-05-13T09:10:00Z",
-    "tool_version": "ai-assets@0.3.11",
+    "tool_version": "ai-skills@0.3.11",
     "window_days": 7,
     "project_path": "/abs/path/to/project",
-    "plugin_filter": "ai-assets",
+    "plugin_filter": "ai-skills",
     "sessions_scanned": 14,
     "malformed_lines": 0,
-    "report_md_path": ".ai-assets-memory/feedback/feedback-2026-05-13-0910.md"
+    "report_md_path": ".ai-skills-memory/feedback/feedback-2026-05-13-0910.md"
   },
   "verdict": "GREEN|YELLOW|RED|INSUFFICIENT_DATA",
   "findings": [
@@ -76,12 +76,12 @@ The resolver runs before WP creation. If the resolved path does not exist on dis
 
 | `asset_hint` pattern | DEV subagent |
 |---|---|
-| `plugin/skills/*/SKILL.md`, `plugin/agents/*.md`, `plugin/rules/*.md` | `ai-assets:prompt-engineer` |
-| `plugin/hooks/scripts/*.py` | `ai-assets:python-engineer` |
-| `plugin/schemas/*.json` | `ai-assets:system-architect` |
-| `plugin/eval/judge-rubrics/*.md`, `plugin/eval/calibration/*` | `ai-assets:eval-judge` |
-| `plugin/eval/config.json`, `plugin/eval/cases/*` | `ai-assets:system-architect` |
-| No asset path (system) | `ai-assets:system-architect` |
+| `plugin/skills/*/SKILL.md`, `plugin/agents/*.md`, `plugin/rules/*.md` | `ai-skills:prompt-engineer` |
+| `plugin/hooks/scripts/*.py` | `ai-skills:python-engineer` |
+| `plugin/schemas/*.json` | `ai-skills:system-architect` |
+| `plugin/eval/judge-rubrics/*.md`, `plugin/eval/calibration/*` | `ai-skills:eval-judge` |
+| `plugin/eval/config.json`, `plugin/eval/cases/*` | `ai-skills:system-architect` |
+| No asset path (system) | `ai-skills:system-architect` |
 
 Honor `owner_role_hint` if set; the mapping above is the default.
 
@@ -95,7 +95,7 @@ Honor `owner_role_hint` if set; the mapping above is the default.
 ```text
 WP-N <severity>: <signature short> @ <asset_hint>
   Findings:    [<finding_id> x<count>, ...]
-  DEV role:    <ai-assets:role>
+  DEV role:    <ai-skills:role>
   Constraints: <verbatim suggested_action> + "<repair without changing public contract>" + per-asset standard clauses
   Acceptance:  /feedback re-run against the same window shows count drop to 0 for these finding_ids
 ```
@@ -107,7 +107,7 @@ WP-N <severity>: <signature short> @ <asset_hint>
 A `fix-feedback` run is closed when:
 
 1. Every WP cleared the HEAVY pipeline (DEV → REVIEW → QA + Lead-side post-checks).
-2. The Lead writes `.ai-assets-memory/plugin-author/fix-cycles/<feedback-stamp>.json`:
+2. The Lead writes `.ai-skills-memory/plugin-author/fix-cycles/<feedback-stamp>.json`:
 
 ```jsonc
 {
@@ -149,7 +149,7 @@ Run from the plugin root:
 
 ```bash
 python3 plugin/skills/plugin-author/scripts/parse_feedback_report.py \
-  --from .ai-assets-memory/feedback/feedback-2026-05-13-0910.json
+  --from .ai-skills-memory/feedback/feedback-2026-05-13-0910.json
 ```
 
 ## Contract status

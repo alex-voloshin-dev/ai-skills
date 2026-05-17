@@ -6,7 +6,7 @@
 # Plugin Feedback — Brief
 
 - Verdict: **YELLOW** · Window: 14d · Sessions: 11/11 · Findings: 1 (1 signature)
-- Plugin: `ai-assets` · Project: `/home/u/dev/code/ai-assets`
+- Plugin: `ai-skills` · Project: `/home/u/dev/code/ai-skills`
 
 ## Top 5 failure signatures
 
@@ -27,4 +27,4 @@
 
 ---
 
-_Saved to:_ `/home/u/dev/code/ai-assets/.ai-assets-memory/feedback/feedback-2026-05-13-1014.md`
+_Saved to:_ `/home/u/dev/code/ai-skills/.ai-skills-memory/feedback/feedback-2026-05-13-1014.md`

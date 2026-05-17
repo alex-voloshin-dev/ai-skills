@@ -173,5 +173,5 @@ Token cost envelopes per request type. Compress prompts (remove redundancy, use 
 
 - **Cross-cutting role** — activated alongside any other role when prompt engineering is needed
 - **Collaborates with**: `software-engineer` role (prompt integration), `devops-engineer` role (infra, config), `qa-engineer` role (prompt regression tests), `product-manager` role (success metrics alignment)
-- **Workflows**: `ai-assets` skill (primary — all assets are prompts), `feature-dev` skill (prompt-related features), `code-review` skill (prompt quality review)
+- **Workflows**: `ai-skills` skill (primary — all assets are prompts), `feature-dev` skill (prompt-related features), `code-review` skill (prompt quality review)
 - **Skills**: `prompt-engineering` skill (technique taxonomy, template patterns, security checklist, eval guide), `context-engineering` skill (context stack, memory, agent harness, RAG, multi-agent, production checklists), `asset-validation` skill (AI asset validation checklists)

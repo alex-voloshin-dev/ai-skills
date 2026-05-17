@@ -50,8 +50,8 @@ All 4 WPs cleared DEV → REVIEW → QA on first pass. Reviewer (prompt-engineer
 
 ## Memory writes
 
-- `.ai-assets-memory/plugin-author/runs.log` appended.
-- `.ai-assets-memory/plugin-author/fix-cycles/feedback-2026-05-13-0910.json` written:
+- `.ai-skills-memory/plugin-author/runs.log` appended.
+- `.ai-skills-memory/plugin-author/fix-cycles/feedback-2026-05-13-0910.json` written:
   ```json
   {
     "feedback_report": "feedback-2026-05-13-0910.json",

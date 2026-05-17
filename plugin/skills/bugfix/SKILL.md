@@ -71,13 +71,13 @@ Determine the affected service's tech stack to choose the right Developer `subag
 
 | Stack signal | Developer `subagent_type` |
 |---|---|
-| Next.js, React, TypeScript, `.tsx` files | `ai-assets:frontend-engineer` |
-| Spring Boot, Java, `.java` files | `ai-assets:java-engineer` |
-| FastAPI, Python, `.py` files | `ai-assets:python-engineer` |
-| Terraform, Dockerfile, Helm, CI/CD | `ai-assets:devops-engineer` |
-| ML model, training pipeline, inference | `ai-assets:ml-engineer` |
+| Next.js, React, TypeScript, `.tsx` files | `ai-skills:frontend-engineer` |
+| Spring Boot, Java, `.java` files | `ai-skills:java-engineer` |
+| FastAPI, Python, `.py` files | `ai-skills:python-engineer` |
+| Terraform, Dockerfile, Helm, CI/CD | `ai-skills:devops-engineer` |
+| ML model, training pipeline, inference | `ai-skills:ml-engineer` |
 | Multiple stacks | One Developer per affected stack (sequential per `subagent-isolation.md`) |
-| Unknown / general | `ai-assets:software-engineer` |
+| Unknown / general | `ai-skills:software-engineer` |
 
 Announce the selected Developer role(s) to the user.
 
@@ -131,11 +131,11 @@ Optional RALF on the reproduction test (kill-on `oracle-pass`): wrap the DEV spa
 ### Step 1 — create the team
 
 ```text
-Create an agent team named "<bug-id>-bugfix-team" with these teammates, all using subagent definitions from the ai-assets plugin:
+Create an agent team named "<bug-id>-bugfix-team" with these teammates, all using subagent definitions from the ai-skills plugin:
 
-- "developer" (ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>) — implements the fix per the bug report's affected-components list, follows team-protocols/developer-protocol.md, isolation: worktree
-- "reviewer" (ai-assets:software-engineer) — read-only review (disallow Write/Edit), follows reviewer-protocol.md, applies code-review skill
-- "qa" (ai-assets:qa-engineer) — runs the regression test, full test suite, smoke checks; follows the QA section of develop/SKILL.md
+- "developer" (ai-skills:<java-engineer | python-engineer | frontend-engineer | ...>) — implements the fix per the bug report's affected-components list, follows team-protocols/developer-protocol.md, isolation: worktree
+- "reviewer" (ai-skills:software-engineer) — read-only review (disallow Write/Edit), follows reviewer-protocol.md, applies code-review skill
+- "qa" (ai-skills:qa-engineer) — runs the regression test, full test suite, smoke checks; follows the QA section of develop/SKILL.md
 
 Use teammate-mode `in-process` by default. Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux or iTerm2 is available.
 ```

@@ -1,4 +1,4 @@
-# /ai-assets-init Result — python-fastapi project
+# /ai-skills-init Result — python-fastapi project
 
 > Detected codebase type: python-fastapi (from `pyproject.toml` + `from fastapi import` patterns + `uvicorn` in deps)
 
@@ -6,24 +6,24 @@
 
 - `CLAUDE.md` — scaffolded with python-fastapi tech stack, Directory Layout pre-filled from observed structure, blank sections for Business Context + Architectural Decisions
 - `AGENTS.md` — pre-filled with the 26 plugin agent names + brief role descriptions
-- `.ai-assets-memory/.gitignore` — copied from `${CLAUDE_PLUGIN_ROOT}/memory/templates/ai-assets-memory.gitignore`
-- `.ai-assets-memory/learnings.md` — empty header template
-- `.ai-assets-memory/runs.jsonl` — touch-created (append-only)
-- `.ai-assets-memory/errors.log` — touch-created
-- `.ai-assets-memory/redactions.log` — touch-created
-- `.ai-assets-memory/.committed/README.md` — copied from template
-- `.ai-assets-memory/.committed/.allowlist-extensions.txt` — empty (project-extension allowlist)
-- `.ai-assets-memory/.committed/conventions.md` — empty body (template)
-- `.ai-assets-memory/init-summary.md` — timestamp + plugin version + detection details
+- `.ai-skills-memory/.gitignore` — copied from `${CLAUDE_PLUGIN_ROOT}/memory/templates/ai-skills-memory.gitignore`
+- `.ai-skills-memory/learnings.md` — empty header template
+- `.ai-skills-memory/runs.jsonl` — touch-created (append-only)
+- `.ai-skills-memory/errors.log` — touch-created
+- `.ai-skills-memory/redactions.log` — touch-created
+- `.ai-skills-memory/.committed/README.md` — copied from template
+- `.ai-skills-memory/.committed/.allowlist-extensions.txt` — empty (project-extension allowlist)
+- `.ai-skills-memory/.committed/conventions.md` — empty body (template)
+- `.ai-skills-memory/init-summary.md` — timestamp + plugin version + detection details
 
 ## Files Skipped (2)
 
 - `<repo>/CLAUDE.md` — exists; skipped (use `--overwrite` to replace; existing has 240 lines, would be lost). NO write performed.
-- `<repo>/.gitignore` — exists; APPENDED `.ai-assets-memory/` rule + negation for `.committed/` (3 lines added). Existing 47 lines preserved.
+- `<repo>/.gitignore` — exists; APPENDED `.ai-skills-memory/` rule + negation for `.committed/` (3 lines added). Existing 47 lines preserved.
 
 ## Directories Created
 
-- `.ai-assets-memory/{sessions,ralph,pending-flush,designs,env-reports,refactor,migrate,spikes,security-audits,docs}/`
+- `.ai-skills-memory/{sessions,ralph,pending-flush,designs,env-reports,refactor,migrate,spikes,security-audits,docs}/`
 
 ## CLAUDE.md Scaffold Excerpt
 
@@ -60,13 +60,13 @@
 ## .gitignore — Lines Appended
 
 ```
-# ai-assets plugin: per-project memory (gitignored except .committed/)
-.ai-assets-memory/
-!.ai-assets-memory/.committed/
+# ai-skills plugin: per-project memory (gitignored except .committed/)
+.ai-skills-memory/
+!.ai-skills-memory/.committed/
 ```
 
 ## Next Steps
 
 1. Open `CLAUDE.md` and fill in Business Context + Tech Stack (Database row)
 2. Run `/feature-design "<your first idea>"` to test the workflow
-3. Optional: customize `.ai-assets-memory/.committed/conventions.md` with team-confirmed conventions
+3. Optional: customize `.ai-skills-memory/.committed/conventions.md` with team-confirmed conventions

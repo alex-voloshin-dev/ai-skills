@@ -40,7 +40,7 @@ Comprehensive security scan with OWASP Top 10 (Web 2021) + OWASP GenAI/LLM Top 1
 
 ## Output
 
-- `<repo>/.ai-assets-memory/security-audits/<run-id>/SECURITY-REPORT.md` — findings by category with severity:
+- `<repo>/.ai-skills-memory/security-audits/<run-id>/SECURITY-REPORT.md` — findings by category with severity:
   - Secrets scan (hardcoded creds, API keys) — **CRITICAL** if found
   - Dependency audit (CVE, outdated libs) — **HIGH**
   - Auth review (credentials, sessions) — **MEDIUM**
@@ -48,7 +48,7 @@ Comprehensive security scan with OWASP Top 10 (Web 2021) + OWASP GenAI/LLM Top 1
   - Data handling (PII exposure, encryption, logging) — **MEDIUM**
   - Cryptography (algorithm choices, key management) — **MEDIUM**
   - Infrastructure (network policies, TLS, secrets store) — **MEDIUM**
-- `<repo>/.ai-assets-memory/security-audits/<run-id>/REMEDIATION-PLAN.md` — per finding: severity, mitigation steps, suggested owner role. **No effort estimate** (Q2)
+- `<repo>/.ai-skills-memory/security-audits/<run-id>/REMEDIATION-PLAN.md` — per finding: severity, mitigation steps, suggested owner role. **No effort estimate** (Q2)
 - Pull request with fixes for automatable issues (dep updates, secret removal from code)
 
 ## Agent roster
@@ -138,8 +138,8 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After audit complete | `.ai-assets-memory/security-audits/<run-id>/findings.json` — structured findings (for trend tracking) |
-| L4 (committed) | If CRITICAL severity found | `.ai-assets-memory/.committed/security/incidents/<date>.md` — critical finding + immediate action taken |
+| L4 | After audit complete | `.ai-skills-memory/security-audits/<run-id>/findings.json` — structured findings (for trend tracking) |
+| L4 (committed) | If CRITICAL severity found | `.ai-skills-memory/.committed/security/incidents/<date>.md` — critical finding + immediate action taken |
 
 `pre-tool-use-committed-write.py` hook enforces `.committed/security/incidents/*.md` matches allowlist.
 

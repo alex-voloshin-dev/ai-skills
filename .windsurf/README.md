@@ -1,6 +1,6 @@
 # Windsurf Package
 
-This directory is the copy-ready Windsurf runtime package for the `ai-assets` repository.
+This directory is the copy-ready Windsurf runtime package for the `ai-skills` repository.
 
 ## Runtime Layout
 

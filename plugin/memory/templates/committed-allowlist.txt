@@ -1,7 +1,7 @@
-# Allowlist for .ai-assets-memory/.committed/ writes
+# Allowlist for .ai-skills-memory/.committed/ writes
 # Format: one glob pattern per line; lines starting with # are comments
 # Read by pre-tool-use-committed-write.py hook (B8) per Round 8 CRIT-1
-# Project extensions go in .ai-assets-memory/.committed/.allowlist-extensions.txt
+# Project extensions go in .ai-skills-memory/.committed/.allowlist-extensions.txt
 # (which is itself allowlisted — bootstrap problem solved)
 
 # Top-level docs

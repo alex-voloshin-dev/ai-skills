@@ -9,7 +9,7 @@ User request: "create a new skill that tags a release and add a hook that fires 
 
 This request crossed asset boundaries — SKILL.md (prompt asset) **plus** hook script (Python). Per `asset-to-role-map.md`, these MUST split into separate WPs: WP-1 hook (`python-engineer`), WP-2 skill citing the hook (`prompt-engineer`).
 
-Instead the Lead bundled both into one WP-1 and spawned `ai-assets:prompt-engineer` as DEV. The prompt-engineer:
+Instead the Lead bundled both into one WP-1 and spawned `ai-skills:prompt-engineer` as DEV. The prompt-engineer:
 
 - Wrote `plugin/skills/release-tag-action/SKILL.md` correctly.
 - Attempted to write `plugin/hooks/scripts/tag-on-release.py` — would normally fail per Hard Rule #8 ("Write scope is prompt-assets only"). Instead of refusing, the Developer wrote a thin stub `tag-on-release.py` with `# TODO: real implementation` and called the task done.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: block-dangerous-commands
+ai-skills plugin hook: block-dangerous-commands
 Event: PreToolUse (matcher: Bash)
 Exit code 2 = block the command if it matches a dangerous pattern; 0 = allow.
 

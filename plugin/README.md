@@ -1,4 +1,4 @@
-# ai-assets — Claude Code Plugin
+# ai-skills — Claude Code Plugin
 
 A reusable team-of-agents plugin for the full software development lifecycle. Drives feature design, implementation, bugfixing, environment analysis, and refactoring through coordinated subagents, with built-in iteration loops (RALF), layered memory, and systematic eval.
 
@@ -11,7 +11,7 @@ Current release. The plugin is the canonical Claude Code delivery format for thi
 For existing `~/.claude/` install users from before v0.2.0, switch to:
 
 ```bash
-claude --plugin-dir /path/to/ai-assets/plugin
+claude --plugin-dir /path/to/ai-skills/plugin
 ```
 
 After cleaning up the old install: `rm -rf ~/.claude/agents ~/.claude/skills ~/.claude/rules ~/.claude/hooks ~/.claude/settings.json` (preserve any of your own personal `~/.claude/` content first).
@@ -44,21 +44,21 @@ Per [official Anthropic docs](https://docs.claude.com/en/docs/claude-code/plugin
 
 ```bash
 # Start Claude Code with the plugin loaded for this session
-claude --plugin-dir /path/to/ai-assets/plugin
+claude --plugin-dir /path/to/ai-skills/plugin
 
 # After editing plugin files, reload without restarting:
 /reload-plugins
 ```
 
-All 32 user-invocable skills appear in `/help` under the `ai-assets:` namespace, e.g. `/ai-assets:feature-design`, `/ai-assets:develop`, `/ai-assets:plugin-doctor`. Plugin namespacing is automatic per Anthropic spec — prevents conflicts when multiple plugins ship same-named skills.
+All 32 user-invocable skills appear in `/help` under the `ai-skills:` namespace, e.g. `/ai-skills:feature-design`, `/ai-skills:develop`, `/ai-skills:plugin-doctor`. Plugin namespacing is automatic per Anthropic spec — prevents conflicts when multiple plugins ship same-named skills.
 
 ### Future: marketplace distribution (after GitHub publish)
 
 Once the plugin is pushed to GitHub, install via the official marketplace flow:
 
 ```text
-/plugin marketplace add alex-voloshin-dev/ai-assets
-/plugin install ai-assets@ai-assets
+/plugin marketplace add alex-voloshin-dev/ai-skills
+/plugin install ai-skills@ai-skills
 ```
 
 The repo's `.claude-plugin/marketplace.json` already declares the registry. Local marketplace install (`/plugin marketplace add <local-path>`) is supported by Claude Code in principle but currently brittle for same-host development on v2.1.x — use `--plugin-dir` instead.
@@ -76,7 +76,7 @@ The repo's `.claude-plugin/marketplace.json` already declares the registry. Loca
 | `/spike` | Time-boxed exploration with go/no-go writeup |
 | `/security-audit` | OWASP Web Top 10 + GenAI Top 10 audit + remediation plan |
 | `/docs-pack` | Generate user-facing docs (README, API ref, runbook) |
-| `/ai-assets-init` | Bootstrap a target repo to be ai-assets-aware |
+| `/ai-skills-init` | Bootstrap a target repo to be ai-skills-aware |
 
 ## Companion skills (9)
 
@@ -91,7 +91,7 @@ The repo's `.claude-plugin/marketplace.json` already declares the registry. Loca
 - **45 eval rubrics + 270 calibration samples + Tier 1 linter + Tier 2 judge-calibration smoke** for systematic regression detection. Tier 2 added in v0.1.4 and requires `ANTHROPIC_API_KEY`. Tier 3 is planned but not yet shipped (runner returns error code 3 if invoked).
 - **G1/G2 attack-surface validation (v0.1.5)** — 6 indirect-prompt-injection fixtures plus a structural runner that confirms the `<untrusted_content>` envelope wraps attacker-planted instructions across 5 attack vectors (poisoned `CLAUDE.md`, malicious env logs, poisoned learnings, bash role-switch, poisoned PRD). 1 fixture documents the sub-200-token wrap-skip design tradeoff. Optional behavioral mode round-trips wrapped payloads through Haiku to verify no compliance escape.
 - **Per-iteration RALF token measurement (v0.1.6)** — `ralph-iter-meter.py` PostToolUse hook estimates tokens per tool call (chars/4) and accumulates while a RALF run is active. `ralph-stop.py` consumes the per-iter accumulator on each Stop intercept, persists `iter-NNN/tokens.json`, and fires a runaway warning when a single iteration exceeds 3× fair share (`token_budget / max_iterations`). Closes the v0.1 gap where session-aggregate token caps only fired inside Tier 3 eval runs.
-- **Defensive subagent depth-guard (v0.1.7)** — `subagent-depth-guard.py` SubagentStart hook walks the `parent_trace_id` chain in G7 spawn payloads, computes spawn depth, and blocks at `depth > userConfig.subagent_max_depth` (default 3). Logs every `start`/`stop`/`rejected` event to `.ai-assets-memory/sessions/<sid>/spawn-chain.jsonl`. Anthropic's runtime enforces depth=1 max; this is the defensive backstop in case orchestration accidentally bypasses or future versions add Task to additional agents.
+- **Defensive subagent depth-guard (v0.1.7)** — `subagent-depth-guard.py` SubagentStart hook walks the `parent_trace_id` chain in G7 spawn payloads, computes spawn depth, and blocks at `depth > userConfig.subagent_max_depth` (default 3). Logs every `start`/`stop`/`rejected` event to `.ai-skills-memory/sessions/<sid>/spawn-chain.jsonl`. Anthropic's runtime enforces depth=1 max; this is the defensive backstop in case orchestration accidentally bypasses or future versions add Task to additional agents.
 - **2 output styles** — `concise-pr` for PR descriptions, `design-pack` for `/feature-design` artefacts.
 - **13-knob declarative config** + 0 external dependencies (fully standalone).
 

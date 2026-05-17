@@ -40,8 +40,8 @@ Plan + execute + validate a migration with a documented + tested rollback proced
 ## Output
 
 - Migration code (schema scripts, version pins, compatibility shims)
-- `<repo>/.ai-assets-memory/migrate/<run-id>/MIGRATION-PLAN.md` — detailed steps + rollback + risk matrix
-- `<repo>/.ai-assets-memory/migrate/<run-id>/VALIDATION.md` — test results + data integrity checks
+- `<repo>/.ai-skills-memory/migrate/<run-id>/MIGRATION-PLAN.md` — detailed steps + rollback + risk matrix
+- `<repo>/.ai-skills-memory/migrate/<run-id>/VALIDATION.md` — test results + data integrity checks
 - PR with migration + rollback procedures documented
 
 ## Agent roster
@@ -124,8 +124,8 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 (committed) | After plan approved | `.ai-assets-memory/.committed/migrations/<name>/plan.md` — strategy for team review (versioned in git) |
-| L4 (committed) | After validation pass | `.ai-assets-memory/.committed/migrations/<name>/validation-report.md` — data integrity proof (versioned) |
+| L4 (committed) | After plan approved | `.ai-skills-memory/.committed/migrations/<name>/plan.md` — strategy for team review (versioned in git) |
+| L4 (committed) | After validation pass | `.ai-skills-memory/.committed/migrations/<name>/validation-report.md` — data integrity proof (versioned) |
 
 Both committed paths must match `committed-allowlist.txt` patterns — `pre-tool-use-committed-write.py` hook enforces.
 

@@ -235,7 +235,7 @@ After rollback:
 
 ## 6. Memory Write (L4)
 
-Append a deploy event to `.ai-assets-memory/runs.jsonl` per `memory-discipline.md` retention rules. Production deploys are long-retention events:
+Append a deploy event to `.ai-skills-memory/runs.jsonl` per `memory-discipline.md` retention rules. Production deploys are long-retention events:
 
 ```json
 {"ts": "<ISO8601>", "event": "deploy", "env": "production", "service": "<name>", "version_from": "<old>", "version_to": "<new>", "method": "k8s|helm|docker|platform", "status": "success|fail|rolled_back", "duration_ms": N, "rollback": <bool>, "approved_by": "<user>"}

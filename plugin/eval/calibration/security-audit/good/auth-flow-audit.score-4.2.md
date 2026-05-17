@@ -51,7 +51,7 @@
 
 ## False Positives Identified + Dismissed
 
-- `tests/fixtures/test_users.py:8` — `password = "test-password-not-real"` flagged by secret-pattern grep; reviewed and confirmed test fixture; whitelisted in `.ai-assets-memory/.committed/security/false-positives.md`
+- `tests/fixtures/test_users.py:8` — `password = "test-password-not-real"` flagged by secret-pattern grep; reviewed and confirmed test fixture; whitelisted in `.ai-skills-memory/.committed/security/false-positives.md`
 - `docs/architecture/auth.md:142` — example JWT secret in code block; reviewed; whitelisted (clearly marked as example)
 
 ## Coverage Notes

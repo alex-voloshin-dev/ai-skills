@@ -8,7 +8,7 @@ Generated Python/Django scaffold for a Node.js/Express project.
 
 CLAUDE.md references Django models, views, migrations, but project uses Express and doesn't have those.
 
-.ai-assets-memory/ created with Python-specific notes (requirements.txt vs package.json).
+.ai-skills-memory/ created with Python-specific notes (requirements.txt vs package.json).
 
 ## What's Wrong
 

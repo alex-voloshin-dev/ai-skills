@@ -11,13 +11,13 @@ Scope: `.` | Stack detected: Node.js (Express 4.x), TypeScript, Mocha
 │   ├── skills/                    # 41 skills (engineering, testing, docs)
 │   ├── rules/                     # 7 guardrails (git-conventions, failure-recovery, etc.)
 │   └── settings.json              # runtime config (models, hooks)
-├── .ai-assets-memory/
+├── .ai-skills-memory/
 │   ├── .committed/
 │   │   └── project-context.md     # Detected: Express + TypeScript + Mocha, port 3000
 │   ├── index.md                   # Entry point
 │   └── README.md                  # How to use this directory
 ├── .claude/CLAUDE.md              # Project-specific Claude guidance (see top)
-├── .gitignore                     # Rules added: .claude/, .ai-assets-memory/
+├── .gitignore                     # Rules added: .claude/, .ai-skills-memory/
 └── (existing files untouched)
 
 ## .claude/CLAUDE.md Created
@@ -38,7 +38,7 @@ Project type: **Node.js/Express with TypeScript**
 - `@engineering/debugging` — Node.js stack traces
 - `@engineering/documentation` — API docs for Express routes
 
-## .ai-assets-memory/ Created
+## .ai-skills-memory/ Created
 
 project-context.md seeded with:
 - Stack: Node.js, Express, TypeScript
@@ -54,7 +54,7 @@ index.md created (empty, ready for user notes).
 
 ```
 .claude/                           # Claude runtime (local)
-.ai-assets-memory/                 # Memory (local, commit selectively)
+.ai-skills-memory/                 # Memory (local, commit selectively)
 dist/                              # TypeScript output (already in .gitignore, kept)
 ```
 

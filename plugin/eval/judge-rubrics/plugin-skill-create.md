@@ -52,7 +52,7 @@ Only scaffolds plugin-convention skills under `plugin/skills/`. Refuses to scaff
 - **Level 5:** All of L4 + scope statement printed in scaffold preamble for clarity
 
 ### Dimension 6: Memory Write
-Appends an entry to `.ai-assets-memory/plugin-skills/<name>/scaffolded.md` recording skill name, type, flags, timestamp. Honors memory-discipline rules (no PII, schema-valid, deduped).
+Appends an entry to `.ai-skills-memory/plugin-skills/<name>/scaffolded.md` recording skill name, type, flags, timestamp. Honors memory-discipline rules (no PII, schema-valid, deduped).
 
 - **Level 1:** No memory write performed
 - **Level 2:** Write attempted but path wrong or schema invalid

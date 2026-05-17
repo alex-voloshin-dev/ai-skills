@@ -44,7 +44,7 @@ The wave-by-wave Path A pipeline ASCII tree for `/feature-design`. Loaded from `
 
 ## Subagent type selection (Path A)
 
-Always prefer the specialised `ai-assets:<role>` subagent_type — the role agent's frontmatter `description`, `model`, `effort`, and body system-prompt carry domain knowledge (GEO structure for `marketing-strategist`, OWASP framing for `security-engineer`, WCAG checklist for `ui-ux-designer`, etc.) that the Lead would otherwise have to inline manually.
+Always prefer the specialised `ai-skills:<role>` subagent_type — the role agent's frontmatter `description`, `model`, `effort`, and body system-prompt carry domain knowledge (GEO structure for `marketing-strategist`, OWASP framing for `security-engineer`, WCAG checklist for `ui-ux-designer`, etc.) that the Lead would otherwise have to inline manually.
 
 `subagent_type: "general-purpose"` is a last-resort fallback when the specialised role definition is unavailable in the current plugin installation (alpha runtime missing the subagent registry, plugin not loaded, role removed in a future plugin version). When it IS used:
 

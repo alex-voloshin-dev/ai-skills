@@ -1,13 +1,13 @@
 {
-  "name": "ai-assets",
+  "name": "ai-skills",
   "owner": {
     "name": "Alex Voloshin",
     "email": "alex@voloshin.net",
-    "url": "https://github.com/alex-voloshin-dev/ai-assets"
+    "url": "https://github.com/alex-voloshin-dev/ai-skills"
   },
   "plugins": [
     {
-      "name": "ai-assets",
+      "name": "ai-skills",
       "source": "./plugin",
       "description": "Reusable team-of-agents plugin for the full SDLC — feature design, development, bugfix, environment analysis — with built-in RALF iteration loop, layered memory, and systematic eval.",
       "version": "0.3.10"

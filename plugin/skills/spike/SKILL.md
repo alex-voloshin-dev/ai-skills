@@ -40,7 +40,7 @@ Single-pass research workflow producing a SPIKE-REPORT with a go/no-go/needs-mor
 
 ## Output
 
-- `<repo>/.ai-assets-memory/spikes/<run-id>/SPIKE-REPORT.md` — findings, pro/con analysis, recommendation
+- `<repo>/.ai-skills-memory/spikes/<run-id>/SPIKE-REPORT.md` — findings, pro/con analysis, recommendation
 - (optional) `<repo>/spike-poc-<run-id>/` — proof-of-concept code if `--poc`
 - Memory write: L4 research record for future reference
 
@@ -101,8 +101,8 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After complete | `.ai-assets-memory/spikes/<run-id>/report.md` — full findings |
-| L4 (committed) | **Always ask user explicitly after report**, never auto-write | `.ai-assets-memory/.committed/decisions/<date>-<question>.md` — recorded decision |
+| L4 | After complete | `.ai-skills-memory/spikes/<run-id>/report.md` — full findings |
+| L4 (committed) | **Always ask user explicitly after report**, never auto-write | `.ai-skills-memory/.committed/decisions/<date>-<question>.md` — recorded decision |
 
 **Hard rule on committed decisions:** never auto-create `.committed/decisions/` files. `.committed/` goes to git and the user may want to reword the decision before committing. The skill ALWAYS asks before writing to `.committed/decisions/`. The `pre-tool-use-committed-write.py` hook enforces the allowlist on these paths regardless.
 

@@ -3,7 +3,7 @@ name: develop
 description: >-
   Multi-agent feature implementation pipeline — DEVELOP → REVIEW → QA with
   developer(s), reviewer, QA, and lead orchestrator. Spawns specialized
-  subagents via the Agent tool (`subagent_type: "ai-assets:<role>"`).
+  subagents via the Agent tool (`subagent_type: "ai-skills:<role>"`).
   Use when implementing a feature with the canonical Anthropic `Agent`
   tool available — preferred over single-agent /feature-dev fallback.
 argument-hint: "[PRD path or feature description]"
@@ -29,7 +29,7 @@ Worked example (paste into the `prompt` argument verbatim, then continue with th
 ```text
 Agent({
   description: "WP-3 implementation (java-engineer)",
-  subagent_type: "ai-assets:java-engineer",
+  subagent_type: "ai-skills:java-engineer",
   isolation: "worktree",
   prompt: `You are the Developer subagent for WP-3. Read \`plugin/skills/team-protocols/role-cards/developer-card.md\` first (slim card; do NOT read lead-protocol.md or path-selection-rules.md).
 
@@ -39,7 +39,7 @@ G7 spawn payload:
   "subagent_role": "java-engineer",
   "goal": "Implement WP-3 (preserve visibility_score on optimistic-lock retry) per design.md §3a verbatim.",
   "constraints": [
-    "envelope_dir: /absolute/path/.ai-assets-memory/sessions/<sid>/team-envelopes",
+    "envelope_dir: /absolute/path/.ai-skills-memory/sessions/<sid>/team-envelopes",
     "<VERBATIM source-section block from design.md §3a>"
   ],
   "state_slice": {
@@ -91,7 +91,7 @@ Present the resolved plan to the user (informational, no approval required):
 ```
 Feature: [name]
 Subprojects: [detected from CLAUDE.md]
-Developers: [roles to spawn — list with subagent_type values like "ai-assets:java-engineer"]
+Developers: [roles to spawn — list with subagent_type values like "ai-skills:java-engineer"]
 Plan source: loaded from <file-or-source-description> | created from scratch
 Work packages:
   1. [description] → [subproject] → [developer subagent_type] → [file(s)]
@@ -131,18 +131,18 @@ The Lead drives the team via natural language; each teammate is a full Claude Co
 ### Step 1 — create the team (natural-language prompt to self)
 
 ```text
-Create an agent team named "<feature-slug>-team" with these teammates, all using subagent definitions from the ai-assets plugin so they inherit the right tools and model:
+Create an agent team named "<feature-slug>-team" with these teammates, all using subagent definitions from the ai-skills plugin so they inherit the right tools and model:
 
-- "developer" (ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>) — implements work packages, follows team-protocols/developer-protocol.md, isolation: worktree
-- "reviewer" (ai-assets:software-engineer) — read-only review (disallow Write/Edit), follows reviewer-protocol.md
-- "qa" (ai-assets:qa-engineer) — higher-level tests + SRE smoke checks, follows the QA section of develop/SKILL.md
+- "developer" (ai-skills:<java-engineer | python-engineer | frontend-engineer | ...>) — implements work packages, follows team-protocols/developer-protocol.md, isolation: worktree
+- "reviewer" (ai-skills:software-engineer) — read-only review (disallow Write/Edit), follows reviewer-protocol.md
+- "qa" (ai-skills:qa-engineer) — higher-level tests + SRE smoke checks, follows the QA section of develop/SKILL.md
 
 Do NOT require plan approval from the developer (the Lead already resolved the plan — execution starts immediately). Use the shared task list with three tasks per WP (DEV, REVIEW, QA) linked via `dependsOn` so REVIEW unblocks when DEV completes and QA unblocks when REVIEW completes with verdict 'approved'.
 
 Use teammate-mode `in-process` by default. Pick `tmux` split-pane mode ONLY if the user has explicitly indicated tmux/iTerm2 is available.
 
 Standard clauses to include in every teammate's spawn prompt (v0.3.11):
-- "File-channel backstop: after self-verification and before returning your G7 envelope via the bus, also write it to .ai-assets-memory/sessions/<sid>/team-envelopes/G7-<role>-<wp>.json via Bash + atomic mv. The Lead's Monitor reads this directory; if SendMessage/TaskUpdate augmentation is intermittent on your tool surface (alpha.31 / alpha.35 / alpha.36) this is the liveness backstop. See developer-protocol.md / reviewer-protocol.md 'File-channel envelopes' for the exact pattern."
+- "File-channel backstop: after self-verification and before returning your G7 envelope via the bus, also write it to .ai-skills-memory/sessions/<sid>/team-envelopes/G7-<role>-<wp>.json via Bash + atomic mv. The Lead's Monitor reads this directory; if SendMessage/TaskUpdate augmentation is intermittent on your tool surface (alpha.31 / alpha.35 / alpha.36) this is the liveness backstop. See developer-protocol.md / reviewer-protocol.md 'File-channel envelopes' for the exact pattern."
 - "Verdict-in-response fallback (Reviewer / QA): if your TaskUpdate or SendMessage tools fail at the gate, deliver your verdict in your next conversation turn — the Lead is monitoring your transcript via Shift+↓ and will write the G7 envelope on your behalf."
 ```
 
@@ -150,7 +150,7 @@ After issuing team-create, the Lead immediately starts a `Monitor` on the team-e
 
 ```text
 Monitor({
-  scope: ".ai-assets-memory/sessions/<sid>/team-envelopes/",
+  scope: ".ai-skills-memory/sessions/<sid>/team-envelopes/",
   pattern: "*.json",
   on_event: "lead-handle-team-envelope"
 })
@@ -180,9 +180,9 @@ After all WPs clear the pipeline, hand off to "Final Verification" below (run in
 
 For each work package, the Lead executes the three-step `Agent({...})` spawn loop defined in `@team-protocols/spawn-pattern.md`:
 
-1. **DEVELOP** — `subagent_type: "ai-assets:<engineer-role>"` (java-engineer, python-engineer, frontend-engineer, etc., picked via `role-selection-table.md`), `isolation: "worktree"`. Prompt instructs the Developer to read `developer-protocol.md` first, carries the full G7 spawn payload, and demands a G7 return contract. Wait for return; validate; extract `files_changed` and `summary`.
-2. **REVIEW** — `subagent_type: "ai-assets:software-engineer"`, `disallowedTools: ["Write", "Edit"]`. Prompt instructs the Reviewer to read `reviewer-protocol.md` + `code-review/SKILL.md`, lists files from the Developer return, asks for a G7 contract with `result.verdict ∈ {approved, changes_requested}`. If `changes_requested`, loop back to Step 1 with the issues attached.
-3. **QA** — `subagent_type: "ai-assets:qa-engineer"`. Prompt scopes higher-level tests (smoke / API / integration / E2E — NOT unit tests; those belong to the Developer), lists files changed and acceptance criteria, demands SRE smoke checks (health endpoint, error rate, basic SLI sanity), and asks for a G7 contract with `result.qa_verdict ∈ {pass, fail}`. If `fail`, loop back to Step 1 with QA's issues attached.
+1. **DEVELOP** — `subagent_type: "ai-skills:<engineer-role>"` (java-engineer, python-engineer, frontend-engineer, etc., picked via `role-selection-table.md`), `isolation: "worktree"`. Prompt instructs the Developer to read `developer-protocol.md` first, carries the full G7 spawn payload, and demands a G7 return contract. Wait for return; validate; extract `files_changed` and `summary`.
+2. **REVIEW** — `subagent_type: "ai-skills:software-engineer"`, `disallowedTools: ["Write", "Edit"]`. Prompt instructs the Reviewer to read `reviewer-protocol.md` + `code-review/SKILL.md`, lists files from the Developer return, asks for a G7 contract with `result.verdict ∈ {approved, changes_requested}`. If `changes_requested`, loop back to Step 1 with the issues attached.
+3. **QA** — `subagent_type: "ai-skills:qa-engineer"`. Prompt scopes higher-level tests (smoke / API / integration / E2E — NOT unit tests; those belong to the Developer), lists files changed and acceptance criteria, demands SRE smoke checks (health endpoint, error rate, basic SLI sanity), and asks for a G7 contract with `result.qa_verdict ∈ {pass, fail}`. If `fail`, loop back to Step 1 with QA's issues attached.
 
 **Only after all three stages return successfully does the work package count as DONE.** The Lead moves to the next WP.
 
@@ -201,7 +201,7 @@ Code-modifying spawns are **sequential per file** — only one writing agent act
 
 ## Per-task Agent — hard-locked QA (first-class mode)
 
-A documented first-class execution mode, NOT an ad-hoc fallback: when the bus is dead, on >4-wave runs, or when team-per-wave cost is unjustified, spawn QA per task via `Agent({subagent_type:"ai-assets:qa-engineer", disallowedTools:["Write","Edit"]})`. Reusable hard-lock brief (fully read-only, single GO'd WP only, `result.files_changed`=`[]`, no aggregate/multi-WP envelopes): `@team-protocols/role-cards/qa-card.md` "Hard-locked QA mode (P0-2)". >4-wave → per-task-Agent cost rationale: `@team-protocols/path-selection-rules.md` "File-channel-exclusive shutdown & multi-wave cost (P2-11)".
+A documented first-class execution mode, NOT an ad-hoc fallback: when the bus is dead, on >4-wave runs, or when team-per-wave cost is unjustified, spawn QA per task via `Agent({subagent_type:"ai-skills:qa-engineer", disallowedTools:["Write","Edit"]})`. Reusable hard-lock brief (fully read-only, single GO'd WP only, `result.files_changed`=`[]`, no aggregate/multi-WP envelopes): `@team-protocols/role-cards/qa-card.md` "Hard-locked QA mode (P0-2)". >4-wave → per-task-Agent cost rationale: `@team-protocols/path-selection-rules.md` "File-channel-exclusive shutdown & multi-wave cost (P2-11)".
 
 ## Final Verification (Lead, main thread)
 
@@ -210,6 +210,6 @@ After all WPs clear the pipeline the Lead does **lightweight scope/marker verifi
 ## Integration
 
 - **Reads**: PRD / ARD / design docs supplied by the user, `CLAUDE.md`, `ARCHITECTURE.md`, `@team-protocols`, `@code-review`, `@qa`
-- **Spawns**: Developer (`ai-assets:<engineer-role>`), Reviewer (`ai-assets:software-engineer`), QA (`ai-assets:qa-engineer`)
+- **Spawns**: Developer (`ai-skills:<engineer-role>`), Reviewer (`ai-skills:software-engineer`), QA (`ai-skills:qa-engineer`)
 - **Writes**: source code via Developer subagents, `REVIEW-LOG.md` from the Lead
 - **Companions**: `/feature-design` (upstream — produces design pack), `/feature-dev` (single-agent fallback), `/team-bugfix` (audit-driven fix variant)

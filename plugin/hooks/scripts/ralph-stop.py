@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: ralph-stop
+ai-skills plugin hook: ralph-stop
 Event: Stop
 Exit code 0 = allow Stop (RALF terminal state OR no active RALF).
 Exit code 2 = block Stop with re-injection prompt (RALF iteration continues).
 
-If active RALF session exists at .ai-assets-memory/ralph/<run-id>/active.lock,
+If active RALF session exists at .ai-skills-memory/ralph/<run-id>/active.lock,
 this hook intercepts the model's exit attempt. Per ralph-budget rule:
 1. Run oracle (cli/judge/regex/python type per --oracle spec in config.json).
 2. If oracle pass → write SUCCESS, release lock, allow Stop.
@@ -36,7 +36,7 @@ hook over the course of every iteration (chars/4 estimate per tool call).
 ralph-stop reads it on Stop intercept, passes it as workflow_tokens to the
 session-aggregate cap check, then resets it to 0 so the next iteration starts
 clean. Each iteration's token spend is also persisted to
-`.ai-assets-memory/ralph/<run-id>/iter-NNN/tokens.json` for forensics and a
+`.ai-skills-memory/ralph/<run-id>/iter-NNN/tokens.json` for forensics and a
 runaway warning fires when a single iteration exceeds 3x the per-iteration
 fair share (workflow_token_budget / max_iterations).
 
@@ -219,7 +219,7 @@ def write_iter_tokens(
         }
 
     runaway = iter_tokens > 3x fair_share_per_iter. The warning is also
-    appended to .ai-assets-memory/ralph-warnings.log so it is durable across
+    appended to .ai-skills-memory/ralph-warnings.log so it is durable across
     iterations (the model may not see the continuation prompt's warning
     inline).
     """
@@ -316,7 +316,7 @@ def check_same_error_repeats(run_dir: pathlib.Path, threshold: int) -> bool:
 def main() -> None:
     data = _lib.read_stdin_json()
     cwd = pathlib.Path.cwd()
-    memory_root = cwd / ".ai-assets-memory"
+    memory_root = cwd / ".ai-skills-memory"
 
     run_dir = _lib.find_active_ralph(memory_root)
     if run_dir is None:

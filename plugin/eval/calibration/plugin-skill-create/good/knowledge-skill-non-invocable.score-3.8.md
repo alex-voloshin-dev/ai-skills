@@ -17,7 +17,7 @@ plugin/eval/calibration/gcp-iam-patterns/
 ├── good/
 └── bad/
 
-.ai-assets-memory/plugin-skills/gcp-iam-patterns/scaffolded.md
+.ai-skills-memory/plugin-skills/gcp-iam-patterns/scaffolded.md
 ```
 
 ## SKILL.md Frontmatter (excerpt)

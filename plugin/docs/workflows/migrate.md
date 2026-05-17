@@ -31,9 +31,9 @@ Schema, library, version, framework migration with documented + tested rollback 
 ## What you get
 
 - Migration code (schema scripts, version pins, compat shims)
-- `<repo>/.ai-assets-memory/migrate/<run-id>/MIGRATION-PLAN.md` — pre-flight + forward + rollback + risk
-- `<repo>/.ai-assets-memory/migrate/<run-id>/VALIDATION.md` — test results + data integrity checks
-- `<repo>/.ai-assets-memory/.committed/migrations/<name>/` — strategy + validation report (versioned in git after sign-off)
+- `<repo>/.ai-skills-memory/migrate/<run-id>/MIGRATION-PLAN.md` — pre-flight + forward + rollback + risk
+- `<repo>/.ai-skills-memory/migrate/<run-id>/VALIDATION.md` — test results + data integrity checks
+- `<repo>/.ai-skills-memory/.committed/migrations/<name>/` — strategy + validation report (versioned in git after sign-off)
 - PR with migration + rollback procedures
 
 ## The hard rule
@@ -60,7 +60,7 @@ Blue-green or canary deployment pattern (gradual traffic shift instead of cutove
 Has its own rollback semantics — `--link` mode is reversible until ANALYZE runs. Document this in your MIGRATION-PLAN.md so the rollback section covers the pre-ANALYZE window separately from post-ANALYZE.
 
 **Where do migration plans live in git?**
-`.ai-assets-memory/.committed/migrations/<name>/plan.md` and `validation-report.md`. Allowlist-validated by `pre-tool-use-committed-write.py`.
+`.ai-skills-memory/.committed/migrations/<name>/plan.md` and `validation-report.md`. Allowlist-validated by `pre-tool-use-committed-write.py`.
 
 ## Examples
 

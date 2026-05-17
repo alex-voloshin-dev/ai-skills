@@ -32,7 +32,7 @@ CONTENT:
 3. **Wrap** — `_lib.py` `wrap_untrusted(redacted, source, timestamp)` returns the templated string
 4. **Inject** wrapped content into LLM context (replacing raw content)
 
-If `redactions_count > 0`, also append a single line to `.ai-assets-memory/redactions.log`:
+If `redactions_count > 0`, also append a single line to `.ai-skills-memory/redactions.log`:
 ```text
 <ISO8601> | source=<provenance> | redactions=<count>
 ```

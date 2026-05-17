@@ -14,7 +14,7 @@
 | security-audit | 4.0 | 4.3 | matched | PASS |
 | bugfix | 3.9 | 4.0 | matched | PASS |
 | develop | 4.4 | 4.2 | matched | PASS |
-| ai-assets-init | 4.1 | 4.0 | matched | PASS |
+| ai-skills-init | 4.1 | 4.0 | matched | PASS |
 | ... | ... | ... | ... | ... |
 
 (48 more skills, all PASS)

@@ -34,12 +34,12 @@ description: ...
 context: fork
 argument-hint: "[PRD path]"
 metadata:
-  ai-assets-context: fork
-  ai-assets-argument-hint: "[PRD path]"
+  ai-skills-context: fork
+  ai-skills-argument-hint: "[PRD path]"
 ---
 ```
 
-The `ai-assets-` prefix avoids collision with other plugins that may also extend `metadata`.
+The `ai-skills-` prefix avoids collision with other plugins that may also extend `metadata`.
 
 ## Where to find examples
 

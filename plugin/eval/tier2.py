@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin eval — Tier 2 smoke runner.
+ai-skills plugin eval — Tier 2 smoke runner.
 
 Per 02-EVAL-FRAMEWORK.md §11 + Phase 4 #1 (post-v0.1.2).
 

@@ -58,7 +58,7 @@ If the rubric score is < 4.0, RALF kicks in (5 iter / 250K tokens / 60min cap) â
 - **Time**: 5â€“15 minutes for typical features; up to 60 min if RALF runs the full 5 iterations
 - **Models**: Opus orchestrator (`feature-design-lead`); Sonnet for the 6 specialist agents; Haiku for `eval-judge`
 
-If you hit the session-aggregate cap (`ralph_session_token_budget`), the workflow pauses and asks before continuing. Adjust via `/plugin configure ai-assets`.
+If you hit the session-aggregate cap (`ralph_session_token_budget`), the workflow pauses and asks before continuing. Adjust via `/plugin configure ai-skills`.
 
 ## Common questions
 

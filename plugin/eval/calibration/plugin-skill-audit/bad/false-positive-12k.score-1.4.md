@@ -18,7 +18,7 @@
 
 ## What Went Wrong
 
-The 12,000-character limit applies ONLY to `SKILL.md` and rule files (per the agentskills.io specification and the ai-assets editing rules in CLAUDE.md):
+The 12,000-character limit applies ONLY to `SKILL.md` and rule files (per the agentskills.io specification and the ai-skills editing rules in CLAUDE.md):
 
 > "SKILL.md and rule files have a 12,000 character limit (skill resources have no hard limit but should stay focused)"
 

@@ -10,7 +10,7 @@ The legacy `.claude/` package was removed in v0.2.0 — `plugin/` fully replaces
 ## Quick Reference
 
 ```text
-ai-assets/
+ai-skills/
 ├── plugin/                  # Claude Code plugin
 │   ├── .claude-plugin/
 │   │   └── plugin.json      # manifest + 13 userConfig knobs
@@ -60,7 +60,7 @@ See [PARITY.md](PARITY.md) for the full parity model.
 For Claude Code, the plugin layout supersedes the old `.claude/` package. To use this repo's Claude Code assets:
 
 ```bash
-claude --plugin-dir /path/to/ai-assets/plugin
+claude --plugin-dir /path/to/ai-skills/plugin
 ```
 
 After editing plugin files in the same Claude Code session, reload without restarting:
@@ -69,7 +69,7 @@ After editing plugin files in the same Claude Code session, reload without resta
 /reload-plugins
 ```
 
-All 31 forked + 5 main-thread orchestrator skills (= 36 user-invocable surface) appear in `/help` under the `ai-assets:` namespace.
+All 31 forked + 5 main-thread orchestrator skills (= 36 user-invocable surface) appear in `/help` under the `ai-skills:` namespace.
 
 ### Skill Format
 

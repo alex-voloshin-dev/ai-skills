@@ -38,7 +38,7 @@ Mandatory first step (idempotent — safe to re-run):
 
 ```bash
 SID="${CLAUDE_SESSION_ID:-$(date -u +%Y%m%dT%H%M%SZ)}"
-ENV_DIR=".ai-assets-memory/sessions/${SID}/team-envelopes"
+ENV_DIR=".ai-skills-memory/sessions/${SID}/team-envelopes"
 mkdir -p "${ENV_DIR}"
 # Surface the absolute path so teammate spawn payloads can pass it through.
 realpath "${ENV_DIR}"
@@ -47,7 +47,7 @@ realpath "${ENV_DIR}"
 Rules:
 
 1. The canonical slug is the Lead's `${CLAUDE_SESSION_ID}` (a UUID). Human-readable workflow names (`v22-wave2-...`, `hero-it3`, etc.) MAY be appended as a suffix on a sibling symlink for operator readability, but the canonical write path is the UUID-keyed directory.
-2. Every spawn payload MUST include the **absolute** envelope-directory path in `constraints` (e.g. `"envelope_dir: /absolute/path/.ai-assets-memory/sessions/<uuid>/team-envelopes"`). Never pass the relative path alone — teammates that run with a different `cwd` (post-context-compact especially) will resolve it against the wrong root.
+2. Every spawn payload MUST include the **absolute** envelope-directory path in `constraints` (e.g. `"envelope_dir: /absolute/path/.ai-skills-memory/sessions/<uuid>/team-envelopes"`). Never pass the relative path alone — teammates that run with a different `cwd` (post-context-compact especially) will resolve it against the wrong root.
 3. The Lead verifies the directory exists with one `Bash(ls -la "${ENV_DIR}")` before the first spawn. If `ls` returns non-zero, the pre-flight failed; the Lead halts and surfaces the failure to the user before spawning anything.
 
 This step runs in addition to — and BEFORE — the wave-sizing / brief-from-source pre-flight checks below.
@@ -111,7 +111,7 @@ The Lead therefore treats the file-channel as a **first-class transport**, not a
 ### Envelope path
 
 ```
-.ai-assets-memory/sessions/<sid>/team-envelopes/
+.ai-skills-memory/sessions/<sid>/team-envelopes/
     TaskCompleted-<task_id>-<ts>.json
     TeammateIdle-<task_id>-<ts>.json
 ```
@@ -124,7 +124,7 @@ At team-create time, the Lead starts a single `Monitor` on the envelope director
 
 ```text
 Monitor({
-  scope: ".ai-assets-memory/sessions/<sid>/team-envelopes/",
+  scope: ".ai-skills-memory/sessions/<sid>/team-envelopes/",
   pattern: "*.json",
   on_event: "lead-handle-team-envelope"
 })
@@ -138,14 +138,14 @@ The Lead still requires a G7 return contract for the schema-validated handoff �
 
 ### Cross-teammate signalling
 
-Teammates that need to communicate without depending on `SendMessage` reliability MAY write their own envelopes into the same directory using `Bash(printf '%s' '<json>' > .ai-assets-memory/sessions/<sid>/team-envelopes/<role>-<topic>-<ts>.json.tmp && mv ... ...json)`. The Lead's `Monitor` picks them up the same way. The Reviewer's `findings-<wp>.json` and the Developer's `ready-for-review-<wp>.json` are the two canonical cross-teammate envelopes. Specification of the cross-teammate envelope schemas lives in `developer-protocol.md` "File-channel envelopes" and `reviewer-protocol.md` "Findings envelope (file-channel)".
+Teammates that need to communicate without depending on `SendMessage` reliability MAY write their own envelopes into the same directory using `Bash(printf '%s' '<json>' > .ai-skills-memory/sessions/<sid>/team-envelopes/<role>-<topic>-<ts>.json.tmp && mv ... ...json)`. The Lead's `Monitor` picks them up the same way. The Reviewer's `findings-<wp>.json` and the Developer's `ready-for-review-<wp>.json` are the two canonical cross-teammate envelopes. Specification of the cross-teammate envelope schemas lives in `developer-protocol.md` "File-channel envelopes" and `reviewer-protocol.md` "Findings envelope (file-channel)".
 
 ### When to fall back to file-channel exclusively (alpha.36)
 
 If for two consecutive `TaskCompleted` events the corresponding G7 envelope did not arrive in the Lead's context within 60 s but a `disk_state.changed_files` snapshot did land in the team-envelopes directory, this is **alpha.36 — silent lead-bound bus**. The teammate's `SendMessage` returns to the lead are being dropped. Recovery:
 
 1. The Lead stops waiting for G7 envelopes via the bus and treats the file-channel envelope as the canonical liveness signal.
-2. For each gate transition, the Lead sends one `SendMessage(<teammate>, "deliver findings now — write G7 envelope to .ai-assets-memory/sessions/<sid>/team-envelopes/G7-<role>-<wp>.json then return verdict in your next response")`.
+2. For each gate transition, the Lead sends one `SendMessage(<teammate>, "deliver findings now — write G7 envelope to .ai-skills-memory/sessions/<sid>/team-envelopes/G7-<role>-<wp>.json then return verdict in your next response")`.
 3. The teammate writes the G7 envelope via `Bash` to the file-channel and additionally posts the verdict in its next conversation turn (verdict-in-response — same pattern as `eval-judge` and alpha.35 4d).
 4. The Lead reads both, validates the file-channel G7 against `return-contract.schema.json`, and proceeds.
 5. Record one line in `REVIEW-LOG.md` "Liveness events": `alpha.36: lead-bound bus dropped <N> consecutive G7 envelopes; switched to file-channel exclusively; <M> envelopes recovered from disk`.
@@ -162,9 +162,9 @@ The procedure below applies symmetrically to Developer, Reviewer, and QA. Read `
 
 2. **Liveness watchdog — evidence-based, not time-based (v0.3.11).** The legacy 90 s × 2 cadence was tuned for visible-transcript work and produced false positives during genuine deep work (Read sequences, schema parsing, test runs). The watchdog now keys on **evidence absence**, not wall-clock:
 
-   - **First check at ~180 s after the hand-off** (or whenever the next `TeammateIdle` envelope lands, whichever first). Inputs: latest envelope from `.ai-assets-memory/sessions/<sid>/team-envelopes/` for this teammate, plus `git status --short` for the WP's `active_files`.
+   - **First check at ~180 s after the hand-off** (or whenever the next `TeammateIdle` envelope lands, whichever first). Inputs: latest envelope from `.ai-skills-memory/sessions/<sid>/team-envelopes/` for this teammate, plus `git status --short` for the WP's `active_files`.
      - Any evidence of progress (envelope timestamp newer than hand-off, OR `git status` shows any of `active_files` modified, OR the teammate task transitioned `pending` → `in_progress`) → reset the watchdog clock for another ~180 s window. Do NOT nudge.
-     - No evidence on any of the three signals → send first nudge with the same hand-off payload plus `"Teammate appears idle — please confirm receipt and start <dev|review|qa>. If your TaskUpdate/SendMessage tools are unavailable, write a status line to .ai-assets-memory/sessions/<sid>/team-envelopes/status-<role>-<wp>.json via Bash and the Lead will pick it up."`
+     - No evidence on any of the three signals → send first nudge with the same hand-off payload plus `"Teammate appears idle — please confirm receipt and start <dev|review|qa>. If your TaskUpdate/SendMessage tools are unavailable, write a status line to .ai-skills-memory/sessions/<sid>/team-envelopes/status-<role>-<wp>.json via Bash and the Lead will pick it up."`
    - **Second check at ~180 s after first nudge.** Same evidence inputs. No progress → second nudge (and final). Total max wait: ~540 s (9 min) before escalation, but ANY of the three evidence signals collapses the timer to zero and grants another full window.
    - **Hard ceiling: 25 minutes wall-clock from the original hand-off** regardless of evidence (caps a teammate that is producing micro-progress but never converging).
 

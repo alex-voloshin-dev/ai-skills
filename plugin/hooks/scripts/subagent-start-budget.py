@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: subagent-start-budget
+ai-skills plugin hook: subagent-start-budget
 Event: SubagentStart
 Exit code 0 = allow spawn; exit code 2 = block spawn (budget exceeded or G7
 schema repeatedly violated).
@@ -42,7 +42,7 @@ G7_PAYLOAD_EXAMPLE = """{
   "subagent_role": "java-engineer",
   "goal": "Implement WP-1.1 per design.md §4.2 — preserve visibility_score on retry.",
   "constraints": [
-    "envelope_dir: /absolute/path/.ai-assets-memory/sessions/<sid>/team-envelopes",
+    "envelope_dir: /absolute/path/.ai-skills-memory/sessions/<sid>/team-envelopes",
     "<VERBATIM source-section block from design.md>"
   ],
   "state_slice": {
@@ -79,7 +79,7 @@ def main() -> None:
 
     # Read meter
     cwd = pathlib.Path.cwd()
-    session_dir = cwd / ".ai-assets-memory" / "sessions" / sid
+    session_dir = cwd / ".ai-skills-memory" / "sessions" / sid
     meter = _lib.read_token_meter(session_dir)
     current_in = int(meter.get("tokens_in_total", 0))
     projected = current_in + estimated_input

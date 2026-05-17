@@ -66,14 +66,14 @@ Session-aggregate caps from `ralph-budget.md` HIGH-3 also apply (20 iter / 400K 
 
 ## State and logs
 
-Every run writes to `<repo>/.ai-assets-memory/ralph/<run-id>/`:
+Every run writes to `<repo>/.ai-skills-memory/ralph/<run-id>/`:
 - `config.json` — caps + oracle + kill-on as locked at start
 - `active.lock` — presence = run is in progress
 - `initial-prompt.md` — full init prompt (G10)
 - `iter-NNN/` — one dir per iteration: `prompt.md`, `output.md`, `diff.patch`, `oracle-result.json`, `tokens.json`
 - `budget.json` — final totals on exit
 
-Per-iteration `tokens.json` (v0.1.6) records `tokens` spent that iteration plus `runaway: true` when a single iteration exceeds 3× the fair share (`token_budget / max_iterations`). Runaway warnings also append to `.ai-assets-memory/ralph-warnings.log`.
+Per-iteration `tokens.json` (v0.1.6) records `tokens` spent that iteration plus `runaway: true` when a single iteration exceeds 3× the fair share (`token_budget / max_iterations`). Runaway warnings also append to `.ai-skills-memory/ralph-warnings.log`.
 
 ## Init vs continuation prompts
 
@@ -86,8 +86,8 @@ Continuation template at `${CLAUDE_PLUGIN_ROOT}/skills/ralph/templates/continuat
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | RALF terminal state | `.ai-assets-memory/ralph/<run-id>/budget.json` (iterations, tokens, exit reason) |
-| L4 | After kill or oracle-pass | `.ai-assets-memory/ralph-history.jsonl` summary line |
+| L4 | RALF terminal state | `.ai-skills-memory/ralph/<run-id>/budget.json` (iterations, tokens, exit reason) |
+| L4 | After kill or oracle-pass | `.ai-skills-memory/ralph-history.jsonl` summary line |
 
 ## Failure modes
 

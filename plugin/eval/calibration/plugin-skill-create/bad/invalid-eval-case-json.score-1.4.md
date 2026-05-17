@@ -9,7 +9,7 @@ plugin/skills/release-notify/SKILL.md                       # OK
 plugin/eval/cases/release-notify/eval-case-001.json          # MALFORMED
 plugin/eval/judge-rubrics/release-notify.md                  # OK
 plugin/eval/calibration/release-notify/{good,bad}/           # OK
-.ai-assets-memory/plugin-skills/release-notify/scaffolded.md # OK
+.ai-skills-memory/plugin-skills/release-notify/scaffolded.md # OK
 ```
 
 ## eval-case-001.json (verbatim)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin eval — calibration re-anchor utility.
+ai-skills plugin eval — calibration re-anchor utility.
 
 Phase 4 follow-up to Tier 2 v0.1.3. Re-scores all 102 calibration samples
 using the current Haiku judge as ground truth, generates a rename plan,

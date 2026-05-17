@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/alex-voloshin-dev/ai-assets/blob/main/plugin/skills/feedback/output-schema.json",
+  "$id": "https://github.com/alex-voloshin-dev/ai-skills/blob/main/plugin/skills/feedback/output-schema.json",
   "title": "feedback output schema (canonical)",
   "description": "Canonical machine-readable counterpart of the /feedback Markdown report. Written alongside `feedback-YYYY-MM-DD-HHMM.md` as `feedback-YYYY-MM-DD-HHMM.json` with full content parity. Consumed by `/plugin-author fix-feedback --from <path>.json` to build a fix-cycle plan. Reparsing the Markdown is a degraded fallback only — this JSON is the contract.",
   "type": "object",
@@ -34,7 +34,7 @@
         },
         "tool_version": {
           "type": "string",
-          "description": "ai-assets plugin version that produced this report, e.g. `ai-assets@0.3.13`."
+          "description": "ai-skills plugin version that produced this report, e.g. `ai-skills@0.3.13`."
         },
         "window_days": {
           "type": "integer",
@@ -47,7 +47,7 @@
         },
         "plugin_filter": {
           "type": "string",
-          "description": "`--plugin NAME` filter applied (e.g. `ai-assets`); `all` means no filter."
+          "description": "`--plugin NAME` filter applied (e.g. `ai-skills`); `all` means no filter."
         },
         "sessions_scanned": {
           "type": "integer",

@@ -1,6 +1,6 @@
 # Conventions Schema (`.committed/conventions.md`)
 
-> Plugin-shipped template. Schema for the team-confirmed conventions file in target repo's `.ai-assets-memory/.committed/conventions.md`. Versioned via git so the whole team shares it.
+> Plugin-shipped template. Schema for the team-confirmed conventions file in target repo's `.ai-skills-memory/.committed/conventions.md`. Versioned via git so the whole team shares it.
 
 ## Purpose
 

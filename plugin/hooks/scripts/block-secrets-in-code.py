@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: block-secrets-in-code
+ai-skills plugin hook: block-secrets-in-code
 Event: PreToolUse (matcher: Write|Edit)
 Exit code 2 = block the write action if secrets are detected; 0 = allow.
 
@@ -73,7 +73,7 @@ SKIP_FILENAMES = {
 # fields like `tokens_used`, `trace_id`, etc. that look like secrets to
 # pattern-based scanners but never are. v0.3.12 (closes audits/2026-05-13 §2.6).
 ENVELOPE_PATH_PATTERNS = [
-    re.compile(r"\.ai-assets-memory/"),
+    re.compile(r"\.ai-skills-memory/"),
     re.compile(r"/team-envelopes/"),
     re.compile(r"(^|/)tmp/.*envelope"),  # /tmp/v22-envelopes/ etc.
     re.compile(r"(^|/)tmp/.*team-"),

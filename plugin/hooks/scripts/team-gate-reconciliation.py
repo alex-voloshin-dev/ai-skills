@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: team-gate-reconciliation
+ai-skills plugin hook: team-gate-reconciliation
 Events: TaskCompleted, TeammateIdle, idle_notification (fall-through)
 Exit code 0 = always allow (advisory hook — never blocks).
 
 Path B reliability hook. Runs read-only disk-state reconciliation at every
 task transition so the Lead has ground-truth evidence even when a teammate
 goes silent-but-complete (alpha.31 sub-case c). Writes a JSON envelope to
-.ai-assets-memory/sessions/<sid>/team-envelopes/<task_id>-<ts>.json so the
+.ai-skills-memory/sessions/<sid>/team-envelopes/<task_id>-<ts>.json so the
 Lead can stream it via Monitor without depending on the team-bus.
 
 Closes feedback items F2 (silent-but-complete) + F9 (out-of-the-box
@@ -177,7 +177,7 @@ def _reconcile_from_file_channel(cwd: pathlib.Path, sid: str) -> dict:
 
     Precedence:
       1. If ``sid`` is known, search that specific session dir first.
-      2. Fallback: scan ALL session dirs under .ai-assets-memory/sessions/
+      2. Fallback: scan ALL session dirs under .ai-skills-memory/sessions/
          (covers the case where sid itself was not delivered by the bus).
     """
     result: dict = {
@@ -187,7 +187,7 @@ def _reconcile_from_file_channel(cwd: pathlib.Path, sid: str) -> dict:
         "errors": [],
     }
     try:
-        memory_root = cwd / ".ai-assets-memory" / "sessions"
+        memory_root = cwd / ".ai-skills-memory" / "sessions"
         if not memory_root.exists():
             return result
 
@@ -325,7 +325,7 @@ def main() -> None:
             }
 
     # Write to deterministic file-channel path that the Lead can Monitor
-    out_dir = cwd / ".ai-assets-memory" / "sessions" / sid / "team-envelopes"
+    out_dir = cwd / ".ai-skills-memory" / "sessions" / sid / "team-envelopes"
     try:
         out_dir.mkdir(parents=True, exist_ok=True)
         safe_task = str(task_id).replace("/", "_").replace(":", "-")

@@ -96,11 +96,11 @@ Per `@team-protocols` "Dual-Path Detection → Path B" section. The Lead drives 
 ### Step 1 — create the team
 
 ```text
-Create an agent team named "<audit-slug>-bugfix-team" with the following teammates, all using subagent definitions from the ai-assets plugin:
+Create an agent team named "<audit-slug>-bugfix-team" with the following teammates, all using subagent definitions from the ai-skills plugin:
 
-- "developer" (ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>) — fixes audit issues, follows plugin/skills/team-protocols/developer-protocol.md, gets isolation: worktree
-- "reviewer" (ai-assets:software-engineer) — independent code review, read-only (disallow Write/Edit), follows reviewer-protocol.md
-- "qa" (ai-assets:qa-engineer) — higher-level tests + SRE smoke, follows the QA section of the develop skill
+- "developer" (ai-skills:<java-engineer | python-engineer | frontend-engineer | ...>) — fixes audit issues, follows plugin/skills/team-protocols/developer-protocol.md, gets isolation: worktree
+- "reviewer" (ai-skills:software-engineer) — independent code review, read-only (disallow Write/Edit), follows reviewer-protocol.md
+- "qa" (ai-skills:qa-engineer) — higher-level tests + SRE smoke, follows the QA section of the develop skill
 
 Require plan approval for the developer teammate before any code changes. Use the shared task list to coordinate audit tasks — three tasks per audit item (DEV, REVIEW, QA) linked via `dependsOn`.
 

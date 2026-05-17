@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin monitor: env-watch (cross-platform Python rewrite)
+ai-skills plugin monitor: env-watch (cross-platform Python rewrite)
 
 Watches the local docker-compose stack and emits one JSON line per
 service-state change to stdout, where Claude Code surfaces it as a

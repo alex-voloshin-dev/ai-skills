@@ -39,7 +39,7 @@
 - Calibration: 3 good + 3 bad samples — meets threshold — OK
 - Rubric dimension count matches latest sample structure — OK
 
-### plugin — ai-assets conventions
+### plugin — ai-skills conventions
 - H5 trigger heading present: `# /feature-design — Feature Design Pack` — OK
 - Third-person description ("Convert a 1–3 sentence feature idea…") — OK
 - No absolute user paths in body — OK

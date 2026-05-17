@@ -15,7 +15,7 @@
 | Skill frontmatter | PASS | 53 SKILL.md files; name + description present; kebab-case names match parent dir; H5 trigger phrase present |
 | Hook references | PASS | 18 hook scripts; every `hooks.json` entry resolves; `python3 ${CLAUDE_PLUGIN_ROOT}/...` wrapper form accepted (v0.3.3+) |
 | JSON validity | PASS | `plugin/schemas/*.json` (2), `eval/config.json`, `monitors/monitors.json`, `.claude-plugin/plugin.json` — all parse |
-| Run-log parseability | PASS | `.ai-assets-memory/runs.jsonl` parses (12 entries) |
+| Run-log parseability | PASS | `.ai-skills-memory/runs.jsonl` parses (12 entries) |
 
 ## Counts
 
@@ -33,7 +33,7 @@ Calibration not yet run; use `/plugin-doctor --calibrate-judge` to run the Tier 
 
 ## Audit log
 
-Appended to `.ai-assets-memory/plugin-doctor.log`:
+Appended to `.ai-skills-memory/plugin-doctor.log`:
 
 ```
 2026-05-08T14:22:11Z mode=default verdict=PASS exit=0 pass=4 warn=0 fail=0

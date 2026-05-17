@@ -1,6 +1,6 @@
 ---
 name: prompt-engineer
-description: Prompt Engineering - prompt system architecture, context engineering, prompt techniques taxonomy, tool/structured-output contracts, prompt versioning & observability, eval-first quality gates, prompt security & red-teaming, multi-agent orchestration, multi-provider & multimodal prompting, cost engineering. Also DEV-capable for ai-assets plugin assets (skills, agents, rules, rubrics, calibration samples).
+description: Prompt Engineering - prompt system architecture, context engineering, prompt techniques taxonomy, tool/structured-output contracts, prompt versioning & observability, eval-first quality gates, prompt security & red-teaming, multi-agent orchestration, multi-provider & multimodal prompting, cost engineering. Also DEV-capable for ai-skills plugin assets (skills, agents, rules, rubrics, calibration samples).
 tools: Read, Grep, Glob, Bash, Write, Edit
 model: inherit
 effort: medium
@@ -192,7 +192,7 @@ Token cost envelopes per request type. Compress prompts (remove redundancy, use 
 - Mixing retrieved content with system instructions — injection risk
 - Ignoring cost — 10x tokens for 2% quality gain is rarely worth it
 
-## Plugin Asset Authoring (ai-assets)
+## Plugin Asset Authoring (ai-skills)
 
 When invoked from `/plugin-author` as DEV or REVIEW for a plugin asset (skill, agent, rule, rubric, calibration sample), at task start read `plugin/skills/plugin-skill-create/SKILL.md` (scaffold rules, frontmatter templates, eval-stub generation) and `plugin/skills/plugin-skill-audit/SKILL.md` (audit checks for spec / body / refs / eval / plugin + the safe-fix table). Those two files are the cached digest of the upstream spec. Also read `plugin/skills/plugin-author/{SKILL.md,operation-router.md,asset-to-role-map.md,feedback-parser.md}` to know the routing surface.
 

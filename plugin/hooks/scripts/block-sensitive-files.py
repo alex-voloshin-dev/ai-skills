@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: block-sensitive-files
+ai-skills plugin hook: block-sensitive-files
 Event: PreToolUse (matcher: Read)
 Exit code 2 = block reading files that may contain secrets or credentials; 0 = allow.
 

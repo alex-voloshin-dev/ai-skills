@@ -31,7 +31,7 @@ Single-pass research workflow producing a SPIKE-REPORT with a go/no-go/needs-mor
 
 ## What you get
 
-- `<repo>/.ai-assets-memory/spikes/<run-id>/SPIKE-REPORT.md` — findings, pro/con, recommendation
+- `<repo>/.ai-skills-memory/spikes/<run-id>/SPIKE-REPORT.md` — findings, pro/con, recommendation
 - (optional) `<repo>/spike-poc-<run-id>/` — POC code if `--poc`
 - Memory: research record to L4 for future reference
 
@@ -62,7 +62,7 @@ Report states inconclusive with specific data gaps; recommends a deeper spike or
 Report failure as a finding — the POC failure is itself a data point for go/no-go. Don't block the spike.
 
 **Can I run multiple spikes in parallel?**
-Yes — they're independent. Each writes to its own `.ai-assets-memory/spikes/<run-id>/`.
+Yes — they're independent. Each writes to its own `.ai-skills-memory/spikes/<run-id>/`.
 
 ## Examples
 

@@ -21,7 +21,7 @@ Detect each subproject's tech stack from its `CLAUDE.md` or `AGENTS.md` and map 
 | ETL/ELT, Spark, dbt, Airflow, data pipelines | Data Engineer | data-engineer |
 | Cloud architecture, landing zones, networking, multi-cloud | Cloud Architect | cloud-architect |
 | GitHub Actions, CI/CD architecture, deployment strategy | DevOps Architect | devops-architect |
-| ai-assets plugin asset (skills/*.md, agents/*.md, rules/*.md, eval/judge-rubrics/*.md, eval/calibration/**) | Prompt Engineer (DEV + REVIEW) | prompt-engineer |
+| ai-skills plugin asset (skills/*.md, agents/*.md, rules/*.md, eval/judge-rubrics/*.md, eval/calibration/**) | Prompt Engineer (DEV + REVIEW) | prompt-engineer |
 | `plugin/hooks/scripts/*.py` (plugin hook code) | Python Engineer | python-engineer |
 | `plugin/schemas/*.json`, `plugin/eval/config.json`, `plugin/eval/cases/*` | System Architect | system-architect |
 

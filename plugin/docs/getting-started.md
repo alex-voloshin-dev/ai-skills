@@ -1,4 +1,4 @@
-# Getting Started with ai-assets
+# Getting Started with ai-skills
 
 A 30-minute tutorial: install the plugin, bootstrap your repo, run a first feature design, observe the outputs.
 
@@ -12,18 +12,18 @@ A 30-minute tutorial: install the plugin, bootstrap your repo, run a first featu
 
 ```bash
 # From git
-claude plugin install https://github.com/alex-voloshin-dev/ai-assets
+claude plugin install https://github.com/alex-voloshin-dev/ai-skills
 
 # From local checkout (developer mode)
 claude plugin install ./plugin
 ```
 
-Claude Code will prompt for `userConfig` values (token caps, RALF defaults, opt-in flags). Defaults are sensible for personal use on a Max subscription. Press Enter to accept; you can change them later via `/plugin configure ai-assets`.
+Claude Code will prompt for `userConfig` values (token caps, RALF defaults, opt-in flags). Defaults are sensible for personal use on a Max subscription. Press Enter to accept; you can change them later via `/plugin configure ai-skills`.
 
 Verify install:
 
 ```bash
-/plugin status ai-assets
+/plugin status ai-skills
 ```
 
 You should see the plugin listed with all its skills and agents discovered.
@@ -32,14 +32,14 @@ You should see the plugin listed with all its skills and agents discovered.
 
 ```bash
 cd /path/to/your/project
-/ai-assets-init
+/ai-skills-init
 ```
 
 This is idempotent — safe to run on a fresh checkout or an existing project. It:
 - Auto-detects your codebase type (`pyproject.toml` → python-fastapi, `package.json` → node, etc.)
 - Creates `CLAUDE.md` if it doesn't exist (skipped if you already have one)
-- Creates `.ai-assets-memory/` directory tree
-- Adds `.ai-assets-memory/` to your `.gitignore` (with `.committed/` exception for opt-in versioned memory)
+- Creates `.ai-skills-memory/` directory tree
+- Adds `.ai-skills-memory/` to your `.gitignore` (with `.committed/` exception for opt-in versioned memory)
 
 Open the new `CLAUDE.md` and fill in the **Business Context** section. The other sections are pre-filled from auto-detection.
 
@@ -107,8 +107,8 @@ Default mode runs linters (no LLM cost). It validates skill frontmatter, hook re
 
 **`/feature-design` is taking too long.** Check `userConfig.ralph_session_max_iter` and `ralph_session_token_budget` — RALF iterations may be eating your budget. The hard cap will pause and ask you before continuing.
 
-**`/plugin-doctor` reports CRITICAL findings.** Read the report. Most common issue: missing `CLAUDE.md` in the target repo (run `/ai-assets-init` first).
+**`/plugin-doctor` reports CRITICAL findings.** Read the report. Most common issue: missing `CLAUDE.md` in the target repo (run `/ai-skills-init` first).
 
-**Memory writes failing.** Check that `.ai-assets-memory/` exists and is writable. Run `/memory-init` to recreate the skeleton.
+**Memory writes failing.** Check that `.ai-skills-memory/` exists and is writable. Run `/memory-init` to recreate the skeleton.
 
 **A subagent returns `status: needs_clarification`.** The orchestrator surfaces the question. Answer it in chat; the workflow resumes from the spawn point.

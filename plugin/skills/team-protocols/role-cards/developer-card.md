@@ -61,7 +61,7 @@ The disk envelope is **additive** — never skip the in-message JSON return. Bot
 
 **Write-early ordering (P1-5).** Write the file-channel G7 FIRST with `status: in_progress` (a valid enum value in `return-contract.schema.json`), THEN run §Self-verification, THEN atomic-overwrite the same path with the final `ok | failed | partial`. This guarantees the Lead has a liveness record even if you die mid-verify. Apply this ordering on every WP.
 
-If `envelope_dir` is absent from the payload, fall back to `.ai-assets-memory/sessions/${sid}/team-envelopes/` (create with `mkdir -p` first) where `${sid}` is `state_slice.session_id`. If `sid` is also absent, fall back to `.ai-assets-memory/team-envelopes/` at the repo root.
+If `envelope_dir` is absent from the payload, fall back to `.ai-skills-memory/sessions/${sid}/team-envelopes/` (create with `mkdir -p` first) where `${sid}` is `state_slice.session_id`. If `sid` is also absent, fall back to `.ai-skills-memory/team-envelopes/` at the repo root.
 
 ## Review iteration rules
 

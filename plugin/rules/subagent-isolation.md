@@ -31,7 +31,7 @@ Recursion depth is therefore at most 2: main thread → feature-design-lead → 
 
 `subagent-depth-guard.py` (SubagentStart hook) enforces a max-depth cap on every spawn, regardless of which agent has Task. Every G7 spawn payload may declare a `parent_trace_id` pointing at the spawn that initiated it (omit/null for top-level spawns from the main thread). The guard:
 
-1. Reads `.ai-assets-memory/sessions/<sid>/spawn-chain.jsonl` (one line per `start`/`stop`/`rejected` event).
+1. Reads `.ai-skills-memory/sessions/<sid>/spawn-chain.jsonl` (one line per `start`/`stop`/`rejected` event).
 2. Computes depth by walking the parent chain from the current spawn.
 3. Blocks the spawn (exit 2 + diagnostic) when `depth > userConfig.subagent_max_depth` (default 3).
 4. Records both successful spawns and rejected attempts to the chain log for forensics.

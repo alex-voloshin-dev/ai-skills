@@ -2,7 +2,7 @@
 
 ## Overview
 
-Evaluates `/plugin-doctor` output — the self-diagnostic for the ai-assets plugin. Six dimensions × five levels. Default mode is fast and cost-free (Tier 1 wrapper); `--calibrate-judge` is opt-in and delegates to Tier 2. `--runs --last N` and `--health-trends` are documented for design continuity but **not yet shipped**.
+Evaluates `/plugin-doctor` output — the self-diagnostic for the ai-skills plugin. Six dimensions × five levels. Default mode is fast and cost-free (Tier 1 wrapper); `--calibrate-judge` is opt-in and delegates to Tier 2. `--runs --last N` and `--health-trends` are documented for design continuity but **not yet shipped**.
 
 ## Dimensions
 
@@ -13,7 +13,7 @@ Default invocation reports on all four sub-checks: skill frontmatter, hooks.json
 - **Level 2:** Three of four sub-checks reported; one silently skipped
 - **Level 3:** All four sub-checks reported
 - **Level 4:** All four + per-check pass/warn/fail badge + counts
-- **Level 5:** All of L4 + first-run handling (no `.ai-assets-memory/` → suggest `/ai-assets-init`)
+- **Level 5:** All of L4 + first-run handling (no `.ai-skills-memory/` → suggest `/ai-skills-init`)
 
 ### Dimension 2: Calibration Delegation
 `--calibrate-judge` correctly delegates to `runner.py --tier 2` and surfaces the score-band tolerance check (±0.5 around filename-encoded score).
@@ -52,7 +52,7 @@ Pass / warn / fail counts at top + per-check line-level details + suggested fix 
 - **Level 5:** All of L4 + machine-readable summary section (JSON or counts table)
 
 ### Dimension 6: Audit-Log Discipline
-Appends an entry to `.ai-assets-memory/plugin-doctor.log` per memory-discipline. Entry includes timestamp, mode (default vs `--calibrate-judge`), and verdict.
+Appends an entry to `.ai-skills-memory/plugin-doctor.log` per memory-discipline. Entry includes timestamp, mode (default vs `--calibrate-judge`), and verdict.
 
 - **Level 1:** No log entry written
 - **Level 2:** Log entry written; missing timestamp or verdict

@@ -33,7 +33,7 @@ If the target repo already has a **partial** design pack (PRD exists but no desi
 
 ## Output (versioned with code, not with project memory)
 
-Files written to **`<repo>/docs/features/<feature-id>/`** — INSIDE the target repo's `docs/`, NOT inside `.ai-assets-memory/`. Reason: design packs are intended to be VERSIONED IN GIT as project documentation, reviewed by the team, and live across many sprints.
+Files written to **`<repo>/docs/features/<feature-id>/`** — INSIDE the target repo's `docs/`, NOT inside `.ai-skills-memory/`. Reason: design packs are intended to be VERSIONED IN GIT as project documentation, reviewed by the team, and live across many sprints.
 
 | File | Producer | Notes |
 |---|---|---|

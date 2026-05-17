@@ -67,6 +67,6 @@ A prompt is not a string — it is a **system** composed of:
 ## Integration
 
 - **Follows rules**: `prompt-engineer` role (prompt system architecture, security, eval-first quality)
-- **Used by workflows**: `ai-assets` skill (all assets are prompts), `feature-dev` skill (AI features), `code-review` skill (prompt quality review)
+- **Used by workflows**: `ai-skills` skill (all assets are prompts), `feature-dev` skill (AI features), `code-review` skill (prompt quality review)
 - **Companion skills**: `context-engineering` skill (context pipeline design, memory engineering, agent harness, RAG architecture, multi-agent orchestration, production checklists), `asset-validation` skill (AI asset format validation), `code-review` skill (review checklists)
 - **Collaborates with roles**: `software-engineer` role (prompt integration), `qa-engineer` role (prompt regression tests), `product-manager` role (success metrics)

@@ -98,4 +98,4 @@ Total run time: 28m 55s (acceptable)
 
 ## Memory Write
 
-Baseline saved to `.ai-assets-memory/env-reports/ci-test-<run-id>/`.
+Baseline saved to `.ai-skills-memory/env-reports/ci-test-<run-id>/`.

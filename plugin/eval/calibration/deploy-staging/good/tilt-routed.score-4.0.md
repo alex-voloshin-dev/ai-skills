@@ -40,7 +40,7 @@ Status:         ✔ Healthy
 Last Build:     2.3s ago
 ```
 
-Memory write: `.ai-assets-memory/runs.jsonl` appended.
+Memory write: `.ai-skills-memory/runs.jsonl` appended.
 
 ## Score rationale
 

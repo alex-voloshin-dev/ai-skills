@@ -24,7 +24,7 @@ Single entry point for the full lifecycle of assets under `plugin/`: skills, age
 ```bash
 /plugin-author create <name> [--type workflow|knowledge|companion] [--agent-spawn] [--ralph]
 /plugin-author audit [<name> | --all] [--deep] [--strict] [--fix]
-/plugin-author fix-feedback --from .ai-assets-memory/feedback/feedback-2026-05-13-0910.json
+/plugin-author fix-feedback --from .ai-skills-memory/feedback/feedback-2026-05-13-0910.json
 /plugin-author improve <name> [--scope description|body|rubric|calibration]
 /plugin-author refactor <name>
 /plugin-author migrate <name>
@@ -40,7 +40,7 @@ Single entry point for the full lifecycle of assets under `plugin/`: skills, age
 - **`audit --deep`** — adds a `prompt-engineer` deep description + security review and an `eval-judge` rubric calibration check
 - **`fix-feedback`** — one WP per finding, grouped by severity and source kind; closes with a `fix-cycles/<stamp>.json` mapping every closed WP to its `finding_id`
 - **`improve` / `refactor` / `migrate`** — targeted DEV → REVIEW → QA on the specified asset
-- A run-log entry in `.ai-assets-memory/plugin-author/runs.log`
+- A run-log entry in `.ai-skills-memory/plugin-author/runs.log`
 
 ## The pipeline
 
@@ -89,7 +89,7 @@ It is opt-in: the orchestrator prints a budget warning before starting because e
 Schema is documented in [`plugin/skills/plugin-author/feedback-parser.md`](../../skills/plugin-author/feedback-parser.md). Every finding produced by `/feedback` carries a `finding_id`, severity, source kind, signature, count, excerpt anchors, and (often) an `asset_hint`. The umbrella refuses to invent assets — if the resolver cannot find the file, it surfaces the mismatch and skips the WP.
 
 **Where do logs go?**
-`.ai-assets-memory/plugin-author/runs.log` (one JSON line per run) and, for `fix-feedback` only, `.ai-assets-memory/plugin-author/fix-cycles/<stamp>.json` mapping every closed WP to its `finding_id`.
+`.ai-skills-memory/plugin-author/runs.log` (one JSON line per run) and, for `fix-feedback` only, `.ai-skills-memory/plugin-author/fix-cycles/<stamp>.json` mapping every closed WP to its `finding_id`.
 
 ## Examples
 
@@ -108,7 +108,7 @@ Lint + `prompt-engineer` description/security review per `optimizing-description
 ### Fix every finding in a feedback report
 ```bash
 /feedback --days 7                                           # produces both .md and .json
-/plugin-author fix-feedback --from .ai-assets-memory/feedback/feedback-2026-05-13-0910.json
+/plugin-author fix-feedback --from .ai-skills-memory/feedback/feedback-2026-05-13-0910.json
 ```
 The umbrella ingests the JSON, builds one WP per finding, drives the HEAVY pipeline, writes the fix-cycle JSON, and a re-run of `/feedback` against the same window confirms the closed findings drop to count: 0.
 

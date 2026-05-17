@@ -44,4 +44,4 @@ This summary captures the Windsurf primitives used by this repository.
 - `.agents/skills` -> `.windsurf/skills/**`
 - user-facing `.claude/skills` -> `.windsurf/workflows/**`
 - `.claude/hooks` -> `.windsurf/hooks.json` + `.windsurf/hooks/scripts/`
-- `.codex/templates`, `.codex/checklists`, `.codex/operations` -> skill support resources under `.windsurf/skills/ai-assets/`
+- `.codex/templates`, `.codex/checklists`, `.codex/operations` -> skill support resources under `.windsurf/skills/ai-skills/`

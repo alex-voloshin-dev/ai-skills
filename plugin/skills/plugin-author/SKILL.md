@@ -1,7 +1,7 @@
 ---
 name: plugin-author
 description: >-
-  Umbrella workflow for ai-assets plugin-asset authoring and maintenance —
+  Umbrella workflow for ai-skills plugin-asset authoring and maintenance —
   creating, auditing, fixing, improving, refactoring, and migrating skills,
   agents, rules, hooks, prompts, schemas, and rubrics inside the plugin.
   Auto-classifies the request, loads the right knowledge skills
@@ -46,7 +46,7 @@ Full trigger-phrase + disambiguation table: `operation-router.md`.
 ```text
 /plugin-author create <name> [--type workflow|knowledge|companion] [--agent-spawn] [--ralph]
 /plugin-author audit [<name> | --all] [--deep] [--strict] [--fix]
-/plugin-author fix-feedback --from .ai-assets-memory/feedback/feedback-2026-05-13-0910.json
+/plugin-author fix-feedback --from .ai-skills-memory/feedback/feedback-2026-05-13-0910.json
 /plugin-author improve <name> [--scope description|body|rubric|calibration]
 /plugin-author refactor <name>
 /plugin-author migrate <name>
@@ -75,18 +75,18 @@ Asset-kind → DEV-role (`asset-to-role-map.md`):
 
 | Asset under `plugin/` | DEV subagent |
 |---|---|
-| `skills/<name>/SKILL.md` (frontmatter + body + refs) | `ai-assets:prompt-engineer` |
-| `agents/<name>.md` | `ai-assets:prompt-engineer` |
-| `rules/<name>.md` | `ai-assets:prompt-engineer` |
-| `hooks/scripts/<name>.py` | `ai-assets:python-engineer` |
-| `schemas/<name>.json` | `ai-assets:system-architect` |
-| `eval/judge-rubrics/<name>.md` | `ai-assets:eval-judge` |
-| `eval/calibration/<name>/*.md` | `ai-assets:eval-judge` |
-| `eval/config.json`, `eval/cases/*` | `ai-assets:system-architect` |
+| `skills/<name>/SKILL.md` (frontmatter + body + refs) | `ai-skills:prompt-engineer` |
+| `agents/<name>.md` | `ai-skills:prompt-engineer` |
+| `rules/<name>.md` | `ai-skills:prompt-engineer` |
+| `hooks/scripts/<name>.py` | `ai-skills:python-engineer` |
+| `schemas/<name>.json` | `ai-skills:system-architect` |
+| `eval/judge-rubrics/<name>.md` | `ai-skills:eval-judge` |
+| `eval/calibration/<name>/*.md` | `ai-skills:eval-judge` |
+| `eval/config.json`, `eval/cases/*` | `ai-skills:system-architect` |
 
-REVIEW (every WP, `disallowedTools: ["Write", "Edit"]`): fresh `ai-assets:prompt-engineer` for prompt assets; `ai-assets:software-engineer` for code/schema. One reviewer, no co-review.
+REVIEW (every WP, `disallowedTools: ["Write", "Edit"]`): fresh `ai-skills:prompt-engineer` for prompt assets; `ai-skills:software-engineer` for code/schema. One reviewer, no co-review.
 
-QA (every WP): `ai-assets:qa-engineer` behavioral checks + Lead-side post-checks (`validate.py`, internal audit per `plugin-skill-audit/SKILL.md`, `/plugin-doctor`, `/eval --skill <name> --tier 1` when applicable).
+QA (every WP): `ai-skills:qa-engineer` behavioral checks + Lead-side post-checks (`validate.py`, internal audit per `plugin-skill-audit/SKILL.md`, `/plugin-doctor`, `/eval --skill <name> --tier 1` when applicable).
 
 ## Pipeline shape
 
@@ -102,9 +102,9 @@ WP DONE only after all of: DEV G7 `status=success`; Reviewer `verdict: approved`
 
 ## Eval-loop closure
 
-`create`/`improve` touching a user-invocable workflow skill or rubric MUST close with: rubric present (`plugin/eval/judge-rubrics/<name>.md`, 5 dimensions), calibration ≥ 6 samples (`plugin/eval/calibration/<name>/{good,bad}/`), `/eval --skill <name> --tier 1` pass. Spawn `ai-assets:eval-judge` to author/tune the rubric when missing or when Spearman drifts.
+`create`/`improve` touching a user-invocable workflow skill or rubric MUST close with: rubric present (`plugin/eval/judge-rubrics/<name>.md`, 5 dimensions), calibration ≥ 6 samples (`plugin/eval/calibration/<name>/{good,bad}/`), `/eval --skill <name> --tier 1` pass. Spawn `ai-skills:eval-judge` to author/tune the rubric when missing or when Spearman drifts.
 
-`audit --deep` additionally spawns `ai-assets:prompt-engineer` per target for spec/best-practice (`prompt-engineering/skill-authoring-spec.md`), description (`prompt-engineering/optimizing-descriptions.md`), and security (`prompt-engineering/security-checklist.md`, OWASP LLM Top 10) review. `--all --deep` is opt-in (prints a budget warning).
+`audit --deep` additionally spawns `ai-skills:prompt-engineer` per target for spec/best-practice (`prompt-engineering/skill-authoring-spec.md`), description (`prompt-engineering/optimizing-descriptions.md`), and security (`prompt-engineering/security-checklist.md`, OWASP LLM Top 10) review. `--all --deep` is opt-in (prints a budget warning).
 
 ## Hard rules
 
@@ -124,17 +124,17 @@ Ambiguous → ask one question. `fix-feedback` missing `.json` → warn, `--md` 
 
 ## Memory writes
 
-- L4 every run: append `{ts, op, target, wps, gate_results, fix_cycle_ref?}` to `.ai-assets-memory/plugin-author/runs.log`.
-- L4 on `fix-feedback`: write `.ai-assets-memory/plugin-author/fix-cycles/<feedback-stamp>.json` mapping each closed WP to its `finding_id` so future `/feedback` runs detect "fixed".
-- L5 only with `--learnings`: delegate to `/learnings-write` — never write `~/.claude/ai-assets/learnings.md` directly.
+- L4 every run: append `{ts, op, target, wps, gate_results, fix_cycle_ref?}` to `.ai-skills-memory/plugin-author/runs.log`.
+- L4 on `fix-feedback`: write `.ai-skills-memory/plugin-author/fix-cycles/<feedback-stamp>.json` mapping each closed WP to its `finding_id` so future `/feedback` runs detect "fixed".
+- L5 only with `--learnings`: delegate to `/learnings-write` — never write `~/.claude/ai-skills/learnings.md` directly.
 
 ## Integration
 
 - **Reads (procedure docs)**: `plugin-skill-create/SKILL.md`, `plugin-skill-audit/SKILL.md` (both `disable-model-invocation: true`).
 - **Reads (knowledge)**: `@prompt-engineering` (incl. cached agentskills.io digests `prompt-engineering/skill-authoring-spec.md` + `optimizing-descriptions.md`), `@context-engineering`, `@team-protocols`, `@subagent-spawn`.
 - **Reads (project)**: `CLAUDE.md`, `plugin/.claude-plugin/plugin.json`, `plugin/dev/validate.py` `EXPECTED_COUNTS`.
-- **Spawns**: `ai-assets:` `prompt-engineer`, `system-architect`, `python-engineer`, `software-engineer`, `qa-engineer`, `eval-judge`.
-- **Writes**: assets under `plugin/skills|agents|rules|hooks|eval|schemas/`; logs `.ai-assets-memory/plugin-author/runs.log` + `fix-cycles/`.
+- **Spawns**: `ai-skills:` `prompt-engineer`, `system-architect`, `python-engineer`, `software-engineer`, `qa-engineer`, `eval-judge`.
+- **Writes**: assets under `plugin/skills|agents|rules|hooks|eval|schemas/`; logs `.ai-skills-memory/plugin-author/runs.log` + `fix-cycles/`.
 - **Companions**: `/plugin-doctor`, `/eval`, `/feedback` (input for `fix-feedback`), `/learnings-write`.
 - **Supporting docs**: `operation-router.md`, `feedback-parser.md`, `asset-to-role-map.md`, `scripts/parse_feedback_report.py`.
 - **Eval (planned)**: `plugin/eval/judge-rubrics/plugin-author.md`, `plugin/eval/calibration/plugin-author/{good,bad}/`, `plugin/eval/cases/plugin-author/`.

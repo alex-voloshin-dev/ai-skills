@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: tool-failure-log
+ai-skills plugin hook: tool-failure-log
 Events: PostToolUseFailure, StopFailure
 Exit code 0 = always allow.
 
-Logs tool/turn failures to .ai-assets-memory/errors.log (separate from success
+Logs tool/turn failures to .ai-skills-memory/errors.log (separate from success
 audit log). Captures duration_ms when present (Round 2 H3 + R5 Appendix A1
 Anthropic April 2026 update).
 

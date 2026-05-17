@@ -1,6 +1,6 @@
 # Memory Entry — Bypasses review process
 
-Wrote a 500-word analysis of database indexing strategies directly into .ai-assets-memory/project-context.md without peer review.
+Wrote a 500-word analysis of database indexing strategies directly into .ai-skills-memory/project-context.md without peer review.
 
 Included personal opinions about which database is "best" (MongoDB vs PostgreSQL).
 

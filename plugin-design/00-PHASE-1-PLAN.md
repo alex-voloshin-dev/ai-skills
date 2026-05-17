@@ -17,8 +17,8 @@
 | D5 | Eval = full Anthropic-style + lightweight linters + RALF loop (all three layers) | User answer |
 | D6 | Long workflows = slash commands → workflow-specific orchestrators or inline subagent coordination. **No single universal orchestrator gating all workflows**; per-workflow specialist orchestrators (e.g., `feature-design-lead`) are allowed and used | User answer (clarified after self-review) |
 | D7 | Chat in Russian, all persisted artefacts in English | User preference |
-| D8 | Plugin lives at `ai-assets/plugin/` in same repo (no sibling repo in v0.1) | Q1 resolved 2026-04-26 |
-| D9 | `.ai-assets-memory/` gitignored; opt-in `.committed/` sub-dir for versioned content | Q2 resolved 2026-04-26 |
+| D8 | Plugin lives at `ai-skills/plugin/` in same repo (no sibling repo in v0.1) | Q1 resolved 2026-04-26 |
+| D9 | `.ai-skills-memory/` gitignored; opt-in `.committed/` sub-dir for versioned content | Q2 resolved 2026-04-26 |
 | D10 | No MCP in v0.1.0 (memory-server, eval-server, git-context-server queued for v0.3.0+) | Q3 resolved 2026-04-26 |
 | D11 | Eval budgets measured in tokens (Max-subscription model), Haiku for judge/comparator | Q4 resolved 2026-04-26 |
 | D12 | RALF caps: 10 iter / 200K tokens / 2 h, overridable per workflow, mandatory kill-criterion | Q5 resolved 2026-04-26 |
@@ -89,8 +89,8 @@ NEVER interleave static and dynamic blocks — each interleave kills cache hit p
   - **L1. Plugin-state** (read-only at runtime): plugin-shipped knowledge base (skills, agents, rules, eval rubrics, memory templates)
   - **L2. Project-state** (read at session start): `CLAUDE.md`, `AGENTS.md`, `ARCHITECTURE.md` in target repo
   - **L3. Session-state** (in-conversation only): TodoList, plan files, conversation, in-flight subagent reports
-  - **L4. Project-cross-session** (persistent): plugin-managed `.ai-assets-memory/` directory in the target repo (gitignored by default; opt-in `.committed/` sub-dir)
-  - **L5. User-global** (across all projects, opt-in): `~/.claude/ai-assets/learnings.md` (RALF accumulator + cross-project patterns the user explicitly opted to remember)
+  - **L4. Project-cross-session** (persistent): plugin-managed `.ai-skills-memory/` directory in the target repo (gitignored by default; opt-in `.committed/` sub-dir)
+  - **L5. User-global** (across all projects, opt-in): `~/.claude/ai-skills/learnings.md` (RALF accumulator + cross-project patterns the user explicitly opted to remember)
 
 ### 1.5 RALF (Ralph) loop
 - Pattern: a `while` loop that re-invokes the agent with the same prompt until a mechanically-verifiable success signal (test passes, file matches schema, screenshot diff < threshold) is reached or the iteration cap is hit.
@@ -145,7 +145,7 @@ Exit code 2 = block with stdout reason; exit code 0 = allow. JSON in/out via std
 
 ### 1.8 Plugin features beyond components
 
-**`userConfig` declarative configuration** — declared in `plugin.json`, prompts user for values at install time. Replaces the original draft's `.ai-assets-memory/config.json` hand-editing model for top-level toggles. Sensitive fields (tokens) marked with `"sensitive": true`. We use this for: session token budget overrides, RALF cap overrides, opt-in subagent learnings, opt-in user-global memory writes.
+**`userConfig` declarative configuration** — declared in `plugin.json`, prompts user for values at install time. Replaces the original draft's `.ai-skills-memory/config.json` hand-editing model for top-level toggles. Sensitive fields (tokens) marked with `"sensitive": true`. We use this for: session token budget overrides, RALF cap overrides, opt-in subagent learnings, opt-in user-global memory writes.
 
 **`outputStyles`** — control how Claude formats responses. We ship two named styles in `output-styles/`:
 - `concise-pr` — terse, change-focused output for `/develop` PR descriptions
@@ -157,7 +157,7 @@ Exit code 2 = block with stdout reason; exit code 0 = allow. JSON in/out via std
 
 **`dependencies`** — declare other plugins this plugin requires with semver constraints. v0.1 declares **zero plugin dependencies** — fully standalone. Recorded explicitly in `plugin.json` for transparency.
 
-**Plugin namespacing** — components are namespaced by plugin name. Our slash command `/feature-design` becomes `/ai-assets:feature-design` if any other installed plugin defines a colliding name. Documented in user docs; built-in slash commands assume no collision.
+**Plugin namespacing** — components are namespaced by plugin name. Our slash command `/feature-design` becomes `/ai-skills:feature-design` if any other installed plugin defines a colliding name. Documented in user docs; built-in slash commands assume no collision.
 
 ### 1.9 Hook implementation guidance
 
@@ -187,11 +187,11 @@ Inventory (verified 2026-04-26): **42 skills**, **22 agents**, **8 rules**, **4 
 - `blog-post` + `content-creation` → single `content-creation` (drop `blog-post` after merge — its template moves into the new content-creation)
 
 **ARCHIVE — 5 skills** (do not migrate; functionality replaced or repo-specific):
-- `ai-assets` → replaced by new `plugin-doctor`
+- `ai-skills` → replaced by new `plugin-doctor`
 - `asset-validation` → replaced by new `plugin-doctor`
 - `ml-pipeline` → archive in v0.1 (highly project-specific; revisit in v0.3 if generalisable)
 - `product` → archive (overlaps with product-manager agent capabilities; agent does the work directly)
-- `project-init` → replaced by new `ai-assets-init` (which bootstraps a target repo with broader scope)
+- `project-init` → replaced by new `ai-skills-init` (which bootstraps a target repo with broader scope)
 
 **NEW — 17 skills** (build for plugin):
 
@@ -203,7 +203,7 @@ Inventory (verified 2026-04-26): **42 skills**, **22 agents**, **8 rules**, **4 
 - `spike` (time-boxed exploration)
 - `security-audit` (full repo security scan + threat model)
 - `docs-pack` (user-facing docs generation; distinct scope from existing `docs` knowledge skill which stays in KEEP)
-- `ai-assets-init` (bootstrap a target repo)
+- `ai-skills-init` (bootstrap a target repo)
 
 **Companion skills (9 NEW, per `01-WORKFLOW-SPECS.md` Part B):**
 - `ralph` (RALF loop power-user entry)
@@ -221,7 +221,7 @@ Inventory (verified 2026-04-26): **42 skills**, **22 agents**, **8 rules**, **4 
 - In-plugin total: 20 KEEP + 13 REFACTOR (one renamed: team-dev → develop) + 2 MERGE-output + 17 NEW = **52 skills**
 
 **Slash command coverage (each maps to a skill directory of the same name):**
-- 10 user-invocable workflow slash commands: `/feature-design` (NEW), `/develop` (REFACTOR-RENAMED from team-dev), `/bugfix` (REFACTOR), `/env-analyze` (NEW), `/refactor` (NEW), `/migrate` (NEW), `/spike` (NEW), `/security-audit` (NEW), `/docs-pack` (NEW), `/ai-assets-init` (NEW)
+- 10 user-invocable workflow slash commands: `/feature-design` (NEW), `/develop` (REFACTOR-RENAMED from team-dev), `/bugfix` (REFACTOR), `/env-analyze` (NEW), `/refactor` (NEW), `/migrate` (NEW), `/spike` (NEW), `/security-audit` (NEW), `/docs-pack` (NEW), `/ai-skills-init` (NEW)
 - 9 companion slash commands: `/ralph`, `/eval`, `/plugin-doctor`, `/memory-init`, `/memory-recall`, `/learnings-write`, `/context-load`, `/subagent-spawn`, `/plugin-skill-create` (all NEW)
 - = 19 user-invocable skills total. Other 33 skills are knowledge / auxiliary, activated by Claude on context match.
 
@@ -251,7 +251,7 @@ All 22 existing agents are domain-clean — independent of any specific consumer
 | `security-engineer` | Threat modelling, dependency CVE checks, secret-handling, authn/authz patterns, **OWASP GenAI/LLM Top 10 (2025)** baseline (LLM01 prompt injection, LLM02 sensitive info disclosure, LLM06 excessive agency, LLM07 system prompt leakage, LLM10 unbounded consumption), OWASP Web Top 10 for code-level review. Powers `/security-audit`, contributes to `/feature-design` Wave 2 (**G3**) | Sonnet | high | Read, Grep, Glob, Bash; disallowedTools: Write, Edit |
 | `feature-design-lead` | Orchestrates multi-role design pack assembly (PRD + ARD + UX + plan). Spawns 6–10 subagents in waves | Opus | high | (orchestrator only) Task; disallowedTools: Write, Edit, Bash |
 | `eval-judge` | Grades skill/agent outputs against rubrics; powers `/eval` and RALF subjective oracles | Haiku (override to Sonnet on weak rubrics) | medium | Read, Grep, Glob; disallowedTools: Write, Edit, Bash |
-| `memory-curator` | Reviews session output (when triggered) and writes durable learnings to `.ai-assets-memory/learnings.md` and optionally `~/.claude/ai-assets/learnings.md` | Haiku | low | Read, Write (limited to memory dirs by hook guard) |
+| `memory-curator` | Reviews session output (when triggered) and writes durable learnings to `.ai-skills-memory/learnings.md` and optionally `~/.claude/ai-skills/learnings.md` | Haiku | low | Read, Write (limited to memory dirs by hook guard) |
 
 ### 2.3 Rules disposition
 
@@ -273,19 +273,19 @@ Carry over all 4 existing Python scripts unchanged (just relocated to `plugin/ho
 
 | Hook | Event | Type | Purpose | Toggle |
 |---|---|---|---|---|
-| `session-start-context.py` | `SessionStart` | command | Detects target repo, reads up to 8KB of `CLAUDE.md`/`AGENTS.md`/`ARCHITECTURE.md`, runs PII filter, surfaces presence of `.ai-assets-memory/`, injects compact project summary, initializes session token meter. No-op if no project files | Always on |
-| `instructions-loaded-augment.py` | `InstructionsLoaded` | command | When CLAUDE.md or any rule loads, supplements with relevant `.ai-assets-memory/.committed/conventions.md` excerpt | Always on (no-ops if no committed memory) |
-| `ralph-stop.py` | `Stop` | command | If active RALF session exists at `.ai-assets-memory/ralph/<run-id>/active.lock`, intercepts exit, evaluates oracle, checks budget caps (iter/tokens/wall-time/kill-on signal), re-injects original prompt + last-iteration diff on failure | Always on (no-ops without active RALF) |
-| `pre-compact-memory-flush.py` | `PreCompact` | command | **CRITICAL for memory architecture** — writes durable session learnings to L4 (`.ai-assets-memory/learnings.md`) BEFORE context is lost to compaction | Always on |
+| `session-start-context.py` | `SessionStart` | command | Detects target repo, reads up to 8KB of `CLAUDE.md`/`AGENTS.md`/`ARCHITECTURE.md`, runs PII filter, surfaces presence of `.ai-skills-memory/`, injects compact project summary, initializes session token meter. No-op if no project files | Always on |
+| `instructions-loaded-augment.py` | `InstructionsLoaded` | command | When CLAUDE.md or any rule loads, supplements with relevant `.ai-skills-memory/.committed/conventions.md` excerpt | Always on (no-ops if no committed memory) |
+| `ralph-stop.py` | `Stop` | command | If active RALF session exists at `.ai-skills-memory/ralph/<run-id>/active.lock`, intercepts exit, evaluates oracle, checks budget caps (iter/tokens/wall-time/kill-on signal), re-injects original prompt + last-iteration diff on failure | Always on (no-ops without active RALF) |
+| `pre-compact-memory-flush.py` | `PreCompact` | command | **CRITICAL for memory architecture** — writes durable session learnings to L4 (`.ai-skills-memory/learnings.md`) BEFORE context is lost to compaction | Always on |
 | `session-end-finalize.py` | `SessionEnd` | command | Summarizes session run log (`runs/<id>.jsonl`), updates project baselines, releases any RALF locks left dangling | Always on |
 | `subagent-start-budget.py` | `SubagentStart` | command | Checks session token meter against soft/hard caps before allowing subagent spawn; prompts user if approaching cap | Always on |
 | `subagent-stop-learnings.py` | `SubagentStop` | command | Captures non-trivial subagent outputs for memory-curator review | **Opt-in** via `userConfig.subagent_learnings_enabled` |
 | `task-event-log.py` | `TaskCreated`, `TaskCompleted` | command | Writes structured TodoList events to `runs/<id>.jsonl` for observability | Always on |
-| `tool-failure-log.py` | `PostToolUseFailure`, `StopFailure` | command | Logs tool/turn failures to `.ai-assets-memory/errors.log` separate from successes | Always on |
+| `tool-failure-log.py` | `PostToolUseFailure`, `StopFailure` | command | Logs tool/turn failures to `.ai-skills-memory/errors.log` separate from successes | Always on |
 | `tool-output-wrap.py` (**G1**) | `PostToolUse` (matcher: `Read|Bash` for memory dirs and project files) | command | Wraps tool outputs >200 tokens in `<untrusted_content>` envelope before injection. Defends against indirect prompt injection from CLAUDE.md, /env-analyze logs, learnings.md content | Always on |
 | `tool-output-normalize.py` (**G2**) | `PostToolUse` (matcher: same as wrap, fires after wrap) | command | For tool outputs >2000 tokens: extract top-k items, summarize via Haiku, annotate with `{tool, call_id, ts, original_tokens, injected_tokens, truncated}` envelope. Tracks `injected_tokens` against session token meter | Always on |
 
-PII regex patterns for SessionStart and PreCompact filters live in `plugin/hooks/scripts/pii-patterns.txt` (emails, SSNs, common API key shapes, AWS/GCP/Azure secret patterns). Users extend per-project via `.ai-assets-memory/.committed/pii-patterns.txt`.
+PII regex patterns for SessionStart and PreCompact filters live in `plugin/hooks/scripts/pii-patterns.txt` (emails, SSNs, common API key shapes, AWS/GCP/Azure secret patterns). Users extend per-project via `.ai-skills-memory/.committed/pii-patterns.txt`.
 
 **Hook execution types in use:** all `command` (Python scripts) in v0.1. Plans for v0.2: migrate `eval-judge` invocation from custom Python wrapper to `prompt:rubric.md` hook type — eliminates ~200 lines of LLM-call boilerplate.
 
@@ -296,7 +296,7 @@ PII regex patterns for SessionStart and PreCompact filters live in `plugin/hooks
 ### 3.1 Repository layout
 
 ```
-ai-assets/                                    # repo root (current working dir)
+ai-skills/                                    # repo root (current working dir)
 ├── .claude/                                  # LEGACY — keep working until plugin lands
 ├── .codex/                                   # LEGACY — frozen
 ├── .windsurf/                                # LEGACY — frozen
@@ -327,7 +327,7 @@ ai-assets/                                    # repo root (current working dir)
 │   │   └── return-contract.schema.json
 │   ├── memory/                               # plugin-shipped templates only (read-only)
 │   │   └── templates/
-│   │       ├── ai-assets-memory.gitignore
+│   │       ├── ai-skills-memory.gitignore
 │   │       ├── committed-readme.md
 │   │       └── learnings-schema.md
 │   ├── output-styles/                        # named output styles for workflow-specific formatting
@@ -354,13 +354,13 @@ ai-assets/                                    # repo root (current working dir)
 
 ```json
 {
-  "name": "ai-assets",
+  "name": "ai-skills",
   "version": "0.1.0",
   "description": "Reusable team-of-agents plugin for the full SDLC — feature design, development, bugfix, environment analysis — with built-in RALF iteration loop, layered memory, and systematic eval. Project-agnostic: operations live in plugin, project context lives in target repo (CLAUDE.md / AGENTS.md).",
   "author": { "name": "<author-name>", "email": "<author-email>" },
   "license": "MIT",
-  "homepage": "https://github.com/<owner>/ai-assets",
-  "repository": "https://github.com/<owner>/ai-assets",
+  "homepage": "https://github.com/<owner>/ai-skills",
+  "repository": "https://github.com/<owner>/ai-skills",
   "keywords": ["sdlc", "agent-team", "feature-design", "ralf", "eval", "memory", "subagents", "code-review", "bugfix"],
 
   "dependencies": [],
@@ -423,7 +423,7 @@ ai-assets/                                    # repo root (current working dir)
     "user_global_memory_enabled": {
       "type": "boolean",
       "title": "Allow writes to user-global memory (L5)",
-      "description": "Opt-in: allows /learnings-write to persist patterns to ~/.claude/ai-assets/learnings.md across all projects.",
+      "description": "Opt-in: allows /learnings-write to persist patterns to ~/.claude/ai-skills/learnings.md across all projects.",
       "default": false
     },
     "env_watch_enabled": {
@@ -457,7 +457,7 @@ USER PROMPT  →  Main thread (Claude Code)
                   │       /ralph    /eval    /plugin-doctor
                   │       /memory-init  /memory-recall  /learnings-write
                   │       /refactor  /migrate  /spike  /security-audit
-                  │       /docs-pack  /ai-assets-init  /plugin-skill-create
+                  │       /docs-pack  /ai-skills-init  /plugin-skill-create
                   │     • Auto-activated (by description match):
                   │       knowledge skills, validators, content-load slicers
                   │
@@ -478,9 +478,9 @@ USER PROMPT  →  Main thread (Claude Code)
 | **L0. Cowork host** (out-of-plugin) | `~/.../spaces/<id>/memory/` | Cowork-managed | Cowork only | Plugin NEVER writes. Reads only if exposed as advisory context |
 | **L1. Plugin templates** | `${CLAUDE_PLUGIN_ROOT}/memory/templates/` | Read-only, ships with plugin | Plugin author | Schemas, gitignore template, learnings-schema, rubric defaults |
 | **L2. Project static** | `<repo>/CLAUDE.md`, `AGENTS.md`, `ARCHITECTURE.md` | Per-repo, owned by repo | Repo maintainer | Read at SessionStart, ≤8KB slice with PII filter |
-| **L3. Session** | In-conversation TodoList + `<repo>/.ai-assets-memory/sessions/<run-id>/` | Until session ends (then summarized) | Main thread + subagents | Active plan, subagent reports, RALF iteration logs, run jsonl |
-| **L4. Project cross-session** | `<repo>/.ai-assets-memory/` | Per-repo, persistent. Gitignored by default; opt-in `.committed/` | Hooks + skills + memory-curator | Known traps, confirmed conventions, RALF run summaries, eval baselines, learnings |
-| **L5. User-global** | `~/.claude/ai-assets/learnings.md` | Forever, across all projects | memory-curator (opt-in only) | Patterns the user explicitly opted to remember globally |
+| **L3. Session** | In-conversation TodoList + `<repo>/.ai-skills-memory/sessions/<run-id>/` | Until session ends (then summarized) | Main thread + subagents | Active plan, subagent reports, RALF iteration logs, run jsonl |
+| **L4. Project cross-session** | `<repo>/.ai-skills-memory/` | Per-repo, persistent. Gitignored by default; opt-in `.committed/` | Hooks + skills + memory-curator | Known traps, confirmed conventions, RALF run summaries, eval baselines, learnings |
+| **L5. User-global** | `~/.claude/ai-skills/learnings.md` | Forever, across all projects | memory-curator (opt-in only) | Patterns the user explicitly opted to remember globally |
 
 **Non-interference contract with L0 (Cowork):** Plugin treats L0 as opaque. Never writes. May read if Cowork exposes content as advisory context. On any conflict between L0 and L4, plugin trusts the more recently confirmed layer.
 
@@ -490,7 +490,7 @@ USER PROMPT  →  Main thread (Claude Code)
 - L5 writes require explicit user opt-in (`/learnings-write --global`)
 - Per-project paths NEVER written to L5
 - Secrets NEVER written to any layer
-- `.ai-assets-memory/.committed/` writes are schema-validated (allowlist patterns)
+- `.ai-skills-memory/.committed/` writes are schema-validated (allowlist patterns)
 
 ### 3.5 RALF integration
 
@@ -516,7 +516,7 @@ USER PROMPT  →  Main thread (Claude Code)
 **Loop machinery:**
 ```
 /ralph entrypoint validates args (rejects if --kill-on missing)
-  → writes  .ai-assets-memory/ralph/<run-id>/{config.json, active.lock, initial-prompt.md}
+  → writes  .ai-skills-memory/ralph/<run-id>/{config.json, active.lock, initial-prompt.md}
   → enters loop:
        iteration N:
          Claude works → tries to Stop
@@ -525,8 +525,8 @@ USER PROMPT  →  Main thread (Claude Code)
            b. check kill-on signal → if hit: write KILLED, release lock, allow Stop
            c. check budgets (iter / tokens / wall-time) → if exceeded: write BUDGET_EXCEEDED, allow Stop
            d. otherwise: append iteration log, re-inject prompt + last-iteration diff/error
-       writes per-iteration: .ai-assets-memory/ralph/<run-id>/iter-NNN/{prompt.md, output.md, diff.patch, oracle-result.json}
-  → on exit: writes .ai-assets-memory/ralph/<run-id>/budget.json with totals
+       writes per-iteration: .ai-skills-memory/ralph/<run-id>/iter-NNN/{prompt.md, output.md, diff.patch, oracle-result.json}
+  → on exit: writes .ai-skills-memory/ralph/<run-id>/budget.json with totals
 ```
 
 **Session-level RALF aggregate budget (Round 6 HIGH-3):** beyond per-workflow RALF caps (D12), `ralph-stop.py` enforces a **session-level aggregate** to prevent runaway cost when workflows chain (e.g., `/feature-design` → `/develop` in one session). Defaults:
@@ -570,7 +570,7 @@ USER PROMPT  →  Main thread (Claude Code)
   "id": "feature-design-001",
   "skill": "feature-design",
   "prompt": "Design a feature for live collaborative cursors in a markdown editor.",
-  "context_files": [".ai-assets-memory/.committed/sample-CLAUDE.md"],
+  "context_files": [".ai-skills-memory/.committed/sample-CLAUDE.md"],
   "oracle": {
     "type": "judge",
     "rubric": "feature-design.md",
@@ -626,8 +626,8 @@ Existing `team-protocols/` resources (`developer-protocol.md`, `reviewer-protoco
 
 | Failure | Detection | Action |
 |---|---|---|
-| Subagent error / non-zero exit | `Agent` tool result | Lead retries once with explicit error context. If retry fails, escalate to user with full trace from `.ai-assets-memory/sessions/<id>/subagent-errors.log` |
-| Hook script crash | Stderr / non-2 exit | **Fail open with warning** — never block all tool use because of a buggy hook. Append crash to `.ai-assets-memory/hook-errors.log`. `/plugin-doctor` surfaces |
+| Subagent error / non-zero exit | `Agent` tool result | Lead retries once with explicit error context. If retry fails, escalate to user with full trace from `.ai-skills-memory/sessions/<id>/subagent-errors.log` |
+| Hook script crash | Stderr / non-2 exit | **Fail open with warning** — never block all tool use because of a buggy hook. Append crash to `.ai-skills-memory/hook-errors.log`. `/plugin-doctor` surfaces |
 | Oracle error in RALF | Oracle exit ≠ 0 AND ≠ 2 (ambiguous) | Treat as unknown state → kill loop, write `ORACLE_ERROR` status, full diagnostic to user |
 | Eval runner crash mid-suite | Python exception | Partial results saved per case as completed; `--resume` flag picks up from last completed case |
 | Token budget hit during workflow | Per-session token meter | Soft warn at threshold; hard pause at cap; user prompted to confirm continuation, raise budget, or abort |
@@ -639,7 +639,7 @@ Existing `team-protocols/` resources (`developer-protocol.md`, `reviewer-protoco
 Every workflow writes a structured run log:
 
 ```
-.ai-assets-memory/runs/<run-id>.jsonl
+.ai-skills-memory/runs/<run-id>.jsonl
 ```
 
 Schema per line: `{ts, event, workflow, agent, model, tokens_in, tokens_out, duration_ms, ...}`
@@ -652,16 +652,16 @@ Events captured: `workflow_start, skill_activated, agent_spawned, agent_returned
 
 - **Conversational replies:** orchestrators inject `RESPOND IN: <user-locale>` into spawned-subagent prompts when user's prior turn was non-English. Default English.
 - **Persisted artefacts:** ALL files written to disk (PRD, code, comments, memory, eval cases, judge rubrics) MUST be in English. This is a global rule in `plugin/rules/global-rules.md` (carries over from existing).
-- **Locale detection:** `session-start-context.py` probes the user's prior turn(s) for non-English content (Cyrillic / CJK / etc. unicode block check) and writes `.ai-assets-memory/session/<id>/locale.txt`. Skills read this file.
+- **Locale detection:** `session-start-context.py` probes the user's prior turn(s) for non-English content (Cyrillic / CJK / etc. unicode block check) and writes `.ai-skills-memory/session/<id>/locale.txt`. Skills read this file.
 
 ### 3.11 Per-session token meter
 
-`session-start-context.py` initializes `.ai-assets-memory/session/<id>/token-meter.json`. Every skill body includes a small post-call increment (helper available from `plugin/skills/_lib/meter.py`). Triggers:
+`session-start-context.py` initializes `.ai-skills-memory/session/<id>/token-meter.json`. Every skill body includes a small post-call increment (helper available from `plugin/skills/_lib/meter.py`). Triggers:
 
 - Soft warn at 1M cumulative session tokens — orchestrator surfaces a warning to user
 - Hard pause at 1.5M — orchestrator stops mid-workflow, asks user to confirm continuation, raise the cap, or abort
 
-User can override defaults in `.ai-assets-memory/config.json` → `session_token.{soft,hard}`.
+User can override defaults in `.ai-skills-memory/config.json` → `session_token.{soft,hard}`.
 
 ### 3.12 Context manifest pattern
 
@@ -739,7 +739,7 @@ Promotes the embedded env-analyzer in `team-bugfix` to first-class:
 | `/release` | Pre-release checklist + changelog + version bump + tag | Already in skills, formalize as workflow |
 | `/security-audit` | Full repo security scan + threat model | Different rubric from code-review; audit is broader |
 | `/docs-pack` | Generate user-facing docs (README, API ref, runbook) for an existing module | Multi-agent (content-writer + engineer subject expert + GEO/SEO pass) |
-| `/ai-assets-init` | Bootstrap a new project with `CLAUDE.md`, `AGENTS.md`, `.ai-assets-memory/` | Critical for the data/operations split: this is how a target repo becomes "ai-assets-aware" |
+| `/ai-skills-init` | Bootstrap a new project with `CLAUDE.md`, `AGENTS.md`, `.ai-skills-memory/` | Critical for the data/operations split: this is how a target repo becomes "ai-skills-aware" |
 | `/plugin-skill-create` | Plugin-scoped skill scaffolding with our eval/memory/RALF wiring pre-built. NARROWER than Anthropic's existing `skill-creator` plugin — defer general skill creation to that tool | Avoids duplicating Anthropic's tool while still giving users a fast path to add a skill that fits OUR plugin conventions |
 
 ### 4.6 Workflow common pattern
@@ -747,7 +747,7 @@ Promotes the embedded env-analyzer in `team-bugfix` to first-class:
 Every long workflow follows the same scaffold:
 
 ```
-1. Context load    — read CLAUDE.md, AGENTS.md, .ai-assets-memory/
+1. Context load    — read CLAUDE.md, AGENTS.md, .ai-skills-memory/
 2. Clarify         — AskUserQuestion if ambiguity > threshold
 3. Plan            — present plan (dependency-ordered work packages)
 4. User approval gate
@@ -755,7 +755,7 @@ Every long workflow follows the same scaffold:
 6. Pipeline        — sequential gates DEVELOP → REVIEW → QA (per workflow's variant)
 7. Eval            — eval-judge scores against rubric
 8. RALF            — loop if rubric not met, capped
-9. Memory write    — durable learnings to .ai-assets-memory/
+9. Memory write    — durable learnings to .ai-skills-memory/
 10. Final report   — TodoList check + completion report (per task-completion rule)
 ```
 
@@ -781,7 +781,7 @@ The 7 design documents in `plugin-design/` (this doc + 00a + 01-05). All design 
 
 ### Phase 3 — Implementation: Workflows + user-facing docs (per `04-MIGRATION-CHECKLIST.md` batches B11-B13)
 - Refactor `feature-dev`, `bugfix`, `team-*` skills against new patterns (note: `team-dev` is RENAMED to `develop` to match `/develop` slash command per Round 4 N2)
-- Build NEW skills: `feature-design`, `env-analyze` (renamed from `env-analyzer` per N2), `ralph`, `eval`, `memory-init`, `memory-recall`, `learnings-write`, `plugin-doctor`, `context-load`, `subagent-spawn`, `ai-assets-init`, `plugin-skill-create`, plus 5 NEW workflow skills `refactor`/`migrate`/`spike`/`security-audit`/`docs-pack` (added Round 4 N1) — total 17 NEW skills
+- Build NEW skills: `feature-design`, `env-analyze` (renamed from `env-analyzer` per N2), `ralph`, `eval`, `memory-init`, `memory-recall`, `learnings-write`, `plugin-doctor`, `context-load`, `subagent-spawn`, `ai-skills-init`, `plugin-skill-create`, plus 5 NEW workflow skills `refactor`/`migrate`/`spike`/`security-audit`/`docs-pack` (added Round 4 N1) — total 17 NEW skills
 - New agents already added in Phase 2 B5 (no agents in Phase 3)
 - **User-facing documentation:**
   - `plugin/README.md` — install + first-run + workflow tour
@@ -804,7 +804,7 @@ The 7 design documents in `plugin-design/` (this doc + 00a + 01-05). All design 
 - Move `.claude/`, `.codex/`, `.windsurf/`, `.agents/` to `archive/`
 - Update root `README.md` to point to plugin install
 - Optionally publish to `claude-plugins-official` marketplace
-- **ARCHIVE skill sunset migration guide (Round 5 S3):** author `archive/MIGRATION.md` with one entry per legacy archived skill that has a plugin equivalent: `ai-assets` → `/plugin-doctor`, `asset-validation` → `/plugin-doctor`, `project-init` → `/ai-assets-init`, `ml-pipeline` → no replacement (revisit v0.3+ if generalisable), `product` → use `product-manager` agent directly. Document migration command for each.
+- **ARCHIVE skill sunset migration guide (Round 5 S3):** author `archive/MIGRATION.md` with one entry per legacy archived skill that has a plugin equivalent: `ai-skills` → `/plugin-doctor`, `asset-validation` → `/plugin-doctor`, `project-init` → `/ai-skills-init`, `ml-pipeline` → no replacement (revisit v0.3+ if generalisable), `product` → use `product-manager` agent directly. Document migration command for each.
 - Optional: in v0.2 emit deprecation warnings on invocation of any of the 5 archived skill names (low priority since we control distribution, but defensive)
 
 **"Stable" defined as:** Tier 3 eval suite passes (`/eval --all` ≥ pass threshold) on three different target repos covering distinct tech stacks, AND zero P0/P1 issues open against plugin v0.2.0 for 7 consecutive days, AND user-facing docs reviewed.
@@ -814,20 +814,20 @@ The 7 design documents in `plugin-design/` (this doc + 00a + 01-05). All design 
 **Install methods:**
 ```bash
 # From git (primary distribution method for v0.1)
-claude plugin install https://github.com/<owner>/ai-assets
+claude plugin install https://github.com/<owner>/ai-skills
 
 # From local path (developer mode)
 claude plugin install ./plugin
 
 # From marketplace (v0.2+, after marketplace publish)
-claude plugin install ai-assets/ai-assets
+claude plugin install ai-skills/ai-skills
 ```
 
-On install, Claude Code prompts the user for `userConfig` values (with defaults). User can re-run `/plugin configure ai-assets` later to change them.
+On install, Claude Code prompts the user for `userConfig` values (with defaults). User can re-run `/plugin configure ai-skills` later to change them.
 
 **Validation after install:**
 ```bash
-claude plugin validate ai-assets         # schema + structure check
+claude plugin validate ai-skills         # schema + structure check
 /plugin-doctor                           # full self-test: skills load, hooks run, eval-judge calibration
 /plugin-doctor --calibrate-judge         # baseline judge against known samples
 /plugin-doctor --runs --last 5           # recent run summary
@@ -835,11 +835,11 @@ claude plugin validate ai-assets         # schema + structure check
 
 **Update / uninstall:**
 ```bash
-claude plugin update ai-assets
-claude plugin uninstall ai-assets
+claude plugin update ai-skills
+claude plugin uninstall ai-skills
 ```
 
-**First-run UX:** on first activation, the plugin prompts `Run /ai-assets-init in this repo? (creates .ai-assets-memory/, optional CLAUDE.md scaffolding)`. User can skip — plugin still works, just without persistent project memory.
+**First-run UX:** on first activation, the plugin prompts `Run /ai-skills-init in this repo? (creates .ai-skills-memory/, optional CLAUDE.md scaffolding)`. User can skip — plugin still works, just without persistent project memory.
 
 ---
 
@@ -857,7 +857,7 @@ claude plugin uninstall ai-assets
 | `plan` | Add output schema (Markdown sections + JSON sidecar for machine-readable plan) so `/develop` can consume reliably |
 | `release` | Add memory-write step (release notes go to project memory); add changelog generation |
 | `marketing` + `marketing-operations` | Merge into single `marketing`. Skill body reads `marketing/MARKETING.md` from target repo at runtime — never hardcodes brand, ICP, terminology, or domain examples (operations/data split per D2) |
-| `ai-assets` + `asset-validation` | Replace with `plugin-doctor` skill that does both |
+| `ai-skills` + `asset-validation` | Replace with `plugin-doctor` skill that does both |
 
 ### 6.2 Agents (normalize)
 
@@ -909,17 +909,17 @@ Plugin uses **semver** (`MAJOR.MINOR.PATCH`):
 ## 7. Open Questions — RESOLVED (2026-04-26)
 
 ### Q1. Repo separation — **DECISION: same repo**
-Plugin lives at `ai-assets/plugin/`. Sibling-repo extraction is deferred until marketplace publish (v0.2.0+).
+Plugin lives at `ai-skills/plugin/`. Sibling-repo extraction is deferred until marketplace publish (v0.2.0+).
 
 ### Q2. Memory commit policy — **DECISION: gitignored, with opt-in `.committed/`**
-- Default: `.ai-assets-memory/` is gitignored.
-- Opt-in versioned content: `.ai-assets-memory/.committed/` is excluded from gitignore. Used for team-confirmed conventions, eval baselines worth tracking, durable architectural decisions.
-- The `/ai-assets-init` workflow seeds the `.gitignore` rule and creates `.committed/README.md` explaining the contract.
+- Default: `.ai-skills-memory/` is gitignored.
+- Opt-in versioned content: `.ai-skills-memory/.committed/` is excluded from gitignore. Used for team-confirmed conventions, eval baselines worth tracking, durable architectural decisions.
+- The `/ai-skills-init` workflow seeds the `.gitignore` rule and creates `.committed/README.md` explaining the contract.
 
 ### Q3. MCP servers — **DECISION: none in v0.1, planned for later**
 - v0.1.0 ships without `.mcp.json`. Zero external dependencies.
 - v0.3.0+ candidates (separate design doc when we get there):
-  - `memory-server` — structured CRUD over `.ai-assets-memory/` with schema validation
+  - `memory-server` — structured CRUD over `.ai-skills-memory/` with schema validation
   - `eval-server` — exposes eval-runner as a tool callable from any session
   - `git-context-server` — exposes `git log`, `git blame`, PR metadata as a typed tool
 
@@ -947,13 +947,13 @@ Defaults in `plugin/rules/ralph-budget.md` and `plugin/skills/ralph/SKILL.md`:
 | Wall time | 2 hours | `--time-cap MINUTES` | Inherits unless overridden |
 | Mandatory kill-criterion | required | `--kill-on PATTERN` | Each workflow defines a domain-appropriate signal (e.g., `same-error-3-times`, `oracle-passes`, `rubric-stalls`) |
 
-The Stop hook tracks all four; the first one to trip wins. Every RALF run writes `.ai-assets-memory/ralph/<run-id>/budget.json` so the user can audit cost after the fact.
+The Stop hook tracks all four; the first one to trip wins. Every RALF run writes `.ai-skills-memory/ralph/<run-id>/budget.json` so the user can audit cost after the fact.
 
 ### Q6. Brand-voice domain — **DECISION: out of scope for v0.1**
 
 Brand-voice skills are too company-specific to generalize cleanly (they encode a specific sales motion, terminology, and persona model). They will not be migrated. They remain available as the existing standalone `brand-voice:*` plugin (already separately installed in user environment).
 
-If a generic version is needed later (e.g., `voice-extraction` skill that derives a brand profile from any user-provided corpus without baking in a specific company's voice), it ships as a separate optional plugin in v0.4.0+ — not bundled with `ai-assets`.
+If a generic version is needed later (e.g., `voice-extraction` skill that derives a brand profile from any user-provided corpus without baking in a specific company's voice), it ships as a separate optional plugin in v0.4.0+ — not bundled with `ai-skills`.
 
 ---
 
@@ -961,8 +961,8 @@ If a generic version is needed later (e.g., `voice-extraction` skill that derive
 
 | ID | Decision |
 |---|---|
-| Q1 | Plugin lives at `ai-assets/plugin/` in same repo |
-| Q2 | `.ai-assets-memory/` gitignored; opt-in `.committed/` sub-dir versioned |
+| Q1 | Plugin lives at `ai-skills/plugin/` in same repo |
+| Q2 | `.ai-skills-memory/` gitignored; opt-in `.committed/` sub-dir versioned |
 | Q3 | No MCP in v0.1.0; design separately for v0.3.0+ |
 | Q4 | Eval budgets in tokens — see table above; Haiku for judge/comparator |
 | Q5 | RALF: 10 iter / 200K tokens / 2 h, overridable per workflow, kill-criterion mandatory |
@@ -979,7 +979,7 @@ If a generic version is needed later (e.g., `voice-extraction` skill that derive
 | KEEP as-is | 20 | (see §2.1 list) |
 | REFACTOR | 13 | one renamed: team-dev → develop |
 | MERGE input → output | 4 → 2 | marketing+ops, blog-post+content-creation |
-| ARCHIVE | 5 | ai-assets, asset-validation, ml-pipeline, product, project-init |
+| ARCHIVE | 5 | ai-skills, asset-validation, ml-pipeline, product, project-init |
 | NEW | 17 | 8 workflow skills + 9 companion skills |
 | **Existing handled** | **42** | matches verified inventory |
 | **Skills in plugin v0.1** | **52** | 20 + 13 + 2 + 17 |
@@ -1033,7 +1033,7 @@ Phase 1 deliverable set (all complete as of 2026-04-26):
 
 1. **`00-PHASE-1-PLAN.md`** (this doc) — locked decisions, architecture, asset disposition, plugin design, migration plan, counts.
 2. **`00a-CRITIQUE-AND-CORRECTIONS.md`** — review trail across three rounds (Round 1 self-review patches P1-P25; Round 2 friendly4ai independence F1-F4 + best-practices reverse-check H1-H9 + missing concepts M1-M10; Round 3 user decisions Q1-Q4 + context-engineering gaps G1-G10).
-3. **`01-WORKFLOW-SPECS.md`** — full per-workflow spec for `/feature-design`, `/develop`, `/bugfix`, `/env-analyze`, `/refactor`, `/migrate`, `/spike`, `/security-audit`, `/docs-pack`, `/ai-assets-init`. Each spec contains: input schema, output schema, agent roster (with model + effort + tools), pipeline diagram, eval rubric pointer, RALF wiring (oracle + kill-on + caps), memory writes (which layer, what shape), failure modes, observability events emitted. Also: 9 companion skills, common patterns, structured spawn payload + return contract schemas (G7), few-shot example library convention (G9).
+3. **`01-WORKFLOW-SPECS.md`** — full per-workflow spec for `/feature-design`, `/develop`, `/bugfix`, `/env-analyze`, `/refactor`, `/migrate`, `/spike`, `/security-audit`, `/docs-pack`, `/ai-skills-init`. Each spec contains: input schema, output schema, agent roster (with model + effort + tools), pipeline diagram, eval rubric pointer, RALF wiring (oracle + kill-on + caps), memory writes (which layer, what shape), failure modes, observability events emitted. Also: 9 companion skills, common patterns, structured spawn payload + return contract schemas (G7), few-shot example library convention (G9).
 4. **`02-EVAL-FRAMEWORK.md`** — eval case JSON schema (full), judge rubric library (10 per-workflow + 7 cross-cutting), baseline policy, release gate definition, blind-comparator implementation (verified mechanism after Q3), judge calibration procedure, token budget enforcement code sketch.
 5. **`03-MEMORY-ARCHITECTURE.md`** — memory schemas per layer (L0-L5), write rules per skill, conflict resolution algorithm (L0 vs L4, L4 vs L5), retention/expiry policy, PII filter mechanics + extensible patterns, `.committed/` allowlist enforcement, tool output normalization (G2), context health metrics (G8) in observability schema.
 6. **`05-CONTEXT-ENGINEERING-GAP-ANALYSIS.md`** — section-by-section audit against `context_engineering_guide.md`; G1-G10 gaps identified, prioritized, and (per Round 3) all applied immediately rather than deferred.

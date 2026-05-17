@@ -68,7 +68,7 @@ Standalone `redis-server` process (PID 4218) from a prior `docker run` (likely a
 
 ## Memory Write
 
-Baseline snapshot saved to `.ai-assets-memory/env-reports/<run-id>/baseline.json` for drift detection on next run.
+Baseline snapshot saved to `.ai-skills-memory/env-reports/<run-id>/baseline.json` for drift detection on next run.
 
 ## Out-of-Scope (would require manual action)
 

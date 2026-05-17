@@ -1,4 +1,4 @@
-# ai-assets
+# ai-skills
 
 > Vendor-agnostic agentic-dev tooling: 26 agents, 73 skills, and 45 eval
 > rubrics that work across Claude Code, Codex, and Windsurf.
@@ -63,8 +63,8 @@ discourse, and a few patterns in this repo lean on that background.
 **Prerequisites** — clone the repo:
 
 ```bash
-git clone https://github.com/alex-voloshin-dev/ai-assets.git
-cd ai-assets
+git clone https://github.com/alex-voloshin-dev/ai-skills.git
+cd ai-skills
 ```
 
 ### Claude Code
@@ -76,7 +76,7 @@ clone:
 claude --plugin-dir ./plugin
 ```
 
-All 32 user-invocable workflows appear under the `ai-assets:` namespace
+All 32 user-invocable workflows appear under the `ai-skills:` namespace
 in `/help`. To reload after editing plugin files in the same session:
 
 ```text
@@ -160,7 +160,7 @@ and eval rubrics are battle-tested.
 ## Repo layout
 
 ```text
-ai-assets/
+ai-skills/
 ├── plugin/                  # Claude Code plugin (canonical for Claude Code)
 │   ├── .claude-plugin/      # Plugin manifest + 13 userConfig knobs
 │   ├── agents/              # 26 specialized agents

@@ -22,7 +22,7 @@ Design prompts, evaluations, guardrails, and AI-facing instructions for reliable
 
 - `prompt-engineering`
 - `context-engineering`
-- `ai-assets`
+- `ai-skills`
 - `asset-validation`
 
 ## Handoff Boundaries

@@ -9,6 +9,6 @@ __pycache__/
 *.pyc
 *.pyo
 
-# ai-assets plugin memory (seeded by /ai-assets-init) — fully gitignored.
-# .committed/ allowlist removed; nothing under .ai-assets-memory/ should be tracked.
-.ai-assets-memory/
+# ai-skills plugin memory (seeded by /ai-skills-init) — fully gitignored.
+# .committed/ allowlist removed; nothing under .ai-skills-memory/ should be tracked.
+.ai-skills-memory/

@@ -31,7 +31,7 @@ Read-only environment diagnostic with optional safe auto-fix for container-level
 
 ## What you get
 
-`<repo>/.ai-assets-memory/env-reports/<run-id>/ENV-REPORT.md` with:
+`<repo>/.ai-skills-memory/env-reports/<run-id>/ENV-REPORT.md` with:
 
 - Container/pod status (name, state, restarts, uptime)
 - Log excerpts (last 20 lines per service, error filter)

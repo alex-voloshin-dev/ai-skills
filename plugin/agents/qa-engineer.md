@@ -195,6 +195,6 @@ Every bug report includes:
 
 - **Base role**: `Agent(software-engineer)` — engineering fundamentals
 - **Collaborates with**: `Agent(java-engineer)` / `Agent(python-engineer)` / `Agent(frontend-engineer)` (implementation testing), `Agent(devops-engineer)` (CI integration, Docker test infra), `Agent(db-engineer)` (test data management, schema), `Agent(product-manager)` (acceptance criteria)
-- **Owns**: `TESTING.md` (root + per-service) — scaffolded by `/ai-assets-init` per detected stack, updated on test infrastructure changes
-- **Workflows**: `/test-local` (primary — full local QA cycle), `/run-tests` (lightweight test execution), `/ai-assets-init` (TESTING.md scaffold), `/pre-commit`, `/bugfix`, `/develop`, `/feature-dev` (single-agent fallback)
+- **Owns**: `TESTING.md` (root + per-service) — scaffolded by `/ai-skills-init` per detected stack, updated on test infrastructure changes
+- **Workflows**: `/test-local` (primary — full local QA cycle), `/run-tests` (lightweight test execution), `/ai-skills-init` (TESTING.md scaffold), `/pre-commit`, `/bugfix`, `/develop`, `/feature-dev` (single-agent fallback)
 - **Skills**: `test-strategy` skill (test writing patterns, coverage targets)

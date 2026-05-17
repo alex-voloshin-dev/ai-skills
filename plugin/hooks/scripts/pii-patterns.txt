@@ -1,7 +1,7 @@
-# PII pattern definitions for ai-assets plugin
+# PII pattern definitions for ai-skills plugin
 # Format: NAME | REGEX
 # Read by _lib.py apply_pii_filter() (B8) and session-start-context.py (B8)
-# Project extensions: .ai-assets-memory/.committed/pii-patterns.txt
+# Project extensions: .ai-skills-memory/.committed/pii-patterns.txt
 # Per 03-MEMORY-ARCHITECTURE.md §7
 
 EMAIL | \b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b

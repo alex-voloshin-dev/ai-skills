@@ -63,11 +63,11 @@ Follow the test pyramid for cost-effective coverage:
 
 ## Key Context File
 
-Projects should have a `TESTING.md` at the root (and per-service in monorepos) documenting test infrastructure, commands, credentials, and organization. Scaffolded by `/ai-assets-init` (per detected stack) and authored using `Agent(qa-engineer)`. Always read `TESTING.md` before writing or running tests.
+Projects should have a `TESTING.md` at the root (and per-service in monorepos) documenting test infrastructure, commands, credentials, and organization. Scaffolded by `/ai-skills-init` (per detected stack) and authored using `Agent(qa-engineer)`. Always read `TESTING.md` before writing or running tests.
 
 ## Integration
 
 - **Follows rules**: `Agent(qa-engineer)` (test strategy, automation, local test infra), `Agent(software-engineer)` (code quality)
-- **Used by workflows**: `/test-local` (full local QA cycle), `/run-tests` (lightweight execution), `/ai-assets-init` (TESTING.md scaffold), `/develop`, `/feature-dev` (single-agent fallback), `/bugfix`, `/pre-commit`
+- **Used by workflows**: `/test-local` (full local QA cycle), `/run-tests` (lightweight execution), `/ai-skills-init` (TESTING.md scaffold), `/develop`, `/feature-dev` (single-agent fallback), `/bugfix`, `/pre-commit`
 - **Companion resources**: `test-writing-guide.md`
 - **Project context**: `TESTING.md` (root + per-service)

@@ -231,7 +231,7 @@ paths are relative to the skill directory root.
 
 ---
 
-## ai-assets overlay (additive, never weaker than upstream)
+## ai-skills overlay (additive, never weaker than upstream)
 
 - Body **≤ 12000 characters** for `SKILL.md`/rule files (stricter
   operationalization of the upstream ≤500-line / ≤5000-token guidance)

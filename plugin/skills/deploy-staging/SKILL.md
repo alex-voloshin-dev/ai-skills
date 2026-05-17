@@ -148,7 +148,7 @@ Check for errors, warnings, or unexpected behavior in the first 2–5 minutes.
 
 ## 5. Memory Write (L4)
 
-Append a deploy event to `.ai-assets-memory/runs.jsonl` per `memory-discipline.md` retention rules:
+Append a deploy event to `.ai-skills-memory/runs.jsonl` per `memory-discipline.md` retention rules:
 
 ```json
 {"ts": "<ISO8601>", "event": "deploy", "env": "staging", "service": "<name>", "version": "<tag>", "method": "k8s|helm|docker|platform", "status": "success|fail", "duration_ms": N, "rollback": false}

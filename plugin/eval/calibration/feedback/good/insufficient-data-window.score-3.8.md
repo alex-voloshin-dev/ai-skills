@@ -6,7 +6,7 @@
 # Plugin Feedback — Brief
 
 - Verdict: **INSUFFICIENT_DATA** · Window: 1d · Sessions: 0/11 · Findings: 0 (0 signatures)
-- Plugin: `ai-assets` · Project: `/home/u/dev/code/ai-assets`
+- Plugin: `ai-skills` · Project: `/home/u/dev/code/ai-skills`
 
 No sessions touched the project in the last 1 day. Try a wider window (e.g. `--days 14`) or drop `--days 0` to include all sessions.
 
@@ -21,8 +21,8 @@ No sessions touched the project in the last 1 day. Try a wider window (e.g. `--d
 ## What to do next
 
 - Re-run with `--days 7` or `--days 0`.
-- Confirm the project path: `--project /home/u/dev/code/ai-assets`.
+- Confirm the project path: `--project /home/u/dev/code/ai-skills`.
 
 ---
 
-_Saved to:_ `/home/u/dev/code/ai-assets/.ai-assets-memory/feedback/feedback-2026-05-13-0917.md`
+_Saved to:_ `/home/u/dev/code/ai-skills/.ai-skills-memory/feedback/feedback-2026-05-13-0917.md`

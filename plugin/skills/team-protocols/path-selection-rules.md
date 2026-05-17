@@ -11,7 +11,7 @@ Fallback path used only on hard technical block of Path B. Per role:
 ```text
 Agent({
   description: "<short label>",
-  subagent_type: "ai-assets:<role>",
+  subagent_type: "ai-skills:<role>",
   prompt: "<full role brief + G7 spawn payload>",
   isolation: "worktree"   # optional, for parallel-safe Developer work
 })
@@ -28,18 +28,18 @@ Per [Anthropic Agent Teams docs](https://docs.claude.com/en/docs/claude-code/age
 **Step 1 — create the team** (natural language to self):
 
 ```text
-Create an agent team named "<feature-slug>-team" with the following teammates, all using subagent definitions from the ai-assets plugin so they inherit the right tools and model:
+Create an agent team named "<feature-slug>-team" with the following teammates, all using subagent definitions from the ai-skills plugin so they inherit the right tools and model:
 
-- "developer" (ai-assets:<java-engineer | python-engineer | frontend-engineer | ...>) — implements work packages, follows the developer protocol from plugin/skills/team-protocols/developer-protocol.md
-- "reviewer" (ai-assets:software-engineer) — independent code review, read-only (no Write/Edit), follows reviewer-protocol.md
-- "qa" (ai-assets:qa-engineer) — higher-level tests + SRE smoke, follows the QA section of the develop skill
+- "developer" (ai-skills:<java-engineer | python-engineer | frontend-engineer | ...>) — implements work packages, follows the developer protocol from plugin/skills/team-protocols/developer-protocol.md
+- "reviewer" (ai-skills:software-engineer) — independent code review, read-only (no Write/Edit), follows reviewer-protocol.md
+- "qa" (ai-skills:qa-engineer) — higher-level tests + SRE smoke, follows the QA section of the develop skill
 
 Require plan approval for the developer teammate before they make any changes. Use the shared task list to coordinate work packages — one task per WP, with `dependsOn` linking review/QA tasks to their developer task.
 ```
 
 Per Anthropic docs, this prompt makes Claude:
 - Create a team with the named teammates
-- Spawn each teammate using the listed `ai-assets:<role>` subagent definitions (the definition's tools + model + body apply, augmented with team coordination tools)
+- Spawn each teammate using the listed `ai-skills:<role>` subagent definitions (the definition's tools + model + body apply, augmented with team coordination tools)
 - Auto-resolve task dependencies — the QA task unblocks when its developer + review tasks complete
 
 **Step 2 — drive work** by populating the shared task list. One task per work package, with three tasks per WP (DEV, REVIEW, QA) linked via `dependsOn`.
@@ -75,7 +75,7 @@ Observed failure modes (do NOT repeat any of these):
 
 - **alpha.34 — `shutdown_request` non-response + `TeamDelete`-on-active recovery (v0.3.10, observed in field feedback)**: in `teammate-mode in-process`, a teammate that is already silent-idle (alpha.31 / alpha.33) cannot acknowledge a `shutdown_request` either, because the team-runtime augmentation that adds `SendMessage` / `TaskUpdate` / `shutdown_response` is the same surface that has stalled. Symptom: the Lead issues `shutdown_request` after the WP completes, gets no acknowledgement from the silent role(s), and the documented "clean shutdown then `TeamDelete`" sequence stalls. Recovery: `TeamDelete` while teammates are still active is the documented recovery, NOT a leak — the runtime tears down the panel and frees the slots. The "TeamDelete fails on active teammates" warning in pre-v0.3.10 docs is wrong for the silent-idle path; it only applies when teammates are responsive and actively writing. After `TeamDelete`, the panel may continue to emit a tail of `idle_notification` JSON messages for several seconds from the torn-down teammates — these are runtime artefacts on a closed bus and the Lead MUST ignore them (do not parse, do not react). Record one line in `REVIEW-LOG.md` "Liveness events": `alpha.34: silent-idle <N>/<M> teammates; TeamDelete-on-active used to recover; <K> tail idle_notifications ignored`. Stranded `~/.claude/teams/<team-name>/` directories from `TeamDelete`-on-active are an alpha runtime artefact — the cleanup cron sweeps them; do not block the workflow on this.
 
-- **alpha.35 — Reviewer team-bus tool gap (silent findings, v0.3.10, observed in field feedback)**: in `teammate-mode in-process`, a Path B Reviewer spawned as `ai-assets:software-engineer` can complete its read-only review work but be unable to deliver its verdict to the team bus because the runtime augmentation for `TaskUpdate` / `SendMessage` did not attach to the Reviewer's tool surface. Symptom: Reviewer transcript (visible via **Shift+↓**) shows complete findings and an explicit `verdict: changes_requested` (or `approved`), often ending with prose like "please relay these envelopes to the lead" or "grant access to TaskUpdate / SendMessage so I can complete the protocol end-to-end" — but the Reviewer's task stays `in_progress` and no G7 envelope arrives at the Lead. Distinct from alpha.31 (silent because never engaged): here the Reviewer engaged, produced output, and even named the delivery gap, but cannot push the envelope itself. Distinct from alpha.32 (tool-capability mismatch at the agent-definition level): the Reviewer's read-only `Write`/`Edit` constraint is correct and intended; what is missing is the team-runtime augmentation that gives any teammate the bus surface. Disk reconciliation does NOT apply (Reviewer is read-only; clean disk is the expected steady state, not a flake signal).
+- **alpha.35 — Reviewer team-bus tool gap (silent findings, v0.3.10, observed in field feedback)**: in `teammate-mode in-process`, a Path B Reviewer spawned as `ai-skills:software-engineer` can complete its read-only review work but be unable to deliver its verdict to the team bus because the runtime augmentation for `TaskUpdate` / `SendMessage` did not attach to the Reviewer's tool surface. Symptom: Reviewer transcript (visible via **Shift+↓**) shows complete findings and an explicit `verdict: changes_requested` (or `approved`), often ending with prose like "please relay these envelopes to the lead" or "grant access to TaskUpdate / SendMessage so I can complete the protocol end-to-end" — but the Reviewer's task stays `in_progress` and no G7 envelope arrives at the Lead. Distinct from alpha.31 (silent because never engaged): here the Reviewer engaged, produced output, and even named the delivery gap, but cannot push the envelope itself. Distinct from alpha.32 (tool-capability mismatch at the agent-definition level): the Reviewer's read-only `Write`/`Edit` constraint is correct and intended; what is missing is the team-runtime augmentation that gives any teammate the bus surface. Disk reconciliation does NOT apply (Reviewer is read-only; clean disk is the expected steady state, not a flake signal).
 
   Detection: a stale `in_progress` Reviewer task whose transcript (Shift+↓) shows substantive review content and an explicit verdict. Strong signal: Reviewer transcript ends with prose asking the Lead to "relay envelopes", "update tasks on my behalf", or "grant access to TaskUpdate / SendMessage". This is the Reviewer correctly recognising the gap and asking for the verdict-in-response fallback.
 
@@ -89,7 +89,7 @@ Observed failure modes (do NOT repeat any of these):
   
   Detection: two consecutive `TaskCompleted` events for which the corresponding G7 envelope did not arrive in the Lead's context within 60 s. Strong signal: the `team-gate-reconciliation.py` hook's file-channel envelope is present and shows correct `disk_state.changed_files` while the bus envelope is missing. Disk evidence ✓, bus evidence ✗.
   
-  Recovery: switch to file-channel-exclusive transport per `lead-protocol.md` "File-channel transport — first-class, not fallback". Lead pushes `SendMessage(<teammate>, "deliver findings now — write G7 envelope to .ai-assets-memory/sessions/<sid>/team-envelopes/G7-<role>-<wp>.json then return verdict in your next response")`. Teammate writes the G7 envelope via `Bash` + `mv` to the file-channel and ALSO posts the verdict in its next conversation turn. Lead reads both, validates the file-channel G7 against `return-contract.schema.json`, proceeds.
+  Recovery: switch to file-channel-exclusive transport per `lead-protocol.md` "File-channel transport — first-class, not fallback". Lead pushes `SendMessage(<teammate>, "deliver findings now — write G7 envelope to .ai-skills-memory/sessions/<sid>/team-envelopes/G7-<role>-<wp>.json then return verdict in your next response")`. Teammate writes the G7 envelope via `Bash` + `mv` to the file-channel and ALSO posts the verdict in its next conversation turn. Lead reads both, validates the file-channel G7 against `return-contract.schema.json`, proceeds.
   
   Prevention: at team-create time, every Developer / Reviewer / QA teammate's spawn prompt includes the standard file-channel envelope clause from `developer-protocol.md` / `reviewer-protocol.md` "File-channel envelopes". This makes the file-channel backstop part of the contract, not a recovery procedure invented mid-session.
   

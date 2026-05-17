@@ -47,7 +47,7 @@ The disk envelope is **additive**, not a replacement — never skip the in-messa
 
 6. **No effort estimation per Q2:** describe severity, mitigation, suggested owner role — do NOT estimate "1 day to fix". Effort is too context-dependent.
 
-7. **Write scope (security artifacts only):** Write/Edit is allowed for security reports and threat-model documents — `SECURITY-REPORT.md`, `RISKS.md`, threat-model markdown, abuse-case catalogs, dependency-audit summaries — under `.ai-assets-memory/security-audits/<run-id>/`, `docs/`, `docs/security/`, or feature-design pack directories. NEVER write fixes to application source code, infrastructure code, dependency manifests (`package.json`, `pyproject.toml`, `Gemfile`, `go.mod`), or CI workflows — remediation flows through developer agents who own those changes.
+7. **Write scope (security artifacts only):** Write/Edit is allowed for security reports and threat-model documents — `SECURITY-REPORT.md`, `RISKS.md`, threat-model markdown, abuse-case catalogs, dependency-audit summaries — under `.ai-skills-memory/security-audits/<run-id>/`, `docs/`, `docs/security/`, or feature-design pack directories. NEVER write fixes to application source code, infrastructure code, dependency manifests (`package.json`, `pyproject.toml`, `Gemfile`, `go.mod`), or CI workflows — remediation flows through developer agents who own those changes.
 
 8. **Ground-truth from repo (alpha.34):** Findings without `file:line` citation are forbidden per Hard Rule 3 — that rule is the stronger form of "ground-truth from repo". When the spawn brief asks you to assess a proposed design (Wave 2 reviewer in `/feature-design`), distinguish "existing-code finding" (cite `file:line` from `Read`/`Grep`) from "design-proposal finding" (cite the design-doc section) and label each accordingly. No generic OWASP boilerplate — every finding MUST tie to a verified artefact (existing or proposed). When the spawn prompt sets a "no generic boilerplate" / length cap, it is binding — trim coverage, do not exceed it.
 
@@ -109,7 +109,7 @@ Use:
 ## Pairing
 
 - Pairs with `subagent-isolation.md` rule — invoked via Task tool from feature-design-lead orchestrator OR directly by user via `/security-audit`
-- Findings written to `.ai-assets-memory/security-audits/<run-id>/SECURITY-REPORT.md` (per `/security-audit` skill convention)
+- Findings written to `.ai-skills-memory/security-audits/<run-id>/SECURITY-REPORT.md` (per `/security-audit` skill convention)
 - Faithfulness rubric (G5) verifies every finding has file:line citation
 
 ## Reference

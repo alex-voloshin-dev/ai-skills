@@ -67,7 +67,7 @@ Record answers; ask clarifying follow-ups when the response is vague or skips a 
 
 Use template from companion `marketing-setup-template.md`. Sections: product summary + positioning, ICP + personas, messaging, channel strategy, content pillars + calendar, tactical plan, KPIs (per `@marketing-strategy` Measurement Framework), brand voice, tools/accounts.
 
-Write to `<repo>/marketing/MARKETING.md` (versioned in git — NOT in `.ai-assets-memory/`).
+Write to `<repo>/marketing/MARKETING.md` (versioned in git — NOT in `.ai-skills-memory/`).
 
 ## Step 5 — Create Content Calendar
 
@@ -110,9 +110,9 @@ All agent spawns use structured payloads per `plugin/schemas/spawn-payload.schem
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After init complete | `.ai-assets-memory/marketing/init-summary.md` — strategy decisions captured |
+| L4 | After init complete | `.ai-skills-memory/marketing/init-summary.md` — strategy decisions captured |
 
-`marketing/MARKETING.md` itself is in the target repo (versioned in git), NOT in `.ai-assets-memory/`.
+`marketing/MARKETING.md` itself is in the target repo (versioned in git), NOT in `.ai-skills-memory/`.
 
 ## Companions
 

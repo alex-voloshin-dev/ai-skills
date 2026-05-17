@@ -3,32 +3,32 @@
 This table is the authoritative mapping `/plugin-author` uses to pick subagents when building a work package.
 
 - **DEV** — chosen per asset kind from the table below.
-- **REVIEW** — `ai-assets:prompt-engineer` (fresh instance, `disallowedTools: ["Write", "Edit"]`) for prompt assets (SKILL.md, agents, rules, rubrics, calibration); `ai-assets:software-engineer` (same disallow) for code and schema assets. One reviewer per WP — no co-review.
-- **QA** — `ai-assets:qa-engineer` for behavioral checks, with Lead-side automated post-checks (`validate.py`, internal audit, `/plugin-doctor`, `/eval --tier 1`) regardless of asset kind.
+- **REVIEW** — `ai-skills:prompt-engineer` (fresh instance, `disallowedTools: ["Write", "Edit"]`) for prompt assets (SKILL.md, agents, rules, rubrics, calibration); `ai-skills:software-engineer` (same disallow) for code and schema assets. One reviewer per WP — no co-review.
+- **QA** — `ai-skills:qa-engineer` for behavioral checks, with Lead-side automated post-checks (`validate.py`, internal audit, `/plugin-doctor`, `/eval --tier 1`) regardless of asset kind.
 
 ## Primary table
 
 | Asset path / pattern under `plugin/` | DEV subagent | Why |
 |---|---|---|
-| `skills/<name>/SKILL.md` — frontmatter | `ai-assets:prompt-engineer` | Description, trigger keywords, third-person, imperative phrasing are prompt-engineering concerns (`prompt-engineering/optimizing-descriptions.md`). |
-| `skills/<name>/SKILL.md` — body (procedures, behavior, when-to-use) | `ai-assets:prompt-engineer` | Body is an instructive prompt + workflow spec. For very broad rewrites, co-review with `ai-assets:system-architect`. |
-| `skills/<name>/<reference>.md` (operation-router, feedback-parser, role-cards, …) | `ai-assets:prompt-engineer` | Sibling reference docs are loaded into prompt context — same engineering surface. |
-| `skills/<name>/scripts/<file>.py` | `ai-assets:python-engineer` | Python code, not prompt. |
-| `skills/<name>/scripts/<file>.sh` | `ai-assets:devops-engineer` | Shell automation. |
-| `agents/<name>.md` | `ai-assets:prompt-engineer` | Agent definition = system prompt. |
-| `rules/<name>.md` | `ai-assets:prompt-engineer` | Rule = guardrail prompt. |
-| `hooks/scripts/<name>.py` | `ai-assets:python-engineer` | Python hook scripts. |
-| `hooks/scripts/_lib.py`, shared helpers | `ai-assets:python-engineer` | Shared Python utility. |
-| `hooks/hooks.json` | `ai-assets:system-architect` | Wiring config — system-level contract. |
-| `schemas/<name>.json` (G7 spawn / return, etc.) | `ai-assets:system-architect` | JSON Schema = inter-component contract. |
-| `eval/judge-rubrics/<name>.md` | `ai-assets:eval-judge` | Rubric — specialist asset for LLM-as-judge; requires calibration. |
-| `eval/calibration/<name>/{good,bad}/*.md` | `ai-assets:eval-judge` | Calibration samples shape the rubric's behavior. |
-| `eval/cases/<name>/*.json` | `ai-assets:system-architect` | Tier-3 case spec — contract surface. |
-| `eval/config.json` | `ai-assets:system-architect` | Runner config — schema-bound. |
-| `docs/workflows/<name>.md`, `docs/concepts/<name>.md` | `ai-assets:content-writer` | User-facing technical docs — diátaxis/style-guide concerns. |
-| `dev/validate.py`, `dev/*` | `ai-assets:python-engineer` | Developer tooling. |
-| `.claude-plugin/plugin.json` | `ai-assets:system-architect` | Plugin manifest — userConfig schema + versioning. |
-| `.claude-plugin/marketplace.json` | `ai-assets:system-architect` | Marketplace manifest. |
+| `skills/<name>/SKILL.md` — frontmatter | `ai-skills:prompt-engineer` | Description, trigger keywords, third-person, imperative phrasing are prompt-engineering concerns (`prompt-engineering/optimizing-descriptions.md`). |
+| `skills/<name>/SKILL.md` — body (procedures, behavior, when-to-use) | `ai-skills:prompt-engineer` | Body is an instructive prompt + workflow spec. For very broad rewrites, co-review with `ai-skills:system-architect`. |
+| `skills/<name>/<reference>.md` (operation-router, feedback-parser, role-cards, …) | `ai-skills:prompt-engineer` | Sibling reference docs are loaded into prompt context — same engineering surface. |
+| `skills/<name>/scripts/<file>.py` | `ai-skills:python-engineer` | Python code, not prompt. |
+| `skills/<name>/scripts/<file>.sh` | `ai-skills:devops-engineer` | Shell automation. |
+| `agents/<name>.md` | `ai-skills:prompt-engineer` | Agent definition = system prompt. |
+| `rules/<name>.md` | `ai-skills:prompt-engineer` | Rule = guardrail prompt. |
+| `hooks/scripts/<name>.py` | `ai-skills:python-engineer` | Python hook scripts. |
+| `hooks/scripts/_lib.py`, shared helpers | `ai-skills:python-engineer` | Shared Python utility. |
+| `hooks/hooks.json` | `ai-skills:system-architect` | Wiring config — system-level contract. |
+| `schemas/<name>.json` (G7 spawn / return, etc.) | `ai-skills:system-architect` | JSON Schema = inter-component contract. |
+| `eval/judge-rubrics/<name>.md` | `ai-skills:eval-judge` | Rubric — specialist asset for LLM-as-judge; requires calibration. |
+| `eval/calibration/<name>/{good,bad}/*.md` | `ai-skills:eval-judge` | Calibration samples shape the rubric's behavior. |
+| `eval/cases/<name>/*.json` | `ai-skills:system-architect` | Tier-3 case spec — contract surface. |
+| `eval/config.json` | `ai-skills:system-architect` | Runner config — schema-bound. |
+| `docs/workflows/<name>.md`, `docs/concepts/<name>.md` | `ai-skills:content-writer` | User-facing technical docs — diátaxis/style-guide concerns. |
+| `dev/validate.py`, `dev/*` | `ai-skills:python-engineer` | Developer tooling. |
+| `.claude-plugin/plugin.json` | `ai-skills:system-architect` | Plugin manifest — userConfig schema + versioning. |
+| `.claude-plugin/marketplace.json` | `ai-skills:system-architect` | Marketplace manifest. |
 
 ## Multi-asset WPs (one DEV per WP)
 
@@ -47,7 +47,7 @@ The per-file sequential gate from `team-protocols/spawn-pattern.md` applies acro
 
 - **Renames** (e.g., `skills/old-name/` → `skills/new-name/`): refused by `/plugin-author`. Rename is a behavior change; the user runs it manually and then asks `/plugin-author audit <new-name>`.
 - **Deletions**: refused. Deletion is irreversible; require explicit user confirmation outside the orchestrator.
-- **Asset has no match** in the table above: route to `ai-assets:system-architect` by default and emit a WARN that the table needs a new row.
+- **Asset has no match** in the table above: route to `ai-skills:system-architect` by default and emit a WARN that the table needs a new row.
 - **Asset lives outside `plugin/`**: refuse — `/plugin-author` is plugin-only. Print the parity-matrix workflow as the right destination.
 
 ## Why these defaults

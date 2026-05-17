@@ -1,6 +1,6 @@
 # Memory Architecture — Plugin Phase 1
 
-> **Purpose:** Define the 6-layer persistent memory model for the ai-assets plugin, including schemas, write rules, conflict resolution, retention policies, and PII handling.
+> **Purpose:** Define the 6-layer persistent memory model for the ai-skills plugin, including schemas, write rules, conflict resolution, retention policies, and PII handling.
 > **Status:** Design for Phase 2 implementation
 > **Date:** 2026-04-26
 > **Dependencies:** Section 3.4 of 00-PHASE-1-PLAN.md; patches P3, P10, H3 from 00a-CRITIQUE-AND-CORRECTIONS.md; memory-validation.md rule
@@ -34,11 +34,11 @@ What it does NOT do:
 | **L0** (Cowork host) | `~/.../spaces/<id>/memory/` | Cowork-managed | Cowork only | plugin (advisory only) | Cowork-owned | unbounded |
 | **L1** (Plugin templates) | `${CLAUDE_PLUGIN_ROOT}/memory/templates/` | plugin version lifetime | Plugin author | plugin at init; user at runtime | read-only at runtime | ~50KB |
 | **L2** (Project static) | `<repo>` CLAUDE.md, AGENTS.md, ARCHITECTURE.md | Per-repo | Repo maintainer | `session-start-context.py` hook | repo-owned | ≤8KB slice per file |
-| **L3** (Session) | `<repo>/.ai-assets-memory/sessions/<run-id>/` | Until session ends | Main thread, subagents | Main thread during session | mutable (temporary) | unbounded per session |
-| **L4** (Project cross-session) | `<repo>/.ai-assets-memory/` | Per-repo, persistent | Hooks, skills, memory-curator | Any skill/hook in same repo | mutable | unbounded (pruning policy applies) |
-| **L5** (User-global) | `~/.claude/ai-assets/learnings.md` | Forever, across all projects | memory-curator (opt-in only) | Skills in any project | mutable | unbounded (pruning policy applies) |
+| **L3** (Session) | `<repo>/.ai-skills-memory/sessions/<run-id>/` | Until session ends | Main thread, subagents | Main thread during session | mutable (temporary) | unbounded per session |
+| **L4** (Project cross-session) | `<repo>/.ai-skills-memory/` | Per-repo, persistent | Hooks, skills, memory-curator | Any skill/hook in same repo | mutable | unbounded (pruning policy applies) |
+| **L5** (User-global) | `~/.claude/ai-skills/learnings.md` | Forever, across all projects | memory-curator (opt-in only) | Skills in any project | mutable | unbounded (pruning policy applies) |
 
-**Non-interference contract with L0:** Plugin treats Cowork's auto-memory as opaque and advisory. Plugin NEVER writes to L0. All plugin writes go to L4 (`.ai-assets-memory/`). On conflict between L0 and L4, trust the more recently confirmed layer; if both are same age, trust L4 (plugin-managed).
+**Non-interference contract with L0:** Plugin treats Cowork's auto-memory as opaque and advisory. Plugin NEVER writes to L0. All plugin writes go to L4 (`.ai-skills-memory/`). On conflict between L0 and L4, trust the more recently confirmed layer; if both are same age, trust L4 (plugin-managed).
 
 ---
 
@@ -50,7 +50,7 @@ What it does NOT do:
 
 **Plugin treatment:** opaque, never write, optionally read if exposed as advisory context
 
-**Contract:** Plugin's own writes ALWAYS go to L4 (`.ai-assets-memory/`). Never attempt to write to L0. If Cowork exposes L0 content as advisory context in the conversation, the plugin may read it but does not depend on it. If user queries both L0 and L4 knowledge, plugin presents L4 as authoritative.
+**Contract:** Plugin's own writes ALWAYS go to L4 (`.ai-skills-memory/`). Never attempt to write to L0. If Cowork exposes L0 content as advisory context in the conversation, the plugin may read it but does not depend on it. If user queries both L0 and L4 knowledge, plugin presents L4 as authoritative.
 
 ---
 
@@ -62,34 +62,34 @@ What it does NOT do:
 
 **Files:**
 
-#### `ai-assets-memory.gitignore` (template)
-Copied by `ai-assets-init` into `<repo>/.gitignore`. Specifies default ignore rules for L4.
+#### `ai-skills-memory.gitignore` (template)
+Copied by `ai-skills-init` into `<repo>/.gitignore`. Specifies default ignore rules for L4.
 
 **Content structure:**
 ```text
-# ai-assets memory — plugin-managed
-.ai-assets-memory/
-!.ai-assets-memory/.committed/
-!.ai-assets-memory/.committed/README.md
-!.ai-assets-memory/.committed/conventions.md
-!.ai-assets-memory/.committed/architecture-decisions/
-!.ai-assets-memory/.committed/eval-baselines/
-!.ai-assets-memory/.committed/pii-patterns.txt
+# ai-skills memory — plugin-managed
+.ai-skills-memory/
+!.ai-skills-memory/.committed/
+!.ai-skills-memory/.committed/README.md
+!.ai-skills-memory/.committed/conventions.md
+!.ai-skills-memory/.committed/architecture-decisions/
+!.ai-skills-memory/.committed/eval-baselines/
+!.ai-skills-memory/.committed/pii-patterns.txt
 ```
 
 **Example (5 lines):**
 ```
-.ai-assets-memory/
-!.ai-assets-memory/.committed/
-!.ai-assets-memory/.committed/README.md
-!.ai-assets-memory/.committed/conventions.md
-!.ai-assets-memory/.committed/architecture-decisions/
+.ai-skills-memory/
+!.ai-skills-memory/.committed/
+!.ai-skills-memory/.committed/README.md
+!.ai-skills-memory/.committed/conventions.md
+!.ai-skills-memory/.committed/architecture-decisions/
 ```
 
 ---
 
 #### `committed-readme.md` (template)
-Explains the L4 `.committed/` sub-directory contract. Copied into `<repo>/.ai-assets-memory/.committed/README.md` by `ai-assets-init`.
+Explains the L4 `.committed/` sub-directory contract. Copied into `<repo>/.ai-skills-memory/.committed/README.md` by `ai-skills-init`.
 
 **Content structure:**
 - Purpose: What `.committed/` is for
@@ -99,7 +99,7 @@ Explains the L4 `.committed/` sub-directory contract. Copied into `<repo>/.ai-as
 
 **Example (10 lines):**
 ```markdown
-# .ai-assets-memory/.committed/ — Versioned Memory
+# .ai-skills-memory/.committed/ — Versioned Memory
 
 This directory holds team-confirmed state worth checking into git:
 - Team conventions discovered and confirmed
@@ -255,7 +255,7 @@ Allowlist of file patterns permitted in `.committed/`. Enforced by `pre-tool-use
 
 **Example (8 lines):**
 ```
-# Allowlist for .ai-assets-memory/.committed/
+# Allowlist for .ai-skills-memory/.committed/
 # Hook block-write to .committed/* if not matched
 
 README.md
@@ -283,10 +283,10 @@ eval-baselines/*.json
 **Truncation:** If any file exceeds 8KB:
 1. Take first 4KB + last 2KB (preserve opening + closing context)
 2. Insert marker: `[TRUNCATED: N bytes omitted]` in the middle
-3. Log to `.ai-assets-memory/sessions/<id>/truncation.log`
+3. Log to `.ai-skills-memory/sessions/<id>/truncation.log`
 4. Do NOT fail; include the truncated slice in context
 
-**PII filter:** Applied to every slice before injection. Matches run against `plugin/hooks/scripts/pii-patterns.txt` + `.ai-assets-memory/.committed/pii-patterns.txt`. Redactions logged to `.ai-assets-memory/redactions.log` (redaction record does NOT contain original value, only match position and pattern name).
+**PII filter:** Applied to every slice before injection. Matches run against `plugin/hooks/scripts/pii-patterns.txt` + `.ai-skills-memory/.committed/pii-patterns.txt`. Redactions logged to `.ai-skills-memory/redactions.log` (redaction record does NOT contain original value, only match position and pattern name).
 
 **Untrusted-content wrapping (G1):** every L2 slice MUST be wrapped before injection. Even though L2 files are user-authored, we treat them as untrusted because (a) project files may be edited by anyone with repo write access, (b) CLAUDE.md / AGENTS.md may include excerpts from external sources, (c) defense-in-depth principle. Wrapper applied by `session-start-context.py` and `instructions-loaded-augment.py` per the canonical template:
 
@@ -305,13 +305,13 @@ CONTENT:
 
 **Format expectations:** Standard Markdown, project documentation as authored. No schema validation — hook reads opportunistically.
 
-**Locale detection:** `session-start-context.py` probes the user's prior turn(s) for non-Latin script (Cyrillic, CJK, Arabic unicode blocks). If detected, writes `.ai-assets-memory/sessions/<id>/locale.txt` with detected locale code (e.g., `ru`, `ja`, `zh`).
+**Locale detection:** `session-start-context.py` probes the user's prior turn(s) for non-Latin script (Cyrillic, CJK, Arabic unicode blocks). If detected, writes `.ai-skills-memory/sessions/<id>/locale.txt` with detected locale code (e.g., `ru`, `ja`, `zh`).
 
 ---
 
 ### L3 — Session (In-Flight State)
 
-**Path:** `<repo>/.ai-assets-memory/sessions/<run-id>/`
+**Path:** `<repo>/.ai-skills-memory/sessions/<run-id>/`
 
 **Lifetime:** Created at `SessionStart`; summarized to L4 and deleted at `SessionEnd`
 
@@ -426,14 +426,14 @@ Running session token totals.
 
 ### L4 — Project Cross-Session (Main Durable Layer)
 
-**Path:** `<repo>/.ai-assets-memory/` (gitignored by default; opt-in `.committed/` sub-dir versioned)
+**Path:** `<repo>/.ai-skills-memory/` (gitignored by default; opt-in `.committed/` sub-dir versioned)
 
 **Lifetime:** Persistent across sessions; pruning policies apply (§6)
 
 **Directory tree with per-file purpose:**
 
 ```
-.ai-assets-memory/
+.ai-skills-memory/
 ├── config.json                    # Project-level overrides of userConfig defaults
 ├── learnings.md                   # Accumulated cross-session learnings (entity-keyed)
 ├── ralf-history.jsonl             # One line per completed RALF run summary
@@ -597,7 +597,7 @@ Every PII redaction recorded (the redaction itself, not the original value). Tex
 ```
 
 #### `.committed/README.md`
-Explains the opt-in `.committed/` contract and what belongs there. Seeded by `ai-assets-init`.
+Explains the opt-in `.committed/` contract and what belongs there. Seeded by `ai-skills-init`.
 
 #### `.committed/conventions.md`
 Team-confirmed project conventions. Intentionally versioned. Follows conventions-schema.md structure.
@@ -622,9 +622,9 @@ User extensions to the write allowlist. Additional glob patterns permitted in `.
 
 ### L5 — User-Global (Opt-In Only)
 
-**Path:** `~/.claude/ai-assets/learnings.md`
+**Path:** `~/.claude/ai-skills/learnings.md`
 
-> **Path collision check (Round 5 S8):** Claude Code itself manages these paths under `~/.claude/`: `agents/`, `skills/`, `plugins/`, `themes/`, `output-styles/`, `settings.json`, `projects/`, `commands/`. As of 2026-04-26 there is no `ai-assets/` managed by Claude Code core, so our use is safe. If a future Claude Code version introduces a managed `~/.claude/ai-assets/` directory, migrate L5 to `~/.claude/plugins-data/ai-assets/learnings.md`.
+> **Path collision check (Round 5 S8):** Claude Code itself manages these paths under `~/.claude/`: `agents/`, `skills/`, `plugins/`, `themes/`, `output-styles/`, `settings.json`, `projects/`, `commands/`. As of 2026-04-26 there is no `ai-skills/` managed by Claude Code core, so our use is safe. If a future Claude Code version introduces a managed `~/.claude/ai-skills/` directory, migrate L5 to `~/.claude/plugins-data/ai-skills/learnings.md`.
 
 **Lifetime:** Forever, across all projects
 
@@ -682,7 +682,7 @@ Table covering all writes from hooks and skills:
 | `ralph-stop.py` | L4 | Stop (RALF context) | ralph/<run-id>/iter-NNN/*, budget.json | Iteration logs; terminal budget totals |
 | `memory-curator` agent | L4/L5 | Triggered by Stop, SubagentStop, PreCompact, or manual | learnings.md (curate/dedupe) and optionally learnings.md in L5 | Entity-keyed entries with confidence, provenance, scope |
 | `/learnings-write` skill | L4 (default) or L5 (--global) | Manual invocation | Append to learnings.md | Add single learning with full schema |
-| `/ai-assets-init` skill | L4 | Init (new project) | Seeds L1 templates into target repo | Creates .ai-assets-memory/, .gitignore rule, .committed/README.md |
+| `/ai-skills-init` skill | L4 | Init (new project) | Seeds L1 templates into target repo | Creates .ai-skills-memory/, .gitignore rule, .committed/README.md |
 
 ### PreCompact Hook (§3.7, H3) — MOST CRITICAL
 
@@ -765,7 +765,7 @@ JWT_SHAPE | ey[A-Za-z0-9_-]+\.ey[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+
 GENERIC_API_KEY | (api[_-]?key|apikey|key|token)\s*=\s*[\w/+]{40,}
 ```
 
-**Extension mechanism:** Project-level patterns at `.ai-assets-memory/.committed/pii-patterns.txt` are concatenated with defaults at filter runtime.
+**Extension mechanism:** Project-level patterns at `.ai-skills-memory/.committed/pii-patterns.txt` are concatenated with defaults at filter runtime.
 
 **On match:** Replace matched span with `[REDACTED:<pattern-name>]`. Preserve surrounding context.
 
@@ -775,7 +775,7 @@ Input:  "Database password is hunter2! Contact alice@example.com for help"
 Output: "Database password is [REDACTED:GENERIC_API_KEY]! Contact [REDACTED:EMAIL] for help"
 ```
 
-**Logging (audit trail):** Every redaction logged to `.ai-assets-memory/redactions.log`. Redaction record itself does NOT contain original value — only match position + pattern name.
+**Logging (audit trail):** Every redaction logged to `.ai-skills-memory/redactions.log`. Redaction record itself does NOT contain original value — only match position + pattern name.
 
 **Failure mode:** If filter crashes, fail open with warning — never block a write due to filtering error.
 
@@ -840,7 +840,7 @@ CONTENT:
 
 ### Failure mode
 
-If normalization fails (Haiku unavailable, parsing error), inject the raw output with G1 wrap and a `normalization_failed: true` marker in the envelope. Log to `.ai-assets-memory/hook-errors.log`.
+If normalization fails (Haiku unavailable, parsing error), inject the raw output with G1 wrap and a `normalization_failed: true` marker in the envelope. Log to `.ai-skills-memory/hook-errors.log`.
 
 ---
 
@@ -859,12 +859,12 @@ eval-baselines/*.json
 ```
 
 **Enforcement hook:** `pre-tool-use-committed-write.py` (PreToolUse on Write|Edit)
-- Checks if Write/Edit path targets `.ai-assets-memory/.committed/*`
+- Checks if Write/Edit path targets `.ai-skills-memory/.committed/*`
 - If yes, validates against allowlist
 - Blocks with exit code 2 if no match, returns user-friendly error
 - Passes (exit 0) if match found
 
-**User extension:** Project can extend allowlist via `.ai-assets-memory/.committed/.allowlist-extensions.txt` (which is itself allowlisted). One glob pattern per line.
+**User extension:** Project can extend allowlist via `.ai-skills-memory/.committed/.allowlist-extensions.txt` (which is itself allowlisted). One glob pattern per line.
 
 **Validation:** Hook re-reads both allowlist files at every write (always-fresh).
 
@@ -930,7 +930,7 @@ Action: Add to conventions.md when team confirms this is intentional.
 
 ## 10. Disaster Recovery
 
-**Corrupt `.ai-assets-memory/`:** Use `/plugin-doctor --memory-rebuild`
+**Corrupt `.ai-skills-memory/`:** Use `/plugin-doctor --memory-rebuild`
 - Reconstructs L4 directory tree from `runs/*.jsonl` archives + L1 templates
 - Restores config.json defaults
 - Restores eval-baselines from `.committed/eval-baselines/`
@@ -943,9 +943,9 @@ Action: Add to conventions.md when team confirms this is intentional.
 3. Rewrite git history (force-push) to remove secret from commits
 4. Document in `SECURITY.md`
 
-**Lost gitignored memory after `git clean -fdx`:** Irrecoverable. User warned by `/ai-assets-init` at first run: "Back up `.ai-assets-memory/learnings.md` if valuable — it is gitignored and will not be recoverable after `git clean -fdx`."
+**Lost gitignored memory after `git clean -fdx`:** Irrecoverable. User warned by `/ai-skills-init` at first run: "Back up `.ai-skills-memory/learnings.md` if valuable — it is gitignored and will not be recoverable after `git clean -fdx`."
 
-**L5 (`~/.claude/ai-assets/learnings.md`) corruption:** Single file, not backed up. User can delete and rebuild over time; prompt to restore from backup if available.
+**L5 (`~/.claude/ai-skills/learnings.md`) corruption:** Single file, not backed up. User can delete and rebuild over time; prompt to restore from backup if available.
 
 ---
 
@@ -1068,7 +1068,7 @@ Every user-invocable skill (`context: fork`) that writes to memory must follow t
 
 1. **L5 opt-out strategy:** If a user enables `user_global_memory_enabled` but later wants to disable it, how do they purge L5 entries created by past sessions? Recommend: `/learnings-write --purge-global` command that clears L5 and sets flag to false.
 
-2. **Cross-project learnings in L4:** Should a learnings entry in Project A reference Project B's experience (if both are ai-assets-aware)? Current design is project-isolated. Could add inter-project links in v0.2.
+2. **Cross-project learnings in L4:** Should a learnings entry in Project A reference Project B's experience (if both are ai-skills-aware)? Current design is project-isolated. Could add inter-project links in v0.2.
 
 3. **Memory versioning:** Should learnings.md entries have version pins (e.g., "valid until plugin v0.2.0")? Deferred to v0.3 if needed.
 

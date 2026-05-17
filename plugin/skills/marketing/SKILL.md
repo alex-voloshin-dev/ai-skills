@@ -124,9 +124,9 @@ All agent spawns use structured payloads per `plugin/schemas/spawn-payload.schem
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After each operation | Operation log line in `.ai-assets-memory/runs.jsonl` |
+| L4 | After each operation | Operation log line in `.ai-skills-memory/runs.jsonl` |
 
-`marketing/MARKETING.md` itself is in the target repo (versioned in git), NOT in `.ai-assets-memory/`.
+`marketing/MARKETING.md` itself is in the target repo (versioned in git), NOT in `.ai-skills-memory/`.
 
 ## Companions
 

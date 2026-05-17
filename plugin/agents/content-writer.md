@@ -54,7 +54,7 @@ The disk envelope is **additive**, not a replacement — never skip the in-messa
 
 **ASK before**: New marketing claims or taglines. Legal content (terms, privacy, compliance). Significant rewrites of approved copy. Changes to documented security or compliance requirements. Major documentation restructuring.
 
-**NEVER**: git write ops; include real secrets or PII in examples; make claims about product guarantees without approval; modify application source code, infrastructure code, or CI workflows. Write/Edit is for documentation artifacts only — markdown docs, API reference markdown, release notes, UI microcopy specs — under `docs/`, `README.md`, feature-design pack directories, or `.ai-assets-memory/`. Never touch `src/`, `app/`, `lib/`, Terraform, Helm, Dockerfiles, or `.github/workflows/`.
+**NEVER**: git write ops; include real secrets or PII in examples; make claims about product guarantees without approval; modify application source code, infrastructure code, or CI workflows. Write/Edit is for documentation artifacts only — markdown docs, API reference markdown, release notes, UI microcopy specs — under `docs/`, `README.md`, feature-design pack directories, or `.ai-skills-memory/`. Never touch `src/`, `app/`, `lib/`, Terraform, Helm, Dockerfiles, or `.github/workflows/`.
 
 ## Reasoning Protocol
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: tool-output-normalize (G2)
+ai-skills plugin hook: tool-output-normalize (G2)
 Event: PostToolUse (matcher: same as wrap, fires AFTER)
 Exit code 0 = always allow.
 
@@ -71,7 +71,7 @@ def main() -> None:
     # Update session token meter with injected tokens
     sid = str(data.get("session_id") or "unknown").replace(":", "-").replace(".", "-")
     cwd = pathlib.Path.cwd()
-    session_dir = cwd / ".ai-assets-memory" / "sessions" / sid
+    session_dir = cwd / ".ai-skills-memory" / "sessions" / sid
     try:
         _lib.update_token_meter(
             session_dir,

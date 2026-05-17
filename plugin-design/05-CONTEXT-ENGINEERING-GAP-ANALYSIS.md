@@ -146,7 +146,7 @@ This is the section with the **most actionable improvements** for our plan.
 
 **Status:** ⚠ partial. We have plan-current.md (Markdown plan) and runs.jsonl (event log). We don't have a single structured state blob.
 
-**Action (Phase 2):** introduce `.ai-assets-memory/sessions/<id>/state.json` per the guide's schema:
+**Action (Phase 2):** introduce `.ai-skills-memory/sessions/<id>/state.json` per the guide's schema:
 ```json
 {
   "goal": "...",

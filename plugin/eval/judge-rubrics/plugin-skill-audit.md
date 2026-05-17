@@ -2,7 +2,7 @@
 
 ## Overview
 
-Evaluates `/plugin-skill-audit` output — per-skill report against agentskills.io specification + ai-assets plugin conventions. Six dimensions × five levels. Default judge: Haiku (deterministic checks). Sonnet escalation only when ambiguity in cross-reference repair surfaces.
+Evaluates `/plugin-skill-audit` output — per-skill report against agentskills.io specification + ai-skills plugin conventions. Six dimensions × five levels. Default judge: Haiku (deterministic checks). Sonnet escalation only when ambiguity in cross-reference repair surfaces.
 
 ## Dimensions
 
@@ -43,7 +43,7 @@ Verifies `plugin/eval/judge-rubrics/<name>.md` exists; calibration count meets t
 - **Level 5:** All of L4 + rubric dimension/calibration drift detected (e.g. rubric has 5 dims, samples score 6)
 
 ### Dimension 5: Plugin-Convention Discipline
-Enforces ai-assets-specific rules — H5 trigger heading pattern (`# /<name>`), `context: fork` semantics for invocable skills, third-person description style, kebab-case directory naming, no absolute user paths.
+Enforces ai-skills-specific rules — H5 trigger heading pattern (`# /<name>`), `context: fork` semantics for invocable skills, third-person description style, kebab-case directory naming, no absolute user paths.
 
 - **Level 1:** Plugin conventions not checked
 - **Level 2:** One convention checked (e.g. kebab-case only)

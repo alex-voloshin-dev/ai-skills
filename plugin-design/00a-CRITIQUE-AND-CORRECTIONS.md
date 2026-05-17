@@ -90,7 +90,7 @@
 ### C4. Hook `subagent-stop-learnings.py` "off by default" — toggled how?
 **Plan says:** "off by default."
 **Reality:** Plugins ship a fixed `hooks/hooks.json`. There's no per-user toggle in the standard plugin model.
-**Fix:** Either (a) ship two `hooks.json` variants and document install-time choice, or (b) make the hook itself read a flag from `.ai-assets-memory/config.json` and no-op if not enabled. Recommend (b).
+**Fix:** Either (a) ship two `hooks.json` variants and document install-time choice, or (b) make the hook itself read a flag from `.ai-skills-memory/config.json` and no-op if not enabled. Recommend (b).
 
 ### C5. Eval case format — `eval/cases/<skill>/<case>.json` mentioned, never specified.
 **Fix:** Define the JSON schema in Section 3.6. Skeleton:
@@ -99,7 +99,7 @@
   "id": "feature-design-001",
   "skill": "feature-design",
   "prompt": "Design a feature for...",
-  "context_files": [".ai-assets-memory/.committed/sample-CLAUDE.md"],
+  "context_files": [".ai-skills-memory/.committed/sample-CLAUDE.md"],
   "oracle": {
     "type": "judge",
     "rubric": "feature-design-rubric.md",
@@ -121,7 +121,7 @@
 
 ### M1. Cowork host auto-memory.
 **Reality:** The user runs in Cowork mode which has its own auto-memory at `~/.../spaces/<id>/memory/`. Our plugin memory must not collide or duplicate.
-**Fix:** Add to Section 3.4: explicit non-interference contract. Plugin memory NEVER writes to host memory dir. Host memory is opaque to plugin. If they overlap (e.g., user asks for project facts), plugin reads host memory if exposed, but always writes to `.ai-assets-memory/`.
+**Fix:** Add to Section 3.4: explicit non-interference contract. Plugin memory NEVER writes to host memory dir. Host memory is opaque to plugin. If they overlap (e.g., user asks for project facts), plugin reads host memory if exposed, but always writes to `.ai-skills-memory/`.
 
 ### M2. Multi-language conversation.
 **Reality:** User wants Russian conversation, English in files. Skills are English. Subagents should respond in user-prefer-language for non-artefact text. Never specified.
@@ -139,13 +139,13 @@
 **Reality:** No mention of what happens when subagent fails, hook crashes, oracle errors.
 **Fix:** Add Section 3.8 "Failure modes":
 - Subagent error → Lead retries once with explicit error context, then escalates to user with full trace
-- Hook script crash → fail open with warning (don't block all tool use due to a buggy hook); log to `.ai-assets-memory/hook-errors.log`
+- Hook script crash → fail open with warning (don't block all tool use due to a buggy hook); log to `.ai-skills-memory/hook-errors.log`
 - Oracle error in RALF → treat as kill condition; user gets full diagnostic
 - Eval runner crash → partial results saved; resume supported
 
 ### M6. Observability.
 **Reality:** No mention of how the user sees what's happening.
-**Fix:** Add: every workflow writes a structured `<run-id>.jsonl` to `.ai-assets-memory/runs/` capturing timestamps, model calls, token counts, subagent spawn/return events. `/plugin-doctor --runs` summarizes.
+**Fix:** Add: every workflow writes a structured `<run-id>.jsonl` to `.ai-skills-memory/runs/` capturing timestamps, model calls, token counts, subagent spawn/return events. `/plugin-doctor --runs` summarizes.
 
 ### M7. Missing security-engineer agent.
 **Reality:** Section 4.1 Wave 2 mentions "ui-ux-designer, db-engineer, security review" — no security agent exists. Also no `/security-audit` workflow agent has anyone to lead it.
@@ -171,7 +171,7 @@
 
 ### E1. Token budget on RALF + nested workflows.
 **Risk:** `/feature-design` uses RALF (cap 5 iter × ~50K tokens per iter = 250K) AND `/develop` uses RALF (cap 8 iter × ~80K tokens = 640K). If a user chains `/feature-design` → `/develop` in one session, we burn ~900K tokens easily. With Max plan rate limits this can hit ceilings mid-session.
-**Fix:** Add a per-session token meter (`session-start-context.py` initializes a counter, every skill increments). Soft warning at 1M, hard pause at 1.5M asking user to confirm continuation. Numbers configurable in `.ai-assets-memory/config.json`.
+**Fix:** Add a per-session token meter (`session-start-context.py` initializes a counter, every skill increments). Soft warning at 1M, hard pause at 1.5M asking user to confirm continuation. Numbers configurable in `.ai-skills-memory/config.json`.
 
 ### E2. Subagent context contamination.
 **Risk:** When the Lead spawns 5 subagents in Wave 2 of `/feature-design`, each gets a full project context payload. 5 × 30K context = 150K tokens just for setup.
@@ -185,7 +185,7 @@
 **Risk:** Judge is Haiku (per cost decision). Haiku judging Opus output may have systematic bias.
 **Fix:** For subjective rubric oracles, add a "judge calibration" check: at install time `/plugin-doctor` runs the judge against 5 known-good and 5 known-bad samples; reports Spearman correlation with expected scores. Flag if < 0.7. Allow user to upgrade judge to Sonnet if calibration weak.
 
-### E5. `.ai-assets-memory/.committed/` is opt-in but easy to misuse.
+### E5. `.ai-skills-memory/.committed/` is opt-in but easy to misuse.
 **Risk:** User accidentally commits ephemeral state by writing to `.committed/` instead of root.
 **Fix:** A pre-commit-style hook validates `.committed/` writes against a schema (only files matching allowlist patterns: `conventions.md`, `eval-baseline.json`, `architecture-decisions/*.md`). Warns/blocks unrelated writes. List in `memory-discipline.md`.
 
@@ -257,7 +257,7 @@ Verified by grep: no friendly4ai-specific terms (AI-Readiness, AI-Visibility, GE
 
 The first draft missed several modern Claude Code plugin features. All added in Round 2:
 
-**H1. `userConfig` declarative configuration.** First draft proposed manual editing of `.ai-assets-memory/config.json` for top-level toggles. Modern best practice is `userConfig` block in `plugin.json` that prompts user at install/configure time. **Replaced** the config.json model for top-level settings; runtime per-session state still uses `.ai-assets-memory/`.
+**H1. `userConfig` declarative configuration.** First draft proposed manual editing of `.ai-skills-memory/config.json` for top-level toggles. Modern best practice is `userConfig` block in `plugin.json` that prompts user at install/configure time. **Replaced** the config.json model for top-level settings; runtime per-session state still uses `.ai-skills-memory/`.
 
 **H2. `outputStyles` and `monitors`.** Not used in first draft.
 - Added two output styles (`concise-pr`, `design-pack`) for workflow-specific formatting
@@ -279,7 +279,7 @@ The first draft missed several modern Claude Code plugin features. All added in 
 ```
 All NEW and REFACTOR skills must conform.
 
-**H6. Plugin namespacing.** First draft did not address what happens if another installed plugin defines a colliding slash command. Added explicit note: `/feature-design` becomes `/ai-assets:feature-design` on collision.
+**H6. Plugin namespacing.** First draft did not address what happens if another installed plugin defines a colliding slash command. Added explicit note: `/feature-design` becomes `/ai-skills:feature-design` on collision.
 
 **H7. Plugin dependencies.** First draft had no `dependencies` field. Added explicit empty array — transparency about being fully standalone in v0.1.
 
@@ -348,7 +348,7 @@ Section-by-section audit against `context_engineering_guide.md`. Found 10 gaps, 
 ### N. Practical / pragmatic issues
 
 #### N1. NEW skills list is INCOMPLETE — missing 5 workflow skills.
-**Q:** Plan §2.1 NEW lists 12 skills. Workflow specs Part A defines 10 workflows. Of those 10, only 3 (feature-design, env-analyzer, ai-assets-init) appear in NEW. What about the other 7?
+**Q:** Plan §2.1 NEW lists 12 skills. Workflow specs Part A defines 10 workflows. Of those 10, only 3 (feature-design, env-analyzer, ai-skills-init) appear in NEW. What about the other 7?
 **A:** Mapping audit:
 - `/feature-design` → NEW feature-design ✓ in plan
 - `/develop` → ambiguous (see N2 below); not in NEW; not explicitly mapped
@@ -359,7 +359,7 @@ Section-by-section audit against `context_engineering_guide.md`. Found 10 gaps, 
 - `/spike` → MISSING from NEW; no existing skill of this name
 - `/security-audit` → MISSING from NEW; existing `security-scan` is sub-skill, not workflow
 - `/docs-pack` → MISSING from NEW; existing `docs` is general docs help, scope differs
-- `/ai-assets-init` → NEW ai-assets-init ✓
+- `/ai-skills-init` → NEW ai-skills-init ✓
 
 **Implication:** Five workflow skills (`refactor`, `migrate`, `spike`, `security-audit`, `docs-pack`) are described in 01-WORKFLOW-SPECS.md but missing from plan §2.1 disposition. Migration checklist B12 silently conflates them under item 123. Real skill count is wrong.
 
@@ -379,7 +379,7 @@ Same question applies to:
 **Fix:** Document the rename decisions in plan §2.1; update REFACTOR list to mark team-dev as "REFACTOR-RENAME → develop"; update NEW list to use `env-analyze`.
 
 #### N3. Migration checklist B12 conflates 6 atomic skills under item 123.
-**Q:** B12 lists "121 feature-design, 122 env-analyzer, 123 (also covered: refactor, migrate, spike, security-audit, docs-pack, ai-assets-init …)". Item 123 covers 6 separate skills. Are these one item or six?
+**Q:** B12 lists "121 feature-design, 122 env-analyzer, 123 (also covered: refactor, migrate, spike, security-audit, docs-pack, ai-skills-init …)". Item 123 covers 6 separate skills. Are these one item or six?
 **A:** They're six separate file-creation tasks. Conflation is a numbering bug — breaks the "atomic items" contract of the checklist.
 **Fix:** Re-enumerate B12 atomically. If NEW=17 (per N1 fix), B12 will have items 121-137 (or however the numbering shakes out after R1).
 
@@ -399,7 +399,7 @@ Same question applies to:
 #### N6. Output directory convention has unexplained outlier.
 **Q:** Workflows write outputs to:
 - `/feature-design` → `<repo>/docs/features/<feature-id>/` (in target repo's docs/, NOT memory)
-- All other workflows → `<repo>/.ai-assets-memory/<workflow-name>/<run-id>/`
+- All other workflows → `<repo>/.ai-skills-memory/<workflow-name>/<run-id>/`
 
 Why is `/feature-design` the outlier?
 **A:** Intentional: design packs are intended to be VERSIONED IN GIT as project documentation. Other workflows produce ephemeral logs. But this rationale is not documented in 01-WORKFLOW-SPECS.md.
@@ -471,7 +471,7 @@ These are complementary, not duplicate. Our framework can DELEGATE description-o
 | Q4-N3 | 04-MIGRATION-CHECKLIST.md B12 | Re-enumerate atomically: 17 NEW skill items (was conflated under 121-132) |
 | Q5-N4 | 04-MIGRATION-CHECKLIST.md B10 | Remove duplicate `eval/config.json` (B10.4 deleted; renumber B10 to close gap) |
 | Q6-N5 | 04-MIGRATION-CHECKLIST.md NEW B10a | Add calibration samples batch — 3-5 samples per rubric × 17 rubrics |
-| Q7-N6 | 01-WORKFLOW-SPECS.md /feature-design and /docs-pack Output schema | Add note: design/docs outputs go to `docs/` (versioned), workflow logs go to `.ai-assets-memory/` (gitignored) |
+| Q7-N6 | 01-WORKFLOW-SPECS.md /feature-design and /docs-pack Output schema | Add note: design/docs outputs go to `docs/` (versioned), workflow logs go to `.ai-skills-memory/` (gitignored) |
 | Q8-O1 | plugin/rules/subagent-isolation.md (Phase 2 authoring spec) | Document the bounded-recursion guarantee for v0.1 |
 | Q9-O2 | 04-MIGRATION-CHECKLIST.md B8 table | Add note: pre-compact-memory-flush + eval-judge invocation will migrate to native `agent:` hook type in v0.2 |
 | Q10-O3 | 03-MEMORY-ARCHITECTURE.md §11 | Add explicit "memory-curator runs in isolated subagent context" sentence |
@@ -499,7 +499,7 @@ These are complementary, not duplicate. Our framework can DELEGATE description-o
 
 #### S3 [HIGH]. ARCHIVE skills have no Phase 5 sunset plan.
 **Q:** 5 ARCHIVE skills stay in legacy `.claude/`. Plan §5 Phase 5 says "Move .claude/, .codex/, .windsurf/, .agents/ to archive/" — but doesn't address what happens to references to those archived skills, nor whether/how users get migration guidance.
-**A:** Real gap. When `.claude/` moves to `archive/` in Phase 5, the 5 ARCHIVE skills become orphaned. Users invoking `/ai-assets` (the legacy archived skill) get no clear migration message.
+**A:** Real gap. When `.claude/` moves to `archive/` in Phase 5, the 5 ARCHIVE skills become orphaned. Users invoking `/ai-skills` (the legacy archived skill) get no clear migration message.
 **Fix:** Plan §5 Phase 5 should include: (a) author `archive/MIGRATION.md` documenting "skill X removed → use Y instead" for each of the 5 archived skills; (b) v0.3.0 release note mentions archive migration; (c) optional: add deprecation hooks in v0.2 that warn when legacy skills are invoked (low priority since we control distribution).
 
 #### S4 [MEDIUM]. Plan §5 phase numbering conflicts with user's mental model.
@@ -524,14 +524,14 @@ These are complementary, not duplicate. Our framework can DELEGATE description-o
 **Fix:** Document in Plan §1.7 hooks reference and Checklist B8 description: tool-output-normalize.py reads `wrap_marker` from previous hook's stdout/env; aborts if missing. This makes ordering self-documenting and self-enforcing.
 
 #### S7 [LOW]. Plugin install path UX has 3 different forms — no canonical guidance.
-**Q:** Different docs reference: `claude plugin install ./plugin` (dev), `claude plugin install <git-url>` (README), `claude plugin install ai-assets/ai-assets` (marketplace future). Which is canonical for the user's expected install method?
+**Q:** Different docs reference: `claude plugin install ./plugin` (dev), `claude plugin install <git-url>` (README), `claude plugin install ai-skills/ai-skills` (marketplace future). Which is canonical for the user's expected install method?
 **A:** All three are valid for different stages. README should make the precedence clear: marketplace (after v0.2 publish) > git URL > local path (dev only).
 **Fix:** Update Plan §5a Distribution & Install — explicit precedence + each method's intended audience.
 
-#### S8 [MEDIUM]. `~/.claude/ai-assets/` for L5 — verify no collision with Claude Code internal paths.
-**Q:** Claude Code itself manages `~/.claude/`. We're creating `~/.claude/ai-assets/`. Could it collide with future Claude Code internal paths?
-**A:** Per current Claude Code docs (verified), Claude Code uses these paths under `~/.claude/`: `agents/`, `skills/`, `plugins/`, `themes/`, `output-styles/`, `settings.json`, `projects/`, `commands/`. Our `ai-assets/` doesn't collide. But it COULD if Claude Code adds a future feature called "ai-assets". Low risk but worth documenting.
-**Fix:** Add a note in 03-MEMORY-ARCHITECTURE.md L5 section: "L5 path is `~/.claude/ai-assets/learnings.md`. As of 2026-04-26, no collision with Claude Code-managed paths under `~/.claude/`. If Claude Code future-introduces a managed `ai-assets` directory, migrate L5 to `~/.claude/plugins-data/ai-assets/learnings.md` or similar."
+#### S8 [MEDIUM]. `~/.claude/ai-skills/` for L5 — verify no collision with Claude Code internal paths.
+**Q:** Claude Code itself manages `~/.claude/`. We're creating `~/.claude/ai-skills/`. Could it collide with future Claude Code internal paths?
+**A:** Per current Claude Code docs (verified), Claude Code uses these paths under `~/.claude/`: `agents/`, `skills/`, `plugins/`, `themes/`, `output-styles/`, `settings.json`, `projects/`, `commands/`. Our `ai-skills/` doesn't collide. But it COULD if Claude Code adds a future feature called "ai-skills". Low risk but worth documenting.
+**Fix:** Add a note in 03-MEMORY-ARCHITECTURE.md L5 section: "L5 path is `~/.claude/ai-skills/learnings.md`. As of 2026-04-26, no collision with Claude Code-managed paths under `~/.claude/`. If Claude Code future-introduces a managed `ai-skills` directory, migrate L5 to `~/.claude/plugins-data/ai-skills/learnings.md` or similar."
 
 #### S9 [HIGH]. B12 validation skipped: "Use when" grep is for user-invocable skills, but expected count of 19 may be wrong.
 **Q:** Round 4 added validation: `grep -l "Use when" plugin/skills/*/SKILL.md | wc -l` → 19. But:

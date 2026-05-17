@@ -17,12 +17,12 @@ Decided this is too much for one role, so spawned subagents:
 
 ```python
 Agent(
-    subagent_type="ai-assets:java-engineer",
+    subagent_type="ai-skills:java-engineer",
     description="implement cancel-order controller",
     prompt="..."
 )
 Agent(
-    subagent_type="ai-assets:test-engineer",
+    subagent_type="ai-skills:test-engineer",
     description="write integration tests",
     prompt="..."
 )

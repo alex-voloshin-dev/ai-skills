@@ -18,7 +18,7 @@ plugin/eval/calibration/feature-flags-rollout/
 ├── good/                                    # empty — fill before Tier 3 use
 └── bad/                                     # empty — fill before Tier 3 use
 
-.ai-assets-memory/plugin-skills/feature-flags-rollout/scaffolded.md
+.ai-skills-memory/plugin-skills/feature-flags-rollout/scaffolded.md
 ```
 
 ## SKILL.md Frontmatter (excerpt)
@@ -67,7 +67,7 @@ RALF and G7 sections NOT generated (correct — neither `--ralph` nor `--agent-s
 
 ## Memory Write
 
-Appended to `.ai-assets-memory/plugin-skills/feature-flags-rollout/scaffolded.md`:
+Appended to `.ai-skills-memory/plugin-skills/feature-flags-rollout/scaffolded.md`:
 
 ```
 - 2026-05-08 | scaffolded | type=workflow | invocable=true | flags=[]

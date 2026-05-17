@@ -29,7 +29,7 @@ Converts a 1–3 sentence feature idea into a complete design pack (PRD, archite
 
 ### Output schema
 
-**Convention exception (Round 4 N6):** `/feature-design` writes its design pack to `<repo>/docs/features/<feature-id>/` — INSIDE the target repo's `docs/` directory, NOT inside `.ai-assets-memory/`. Reason: design packs are intended to be VERSIONED IN GIT as project documentation, reviewed by the team, and live across many sprints. They are NOT ephemeral run logs (which DO live in `.ai-assets-memory/`). The same exception applies to `/docs-pack` outputs (also user-facing docs intended for git). All other workflows write outputs to `.ai-assets-memory/<workflow>/<run-id>/` because those outputs are ephemeral artifacts of one workflow execution.
+**Convention exception (Round 4 N6):** `/feature-design` writes its design pack to `<repo>/docs/features/<feature-id>/` — INSIDE the target repo's `docs/` directory, NOT inside `.ai-skills-memory/`. Reason: design packs are intended to be VERSIONED IN GIT as project documentation, reviewed by the team, and live across many sprints. They are NOT ephemeral run logs (which DO live in `.ai-skills-memory/`). The same exception applies to `/docs-pack` outputs (also user-facing docs intended for git). All other workflows write outputs to `.ai-skills-memory/<workflow>/<run-id>/` because those outputs are ephemeral artifacts of one workflow execution.
 
 Files written to `<repo>/docs/features/<feature-id>/` (feature-id auto-generated from first 3 words of idea):
 - `PRD.md` — product vision, success metrics, acceptance criteria
@@ -90,7 +90,7 @@ Files written to `<repo>/docs/features/<feature-id>/` (feature-id auto-generated
 │  └─ (loop back to WAVE 3)
 │
 └─ Lead writes IMPLEMENTATION-PLAN.md (maps PRD requirements → work packages → engineer roles)
-   Memory write: L4 `.ai-assets-memory/designs/<feature-id>.md` (summary + decisions)
+   Memory write: L4 `.ai-skills-memory/designs/<feature-id>.md` (summary + decisions)
    Report: /plugin-doctor format (TodoList check + token totals)
 ```
 
@@ -116,9 +116,9 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After wave-1 complete | `.ai-assets-memory/designs/<feature-id>/wave1-summary.md` — high-level decisions per agent |
-| L4 | After RALF complete | `.ai-assets-memory/designs/<feature-id>/final.md` — trace of all rubric scores + converged design |
-| L4 (committed, opt-in) | Before handoff | `.ai-assets-memory/.committed/designs/<feature-id>.md` — finalized design snapshot for team review |
+| L4 | After wave-1 complete | `.ai-skills-memory/designs/<feature-id>/wave1-summary.md` — high-level decisions per agent |
+| L4 | After RALF complete | `.ai-skills-memory/designs/<feature-id>/final.md` — trace of all rubric scores + converged design |
+| L4 (committed, opt-in) | Before handoff | `.ai-skills-memory/.committed/designs/<feature-id>.md` — finalized design snapshot for team review |
 
 ### Failure modes
 - **Subagent (Wave 1–2) timeout:** Lead retries once with explicit error context. If persistent, escalates to user with instructions to narrow scope.
@@ -127,7 +127,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 - **Budget hit mid-RALF:** Hard pause; prompt user to confirm continuation or abort (raises per-workflow RALF cap in userConfig).
 
 ### Observability events
-Events written to `.ai-assets-memory/runs/<run-id>.jsonl`:
+Events written to `.ai-skills-memory/runs/<run-id>.jsonl`:
 - `workflow_start` — feature-design with idea hash
 - `context_load` × 9 — per-agent context slice loaded (tokens)
 - `wave_start` (1, 2, 3)
@@ -155,8 +155,8 @@ Full implementation of a feature from design pack or PRD. Takes an IMPLEMENTATIO
 
 ### Output schema
 - Working code committed to branch (per role-selection-table.md)
-- `<repo>/.ai-assets-memory/develop/<run-id>/REVIEW-LOG.md` — review trace
-- `.ai-assets-memory/develop/<run-id>/PR-description.md` — auto-built from IMPLEMENTATION-PLAN + diff summary + run stats
+- `<repo>/.ai-skills-memory/develop/<run-id>/REVIEW-LOG.md` — review trace
+- `.ai-skills-memory/develop/<run-id>/PR-description.md` — auto-built from IMPLEMENTATION-PLAN + diff summary + run stats
 - Pull request opened with auto-generated description and suggested reviewers
 - Tests passing (unit + integration + smoke where applicable)
 
@@ -227,9 +227,9 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After DEVELOP complete | `.ai-assets-memory/develop/<run-id>/developer-notes.md` — per-developer summary |
-| L4 | After QA pass | `.ai-assets-memory/develop/<run-id>/final.md` — design-to-code trace |
-| L4 (committed) | On PR open | `.ai-assets-memory/.committed/releases/<version>/changes.md` — what changed, why |
+| L4 | After DEVELOP complete | `.ai-skills-memory/develop/<run-id>/developer-notes.md` — per-developer summary |
+| L4 | After QA pass | `.ai-skills-memory/develop/<run-id>/final.md` — design-to-code trace |
+| L4 (committed) | On PR open | `.ai-skills-memory/.committed/releases/<version>/changes.md` — what changed, why |
 
 ### Failure modes
 - **Developer stalls on work package:** Lead checks git log, retries with explicit error context. Escalates if persistent.
@@ -264,7 +264,7 @@ Triage environment vs. code issue; diagnose root cause; fix; ship. Use for: prod
 - `--reproduction-test` (optional): path to a test that reproduces the bug (exit 0 = bug visible, exit non-0 = bug fixed). If omitted, qa-engineer auto-creates one.
 
 ### Output schema
-- Root cause documented in `.ai-assets-memory/bugfix/<run-id>/diagnosis.md`
+- Root cause documented in `.ai-skills-memory/bugfix/<run-id>/diagnosis.md`
 - Code fix (if code) or configuration change (if infra)
 - Reproduction test now passing
 - Pull request with fix and test
@@ -337,8 +337,8 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After diagnosis | `.ai-assets-memory/bugfix/<run-id>/diagnosis.md` — root cause analysis |
-| L4 (committed, opt-in) | After fix ships | `.ai-assets-memory/.committed/incidents/<date>-<summary>.md` — incident post-mortem for pattern matching |
+| L4 | After diagnosis | `.ai-skills-memory/bugfix/<run-id>/diagnosis.md` — root cause analysis |
+| L4 (committed, opt-in) | After fix ships | `.ai-skills-memory/.committed/incidents/<date>-<summary>.md` — incident post-mortem for pattern matching |
 
 ### Failure modes
 - **Env vs. code ambiguous:** Lead escalates to user; asks for more info or environmental logs.
@@ -372,7 +372,7 @@ Standalone diagnostic for environment state (local Docker compose, K8s, CI runne
 - `--auto-fix` (optional): apply ONLY container-level safe fixes — restart stuck containers, clear container-scoped caches, regenerate config from existing template. Default false. **Explicitly NOT in scope:** restarting Docker daemon, regenerating TLS certs, modifying host-level state, deleting data, changing secrets, k8s namespace operations. Anything outside container-level → manual escalation only.
 
 ### Output schema
-- `.ai-assets-memory/env-reports/<run-id>/ENV-REPORT.md` — diagnostic summary with tables:
+- `.ai-skills-memory/env-reports/<run-id>/ENV-REPORT.md` — diagnostic summary with tables:
   - Container/pod status (name, state, restarts, uptime)
   - Log excerpts (last 20 lines per service, error filter)
   - Network sanity (connectivity, DNS, port availability)
@@ -434,7 +434,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After analysis | `.ai-assets-memory/env-reports/<run-id>/baseline.json` — container states, resource usage, timestamps (for drift detection) |
+| L4 | After analysis | `.ai-skills-memory/env-reports/<run-id>/baseline.json` — container states, resource usage, timestamps (for drift detection) |
 
 ### Failure modes
 - **Docker not installed:** Graceful skip; report N/A for that scope.
@@ -469,7 +469,7 @@ Plan and execute a code refactor (change structure without changing behavior). U
 ### Output schema
 - Refactored code in assigned files
 - Test suite passing (tests updated if signatures change)
-- `.ai-assets-memory/refactor/<run-id>/REFACTOR-LOG.md` — before/after comparison, rationale
+- `.ai-skills-memory/refactor/<run-id>/REFACTOR-LOG.md` — before/after comparison, rationale
 - Pull request with diff + refactor log
 
 ### Agent roster
@@ -528,8 +528,8 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After plan approval | `.ai-assets-memory/refactor/<run-id>/plan.md` |
-| L4 | After completion | `.ai-assets-memory/refactor/<run-id>/final.md` — before/after stats (lines, complexity metrics) |
+| L4 | After plan approval | `.ai-skills-memory/refactor/<run-id>/plan.md` |
+| L4 | After completion | `.ai-skills-memory/refactor/<run-id>/final.md` — before/after stats (lines, complexity metrics) |
 
 ### Failure modes
 - **Refactor scope creeps:** Lead stops work; user must clarify goal.
@@ -560,8 +560,8 @@ Planned migration (schema, library, version, framework). Use for: database schem
 
 ### Output schema
 - Migration code (schema scripts, version pins, compatibility shims)
-- `.ai-assets-memory/migrate/<run-id>/MIGRATION-PLAN.md` — detailed steps, rollback procedure, risk assessment
-- `.ai-assets-memory/migrate/<run-id>/VALIDATION.md` — test results, data integrity checks
+- `.ai-skills-memory/migrate/<run-id>/MIGRATION-PLAN.md` — detailed steps, rollback procedure, risk assessment
+- `.ai-skills-memory/migrate/<run-id>/VALIDATION.md` — test results, data integrity checks
 - PR with migration + rollback procedures documented
 
 ### Agent roster
@@ -632,8 +632,8 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 (committed) | After plan approved | `.ai-assets-memory/.committed/migrations/<name>/plan.md` — strategy for team review |
-| L4 (committed) | After validation pass | `.ai-assets-memory/.committed/migrations/<name>/validation-report.md` — data integrity proof |
+| L4 (committed) | After plan approved | `.ai-skills-memory/.committed/migrations/<name>/plan.md` — strategy for team review |
+| L4 (committed) | After validation pass | `.ai-skills-memory/.committed/migrations/<name>/validation-report.md` — data integrity proof |
 
 ### Failure modes
 - **Rollback procedure fails:** Escalate as critical; do not proceed with migration until rollback is proven safe.
@@ -666,7 +666,7 @@ Time-boxed exploration with go/no-go writeup. Use for: evaluating new tech, prot
 - `--poc` (optional): if set, produce a minimal proof-of-concept (code) alongside writeup.
 
 ### Output schema
-- `.ai-assets-memory/spikes/<run-id>/SPIKE-REPORT.md` — findings, pro/con analysis, recommendation (go/no-go/needs-more-info)
+- `.ai-skills-memory/spikes/<run-id>/SPIKE-REPORT.md` — findings, pro/con analysis, recommendation (go/no-go/needs-more-info)
 - (optional) Proof-of-concept code in `./spike-poc-<run-id>/` (if `--poc` flag)
 - Memory write: L4 research decision for future reference
 
@@ -715,8 +715,8 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After complete | `.ai-assets-memory/spikes/<run-id>/report.md` — full findings |
-| L4 (committed) | **Always ask user explicitly after report**, never auto-write | `.ai-assets-memory/.committed/decisions/<date>-<question>.md` — recorded decision (only if user confirms in chat). Never auto-create — `.committed/` goes to git and the user may want to reword the decision before committing |
+| L4 | After complete | `.ai-skills-memory/spikes/<run-id>/report.md` — full findings |
+| L4 (committed) | **Always ask user explicitly after report**, never auto-write | `.ai-skills-memory/.committed/decisions/<date>-<question>.md` — recorded decision (only if user confirms in chat). Never auto-create — `.committed/` goes to git and the user may want to reword the decision before committing |
 
 ### Failure modes
 - **Time cap hit mid-research:** Researcher pauses at time-cap; produces partial report with "more investigation needed" note.
@@ -744,7 +744,7 @@ Full security scan of the codebase and infrastructure. Use for: pre-release audi
 - `--report-type` (optional, default "summary"): `summary` or `detailed`.
 
 ### Output schema
-- `.ai-assets-memory/security-audits/<run-id>/SECURITY-REPORT.md` — findings by category:
+- `.ai-skills-memory/security-audits/<run-id>/SECURITY-REPORT.md` — findings by category:
   - Secrets scan (hardcoded creds, API keys, etc.) — CRITICAL if found
   - Dependency audit (CVE check, outdated libs) — HIGH severity
   - Auth review (credential handling, session management) — MEDIUM
@@ -752,7 +752,7 @@ Full security scan of the codebase and infrastructure. Use for: pre-release audi
   - Data handling (PII exposure, encryption, logging) — MEDIUM
   - Cryptography (algorithm choices, key management) — MEDIUM
   - Infrastructure (network policies, TLS, secrets store) — MEDIUM
-- `.ai-assets-memory/security-audits/<run-id>/REMEDIATION-PLAN.md` — per finding: severity, mitigation steps, suggested owner role. **No effort estimate** — effort is too context-dependent (team velocity, codebase familiarity, dependency on other teams) for a security agent to predict reliably; user/PM owns sizing
+- `.ai-skills-memory/security-audits/<run-id>/REMEDIATION-PLAN.md` — per finding: severity, mitigation steps, suggested owner role. **No effort estimate** — effort is too context-dependent (team velocity, codebase familiarity, dependency on other teams) for a security agent to predict reliably; user/PM owns sizing
 - Pull request with fixes for automatable issues (dependency updates, secrets removal from code)
 
 ### Agent roster
@@ -817,8 +817,8 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After audit complete | `.ai-assets-memory/security-audits/<run-id>/findings.json` — structured findings (for trend tracking) |
-| L4 (committed) | If CRITICAL found | `.ai-assets-memory/.committed/security/incidents/<date>.md` — critical finding + immediate action taken |
+| L4 | After audit complete | `.ai-skills-memory/security-audits/<run-id>/findings.json` — structured findings (for trend tracking) |
+| L4 (committed) | If CRITICAL found | `.ai-skills-memory/.committed/security/incidents/<date>.md` — critical finding + immediate action taken |
 
 ### Failure modes
 - **False positive (e.g., secret string in comment, not actual key):** Security engineer reviews, confirms, removes from report if benign.
@@ -910,7 +910,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After complete | `.ai-assets-memory/docs/<module>/generation-summary.md` — what was documented, when, audience |
+| L4 | After complete | `.ai-skills-memory/docs/<module>/generation-summary.md` — what was documented, when, audience |
 
 ### Failure modes
 - **Source code poorly documented:** Content writer infers from tests + examples; flags as "inferred from tests" in doc.
@@ -924,15 +924,15 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 ---
 
-## /ai-assets-init
+## /ai-skills-init
 
 ### Purpose
-Bootstrap a target repository to be ai-assets-aware. Creates CLAUDE.md scaffolding, initializes .ai-assets-memory/ directory structure, configures .gitignore rules. Use on: first run in a new repo, when moving to ai-assets plugin. Idempotent — safe to re-run.
+Bootstrap a target repository to be ai-skills-aware. Creates CLAUDE.md scaffolding, initializes .ai-skills-memory/ directory structure, configures .gitignore rules. Use on: first run in a new repo, when moving to ai-skills plugin. Idempotent — safe to re-run.
 
 ### Invocation
 ```
-/ai-assets-init
-/ai-assets-init --codebase-type "python-flask"
+/ai-skills-init
+/ai-skills-init --codebase-type "python-flask"
 ```
 
 ### Input schema
@@ -942,13 +942,13 @@ Bootstrap a target repository to be ai-assets-aware. Creates CLAUDE.md scaffoldi
 ### Output schema
 - `<repo>/CLAUDE.md` — scaffolded with codebase type, empty sections for user to fill
 - `<repo>/AGENTS.md` — empty template (optional, for team that wants agent customization)
-- `<repo>/.ai-assets-memory/` directory structure:
+- `<repo>/.ai-skills-memory/` directory structure:
   - `.gitignore` — templates for what to ignore (session logs, RALF iterations)
   - `.committed/` — opt-in versioned memory (conventions, baselines, decisions)
   - `config.json` — per-repo token/RALF overrides (optional)
   - `learnings.md` — empty template
   - `designs/`, `develop/`, `bugfix/`, `refactor/`, `spikes/`, `security-audits/` — empty subdirs
-- `<repo>/.gitignore` — appended with `.ai-assets-memory/` exclusion rule (if not already present)
+- `<repo>/.gitignore` — appended with `.ai-skills-memory/` exclusion rule (if not already present)
 
 ### Agent roster
 
@@ -970,14 +970,14 @@ Bootstrap a target repository to be ai-assets-aware. Creates CLAUDE.md scaffoldi
 ├─ Generate (optional) AGENTS.md:
 │  └─ List the 22 base agents available; user can customize per-repo
 │
-├─ Create .ai-assets-memory structure:
+├─ Create .ai-skills-memory structure:
 │  ├─ .gitignore with rules for session logs, RALF runs, ephemeral memory
 │  ├─ .committed/ subdir with README explaining versioned memory contract
 │  ├─ config.json template with override options
 │  └─ Subdirs for workflow outputs
 │
 ├─ Update root .gitignore:
-│  └─ Add .ai-assets-memory/ rule (if not present)
+│  └─ Add .ai-skills-memory/ rule (if not present)
 │
 └─ Report: scaffold creation summary, next steps (fill in CLAUDE.md, run workflows)
 ```
@@ -985,7 +985,7 @@ Bootstrap a target repository to be ai-assets-aware. Creates CLAUDE.md scaffoldi
 No RALF; scaffolding is one-pass.
 
 ### Eval rubric
-Pointer: `plugin/eval/judge-rubrics/ai-assets-init.md` (Phase 2).
+Pointer: `plugin/eval/judge-rubrics/ai-skills-init.md` (Phase 2).
 
 Dimensions:
 1. **Correctness** — scaffold matches detected codebase type
@@ -1000,7 +1000,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 - **No RALF** — setup is one-pass; idempotent so safe to re-run.
 
 ### Memory writes
-- L4: `.ai-assets-memory/init-summary.md` — timestamp, codebase type detected, files created
+- L4: `.ai-skills-memory/init-summary.md` — timestamp, codebase type detected, files created
 
 ### Failure modes
 - **Codebase type ambiguous:** Scaffolder defaults to generic; user can specify with `--codebase-type`.
@@ -1008,7 +1008,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 - **Write permission denied:** Escalate to user; ask for elevated permissions or alternate location.
 
 ### Observability events
-- `workflow_start` — ai-assets-init
+- `workflow_start` — ai-skills-init
 - `codebase_type_detected` — detected type
 - `scaffold_created` — files/dirs created
 - `workflow_end` — COMPLETE
@@ -1031,10 +1031,10 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 **Behavior:**
 - Validates `--oracle` and `--kill-on` args (rejects if both missing).
-- Initializes RALF run in `.ai-assets-memory/ralph/<run-id>/`.
+- Initializes RALF run in `.ai-skills-memory/ralph/<run-id>/`.
 - Enters loop: generate → check oracle → check kill-on signal → on failure: log iteration + re-inject prompt.
 - Caps: 10 iter / 200K tokens / 120 min (overridable in userConfig).
-- Writes `.ai-assets-memory/ralph/<run-id>/budget.json` with final cost + iteration count.
+- Writes `.ai-skills-memory/ralph/<run-id>/budget.json` with final cost + iteration count.
 - Emits observability events to run log.
 
 **Init vs continuation prompts (G10):** RALF distinguishes the FIRST iteration prompt (init) from subsequent iterations (continuation):
@@ -1042,7 +1042,7 @@ Pass: avg ≥ 4.0, no dimension < 3.
 - **Init prompt (iter 1):** full task brief — goal, constraints, evidence, output contract, oracle definition, kill-on signal. Typically 5–15K tokens depending on workflow.
 - **Continuation prompt (iter ≥ 2):** state delta only — last-iteration diff, oracle failure summary, top-3 active constraints, kill-on countdown. Typically 1–3K tokens. Reduces per-iteration token cost by ~70%.
 
-Both prompts are stored in `.ai-assets-memory/ralph/<run-id>/`:
+Both prompts are stored in `.ai-skills-memory/ralph/<run-id>/`:
 - `iter-001/prompt.md` — full init prompt
 - `iter-NNN/prompt.md` (N ≥ 2) — continuation prompt with state delta
 
@@ -1059,7 +1059,7 @@ RALF iteration {N} of max {MAX}.
 {oracle_status}: {oracle_message}
 {if failed: top error excerpt, max 200 tokens, wrapped per G1}
 
-## Active constraints (top 3, full list at .ai-assets-memory/ralph/{run-id}/config.json)
+## Active constraints (top 3, full list at .ai-skills-memory/ralph/{run-id}/config.json)
 1. {constraint 1}
 2. {constraint 2}
 3. {constraint 3}
@@ -1069,7 +1069,7 @@ RALF iteration {N} of max {MAX}.
 
 ## Your task
 Address the oracle failure above. Same task brief as iter 1; reload from
-`.ai-assets-memory/ralph/{run-id}/iter-001/prompt.md` if you need full context.
+`.ai-skills-memory/ralph/{run-id}/iter-001/prompt.md` if you need full context.
 ```
 
 ---
@@ -1115,17 +1115,17 @@ Address the oracle failure above. Same task brief as iter 1; reload from
 **Behavior (default mode):**
 - Checks skill frontmatter (name, description, required fields, `Use when` trigger pattern per H5) — validates against schema.
 - Checks hook scripts: executable bit set, Python syntax valid.
-- Checks `.ai-assets-memory/runs/*.jsonl` parsing and summarizes: total runs, avg duration, token totals, success rate.
-- Produces a report in stdout + `.ai-assets-memory/plugin-doctor.log`.
+- Checks `.ai-skills-memory/runs/*.jsonl` parsing and summarizes: total runs, avg duration, token totals, success rate.
+- Produces a report in stdout + `.ai-skills-memory/plugin-doctor.log`.
 
 ---
 
 ## /memory-init
 
-**Purpose:** Creates `.ai-assets-memory/` skeleton if missing. Idempotent.
+**Purpose:** Creates `.ai-skills-memory/` skeleton if missing. Idempotent.
 
 **Behavior:**
-- Creates directory structure (same as `/ai-assets-init` memory portion).
+- Creates directory structure (same as `/ai-skills-init` memory portion).
 - Initializes `learnings.md` with header comment.
 - Sets up `.committed/` with allowlist enforcement.
 - No-op if already exists.
@@ -1134,7 +1134,7 @@ Address the oracle failure above. Same task brief as iter 1; reload from
 
 ## /memory-recall
 
-**Purpose:** Query `.ai-assets-memory/` (L4) and optionally `~/.claude/ai-assets/learnings.md` (L5) for relevant memories by topic or keyword.
+**Purpose:** Query `.ai-skills-memory/` (L4) and optionally `~/.claude/ai-skills/learnings.md` (L5) for relevant memories by topic or keyword.
 
 **Invocation:**
 ```
@@ -1144,8 +1144,8 @@ Address the oracle failure above. Same task brief as iter 1; reload from
 ```
 
 **Behavior:**
-- Searches `.ai-assets-memory/learnings.md` and subdirs (L4) by keyword.
-- If `--global` flag: also searches `~/.claude/ai-assets/learnings.md` (L5, requires `user_global_memory_enabled: true`).
+- Searches `.ai-skills-memory/learnings.md` and subdirs (L4) by keyword.
+- If `--global` flag: also searches `~/.claude/ai-skills/learnings.md` (L5, requires `user_global_memory_enabled: true`).
 - Returns matching excerpts with context.
 
 ---
@@ -1162,8 +1162,8 @@ Address the oracle failure above. Same task brief as iter 1; reload from
 
 **Behavior:**
 - Prompts for confirmation before write.
-- Default: writes to `.ai-assets-memory/learnings.md` (L4, project-scoped).
-- With `--global`: writes to `~/.claude/ai-assets/learnings.md` (L5, user-scoped), requires `user_global_memory_enabled: true`.
+- Default: writes to `.ai-skills-memory/learnings.md` (L4, project-scoped).
+- With `--global`: writes to `~/.claude/ai-skills/learnings.md` (L5, user-scoped), requires `user_global_memory_enabled: true`.
 - Memory-curator agent reviews + approves (if `subagent_learnings_enabled: true`).
 - Appends with timestamp, source (workflow, reason).
 
@@ -1228,7 +1228,7 @@ Address the oracle failure above. Same task brief as iter 1; reload from
 ### Standard Workflow Scaffold (every long workflow follows)
 
 ```
-1. Context load       — read CLAUDE.md, AGENTS.md, .ai-assets-memory/
+1. Context load       — read CLAUDE.md, AGENTS.md, .ai-skills-memory/
 2. Clarify            — AskUserQuestion if ambiguity exceeds threshold
 3. Plan               — present plan (dependency-ordered work packages, effort estimate)
 4. User approval gate — proceed only with explicit OK
@@ -1236,7 +1236,7 @@ Address the oracle failure above. Same task brief as iter 1; reload from
 6. Pipeline           — workflow-specific gates (DEVELOP → REVIEW → QA, or variants)
 7. Eval               — eval-judge scores against workflow-specific rubric
 8. RALF              — loop if rubric not met; capped by iter/tokens/time + kill-on signal
-9. Memory write       — durable learnings to .ai-assets-memory/L4 (or L5 if --global)
+9. Memory write       — durable learnings to .ai-skills-memory/L4 (or L5 if --global)
 10. Final report      — TodoList check + completion report (per task-completion rule)
 ```
 
@@ -1261,11 +1261,11 @@ All workflows enforce:
 | `/spike` | research findings | research decision (if go/no-go unanimous) |
 | `/security-audit` | audit findings, remediation plan | critical findings incident log |
 | `/docs-pack` | docs generation summary | (none) |
-| `/ai-assets-init` | init summary | (none) |
+| `/ai-skills-init` | init summary | (none) |
 
 ### Shared Observability Events
 
-Every workflow writes to `.ai-assets-memory/runs/<run-id>.jsonl`:
+Every workflow writes to `.ai-skills-memory/runs/<run-id>.jsonl`:
 - `workflow_start` — workflow name, user input hash, timestamp
 - `context_load` — tokens consumed
 - `plan_generated` — effort estimate

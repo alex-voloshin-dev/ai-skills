@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin — local validator + structural test runner.
+ai-skills plugin — local validator + structural test runner.
 
 This is the closest thing to `claude plugin validate ./plugin` that exists
 today (no such CLI command ships with Claude Code as of April 2026 per
@@ -33,7 +33,7 @@ Code itself:
 
 Real validation (manifest schema enforcement, hook ABI conformance) only
 happens when you actually install the plugin into Claude Code via
-`/plugin marketplace add <local-path>` then `/plugin install ai-assets`.
+`/plugin marketplace add <local-path>` then `/plugin install ai-skills`.
 This script catches everything you can catch BEFORE that step.
 
 Usage (from repo root):
@@ -337,7 +337,7 @@ def check_marketplace(report: Report) -> None:
     plugins array references the plugin manifest correctly.
     """
     # Since alpha.22, the canonical marketplace.json lives ONE LEVEL UP
-    # from the plugin (at ai-assets/.claude-plugin/marketplace.json) and
+    # from the plugin (at ai-skills/.claude-plugin/marketplace.json) and
     # references the plugin via `source: "./plugin"`. The same-directory
     # layout (marketplace.json + plugin.json in plugin/.claude-plugin/)
     # was rejected by Claude Code v2.1.122 — kept as deprecated stub
@@ -869,7 +869,7 @@ CHECKS = [
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="ai-assets plugin local validator",
+        description="ai-skills plugin local validator",
     )
     parser.add_argument("--quiet", action="store_true", help="Only show failures + summary")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON report")

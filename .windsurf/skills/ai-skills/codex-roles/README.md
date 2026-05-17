@@ -1,6 +1,6 @@
 # Windsurf Role Library
 
-This directory contains Codex role reference material bundled into the Windsurf `ai-assets` skill.
+This directory contains Codex role reference material bundled into the Windsurf `ai-skills` skill.
 
 These files are not runtime agent prompts. They are authoring aids for:
 

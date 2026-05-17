@@ -39,7 +39,7 @@ Oracle: 1. Tokens: in=3754, out=1132, cache=18310.
 
 ## Telemetry written
 
-`.ai-assets-memory/ralph/ralph-2026-05-04-jsonschema/iter-{001..004}/tokens.json` + `summary.json` with `terminated:"kill-on:repeat-error"`.
+`.ai-skills-memory/ralph/ralph-2026-05-04-jsonschema/iter-{001..004}/tokens.json` + `summary.json` with `terminated:"kill-on:repeat-error"`.
 
 ## Note
 

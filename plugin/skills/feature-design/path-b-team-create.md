@@ -18,23 +18,23 @@ Two clauses still need to be explicit in the team-create prompt:
 Paste this into the natural-language team-create call. Substitute `<feature-slug>` with the kebab-case slug derived from the feature idea. Substitute `<feature-id>` with the same slug — files are written under `docs/features/<feature-id>/`.
 
 ```text
-Create an agent team named "<feature-slug>-design-team" with these teammates, each using subagent definitions from the ai-assets plugin:
+Create an agent team named "<feature-slug>-design-team" with these teammates, each using subagent definitions from the ai-skills plugin:
 
 Wave 1 (parallel drafts — each teammate writes its own file):
-- "pm" (ai-assets:product-manager) — writes docs/features/<feature-id>/PRD.md directly using its Write tool
-- "marketing" (ai-assets:marketing-strategist) — writes docs/features/<feature-id>/MARKET-ANALYSIS.md directly (skip if not public-facing)
-- "sysarch" (ai-assets:system-architect) — writes docs/features/<feature-id>/ARCHITECTURE.md directly
+- "pm" (ai-skills:product-manager) — writes docs/features/<feature-id>/PRD.md directly using its Write tool
+- "marketing" (ai-skills:marketing-strategist) — writes docs/features/<feature-id>/MARKET-ANALYSIS.md directly (skip if not public-facing)
+- "sysarch" (ai-skills:system-architect) — writes docs/features/<feature-id>/ARCHITECTURE.md directly
 
 Wave 2 (parallel domain work — each teammate writes its own file or section):
-- "ux" (ai-assets:ui-ux-designer) — writes docs/features/<feature-id>/UX-FLOW.md directly
-- "db" (ai-assets:db-engineer) — writes docs/features/<feature-id>/DATA-MODEL.md directly
-- "sec" (ai-assets:security-engineer) — writes its findings into docs/features/<feature-id>/RISKS.md directly (creates the file if missing; sec owns the "Security findings" section)
-- "qa-design" (ai-assets:qa-engineer) — writes its acceptance-criteria section into docs/features/<feature-id>/RISKS.md directly (qa-design owns the "Test plan + acceptance criteria" section, appending to whatever sec wrote)
+- "ux" (ai-skills:ui-ux-designer) — writes docs/features/<feature-id>/UX-FLOW.md directly
+- "db" (ai-skills:db-engineer) — writes docs/features/<feature-id>/DATA-MODEL.md directly
+- "sec" (ai-skills:security-engineer) — writes its findings into docs/features/<feature-id>/RISKS.md directly (creates the file if missing; sec owns the "Security findings" section)
+- "qa-design" (ai-skills:qa-engineer) — writes its acceptance-criteria section into docs/features/<feature-id>/RISKS.md directly (qa-design owns the "Test plan + acceptance criteria" section, appending to whatever sec wrote)
 
 Wave 3 (sequential cross-check):
-- "pm-review" (ai-assets:product-manager) — fresh PM-reviewer reading all wave-1 + wave-2 outputs, writes docs/features/<feature-id>/feedback.md directly
-- "sysarch-review" (ai-assets:system-architect) — fresh architecture-reviewer reading all wave-1 + wave-2 outputs, writes docs/features/<feature-id>/architecture-review.md directly
-- "judge" (ai-assets:eval-judge) — INTENTIONALLY read-only; scores the design pack against feature-design.md rubric; returns the full verdict + per-dimension scores + cited findings in a single fenced JSON block in its final message. The Lead writes REVIEW-LOG.md from the structured return — judge has no Write tool by design.
+- "pm-review" (ai-skills:product-manager) — fresh PM-reviewer reading all wave-1 + wave-2 outputs, writes docs/features/<feature-id>/feedback.md directly
+- "sysarch-review" (ai-skills:system-architect) — fresh architecture-reviewer reading all wave-1 + wave-2 outputs, writes docs/features/<feature-id>/architecture-review.md directly
+- "judge" (ai-skills:eval-judge) — INTENTIONALLY read-only; scores the design pack against feature-design.md rubric; returns the full verdict + per-dimension scores + cited findings in a single fenced JSON block in its final message. The Lead writes REVIEW-LOG.md from the structured return — judge has no Write tool by design.
 
 Use teammate-mode `in-process` by default (works in any terminal including Windows without WSL — no tmux/iTerm2 required). Pick `tmux` split-pane mode only if the user has explicitly indicated tmux or iTerm2 is available and they prefer it. If unsure, `in-process` is the safe choice.
 

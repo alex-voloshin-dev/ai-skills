@@ -14,8 +14,8 @@ Validate:
 - Root or scoped `AGENTS.md`
 - `.windsurf/skills/*/SKILL.md`
 - Companion markdown resources for skills
-- shared template resources under `.windsurf/skills/ai-assets/templates/*`
-- shared checklists under `.windsurf/skills/ai-assets/checklists/*`
+- shared template resources under `.windsurf/skills/ai-skills/templates/*`
+- shared checklists under `.windsurf/skills/ai-skills/checklists/*`
 - explicit support scripts used by the Windsurf package, including `.windsurf/hooks/scripts/*`
 
 Do not use this skill for application linting, unit tests, or runtime deployment checks.
@@ -59,7 +59,7 @@ Check:
 
 - References to `AGENTS.md`
 - References to `.windsurf/skills/<name>/`
-- References to shared templates and checklists under `.windsurf/skills/ai-assets/`
+- References to shared templates and checklists under `.windsurf/skills/ai-skills/`
 - References to local scripts
 
 Flag missing targets and orphaned assets that no workflow will discover.

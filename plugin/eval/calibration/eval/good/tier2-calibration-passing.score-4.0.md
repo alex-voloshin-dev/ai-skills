@@ -21,8 +21,8 @@ For each sampled rubric, the Haiku judge would score the shipped good + bad cali
 10 rubrics × 2 samples (1 good + 1 bad) = 20 judge calls. All resolved:
 
 ```
-ai-assets-init      good/python-fastapi-init.score-4.1.md      band [3.6, 4.6]
-ai-assets-init      bad/overwrite-without-flag.score-1.3.md    band [0.8, 1.8]
+ai-skills-init      good/python-fastapi-init.score-4.1.md      band [3.6, 4.6]
+ai-skills-init      bad/overwrite-without-flag.score-1.3.md    band [0.8, 1.8]
 feature-design      good/cache-invalidation.score-4.0.md       band [3.5, 4.5]
 feature-design      bad/vague-design.score-1.0.md              band [0.5, 1.5]
 ... (16 more pairs)

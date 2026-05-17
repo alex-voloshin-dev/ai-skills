@@ -1,7 +1,7 @@
 # PR Created — fix(auth): rotate session token on privilege escalation
 
 > Forge: GitHub
-> Source: `/develop` produced `REVIEW-LOG.md` at `.ai-assets-memory/sessions/2026-05-08-auth-fix/REVIEW-LOG.md`
+> Source: `/develop` produced `REVIEW-LOG.md` at `.ai-skills-memory/sessions/2026-05-08-auth-fix/REVIEW-LOG.md`
 > Branch: `fix/auth-session-rotation` → `main`
 > URL: https://github.com/acme/web/pull/4322
 

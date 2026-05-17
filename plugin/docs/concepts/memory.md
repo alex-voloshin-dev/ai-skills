@@ -1,4 +1,4 @@
-# Memory in ai-assets
+# Memory in ai-skills
 
 How the plugin persists information across turns, sessions, and projects.
 
@@ -12,7 +12,7 @@ LLM agents are stateless between turns. Without persistent memory:
 - Subagent reports vanish when the parent context compacts
 - You can't tell what the team agreed on three weeks ago
 
-ai-assets layers six memory tiers so that the right information is available at the right time, without bloating context.
+ai-skills layers six memory tiers so that the right information is available at the right time, without bloating context.
 
 ## The 6 layers
 
@@ -21,9 +21,9 @@ ai-assets layers six memory tiers so that the right information is available at 
 | **L0** Cowork host | Anthropic-managed cross-project memory | `~/.../spaces/<id>/memory/` | Out-of-plugin (Cowork manages) |
 | **L1** Plugin templates | Read-only knowledge bundled with the plugin | `${CLAUDE_PLUGIN_ROOT}/memory/templates/` | Frozen at plugin install |
 | **L2** Project static | `CLAUDE.md`, `AGENTS.md`, `ARCHITECTURE.md`, `marketing/MARKETING.md` | Target repo | Per-repo, owned by repo |
-| **L3** Session | Per-session run logs, token meter, RALF iter dirs | `<repo>/.ai-assets-memory/sessions/<id>/` | Until session ends, then summarized to L4 |
-| **L4** Project cross-session | Project's persistent learnings, run history, eval baselines | `<repo>/.ai-assets-memory/` | Per-repo, persistent |
-| **L5** User-global | Patterns the user wants across ALL projects (opt-in only) | `~/.claude/ai-assets/learnings.md` | Forever, across all projects |
+| **L3** Session | Per-session run logs, token meter, RALF iter dirs | `<repo>/.ai-skills-memory/sessions/<id>/` | Until session ends, then summarized to L4 |
+| **L4** Project cross-session | Project's persistent learnings, run history, eval baselines | `<repo>/.ai-skills-memory/` | Per-repo, persistent |
+| **L5** User-global | Patterns the user wants across ALL projects (opt-in only) | `~/.claude/ai-skills/learnings.md` | Forever, across all projects |
 
 ## What goes where
 
@@ -43,7 +43,7 @@ The plugin enforces strict rules per `memory-discipline.md`:
 /memory-init
 ```
 
-Creates the `.ai-assets-memory/` skeleton. Idempotent.
+Creates the `.ai-skills-memory/` skeleton. Idempotent.
 
 ### Recall what you've stored
 
@@ -78,9 +78,9 @@ Spawns the `memory-curator` agent to dedupe, PII-filter, and append per `learnin
 
 ## What gets versioned in git
 
-By default, **none of `.ai-assets-memory/` goes to git.** It's session/project-local state.
+By default, **none of `.ai-skills-memory/` goes to git.** It's session/project-local state.
 
-The exception: `.ai-assets-memory/.committed/` is intentionally tracked for memory the team agrees on:
+The exception: `.ai-skills-memory/.committed/` is intentionally tracked for memory the team agrees on:
 - `conventions.md` — team-confirmed coding conventions
 - `learnings.md` — curated learnings worth sharing
 - `architecture-decisions/*.md` — ADRs
@@ -91,13 +91,13 @@ Everything in `.committed/` is allowlist-validated by the `pre-tool-use-committe
 
 ## Related workflows
 
-- [`/memory-init`](../workflows/ai-assets-init.md) — initial setup (also runs as part of `/ai-assets-init`)
+- [`/memory-init`](../workflows/ai-skills-init.md) — initial setup (also runs as part of `/ai-skills-init`)
 - [`/learnings-write`](../workflows/feature-design.md) — capture a learning (used during any workflow)
 - [`/feature-design`](../workflows/feature-design.md) — writes designs to L4 + optionally `.committed/`
 - [`/security-audit`](../workflows/security-audit.md) — CRITICAL findings written to `.committed/security/incidents/`
 
 ## Privacy and PII
 
-The PII filter runs on every memory write. Default patterns cover emails, phone numbers, AWS/GCP/Azure/Stripe/GitHub tokens, JWTs, PEM private keys, and generic API key shapes. Project-specific patterns can be added at `.ai-assets-memory/.committed/pii-patterns.txt`. Redactions are logged to `.ai-assets-memory/redactions.log` for audit.
+The PII filter runs on every memory write. Default patterns cover emails, phone numbers, AWS/GCP/Azure/Stripe/GitHub tokens, JWTs, PEM private keys, and generic API key shapes. Project-specific patterns can be added at `.ai-skills-memory/.committed/pii-patterns.txt`. Redactions are logged to `.ai-skills-memory/redactions.log` for audit.
 
 If you ever see PII in memory, treat it as a bug — the filter should have caught it. File the redaction trail and consider adding the missed pattern to project extensions.

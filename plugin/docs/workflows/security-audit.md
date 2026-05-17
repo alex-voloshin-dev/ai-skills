@@ -31,10 +31,10 @@ Comprehensive security scan with OWASP Top 10 (Web 2021) + OWASP GenAI/LLM Top 1
 
 ## What you get
 
-- `<repo>/.ai-assets-memory/security-audits/<run-id>/SECURITY-REPORT.md` — findings by category with severity (CRITICAL > HIGH > MEDIUM > LOW)
-- `<repo>/.ai-assets-memory/security-audits/<run-id>/REMEDIATION-PLAN.md` — per finding: severity, mitigation, suggested owner role
+- `<repo>/.ai-skills-memory/security-audits/<run-id>/SECURITY-REPORT.md` — findings by category with severity (CRITICAL > HIGH > MEDIUM > LOW)
+- `<repo>/.ai-skills-memory/security-audits/<run-id>/REMEDIATION-PLAN.md` — per finding: severity, mitigation, suggested owner role
 - PR with fixes for automatable issues (dep updates, secret removal from code)
-- For CRITICAL: written to `.ai-assets-memory/.committed/security/incidents/<date>.md` (allowlist-validated)
+- For CRITICAL: written to `.ai-skills-memory/.committed/security/incidents/<date>.md` (allowlist-validated)
 
 ## What's checked
 

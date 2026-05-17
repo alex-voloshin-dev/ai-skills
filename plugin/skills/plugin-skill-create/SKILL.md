@@ -1,6 +1,6 @@
 ---
 name: plugin-skill-create
-description: Internal procedure for `/plugin-author create`. Scaffolds a new skill INSIDE the ai-assets plugin (under `plugin/skills/`) with H5 frontmatter, eval test-case stub, and memory-write points pre-wired. Conforms to the agentskills.io specification (https://agentskills.io/specification) and ai-assets plugin conventions. No longer slash-invocable — call `/plugin-author create <name>` instead. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill.
+description: Internal procedure for `/plugin-author create`. Scaffolds a new skill INSIDE the ai-skills plugin (under `plugin/skills/`) with H5 frontmatter, eval test-case stub, and memory-write points pre-wired. Conforms to the agentskills.io specification (https://agentskills.io/specification) and ai-skills plugin conventions. No longer slash-invocable — call `/plugin-author create <name>` instead. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill.
 disable-model-invocation: true
 ---
 
@@ -11,7 +11,7 @@ Generate `plugin/skills/<name>/SKILL.md` plus eval/case stub plus memory-hook sc
 1. **agentskills.io specification** — https://agentskills.io/specification (frontmatter, naming, directory layout, progressive disclosure)
 2. **agentskills.io best practices** — https://agentskills.io/skill-creation/best-practices (description style, body length, calibration)
 3. **agentskills.io description optimization** — https://agentskills.io/skill-creation/optimizing-descriptions (trigger phrasing, what+when, keywords)
-4. **ai-assets plugin conventions** — H5 frontmatter trigger pattern, schema-validated frontmatter, `<untrusted_content>` G1 wrapping where applicable, G7 spawn payload format if the skill spawns subagents
+4. **ai-skills plugin conventions** — H5 frontmatter trigger pattern, schema-validated frontmatter, `<untrusted_content>` G1 wrapping where applicable, G7 spawn payload format if the skill spawns subagents
 
 The cached, offline-authoritative form of (1)–(3) is `prompt-engineering/skill-authoring-spec.md` + `prompt-engineering/optimizing-descriptions.md` — read those first; re-fetch the live URLs only when network is available.
 
@@ -101,7 +101,7 @@ The `TODO —` token is a hard guard: `plugin-skill-audit` fails (CRITICAL sever
 
 ## Hard rules
 
-Every scaffolded skill MUST satisfy the agentskills.io specification + ai-assets conventions below. The audit counterpart `/plugin-skill-audit` enforces the same rules — anything this skill emits MUST pass `/plugin-skill-audit <name> --strict`.
+Every scaffolded skill MUST satisfy the agentskills.io specification + ai-skills conventions below. The audit counterpart `/plugin-skill-audit` enforces the same rules — anything this skill emits MUST pass `/plugin-skill-audit <name> --strict`.
 
 ### agentskills.io spec, best-practices, scripts & description rules (cached digest)
 
@@ -117,7 +117,7 @@ Hard invariants every scaffold MUST satisfy (enforced by `/plugin-author audit -
 - **Body** ≤ 5000 tokens AND ≤ 500 lines recommended; file references one level deep from `SKILL.md`
 - **Scripts/deps** (only when `scripts/` is generated): no interactive prompts (agents run non-interactive shells); `--help` usage; structured data → stdout, diagnostics → stderr; pinned deps or inline PEP 723 / equivalent — see the digest's "Using scripts in skills" section
 
-### ai-assets plugin conventions
+### ai-skills plugin conventions
 
 - **Body ≤ 12K chars** per project rule (matches the upstream ≤500-line recommendation)
 - **Description in third person** — first-person breaks discovery
@@ -158,11 +158,11 @@ Sourced from the digest's "Using scripts in skills" section:
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After scaffold | `.ai-assets-memory/plugin-skills/<name>/scaffolded.md` — timestamp + flags used |
+| L4 | After scaffold | `.ai-skills-memory/plugin-skills/<name>/scaffolded.md` — timestamp + flags used |
 
 ## Integration
 
-- **Status**: internal procedure document for `/plugin-author create`. Not slash-invocable (frontmatter `disable-model-invocation: true`). The umbrella reads this file directly when scaffolding a new asset; `ai-assets:prompt-engineer` pre-reads it before any plugin-asset DEV pass.
+- **Status**: internal procedure document for `/plugin-author create`. Not slash-invocable (frontmatter `disable-model-invocation: true`). The umbrella reads this file directly when scaffolding a new asset; `ai-skills:prompt-engineer` pre-reads it before any plugin-asset DEV pass.
 - **Reachable via**: `/plugin-author create <name> [--type workflow|knowledge|companion] [--agent-spawn] [--ralph]`
 - **Writes to**: `plugin/skills/<name>/`, `plugin/eval/cases/<name>/`, `plugin/eval/judge-rubrics/<name>.md`
 - **References**:

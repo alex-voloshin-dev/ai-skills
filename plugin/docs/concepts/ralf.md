@@ -1,6 +1,6 @@
 # RALF: Read-Act-Learn-Feedback
 
-How ai-assets workflows iterate on a task until a mechanically-verifiable success signal.
+How ai-skills workflows iterate on a task until a mechanically-verifiable success signal.
 
 > Internal spec lives in `plugin-design/01-WORKFLOW-SPECS.md` (`/ralph` section) and `plugin-design/00-PHASE-1-PLAN.md` §3.5. This doc is the user-facing summary.
 
@@ -87,13 +87,13 @@ A companion PostToolUse hook (`ralph-iter-meter.py`) estimates tokens per tool c
 
 1. Persists per-iter spend to `iter-NNN/tokens.json` with the fair-share calculation.
 2. Resets the accumulator so the next iteration starts at zero.
-3. Fires a **runaway warning** when a single iteration exceeds 3× the fair share (`workflow_token_budget / max_iterations`), durably logging to `.ai-assets-memory/ralph-warnings.log`.
+3. Fires a **runaway warning** when a single iteration exceeds 3× the fair share (`workflow_token_budget / max_iterations`), durably logging to `.ai-skills-memory/ralph-warnings.log`.
 
 The chars/4 estimate is a guardrail, not a billing meter — Tier 3 eval runs populate exact API counts directly via `ralf_workflow_tokens_last`. Before v0.1.6, interactive RALF (`/ralph` directly) had no per-iteration token signal: only iteration-count and wall-time caps could fire. Now the session-aggregate token cap is also effective interactively.
 
 ## State and logs
 
-Every RALF run writes to `<repo>/.ai-assets-memory/ralph/<run-id>/`:
+Every RALF run writes to `<repo>/.ai-skills-memory/ralph/<run-id>/`:
 
 - `config.json` — caps + oracle + kill-on as locked at start
 - `active.lock` — presence = run is in progress

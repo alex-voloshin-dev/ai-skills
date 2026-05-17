@@ -8,7 +8,7 @@ event carrying the envelope as `tool_input.content`. Pipe to
 re-introducing the audit §2.6 false-positive on valid G7 envelopes.
 
 Each fixture is exercised twice:
-1. Path inside `.ai-assets-memory/sessions/<sid>/team-envelopes/` — must pass
+1. Path inside `.ai-skills-memory/sessions/<sid>/team-envelopes/` — must pass
    via the ENVELOPE_PATH_PATTERNS allowlist.
 2. Path outside the allowlist (`/tmp/scratch-G7.json`) — must pass via the
    content-level `looks_like_json_envelope` detector. This isolates the two
@@ -56,7 +56,7 @@ def check_one(fixture: pathlib.Path) -> list[str]:
 
     # Case 1: write to canonical team-envelopes path (path allowlist guard)
     rc, _, err = run_hook({
-        "file_path": f".ai-assets-memory/sessions/abc/team-envelopes/G7-{fixture.stem}.json",
+        "file_path": f".ai-skills-memory/sessions/abc/team-envelopes/G7-{fixture.stem}.json",
         "content": envelope_text,
     })
     if rc != 0:

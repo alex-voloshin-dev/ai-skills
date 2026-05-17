@@ -1,10 +1,25 @@
 # Changelog
 
-All notable changes to the `ai-assets` plugin. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html) per `../plugin-design/00-PHASE-1-PLAN.md` §6.6.
+All notable changes to the `ai-skills` plugin. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html) per `../plugin-design/00-PHASE-1-PLAN.md` §6.6.
 
 ## [Unreleased]
 
 Next release in planning.
+
+## [0.4.0] — 2026-05-17 — BREAKING: marketplace + plugin renamed `ai-assets` → `ai-skills`
+
+Full repo-identity rename. This entry is the **sole intentional retention of the old `ai-assets` token** (kept here to document the cut).
+
+**BREAKING — hard cut, no alias:**
+
+- Marketplace + plugin `name` renamed `ai-assets` → `ai-skills` (`.claude-plugin/marketplace.json`, `plugin/.claude-plugin/plugin.json`).
+- Skill/agent **namespace renamed `ai-assets:` → `ai-skills:`** across all 1,060 tracked files. Every `/ai-assets:*` invocation and every `subagent_type: "ai-assets:…"` reference **stops resolving after upgrade** — update call sites to `ai-skills:`.
+- Memory paths moved: `.ai-assets-memory/` → `.ai-skills-memory/` and `~/.claude/ai-assets/` → `~/.claude/ai-skills/` (existing project memory was migrated in place; L5 path had no prior data on the dev host).
+- Codex/Windsurf/.agents parity packages, root docs, installers, and repo-URL links renamed for consistency.
+
+**Migration:** see [`RENAME-RUNBOOK.md`](../RENAME-RUNBOOK.md) for the required git/ops steps (GitHub repo rename, `git remote set-url`, local dir rename, `/plugin marketplace remove` + re-add + `/plugin install ai-skills`).
+
+Deterministic single-pass substitution (`git grep | sed`, CHANGELOG + gitignored memory data excluded) + `git mv` for 67 name-bearing paths. Oracle green: 0 `ai-assets` residue in tracked files outside this entry; `validate.py` `25 pass, 0 fail`; `EXPECTED_COUNTS` unchanged (pure rename — no asset added/removed).
 
 ## [0.3.15] — 2026-05-17 — agentskills.io authoring guidance integrated into skill-authoring logic
 

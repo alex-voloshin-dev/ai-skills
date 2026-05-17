@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/alex-voloshin-dev/ai-assets/plugin/memory/templates/eval-baseline.schema.json",
+  "$id": "https://github.com/alex-voloshin-dev/ai-skills/plugin/memory/templates/eval-baseline.schema.json",
   "title": "Eval Baseline",
-  "description": "Per-skill scorecard captured by /eval --baseline. Stored at plugin/eval/baselines/<skill>/<release-tag>.json (plugin-shipped baselines) AND at .ai-assets-memory/.committed/eval-baselines/<release-tag>.json (project-specific baselines). Used for regression detection per 02-EVAL-FRAMEWORK.md.",
+  "description": "Per-skill scorecard captured by /eval --baseline. Stored at plugin/eval/baselines/<skill>/<release-tag>.json (plugin-shipped baselines) AND at .ai-skills-memory/.committed/eval-baselines/<release-tag>.json (project-specific baselines). Used for regression detection per 02-EVAL-FRAMEWORK.md.",
   "type": "object",
   "required": ["skill", "release_tag", "captured_at", "tier", "cases", "summary"],
   "additionalProperties": false,

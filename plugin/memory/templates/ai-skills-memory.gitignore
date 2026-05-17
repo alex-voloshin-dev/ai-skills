@@ -1,0 +1,27 @@
+# ai-skills plugin memory — default gitignore
+# Seeded by /ai-skills-init into target repo's <repo-root>/.gitignore
+# Per D9: .ai-skills-memory/ is gitignored by default, with opt-in .committed/ for versioned content.
+
+# Ignore ALL .ai-skills-memory contents...
+.ai-skills-memory/*
+
+# ...EXCEPT the .committed/ subdir (opt-in versioned content)
+!.ai-skills-memory/.committed/
+
+# Ignore .committed/ contents that don't match the allowlist
+# (allowlist enforced by pre-tool-use-committed-write.py hook)
+.ai-skills-memory/.committed/*
+
+# Allowlist exceptions: README, conventions, eval baselines, architecture decisions, PII pattern extensions
+!.ai-skills-memory/.committed/README.md
+!.ai-skills-memory/.committed/conventions.md
+!.ai-skills-memory/.committed/architecture-decisions/
+!.ai-skills-memory/.committed/architecture-decisions/*.md
+!.ai-skills-memory/.committed/eval-baselines/
+!.ai-skills-memory/.committed/eval-baselines/*.json
+!.ai-skills-memory/.committed/pii-patterns.txt
+!.ai-skills-memory/.committed/.allowlist-extensions.txt
+!.ai-skills-memory/.committed/decisions/
+!.ai-skills-memory/.committed/decisions/*.md
+!.ai-skills-memory/.committed/releases/
+!.ai-skills-memory/.committed/releases/**/*.md

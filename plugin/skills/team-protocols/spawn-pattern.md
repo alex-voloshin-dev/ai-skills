@@ -16,7 +16,7 @@ Agent({
 
 ### How `subagent_type` resolves
 
-- **Plugin agents** (the 26 specialized agents this plugin ships) — use the scoped form: `ai-assets:java-engineer`, `ai-assets:frontend-engineer`, `ai-assets:qa-engineer`, etc. The `<plugin-name>` prefix is the `name` field from `plugin/.claude-plugin/plugin.json` (`ai-assets`); the `<agent-name>` is the `name` frontmatter from `plugin/agents/<file>.md`.
+- **Plugin agents** (the 26 specialized agents this plugin ships) — use the scoped form: `ai-skills:java-engineer`, `ai-skills:frontend-engineer`, `ai-skills:qa-engineer`, etc. The `<plugin-name>` prefix is the `name` field from `plugin/.claude-plugin/plugin.json` (`ai-skills`); the `<agent-name>` is the `name` frontmatter from `plugin/agents/<file>.md`.
 - **Built-in subagents** — `general-purpose`, `Explore`, `Plan`, `statusline-setup`. Use `general-purpose` as the universal fallback when a more specific role is unavailable.
 
 ### Hard constraints (per Anthropic docs)
@@ -68,7 +68,7 @@ Every Developer / Reviewer / QA role-step in a workflow follows this exact patte
 ```text
 Agent({
   description: "WP-3 implementation (java-engineer)",
-  subagent_type: "ai-assets:java-engineer",
+  subagent_type: "ai-skills:java-engineer",
   prompt: "You are the Developer subagent for work package WP-3. Read the developer role card at plugin/skills/team-protocols/role-cards/developer-card.md before starting (slim card — do NOT read lead-protocol.md or path-selection-rules.md, those are lead-only). Your G7 spawn payload:\n\n<JSON-from-step-1>\n\nWhen done, return a G7 return contract (per plugin/schemas/return-contract.schema.json) summarizing files changed, tests added, and any risks.",
   isolation: "worktree"   // optional — gives the Developer an isolated git worktree for safer parallel work
 })
@@ -88,8 +88,8 @@ For a typical `/develop` work package:
 
 | Step | Role | `subagent_type` | Notes |
 |---|---|---|---|
-| 1 | Developer (per stack) | `ai-assets:java-engineer` / `ai-assets:python-engineer` / `ai-assets:frontend-engineer` / etc. — pick from `role-selection-table.md` | One Developer per affected subproject; sequential code-modification gate per `subagent-isolation.md` |
-| 2 | Reviewer | `ai-assets:software-engineer` | Read-only via `disallowedTools: ["Write", "Edit"]` in the `Agent` call |
-| 3 | QA | `ai-assets:qa-engineer` | Higher-level tests only — Developer owns unit tests |
+| 1 | Developer (per stack) | `ai-skills:java-engineer` / `ai-skills:python-engineer` / `ai-skills:frontend-engineer` / etc. — pick from `role-selection-table.md` | One Developer per affected subproject; sequential code-modification gate per `subagent-isolation.md` |
+| 2 | Reviewer | `ai-skills:software-engineer` | Read-only via `disallowedTools: ["Write", "Edit"]` in the `Agent` call |
+| 3 | QA | `ai-skills:qa-engineer` | Higher-level tests only — Developer owns unit tests |
 
 If a more specific specialized agent is unavailable in this plugin install, fall back to `subagent_type: "general-purpose"` and put the role brief entirely in the prompt.

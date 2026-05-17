@@ -1,4 +1,4 @@
-# Evaluation in ai-assets
+# Evaluation in ai-skills
 
 How the plugin scores workflow outputs and prevents regressions.
 
@@ -46,7 +46,7 @@ Each rubric (`plugin/eval/judge-rubrics/<name>.md`) defines:
 The plugin ships **45 rubrics** organized as:
 
 ### Per-workflow (28)
-One rubric per major workflow. The original 10 (`feature-design`, `develop`, `bugfix`, `refactor`, `migrate`, `spike`, `security-audit`, `docs-pack`, `env-analyze`, `ai-assets-init`) plus 4 meta-tools rubrics and the 24-rubric per-skill workflow expansion (audit B coverage push). Live list: `plugin/eval/judge-rubrics/`.
+One rubric per major workflow. The original 10 (`feature-design`, `develop`, `bugfix`, `refactor`, `migrate`, `spike`, `security-audit`, `docs-pack`, `env-analyze`, `ai-skills-init`) plus 4 meta-tools rubrics and the 24-rubric per-skill workflow expansion (audit B coverage push). Live list: `plugin/eval/judge-rubrics/`.
 
 ### Per-skill workflow rubrics (additional coverage)
 Included in the 28 above — each user-invocable workflow skill has a matched rubric so Tier 2 can score outputs against that skill's contract.
@@ -84,7 +84,7 @@ Capture a baseline at each release tag:
 
 Stored at `plugin/eval/baselines/<skill>/v0.1.0.json` (per-skill scorecards). Subsequent runs compare against the baseline; deltas > 0.5 flag as potential regressions.
 
-For project-specific baselines, write to `.ai-assets-memory/.committed/eval-baselines/<release-tag>.json` (allowlist-validated).
+For project-specific baselines, write to `.ai-skills-memory/.committed/eval-baselines/<release-tag>.json` (allowlist-validated).
 
 ## Blind-comparator (Round 3 Q3)
 
@@ -114,6 +114,6 @@ Tier 2/3 ship after eval-judge wiring is hardened in Phase 3.
 ## Related workflows
 
 - [`/eval`](../workflows/feature-design.md) — runs eval tiers
-- [`/plugin-doctor`](../workflows/ai-assets-init.md) — calibration mode
+- [`/plugin-doctor`](../workflows/ai-skills-init.md) — calibration mode
 - [`/feature-design`](../workflows/feature-design.md) — uses `feature-design.md` rubric internally for RALF gates
 - [`/security-audit`](../workflows/security-audit.md) — uses `security-audit.md` rubric

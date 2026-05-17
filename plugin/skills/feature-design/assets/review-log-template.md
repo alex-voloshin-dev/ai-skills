@@ -57,7 +57,7 @@ Re-approves; no new concerns introduced by the round-1 fixes.
 
 **Design pack status: APPROVED — ready for `/develop` handoff.**
 
-Lead: `feature-design-lead`. Pack version: `v1.0.0` (semver bumped on every approved round). Memory write: `.ai-assets-memory/designs/two-factor-authentication/final.md` updated with rubric scores and convergence trace.
+Lead: `feature-design-lead`. Pack version: `v1.0.0` (semver bumped on every approved round). Memory write: `.ai-skills-memory/designs/two-factor-authentication/final.md` updated with rubric scores and convergence trace.
 
 ---
 

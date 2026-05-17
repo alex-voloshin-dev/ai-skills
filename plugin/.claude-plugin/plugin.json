@@ -1,14 +1,14 @@
 {
-  "name": "ai-assets",
-  "version": "0.3.15",
+  "name": "ai-skills",
+  "version": "0.4.0",
   "description": "Reusable team-of-agents plugin for the full SDLC — feature design, development, bugfix, environment analysis — with built-in RALF iteration loop, layered memory, and systematic eval. Project-agnostic: operations live in plugin, project context lives in target repo (CLAUDE.md / AGENTS.md).",
   "author": {
     "name": "Alex Voloshin",
     "email": "alex@voloshin.net"
   },
   "license": "MIT",
-  "homepage": "https://github.com/alex-voloshin-dev/ai-assets",
-  "repository": "https://github.com/alex-voloshin-dev/ai-assets",
+  "homepage": "https://github.com/alex-voloshin-dev/ai-skills",
+  "repository": "https://github.com/alex-voloshin-dev/ai-skills",
   "keywords": [
     "sdlc",
     "agent-team",
@@ -103,7 +103,7 @@
     "user_global_memory_enabled": {
       "type": "boolean",
       "title": "Allow writes to user-global memory (L5)",
-      "description": "Opt-in: allows /learnings-write to persist patterns to ~/.claude/ai-assets/learnings.md across all projects.",
+      "description": "Opt-in: allows /learnings-write to persist patterns to ~/.claude/ai-skills/learnings.md across all projects.",
       "default": false
     },
     "env_watch_enabled": {

@@ -39,7 +39,7 @@ Exit code: 0
 
 ## Audit log
 
-Appended to `.ai-assets-memory/plugin-doctor.log`:
+Appended to `.ai-skills-memory/plugin-doctor.log`:
 
 ```
 2026-05-08T14:24:03Z mode=calibrate-judge verdict=PASS-DRY-RUN exit=0 pairs=20 live=0

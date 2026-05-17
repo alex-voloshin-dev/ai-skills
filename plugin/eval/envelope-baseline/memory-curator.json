@@ -5,9 +5,9 @@
   "tokens_used": {"input": 6800, "output": 320},
   "tool_calls": 3,
   "result": {
-    "summary": "Wrote 2 new entries to L4 .ai-assets-memory/learnings.md; deduped 1 against existing; redacted 0 PII matches.",
+    "summary": "Wrote 2 new entries to L4 .ai-skills-memory/learnings.md; deduped 1 against existing; redacted 0 PII matches.",
     "target_layer": "L4",
-    "target_path": ".ai-assets-memory/learnings.md",
+    "target_path": ".ai-skills-memory/learnings.md",
     "entries_written": [
       "Session token storage policy (HttpOnly + SameSite + Secure)",
       "Bearer token rotation cadence — 90 days production / 30 days staging"
@@ -18,7 +18,7 @@
     "pii_redactions_count": 0
   },
   "evidence": [
-    {"artefact_id": ".ai-assets-memory/sessions/abc/runs.jsonl", "quote": "decision: Sessions issue tokens with HttpOnly; rotation: 90 days", "span": "lines 47-52"}
+    {"artefact_id": ".ai-skills-memory/sessions/abc/runs.jsonl", "quote": "decision: Sessions issue tokens with HttpOnly; rotation: 90 days", "span": "lines 47-52"}
   ],
   "risks": [],
   "next_actions": []

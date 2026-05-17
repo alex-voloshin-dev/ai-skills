@@ -14,7 +14,7 @@
     "Dedupe against existing learnings.md per memory-validation.md"
   ],
   "state_slice": {
-    "active_files": [".ai-assets-memory/learnings.md"]
+    "active_files": [".ai-skills-memory/learnings.md"]
   },
   "allowed_tools": ["Read", "Write"],
   "budget": {
@@ -30,7 +30,7 @@
 }
 ```
 
-## Entry written to `.ai-assets-memory/learnings.md`
+## Entry written to `.ai-skills-memory/learnings.md`
 
 ```markdown
 ## React 18 — startTransition for non-urgent state updates
@@ -78,15 +78,15 @@ Used in: `src/components/search/SearchBox.tsx`. Reduced perceived input latency 
   "status": "ok",
   "tokens_used": {"input": 3120, "output": 480},
   "result": {
-    "summary": "Wrote 1 new entry to .ai-assets-memory/learnings.md (L4); deduped 0 against existing; redacted 0 PII matches.",
+    "summary": "Wrote 1 new entry to .ai-skills-memory/learnings.md (L4); deduped 0 against existing; redacted 0 PII matches.",
     "target_layer": "L4",
-    "target_path": ".ai-assets-memory/learnings.md",
+    "target_path": ".ai-skills-memory/learnings.md",
     "entries_written": ["React 18 — startTransition for non-urgent state updates"],
     "entries_deduped": [],
     "pii_redactions_count": 0
   },
   "evidence": [
-    {"artefact_id": ".ai-assets-memory/learnings.md", "span": "appended at line 142"}
+    {"artefact_id": ".ai-skills-memory/learnings.md", "span": "appended at line 142"}
   ],
   "risks": []
 }

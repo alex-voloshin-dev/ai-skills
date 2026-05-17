@@ -11,7 +11,7 @@ Scope: `.` | Stack detected: Python 3.10+, FastAPI, pytest, Pydantic
 │   ├── skills/                    # 41 skills for Python/FastAPI development
 │   ├── rules/                     # 7 guardrails (code-quality, failure-recovery, git-conventions)
 │   └── settings.json              # Models: Sonnet for code-review, Haiku for docs
-├── .ai-assets-memory/
+├── .ai-skills-memory/
 │   ├── .committed/
 │   │   ├── project-context.md     # FastAPI, Python 3.10, pytest, PostgreSQL, port 8000
 │   │   ├── api-endpoints.md       # Detected 12 routes; 5 POST, 4 GET, 2 DELETE, 1 PATCH
@@ -19,7 +19,7 @@ Scope: `.` | Stack detected: Python 3.10+, FastAPI, pytest, Pydantic
 │   ├── index.md                   # Memory index
 │   └── README.md
 ├── .claude/CLAUDE.md              # FastAPI-specific guidance (routing patterns, async, validation)
-├── .gitignore                     # Added .claude/, .ai-assets-memory/, venv/, __pycache__/
+├── .gitignore                     # Added .claude/, .ai-skills-memory/, venv/, __pycache__/
 └── (existing files untouched)
 
 ## .claude/CLAUDE.md Created
@@ -48,7 +48,7 @@ Project type: **Python/FastAPI with SQLAlchemy**
 - Dependency injection pattern (Depends)
 - Migration strategy: Alembic versioned migrations
 
-## .ai-assets-memory/ Created
+## .ai-skills-memory/ Created
 
 .committed/project-context.md seeded with:
 - Stack: FastAPI, Python 3.10, PostgreSQL, SQLAlchemy
@@ -63,7 +63,7 @@ Project type: **Python/FastAPI with SQLAlchemy**
 
 ```
 .claude/                           # Claude runtime
-.ai-assets-memory/                 # Memory (commit selectively)
+.ai-skills-memory/                 # Memory (commit selectively)
 venv/                              # Virtual env (already present, kept)
 __pycache__/                        # Python cache
 *.pyc

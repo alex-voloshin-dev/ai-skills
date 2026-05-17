@@ -38,7 +38,7 @@ These skills rely on Claude Code's native multi-agent spawning capability, which
 | `team-protocols` | Shared protocols for Claude Code's Agent tool with named subagent spawning. Codex and Windsurf lack runtime multi-agent primitives. |
 | `team-bugfix` | Multi-agent coordinated bugfix workflow using Claude Code's parallel Agent spawning. No equivalent runtime primitive exists. |
 | `team-dev` | Multi-agent coordinated feature development workflow using Claude Code's parallel Agent spawning with developer/reviewer/QA pipeline. No equivalent runtime primitive exists. |
-| `plugin-author` (v0.3.12) | Umbrella DX workflow for authoring/auditing/fixing ai-assets plugin assets — operates exclusively on `plugin/skills/`, `plugin/agents/`, `plugin/rules/`, `plugin/hooks/`, `plugin/eval/`, `plugin/schemas/`. Codex (`.codex/`) and Windsurf (`.windsurf/`) have different runtime structure and do not use this layout; their analogous tooling lives in `.agents/skills/asset-validation/` + `.codex/checklists/codex-asset-review.md`. Absorbed and hid `/plugin-skill-create` and `/plugin-skill-audit` as user-facing slash commands (now `disable-model-invocation: true` internal procedure docs). |
+| `plugin-author` (v0.3.12) | Umbrella DX workflow for authoring/auditing/fixing ai-skills plugin assets — operates exclusively on `plugin/skills/`, `plugin/agents/`, `plugin/rules/`, `plugin/hooks/`, `plugin/eval/`, `plugin/schemas/`. Codex (`.codex/`) and Windsurf (`.windsurf/`) have different runtime structure and do not use this layout; their analogous tooling lives in `.agents/skills/asset-validation/` + `.codex/checklists/codex-asset-review.md`. Absorbed and hid `/plugin-skill-create` and `/plugin-skill-audit` as user-facing slash commands (now `disable-model-invocation: true` internal procedure docs). |
 
 ### Rules and Guardrails
 
@@ -145,7 +145,7 @@ Removed all project-specific references (friendly4AI, founder names, product-spe
 from the `social-media-manager` skill across all three packages. The skill now reads product
 context from `marketing/MARKETING.md` at runtime, making it reusable for any project.
 Cleaned machine-specific paths from `settings.json`. Scoped parity rules in `.claude/CLAUDE.md`
-as "ai-assets repo only". Created `PARITY.md` documenting the full cross-vendor parity model.
+as "ai-skills repo only". Created `PARITY.md` documenting the full cross-vendor parity model.
 
 ### 2026-03-23: social-media-manager skill
 

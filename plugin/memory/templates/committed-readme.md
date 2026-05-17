@@ -1,8 +1,8 @@
-# `.ai-assets-memory/.committed/` — versioned project memory
+# `.ai-skills-memory/.committed/` — versioned project memory
 
-> Seeded by `/ai-assets-init` into target repo at `.ai-assets-memory/.committed/README.md`. Edit freely.
+> Seeded by `/ai-skills-init` into target repo at `.ai-skills-memory/.committed/README.md`. Edit freely.
 
-This directory is the **opt-in versioned** part of the `ai-assets` plugin's project memory (L4 in the 6-layer model). Everything else under `.ai-assets-memory/` is gitignored — only paths matching the allowlist (see `pii-patterns.txt` and `.allowlist-extensions.txt`) are permitted here, and they ARE committed to git so the team shares them.
+This directory is the **opt-in versioned** part of the `ai-skills` plugin's project memory (L4 in the 6-layer model). Everything else under `.ai-skills-memory/` is gitignored — only paths matching the allowlist (see `pii-patterns.txt` and `.allowlist-extensions.txt`) are permitted here, and they ARE committed to git so the team shares them.
 
 ## When to write here
 
@@ -18,10 +18,10 @@ Put content here that the **whole team** should see and version-control:
 
 ## When NOT to write here
 
-- Ephemeral session state — goes to `.ai-assets-memory/sessions/<run-id>/` (L3, gitignored)
-- Subagent reports — `.ai-assets-memory/sessions/<run-id>/subagent-reports/` (L3)
-- Tool failure logs — `.ai-assets-memory/errors.log` (L4 root, gitignored)
-- Run-specific RALF iterations — `.ai-assets-memory/ralph/<run-id>/` (L4 root, gitignored)
+- Ephemeral session state — goes to `.ai-skills-memory/sessions/<run-id>/` (L3, gitignored)
+- Subagent reports — `.ai-skills-memory/sessions/<run-id>/subagent-reports/` (L3)
+- Tool failure logs — `.ai-skills-memory/errors.log` (L4 root, gitignored)
+- Run-specific RALF iterations — `.ai-skills-memory/ralph/<run-id>/` (L4 root, gitignored)
 - Personal learnings (cross-project) — those go to L5 user-global, never project-committed
 
 ## Allowlist enforcement

@@ -43,7 +43,7 @@ First iteration uses init prompt; iter ≥ 2 uses the G10 continuation-prompt te
 - **Level 5:** All of L4 + delta-only context (failed assertion + last patch + oracle output) per iter
 
 ### Dimension 5: Per-Iteration Telemetry
-`tokens.json` written per iteration to `.ai-assets-memory/ralph/<run-id>/iter-NNN/`. Captures input/output/cache tokens + duration + oracle exit code.
+`tokens.json` written per iteration to `.ai-skills-memory/ralph/<run-id>/iter-NNN/`. Captures input/output/cache tokens + duration + oracle exit code.
 
 - **Level 1:** No telemetry written
 - **Level 2:** Aggregate totals only at end of run

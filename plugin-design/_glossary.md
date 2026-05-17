@@ -84,11 +84,11 @@
 
 | Skill | Replacement in plugin | Phase 5 sunset migration |
 |---|---|---|
-| ai-assets | /plugin-doctor | `archive/MIGRATION.md` entry |
+| ai-skills | /plugin-doctor | `archive/MIGRATION.md` entry |
 | asset-validation | /plugin-doctor | same |
 | ml-pipeline | (none in v0.1; revisit v0.3+) | document as "no replacement; revisit if generalisable" |
 | product | product-manager agent (use directly) | document |
-| project-init | /ai-assets-init | document |
+| project-init | /ai-skills-init | document |
 
 ### NEW (17) — author for plugin
 
@@ -103,7 +103,7 @@
 | 42 | spike | /spike | Part A |
 | 43 | security-audit | /security-audit | Part A |
 | 44 | docs-pack | /docs-pack | Part A |
-| 45 | ai-assets-init | /ai-assets-init | Part A |
+| 45 | ai-skills-init | /ai-skills-init | Part A |
 
 #### Companion skills (9 NEW)
 
@@ -215,7 +215,7 @@ Recount user-invocable: KEEP gives 3 (/analyze, /analyze-local, /analyze-prod), 
 | 13 | tool-failure-log.py | PostToolUseFailure, StopFailure | Errors to errors.log |
 | 14 | tool-output-wrap.py (G1) | PostToolUse(Read\|Bash for memory/project paths) | Wraps outputs >200 tokens in `<untrusted_content>` |
 | 15 | tool-output-normalize.py (G2) | PostToolUse(same as wrap, AFTER) | Outputs >2000 tokens: extract → Haiku-summarize → annotate; asserts wrap marker (Round 5 S6) |
-| 16 | pre-tool-use-committed-write.py (Round 8 CRIT-1) | PreToolUse(Write\|Edit) | Validates writes to `.ai-assets-memory/.committed/*` against allowlist from `committed-allowlist.txt`; exit 2 if not matched |
+| 16 | pre-tool-use-committed-write.py (Round 8 CRIT-1) | PreToolUse(Write\|Edit) | Validates writes to `.ai-skills-memory/.committed/*` against allowlist from `committed-allowlist.txt`; exit 2 if not matched |
 
 ---
 
@@ -223,7 +223,7 @@ Recount user-invocable: KEEP gives 3 (/analyze, /analyze-local, /analyze-prod), 
 
 ### Per-workflow (10)
 
-feature-design, develop, bugfix, refactor, migrate, spike, security-audit, docs-pack, env-analyze, ai-assets-init
+feature-design, develop, bugfix, refactor, migrate, spike, security-audit, docs-pack, env-analyze, ai-skills-init
 
 ### Cross-cutting (7)
 
@@ -253,7 +253,7 @@ feature-design, develop, bugfix, refactor, migrate, spike, security-audit, docs-
 - `plugin/monitors/monitors.json` → `env-watch.sh` (opt-in via `userConfig.env_watch_enabled`)
 
 ### Memory templates L1 (7 in `plugin/memory/templates/` + 1 in `plugin/hooks/scripts/`)
-- ai-assets-memory.gitignore
+- ai-skills-memory.gitignore
 - committed-readme.md
 - learnings-schema.md
 - conventions-schema.md
@@ -298,8 +298,8 @@ feature-design, develop, bugfix, refactor, migrate, spike, security-audit, docs-
 | D5 | Eval = full Anthropic-style + lightweight linters + RALF loop |
 | D6 | Long workflows = slash commands → workflow-specific orchestrators or inline coordination; no single universal orchestrator |
 | D7 | Chat in Russian, persisted artefacts in English |
-| D8 | Plugin lives at `ai-assets/plugin/` in same repo |
-| D9 | `.ai-assets-memory/` gitignored; opt-in `.committed/` for versioned content |
+| D8 | Plugin lives at `ai-skills/plugin/` in same repo |
+| D9 | `.ai-skills-memory/` gitignored; opt-in `.committed/` for versioned content |
 | D10 | No MCP in v0.1; planned for v0.3+ |
 | D11 | Eval budgets in tokens (Max-subscription model); Haiku for judge/comparator |
 | D12 | RALF defaults: 10 iter / 200K tokens / 2h; mandatory `--kill-on`; per-workflow overrides |
@@ -313,12 +313,12 @@ feature-design, develop, bugfix, refactor, migrate, spike, security-audit, docs-
 |---|---|---|
 | Plugin install root | `${CLAUDE_PLUGIN_ROOT}/` | All plugin internal references |
 | Plugin source (in repo) | `<workspace>/plugin/` | Authoring location |
-| Project memory (L4) | `<target-repo>/.ai-assets-memory/` | Per-project persistent memory |
-| User-global memory (L5) | `~/.claude/ai-assets/learnings.md` | Cross-project learnings (opt-in) |
+| Project memory (L4) | `<target-repo>/.ai-skills-memory/` | Per-project persistent memory |
+| User-global memory (L5) | `~/.claude/ai-skills/learnings.md` | Cross-project learnings (opt-in) |
 | Cowork host memory (L0) | `~/.../spaces/<id>/memory/` | Out-of-plugin; non-interference contract |
 | Design pack output | `<target-repo>/docs/features/<feature-id>/` | /feature-design only (versioned in git) |
-| Workflow run logs | `.ai-assets-memory/<workflow>/<run-id>/` | All other workflows (gitignored) |
-| Versioned `.committed/` | `.ai-assets-memory/.committed/` | Opt-in git-tracked sub-dir |
+| Workflow run logs | `.ai-skills-memory/<workflow>/<run-id>/` | All other workflows (gitignored) |
+| Versioned `.committed/` | `.ai-skills-memory/.committed/` | Opt-in git-tracked sub-dir |
 
 ---
 

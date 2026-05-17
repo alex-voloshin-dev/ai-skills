@@ -75,7 +75,7 @@ The Developer escalates to the Lead. The Lead pauses the pipeline, presents the 
 The skill detects at activation time. If unavailable, it halts and recommends `/feature-dev` (single-agent fallback). Inline execution is NOT a fallback — it would break the gate enforcement that this workflow relies on.
 
 **Where does REVIEW-LOG.md live?**
-Written to `<repo>/REVIEW-LOG.md` for `/create-pr` to ingest. Also archived to `.ai-assets-memory/develop/<run-id>/` for history.
+Written to `<repo>/REVIEW-LOG.md` for `/create-pr` to ingest. Also archived to `.ai-skills-memory/develop/<run-id>/` for history.
 
 ## Examples
 

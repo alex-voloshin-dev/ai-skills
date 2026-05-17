@@ -69,7 +69,7 @@ Reduces per-agent input tokens vs sending full CLAUDE.md to every subagent.
 <wrapped excerpt>
 
 ---
-Sources: CLAUDE.md (lines X-Y), AGENTS.md (section "Z"), ARCHITECTURE.md (sections A,B), .ai-assets-memory/learnings.md (3 entries)
+Sources: CLAUDE.md (lines X-Y), AGENTS.md (section "Z"), ARCHITECTURE.md (sections A,B), .ai-skills-memory/learnings.md (3 entries)
 ```
 
 ## Failure modes

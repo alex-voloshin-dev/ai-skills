@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: subagent-depth-guard
+ai-skills plugin hook: subagent-depth-guard
 Event: SubagentStart
 Exit code 0 = allow spawn; exit code 2 = block spawn (depth cap exceeded).
 
@@ -140,7 +140,7 @@ def main() -> None:
         _lib.allow()
 
     cwd = pathlib.Path.cwd()
-    session_dir = cwd / ".ai-assets-memory" / "sessions" / sid
+    session_dir = cwd / ".ai-skills-memory" / "sessions" / sid
     chain_path = session_dir / SPAWN_CHAIN_FILENAME
 
     chain_events = _read_chain(chain_path)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: ralph-iter-meter
+ai-skills plugin hook: ralph-iter-meter
 Event: PostToolUse (matcher: .* — runs after every tool call)
 Exit code 0 = always allow.
 
@@ -74,7 +74,7 @@ def main() -> None:
     data = _lib.normalize_hook_input(data)
 
     cwd = pathlib.Path.cwd()
-    memory_root = cwd / ".ai-assets-memory"
+    memory_root = cwd / ".ai-skills-memory"
 
     # Cheap precondition: skip everything if no RALF run is active.
     run_dir = _lib.find_active_ralph(memory_root)

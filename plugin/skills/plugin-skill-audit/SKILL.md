@@ -1,12 +1,12 @@
 ---
 name: plugin-skill-audit
-description: Internal procedure for `/plugin-author audit`. Audit, validate, and update existing skills inside the ai-assets plugin (under `plugin/skills/`). Checks frontmatter against the agentskills.io specification, body length, progressive-disclosure structure, cross-reference integrity, eval-case wiring, and ai-assets plugin conventions. No longer slash-invocable — call `/plugin-author audit [<name> | --all] [--deep] [--strict] [--fix]` instead. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill (the safe-fix table and audit checks are the cached digest of upstream spec rules).
+description: Internal procedure for `/plugin-author audit`. Audit, validate, and update existing skills inside the ai-skills plugin (under `plugin/skills/`). Checks frontmatter against the agentskills.io specification, body length, progressive-disclosure structure, cross-reference integrity, eval-case wiring, and ai-skills plugin conventions. No longer slash-invocable — call `/plugin-author audit [<name> | --all] [--deep] [--strict] [--fix]` instead. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill (the safe-fix table and audit checks are the cached digest of upstream spec rules).
 disable-model-invocation: true
 ---
 
 # /plugin-skill-audit — Plugin Skill Auditor
 
-Audit skills in `plugin/skills/<name>/` against the agentskills.io spec + best-practices and ai-assets conventions. Emits a per-skill pass/warn/fail report and optionally applies safe fixes. Counterpart to `/plugin-skill-create`; NEVER creates skills.
+Audit skills in `plugin/skills/<name>/` against the agentskills.io spec + best-practices and ai-skills conventions. Emits a per-skill pass/warn/fail report and optionally applies safe fixes. Counterpart to `/plugin-skill-create`; NEVER creates skills.
 
 ## When to use
 
@@ -47,10 +47,10 @@ Not for: scaffolding new skills (use `/plugin-skill-create`); Codex/Windsurf ass
    - **refs** — cross-reference integrity
    - **eval** — eval-case + judge-rubric wiring
    - **scripts** — `scripts/` agentic-use checks (skipped if the skill has no `scripts/` dir)
-   - **plugin** — ai-assets plugin-specific conventions (H5 trigger, `context: fork`, etc.)
+   - **plugin** — ai-skills plugin-specific conventions (H5 trigger, `context: fork`, etc.)
 3. Print a per-skill report: `name | check | status | detail`
 4. If `--fix`: apply only the safe, deterministic fixes from the Safe-fix table; re-run checks to confirm
-5. Append an audit-log entry to `.ai-assets-memory/plugin-skill-audit.log`
+5. Append an audit-log entry to `.ai-skills-memory/plugin-skill-audit.log`
 6. Exit non-zero if any check failed (or any warned in `--strict`)
 
 ## agentskills.io specification checks (group `spec`)
@@ -69,11 +69,11 @@ Frontmatter — optional fields permitted by spec:
 - `metadata` — string→string map (warn on non-string values)
 - `allowed-tools` — space-separated tool list (experimental; warn if used)
 
-ai-assets-tolerated (not upstream): `context: fork` (slash-invocable), `argument-hint` (`/help` hint), `disable-model-invocation: true` (knowledge-only). Any field outside {spec-optional ∪ ai-assets-tolerated} → `warn`.
+ai-skills-tolerated (not upstream): `context: fork` (slash-invocable), `argument-hint` (`/help` hint), `disable-model-invocation: true` (knowledge-only). Any field outside {spec-optional ∪ ai-skills-tolerated} → `warn`.
 
 ## Body checks (group `body`)
 
-- ≤ 5000 tokens AND ≤ 500 lines (digest recommended) — `warn` beyond, `fail` beyond 1.5×; ≤ 12000 chars (ai-assets rule) — `fail` beyond
+- ≤ 5000 tokens AND ≤ 500 lines (digest recommended) — `warn` beyond, `fail` beyond 1.5×; ≤ 12000 chars (ai-skills rule) — `fail` beyond
 - First H1 present, matching `# /<name>` or `# <Title>`
 - Recommended sections present (`warn` if missing): When to use, Invocation, Arguments (if `argument-hint`), Behavior, Failure modes, Integration
 - Long templates moved to sibling files (`warn` if an inline fenced block > 80 lines)
@@ -165,14 +165,14 @@ When `--fix` runs, a second block lists every applied fix with the line range to
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After every run | Append a JSON line to `.ai-assets-memory/plugin-skill-audit.log` — ts, target, counts, fixes |
+| L4 | After every run | Append a JSON line to `.ai-skills-memory/plugin-skill-audit.log` — ts, target, counts, fixes |
 
 ## Integration
 
-- **Status**: internal procedure for `/plugin-author audit`. Not slash-invocable. The umbrella reads it directly; `ai-assets:prompt-engineer` pre-reads it before any plugin-asset DEV/REVIEW pass.
+- **Status**: internal procedure for `/plugin-author audit`. Not slash-invocable. The umbrella reads it directly; `ai-skills:prompt-engineer` pre-reads it before any plugin-asset DEV/REVIEW pass.
 - **Reachable via**: `/plugin-author audit [<name> | --all] [--deep] [--strict] [--fix] [--check spec|body|refs|eval|scripts|all]`
 - **Reads**: `plugin/skills/<name>/SKILL.md`, sibling resource files, `plugin/eval/cases/<name>/`, `plugin/eval/judge-rubrics/<name>.md`, `plugin/eval/config.json`, `plugin/.claude-plugin/plugin.json`
-- **Writes**: stdout report; `.ai-assets-memory/plugin-skill-audit.log`; (only with `--fix`) safe-fix-table edits.
+- **Writes**: stdout report; `.ai-skills-memory/plugin-skill-audit.log`; (only with `--fix`) safe-fix-table edits.
 - **Companion**: `plugin/skills/plugin-skill-create/SKILL.md`. **Whole-plugin diagnostic**: `/plugin-doctor`.
 - **Spec reference (cached, offline source of truth)**: `prompt-engineering/skill-authoring-spec.md` , `prompt-engineering/optimizing-descriptions.md` — mirroring https://agentskills.io/specification + /skill-creation/{best-practices,optimizing-descriptions,using-scripts}
 - **Codex/Windsurf analog**: `.agents/skills/asset-validation/` + `.codex/checklists/codex-asset-review.md` (parity-tracked in `review/parity-matrix.md`).

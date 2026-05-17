@@ -42,7 +42,7 @@ Plan + execute + verify a refactor that changes structure without changing behav
 
 - Refactored code in assigned files
 - Test suite passing (tests updated only if signatures genuinely change)
-- `<repo>/.ai-assets-memory/refactor/<run-id>/REFACTOR-LOG.md` — before/after comparison + rationale
+- `<repo>/.ai-skills-memory/refactor/<run-id>/REFACTOR-LOG.md` — before/after comparison + rationale
 - Pull request with diff + refactor log
 
 ## Agent roster
@@ -121,8 +121,8 @@ Pass: avg ≥ 4.0, no dimension < 3.
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After plan approval | `.ai-assets-memory/refactor/<run-id>/plan.md` |
-| L4 | After completion | `.ai-assets-memory/refactor/<run-id>/final.md` — before/after stats (lines, complexity metrics) |
+| L4 | After plan approval | `.ai-skills-memory/refactor/<run-id>/plan.md` |
+| L4 | After completion | `.ai-skills-memory/refactor/<run-id>/final.md` — before/after stats (lines, complexity metrics) |
 
 ## Failure modes
 

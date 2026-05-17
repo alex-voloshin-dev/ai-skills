@@ -90,4 +90,4 @@ Events: 0/3 nodes available: 3 Insufficient memory. Pod requires 1Gi, no node ha
 
 ## Memory Write
 
-Baseline saved to `.ai-assets-memory/env-reports/k8s-prod-<run-id>/`.
+Baseline saved to `.ai-skills-memory/env-reports/k8s-prod-<run-id>/`.

@@ -1,6 +1,6 @@
 ---
 name: plugin-doctor
-description: Self-diagnostic for the ai-assets plugin — validates skill frontmatter, hook executability, run-log parseability, and judge calibration. Default mode is fast and cost-free; `--calibrate-judge` is opt-in. Use when installing the plugin, upgrading to a new version, or troubleshooting unexpected plugin behavior.
+description: Self-diagnostic for the ai-skills plugin — validates skill frontmatter, hook executability, run-log parseability, and judge calibration. Default mode is fast and cost-free; `--calibrate-judge` is opt-in. Use when installing the plugin, upgrading to a new version, or troubleshooting unexpected plugin behavior.
 context: fork
 argument-hint: "[--calibrate-judge]"
 ---
@@ -26,7 +26,7 @@ Planned (not yet shipped):
 /plugin-doctor --health-trends          # context-health metrics summary (G8)
 ```
 
-Both `--runs` and `--health-trends` will land once `.ai-assets-memory/runs.jsonl` accumulates enough entries to make the summary meaningful. Track progress in the plugin issue tracker.
+Both `--runs` and `--health-trends` will land once `.ai-skills-memory/runs.jsonl` accumulates enough entries to make the summary meaningful. Track progress in the plugin issue tracker.
 
 ## Two-step boot model
 
@@ -36,7 +36,7 @@ Wraps `plugin/eval/runner.py --tier 1` — runs and reports on:
 - **Skill frontmatter** — `name` + `description` present, kebab-case `name` matches parent dir, recognizable `Use when` trigger phrase (H5 regex from `runner.py`).
 - **Hook references** — every entry in `plugin/hooks/hooks.json` resolves to an existing script under `${CLAUDE_PLUGIN_ROOT}/hooks/scripts/`. Both bare-path and the v0.3.3 `python3 ${CLAUDE_PLUGIN_ROOT}/...` wrapper form accepted.
 - **Hook scripts** — Python syntax valid (`py_compile` in the runner).
-- **Run logs** — `.ai-assets-memory/runs.jsonl` parses (JSON-syntax check; richer summaries are planned via `--runs --last N`, see Planned section above).
+- **Run logs** — `.ai-skills-memory/runs.jsonl` parses (JSON-syntax check; richer summaries are planned via `--runs --last N`, see Planned section above).
 - **JSON validity** — `plugin/schemas/*.json` + `eval/config.json` + `monitors/monitors.json` + `.claude-plugin/plugin.json` parse cleanly.
 
 Note: schema files are checked for valid JSON syntax, not full JSON Schema draft 2020-12 validation; the `$schema` URI declares draft 2020-12 but the runner does not currently re-validate against it.
@@ -61,7 +61,7 @@ Requires `ANTHROPIC_API_KEY` and the `anthropic` Python SDK; without them the ru
 
 ### `--show-recent-errors` (recent-errors dashboard)
 
-Surfaces the top hooks ranked by `ERROR + WARNING` count in `.ai-assets-memory/errors.log` over the last 7 days (default window). Ranking is `ERROR * 10 + WARNING` so a hook with a few ERRORs ranks above a hook with many INFO-level WARNINGs. For each hook the dashboard shows the top 3 `issue` strings and counts so the root cause of a noisy hook is one glance away.
+Surfaces the top hooks ranked by `ERROR + WARNING` count in `.ai-skills-memory/errors.log` over the last 7 days (default window). Ranking is `ERROR * 10 + WARNING` so a hook with a few ERRORs ranks above a hook with many INFO-level WARNINGs. For each hook the dashboard shows the top 3 `issue` strings and counts so the root cause of a noisy hook is one glance away.
 
 Invocation:
 
@@ -69,7 +69,7 @@ Invocation:
 python3 ${CLAUDE_PLUGIN_ROOT}/dev/recent-errors.py [--days N] [--top K] [--json]
 ```
 
-Run from the project root (the script defaults to `<cwd>/.ai-assets-memory/errors.log`). No LLM cost; fail-open on missing log or parse errors. Typical output (real f4ai data, 7-day window):
+Run from the project root (the script defaults to `<cwd>/.ai-skills-memory/errors.log`). No LLM cost; fail-open on missing log or parse errors. Typical output (real f4ai data, 7-day window):
 
 ```
 Recent errors — last 7 day(s) (since 2026-05-06T13:40:33Z)
@@ -93,11 +93,11 @@ Use `--json` for machine-readable output (e.g. CI dashboards). Use `--days 1` fo
 ## Output
 
 - stdout: human-readable report
-- `.ai-assets-memory/plugin-doctor.log` — append-only audit log
+- `.ai-skills-memory/plugin-doctor.log` — append-only audit log
 
 ## Failure modes
 
-- **No `.ai-assets-memory/`:** report as "first run — no history yet"; suggest `/ai-assets-init`
+- **No `.ai-skills-memory/`:** report as "first run — no history yet"; suggest `/ai-skills-init`
 - **Hook script missing executable bit:** **expected** since v0.3.3. Hooks are invoked via the wrapper form `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/<name>.py` (commit `4ea3347`), which does not need the exec bit. Reverting to the bare `${CLAUDE_PLUGIN_ROOT}/...` form would re-introduce the v0.3.2 "Permission denied" install bug. Report this as `INFO` only, not as a warning.
 - **`hooks.json` command starts with `python3 ${CLAUDE_PLUGIN_ROOT}/...` rather than `${CLAUDE_PLUGIN_ROOT}/...`:** **expected** since v0.3.3 — same reason as above. The Tier 1 linter (`plugin/eval/runner.py`) accepts both forms by searching for the placeholder substring rather than requiring it at position 0. If a third-party validator still flags the wrapper form, treat it as a linter-bug, not a plugin-bug.
 - **`marketplace.json` missing at the cache root (`~/.claude/plugins/cache/<owner>/<plugin>/.claude-plugin/marketplace.json`):** **expected** in `claude --plugin-dir` install mode. The repo-level `/<repo>/.claude-plugin/marketplace.json` is the source-of-truth and is consumed only by `/plugin marketplace add`. `--plugin-dir` is the supported install mode for local development of this repo (per repo `README.md` and `CLAUDE.md`); the cache-root warning can be ignored unless distributing via marketplace.
@@ -105,7 +105,7 @@ Use `--json` for machine-readable output (e.g. CI dashboards). Use `--days 1` fo
 
 ## Integration
 
-- **Reads**: every file under `plugin/` for lints; `.ai-assets-memory/runs.jsonl`, `plugin-doctor.log` for summaries
+- **Reads**: every file under `plugin/` for lints; `.ai-skills-memory/runs.jsonl`, `plugin-doctor.log` for summaries
 - **Calls**: `eval/runner.py --tier 1` (Tier 1 linters); `eval/runner.py --tier 2` if `--calibrate-judge`
-- **Memory writes**: `.ai-assets-memory/plugin-doctor.log` (audit trail)
+- **Memory writes**: `.ai-skills-memory/plugin-doctor.log` (audit trail)
 - **Used by**: developers post-install, CI smoke before merge

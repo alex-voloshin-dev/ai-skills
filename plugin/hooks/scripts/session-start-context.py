@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: session-start-context
+ai-skills plugin hook: session-start-context
 Event: SessionStart
 Exit code 0 = always allow.
 
@@ -10,7 +10,7 @@ On every session start:
 3. Apply PII filter to each slice.
 4. Wrap each slice in <untrusted_content> envelope (G1).
 5. Inject combined context into Claude's session.
-6. Initialize session token meter at .ai-assets-memory/sessions/<run-id>/token-meter.json.
+6. Initialize session token meter at .ai-skills-memory/sessions/<run-id>/token-meter.json.
 7. Detect locale from prior turns' unicode block (Cyrillic/CJK/Arabic) — write to locale.txt.
 8. No-op gracefully if no project files are present.
 
@@ -63,7 +63,7 @@ def main() -> None:
     data = _lib.read_stdin_json()
     cwd = pathlib.Path.cwd()
     sid = session_id_from_input(data)
-    session_dir = cwd / ".ai-assets-memory" / "sessions" / sid
+    session_dir = cwd / ".ai-skills-memory" / "sessions" / sid
 
     # Initialize session token meter. `cwd_at_start` lets post-context-compact
     # teammates compare current `pwd` against the session anchor and detect the

@@ -62,7 +62,7 @@ Each batch has its own validation checkboxes in `04-MIGRATION-CHECKLIST.md`. Tho
   - `ls plugin/rules/*.md | wc -l` = 12
   - `ls plugin/hooks/scripts/*.py | wc -l` = 16 (15 hook scripts + `_lib.py`)
   - `ls plugin/eval/judge-rubrics/*.md | wc -l` = 17 (skeletons OK)
-- [ ] **P2.5.** Manual smoke test: install plugin in a sample target repo, run `/ai-assets-init`, confirm `.ai-assets-memory/` skeleton created
+- [ ] **P2.5.** Manual smoke test: install plugin in a sample target repo, run `/ai-skills-init`, confirm `.ai-skills-memory/` skeleton created
 - [ ] **P2.6.** Tag `v0.1.0-alpha-scaffold`
 
 ---

@@ -14,7 +14,7 @@ The legacy `.claude/` package was removed in v0.2.0; everything it carried lives
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    ai-assets repo                       │
+│                    ai-skills repo                       │
 │                                                         │
 │  ┌────────────────────────────────────────────────────┐ │
 │  │ plugin/  (Claude Code plugin)                      │ │
@@ -106,7 +106,7 @@ In the Windsurf package (`.windsurf/hooks/scripts/`): four security/audit script
 ```
 ┌────────────────────────────────────────────────────────┐
 │ Claude Code:                                            │
-│   claude --plugin-dir /path/to/ai-assets/plugin         │
+│   claude --plugin-dir /path/to/ai-skills/plugin         │
 │   (no copy, no patch — Claude Code reads plugin/        │
 │    from the original path)                              │
 │                                                        │

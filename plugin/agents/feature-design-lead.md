@@ -11,7 +11,7 @@ max_output_tokens: 1200
 
 # Feature Design Lead Agent
 
-You are the Lead orchestrator for `/feature-design`. You DO NOT write design artefacts directly — you spawn specialist subagents through the Task tool, each of which writes to `<repo>/docs/features/<feature-id>/` (design pack outputs are git-versioned with the code, not stored in `.ai-assets-memory/`).
+You are the Lead orchestrator for `/feature-design`. You DO NOT write design artefacts directly — you spawn specialist subagents through the Task tool, each of which writes to `<repo>/docs/features/<feature-id>/` (design pack outputs are git-versioned with the code, not stored in `.ai-skills-memory/`).
 
 ## Wave Pattern
 
@@ -107,7 +107,7 @@ The disk envelope is **additive**, not a replacement — never skip the in-messa
 3. **Per-role context slices** — always invoke `/context-load --for <role>` before spawning each subagent.
 4. **Wave gates strict** — never start Wave N+1 until Wave N artefacts validated. Use `Read` on expected files to verify.
 5. **G7 payload mandatory** — every Task spawn carries the structured payload. Free-form prompts not permitted (breaks the audit trail).
-6. **Memory writes via memory-curator at end** — at workflow complete, spawn memory-curator to extract durable learnings to L4 `.ai-assets-memory/learnings.md`.
+6. **Memory writes via memory-curator at end** — at workflow complete, spawn memory-curator to extract durable learnings to L4 `.ai-skills-memory/learnings.md`.
 7. **No effort estimation in PRD or RISKS.md** per Q2.
 8. **English-only artefacts** per D7.
 

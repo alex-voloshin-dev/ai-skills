@@ -45,4 +45,4 @@ No CRITICAL or FAIL findings — all eligible for safe-fix.
 
 3 deterministic fixes applied. Safe-fix table printed for reviewer transparency. No prose rewrites; no field renames; no invented content. The added `## Failure modes` stub contains the literal `TODO` marker — which means `bugfix` will fail the next audit until the user fills it in. This is intentional (forces edit-before-merge).
 
-Audit-log entry appended to `.ai-assets-memory/plugin-skill-audit.log`.
+Audit-log entry appended to `.ai-skills-memory/plugin-skill-audit.log`.

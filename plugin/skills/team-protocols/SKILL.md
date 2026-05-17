@@ -33,7 +33,7 @@ Before team-create, the Lead also runs the two pre-flight checks from `lead-prot
 
 ## File-channel transport — first-class, not fallback (v0.3.11)
 
-Per `lead-protocol.md` "File-channel transport — first-class, not fallback", the Lead wires `.ai-assets-memory/sessions/<sid>/team-envelopes/` as the canonical liveness signal at team-create. The `team-gate-reconciliation.py` hook writes a snapshot envelope automatically on every `TaskCompleted` and `TeammateIdle`; teammates write their G7 envelopes there too (per `developer-protocol.md` and `reviewer-protocol.md` "File-channel envelopes"). The Lead `Monitor`s the directory so silent-lead-bound-bus failures (alpha.36) do not stall the pipeline.
+Per `lead-protocol.md` "File-channel transport — first-class, not fallback", the Lead wires `.ai-skills-memory/sessions/<sid>/team-envelopes/` as the canonical liveness signal at team-create. The `team-gate-reconciliation.py` hook writes a snapshot envelope automatically on every `TaskCompleted` and `TeammateIdle`; teammates write their G7 envelopes there too (per `developer-protocol.md` and `reviewer-protocol.md` "File-channel envelopes"). The Lead `Monitor`s the directory so silent-lead-bound-bus failures (alpha.36) do not stall the pipeline.
 
 ## Two Paths — Subagents OR Agent Teams
 

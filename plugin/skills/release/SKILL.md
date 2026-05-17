@@ -128,7 +128,7 @@ Generate release notes for GitHub/GitLab:
 
 ## 7. Memory Write (L4)
 
-Append a release event to `.ai-assets-memory/runs.jsonl` for cross-session aggregation per `memory-discipline.md`:
+Append a release event to `.ai-skills-memory/runs.jsonl` for cross-session aggregation per `memory-discipline.md`:
 
 ```json
 {"ts": "<ISO8601>", "event": "release", "version": "vX.Y.Z", "type": "major|minor|patch", "commit_count": N, "breaking_changes": <bool>}

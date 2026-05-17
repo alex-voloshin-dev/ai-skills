@@ -100,7 +100,7 @@ The plugin carries capabilities that are intentionally not mirrored to Codex/Win
 | Untrusted-content wrapping (G1) | Depends on PostToolUse event piping |
 | 45 eval rubrics + 270 calibration samples + Tier 1/Tier 2/g1g2 runners | Plugin-internal eval framework (rubrics + Haiku judge calibration) |
 | `team-protocols`, `team-bugfix`, `develop`, `feature-design`, `bugfix` orchestration | Depend on Claude Code's Agent tool + optional Agent Teams flag |
-| 73 skills × 36 user-invocable (32 `context: fork` + 4 main-thread orchestrators) | Plugin-namespaced via `ai-assets:` prefix per Anthropic spec |
+| 73 skills × 36 user-invocable (32 `context: fork` + 4 main-thread orchestrators) | Plugin-namespaced via `ai-skills:` prefix per Anthropic spec |
 
 Codex and Windsurf carry the simpler 4 carry-over hooks (security/audit only) plus the shared skill+role corpus.
 

@@ -129,10 +129,10 @@ All agent spawns use `plugin/schemas/spawn-payload.schema.json`. Returns conform
 
 | Layer | When | Shape |
 |---|---|---|
-| L4 | After draft complete | `.ai-assets-memory/content/<slug>/draft-summary.md` (per piece, for trend tracking) |
-| L4 | After publish | Run-log line in `.ai-assets-memory/runs.jsonl` |
+| L4 | After draft complete | `.ai-skills-memory/content/<slug>/draft-summary.md` (per piece, for trend tracking) |
+| L4 | After publish | Run-log line in `.ai-skills-memory/runs.jsonl` |
 
-Blog post output goes to the project's blog directory (NOT to `.ai-assets-memory/`) per project conventions.
+Blog post output goes to the project's blog directory (NOT to `.ai-skills-memory/`) per project conventions.
 
 ## Companions
 

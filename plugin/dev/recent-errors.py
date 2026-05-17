@@ -2,7 +2,7 @@
 """Recent-errors dashboard for `/plugin-doctor --show-recent-errors` (audit
 §WP-4.2).
 
-Reads `.ai-assets-memory/errors.log` from the current project and prints a
+Reads `.ai-skills-memory/errors.log` from the current project and prints a
 top-N summary of hooks ranked by ERROR + WARNING count over the last N days.
 
 Usage:
@@ -131,14 +131,14 @@ def main() -> int:
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
     parser.add_argument(
         "--errors-log",
-        default=".ai-assets-memory/errors.log",
-        help="Path to errors.log (default: <cwd>/.ai-assets-memory/errors.log)",
+        default=".ai-skills-memory/errors.log",
+        help="Path to errors.log (default: <cwd>/.ai-skills-memory/errors.log)",
     )
     args = parser.parse_args()
 
     path = pathlib.Path(args.errors_log).expanduser()
     if not path.is_file():
-        msg = f"errors.log not found at {path} — no history yet. Use /ai-assets-init in this repo."
+        msg = f"errors.log not found at {path} — no history yet. Use /ai-skills-init in this repo."
         if args.json:
             print(json.dumps({"error": "not_found", "path": str(path)}, indent=2))
         else:

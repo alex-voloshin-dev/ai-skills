@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: session-end-finalize
+ai-skills plugin hook: session-end-finalize
 Event: SessionEnd
 Exit code 0 = always allow.
 
@@ -13,7 +13,7 @@ Per memory-discipline retention rules:
 3. Cross-check event count against repo-wide agent-actions.log filtered by
    session_id.
 4. Append session summary line to L4 runs.jsonl (cross-session aggregate).
-5. Release any dangling RALF locks (.ai-assets-memory/ralph/<run-id>/active.lock).
+5. Release any dangling RALF locks (.ai-skills-memory/ralph/<run-id>/active.lock).
 6. Optionally delete L3 sessions/<id>/ after summary write (per retention rule
    "session lifetime; archived to L4 then sessions/<id> deleted"). v0.1: keep
    sessions/<id>/ for 7 days; deletion handled separately to avoid data loss.
@@ -107,7 +107,7 @@ def main() -> None:
     sid = str(data.get("session_id") or "unknown").replace(":", "-").replace(".", "-")
 
     cwd = pathlib.Path.cwd()
-    memory_root = cwd / ".ai-assets-memory"
+    memory_root = cwd / ".ai-skills-memory"
     session_dir = memory_root / "sessions" / sid
 
     if not session_dir.exists():

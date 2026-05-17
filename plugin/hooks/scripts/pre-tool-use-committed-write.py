@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: pre-tool-use-committed-write (Round 8 CRIT-1)
+ai-skills plugin hook: pre-tool-use-committed-write (Round 8 CRIT-1)
 Event: PreToolUse (matcher: Write|Edit)
 Exit code 0 = allow; exit code 2 = block.
 
 Per memory-discipline rule 6 + 03-MEMORY-ARCHITECTURE.md §8: enforces
-allowlist on writes targeting `.ai-assets-memory/.committed/*`.
+allowlist on writes targeting `.ai-skills-memory/.committed/*`.
 
 Allowlist source order:
 1. ${CLAUDE_PLUGIN_ROOT}/memory/templates/committed-allowlist.txt (plugin defaults)
-2. .ai-assets-memory/.committed/.allowlist-extensions.txt (project extension —
+2. .ai-skills-memory/.committed/.allowlist-extensions.txt (project extension —
    itself in the default allowlist to bootstrap)
 
 Match logic: glob patterns. Path matched against patterns; first match allows.
@@ -29,9 +29,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _lib  # noqa: E402
 
 
-COMMITTED_PREFIX = ".ai-assets-memory/.committed/"
+COMMITTED_PREFIX = ".ai-skills-memory/.committed/"
 DEFAULT_ALLOWLIST_PATH = "memory/templates/committed-allowlist.txt"
-PROJECT_EXTENSION = ".ai-assets-memory/.committed/.allowlist-extensions.txt"
+PROJECT_EXTENSION = ".ai-skills-memory/.committed/.allowlist-extensions.txt"
 
 
 def load_allowlist() -> list[str]:
@@ -69,7 +69,7 @@ def _parse_allowlist_file(path: pathlib.Path) -> list[str]:
 
 
 def is_committed_write(file_path: str) -> bool:
-    """True if the write target is under .ai-assets-memory/.committed/."""
+    """True if the write target is under .ai-skills-memory/.committed/."""
     norm = file_path.replace("\\", "/")
     return COMMITTED_PREFIX in norm
 
@@ -131,7 +131,7 @@ def main() -> None:
         f"BLOCKED: write to .committed/ path '{rel}' is not in the allowlist.\n"
         f"Allowlist patterns checked: {len(patterns)}\n"
         f"To permit this path, add a glob pattern to "
-        f".ai-assets-memory/.committed/.allowlist-extensions.txt\n"
+        f".ai-skills-memory/.committed/.allowlist-extensions.txt\n"
         f"Default allowlist: ${{CLAUDE_PLUGIN_ROOT}}/memory/templates/committed-allowlist.txt"
     )
 

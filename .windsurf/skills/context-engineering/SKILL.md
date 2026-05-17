@@ -103,7 +103,7 @@ Overflow strategy: truncate lowest-priority layers first (L7 → L6 → L5).
 ## Integration
 
 - **Follows rules**: `prompt-engineer` role (prompt-level techniques, security, eval-first quality)
-- **Used by workflows**: `ai-assets` skill (context engineering validation), `feature-dev` skill (AI features), `plan` skill (AI work packages), `code-review` skill (context quality review)
+- **Used by workflows**: `ai-skills` skill (context engineering validation), `feature-dev` skill (AI features), `plan` skill (AI work packages), `code-review` skill (context quality review)
 - **Companion skill**: `prompt-engineering` skill (technique selection, template patterns, eval, security checklist)
 - **Collaborates with roles**: `solution-architect` role (AI system design), `product-manager` role (agent contracts), `sre-engineer` role (context observability), `software-engineer` role (implementation)
 - **Primary source**: `guides/context_engineering_guide.md`

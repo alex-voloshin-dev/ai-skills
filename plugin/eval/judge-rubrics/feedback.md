@@ -2,7 +2,7 @@
 
 ## Overview
 
-Evaluates `/feedback` output — the post-hoc plugin session analyzer that mines `~/.claude/projects/<sanitized-cwd>/*.jsonl` for hook errors, subagent failures, abnormal stops, and other anomalies attributable to the ai-assets plugin. Five dimensions × five levels. Pass threshold 3.6 (workflow skill with deterministic worker — output shape matters more than novel reasoning).
+Evaluates `/feedback` output — the post-hoc plugin session analyzer that mines `~/.claude/projects/<sanitized-cwd>/*.jsonl` for hook errors, subagent failures, abnormal stops, and other anomalies attributable to the ai-skills plugin. Five dimensions × five levels. Pass threshold 3.6 (workflow skill with deterministic worker — output shape matters more than novel reasoning).
 
 ## Dimensions
 
@@ -43,7 +43,7 @@ Extended report on disk follows the section order: Executive Summary → Scope &
 - **Level 5:** All of L4 + verdict (GREEN/YELLOW/RED) computed per the SKILL definition and consistent across both reports
 
 ### Dimension 5: Memory and Path Discipline
-Writes one JSON-line entry to `.ai-assets-memory/feedback/feedback.log` per run; default report path is `.ai-assets-memory/feedback/feedback-<YYYY-MM-DD>-<HHMM>.md` and re-runs do not overwrite each other; `--out` override respected; falls back to `/tmp/...` on permission denied with a warning; never writes outside repo or `$HOME` unless `--out` says so.
+Writes one JSON-line entry to `.ai-skills-memory/feedback/feedback.log` per run; default report path is `.ai-skills-memory/feedback/feedback-<YYYY-MM-DD>-<HHMM>.md` and re-runs do not overwrite each other; `--out` override respected; falls back to `/tmp/...` on permission denied with a warning; never writes outside repo or `$HOME` unless `--out` says so.
 
 - **Level 1:** No memory write; default path overwrites previous run
 - **Level 2:** Memory write present but missing required keys (verdict, report path, findings count)

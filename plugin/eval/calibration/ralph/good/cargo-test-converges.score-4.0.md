@@ -33,7 +33,7 @@ Oracle exit: 0 — converged. Tokens: in=3801, out=982, cache=15110.
 ## Telemetry written
 
 ```
-.ai-assets-memory/ralph/ralph-2026-05-03-contract-fix/
+.ai-skills-memory/ralph/ralph-2026-05-03-contract-fix/
   iter-001/tokens.json   {input:18421, output:2104, cache_read:0, duration_s:42, oracle_exit:1}
   iter-002/tokens.json   {input:4218,  output:1612, cache_read:14882, duration_s:18, oracle_exit:1}
   iter-003/tokens.json   {input:3801,  output:982,  cache_read:15110, duration_s:14, oracle_exit:0}

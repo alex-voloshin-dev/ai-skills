@@ -1,5 +1,5 @@
 # Bundled Codex Operations
 
-This folder preserves Codex operation reference material inside the Windsurf `ai-assets` skill.
+This folder preserves Codex operation reference material inside the Windsurf `ai-skills` skill.
 
 These files document how plugin-side hook and settings intent was translated for the Codex package. They are supporting resources for parity work, not hidden Windsurf runtime automation.

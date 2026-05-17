@@ -32,7 +32,7 @@ Existing skill `bugfix` left untouched (last modified: 2026-04-22 by your team-b
 - `plugin/skills/bugfix/references/` — directory contents unchanged
 - `plugin/eval/cases/bugfix/` — directory contents unchanged
 - `plugin/eval/judge-rubrics/bugfix.md` — file unchanged
-- `.ai-assets-memory/plugin-skills/bugfix/scaffolded.md` — NOT modified (collision aborted before any write)
+- `.ai-skills-memory/plugin-skills/bugfix/scaffolded.md` — NOT modified (collision aborted before any write)
 
 Exit code: 1 (non-zero, signals error to CI / shell pipelines).
 

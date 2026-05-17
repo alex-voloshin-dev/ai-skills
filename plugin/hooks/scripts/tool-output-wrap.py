@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ai-assets plugin hook: tool-output-wrap (G1)
+ai-skills plugin hook: tool-output-wrap (G1)
 Event: PostToolUse (matcher: Read|Bash for memory dirs and project files)
 Exit code 0 = always allow.
 
@@ -76,7 +76,7 @@ def main() -> None:
     elif tool_name == "Read":
         path = tool_input.get("file_path", "")
         # Memory dir reads → L4; project file reads → L2 if matches
-        if ".ai-assets-memory" in path:
+        if ".ai-skills-memory" in path:
             source = f"L4:{path}"
         elif path.endswith(("CLAUDE.md", "AGENTS.md", "ARCHITECTURE.md")):
             source = f"L2:{path}"
