@@ -120,10 +120,21 @@ Valid Path A triggers (hard technical blocks detected at or before Path B Step 1
 2. The Lead is itself running inside a subagent that has no team primitives.
 3. **Pre-spawn tool-capability check (alpha.32) fails for the whole team** — every candidate `subagent_type` for a writing role lacks `Write` / `Edit` AND the workflow cannot be restructured to write in the Lead's main thread. In this case the team cannot fulfil its workflow contract, so Path B is not actionable for this run. Partial mismatches (only some roles read-only) are handled per role per the alpha.32 entry above, not by a whole-session downgrade.
 4. **alpha.33-fast-fail — total-team zero-activity within 90 s of team-create + first TaskCreate**. `TeamCreate` succeeded but no teammate emitted any activity. This is observable, not theoretical — see the alpha.33 entry above. Per-role nudge cycles cannot recover total-team silence, so a user-approved whole-workflow Path A fallback is legitimate here. Document the trigger in `REVIEW-LOG.md` "Liveness events" with timestamps.
+5. **Dead team bus — coordination augmentation absent for the whole team (P0-1, alpha.31/34/36).** The post-create coordination-tool probe (Pre-spawn Procedure step 7) shows NO teammate has working `TaskUpdate` + `SendMessage`. Per field observation this is frequently the alpha default, not a rare flake. This is a SANCTIONED Path A trigger applied **once per run for the entire workflow** — distinct from the per-wave alpha.31 / alpha.33 liveness events (those are recoverable single-wave flakes handled by the watchdog; this is a whole-run bus failure decided exactly once). Decide it at the first probe and stay on Path A for the rest of the run; do NOT rediscover it wave-by-wave or re-enter Path B on a later wave. Document in `REVIEW-LOG.md` "Liveness events" with the probe timestamp.
 
-In cases (1) and (2), fall back silently and continue. Case (3) and (4) surface user-facing escalation prompts before falling back. All other downgrade rationales remain invalid.
+In cases (1) and (2), fall back silently and continue. Case (5) is decided once at the post-create probe and applies to the entire run (documented, no per-wave re-entry into Path B). Cases (3) and (4) surface user-facing escalation prompts before falling back. All other downgrade rationales remain invalid.
 
 Display-mode unavailability is NEVER a valid Path A trigger. Always default to `teammate-mode in-process` if tmux/iTerm2 is uncertain.
+
+## File-channel-exclusive shutdown & multi-wave cost (P2-11)
+
+When the team runs file-channel-exclusively (alpha.36 recovery active), teammate shutdown semantics differ from the responsive path — this extends the alpha.34 shutdown entry above, it does not replace it:
+
+- A file-channel-exclusive teammate acknowledges `shutdown_request` via an `idle_notification` on the panel, NOT a `shutdown_response`. Absence of `shutdown_response` here is expected — do NOT treat it as a hang or escalate.
+- `TeamDelete` will refuse roughly 3× in a row while a read-only Reviewer drains its final file-channel write. This is expected back-pressure, not a leak: retry with backoff (e.g. 2 s / 4 s / 8 s) and do NOT block the workflow on it — proceed once it succeeds.
+- The stranded `~/.claude/teams/<team-name>/` directory and the consumed terminal pane are REAL costs that accumulate per team lifecycle on a multi-wave run (the cleanup cron eventually sweeps the dir; the pane is gone for the session).
+
+**Lead-facing note (P2-11):** on a run with **> 4 waves**, prefer **per-task `Agent({...})`** (no team lifecycle, no pane leak, no stranded dir) over **team-per-wave**. Repeated team-create / `TeamDelete` cycles multiply the stranded-dir and consumed-pane costs above; on long multi-wave runs the per-task Agent shape is the lower-cost option versus spinning a fresh team each wave.
 
 ## Pre-spawn tool-capability check (alpha.32 mitigation)
 
@@ -149,6 +160,8 @@ Procedure:
 5. If mitigation is (c) per-role Path A fallback, the team-create prompt omits that teammate and the Lead spawns it via `Agent({...})` for its wave only — the rest of the team stays in Path B.
 
 6. If every writing role would need mitigation (c), the whole team is non-viable in Path B — declare a hard technical block per the third valid Path A trigger above and fall back to Path A for the whole run. With v0.3.8 producer capabilities this should be essentially unreachable for the standard `/feature-design`, `/develop`, `/team-bugfix`, `/refactor`, `/migrate` workflows.
+
+7. **Coordination-tool capability probe (P0-1, alpha.31/34/36).** Immediately after `TeamCreate` + the first `TaskCreate` round — before driving any work — the Lead probes that at least one teammate actually has the `TaskUpdate` + `SendMessage` augmentation (push one trivial `SendMessage` and confirm a teammate `TaskUpdate` / ack round-trips, or inspect the first teammate's tool surface). Teammates frequently lack this coordination augmentation despite a successful `TeamCreate` — this is the observed default in the current alpha runtime (alpha.31/34/36), not a rare flake. If NO teammate can `TaskUpdate` + `SendMessage`, the team bus is dead: this is a sanctioned hard technical block — switch to Path A **once, for the whole run** (see Valid Path A trigger 5), not a per-wave liveness event to be rediscovered each wave. Decide it once at this probe; do NOT re-enter Path B on later waves of the same run.
 
 ### Role-capability cache (plugin agents, alpha.32 reference)
 

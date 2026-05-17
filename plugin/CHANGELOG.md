@@ -6,6 +6,20 @@ All notable changes to the `ai-assets` plugin. Format: [Keep a Changelog](https:
 
 Next release in planning.
 
+## [0.3.14] — 2026-05-17 — Path B reliability hardening (SESSION-RETROSPECTIVE 15-rec fix-cycle)
+
+Implements all 15 recommendations from the f4ai `/develop` Score-v2.2 session retrospective via `/plugin-author fix-feedback` (7 WPs / 2 waves, every DEV→REVIEW→QA gate green). The run self-validated: it hit the exact alpha.31/34/36 + `TeamDelete`-refuses-~3× failure modes these changes harden, and the file-channel-exclusive transport carried the whole pipeline.
+
+- **`plugin/schemas/return-contract.schema.json`** — `in_progress` added as a non-terminal checkpoint state to the `status` enum (P1-5 write-early ordering: envelope written first with summary populated, then finalized — truncation mid-verify now leaves a discoverable partial); `result.files_changed` description mandates mechanical derivation from `git status --porcelain` (P1-6).
+- **`plugin/skills/team-protocols/role-cards/developer-card.md`** — Hard rules 6→8: rule 7 one-WP claim-lock (P0-4), rule 8 scope-expansion stop (P1-7); self-verification gained git-status `files_changed` step (P1-6); write-early G7 ordering para (P1-5).
+- **`plugin/skills/team-protocols/role-cards/qa-card.md` + `reviewer-card.md`** — structural read-only invariant: QA/Reviewer MUST be spawned `disallowedTools:["Write","Edit"]` (P0-3, makes the Wave-5b self-certification collapse structurally impossible); named Hard-locked QA mode (P0-2); binary `qa_verdict ∈ {pass,fail}` + REVIEW=spec-gate / QA=execution split (P2-15); write-early ordering (P1-5).
+- **`plugin/skills/team-protocols/path-selection-rules.md`** — post-`TeamCreate` coordination-tool capability probe as Pre-spawn Procedure step 7 + sanctioned once-per-run dead-bus Path A trigger 5, explicitly distinct from per-wave alpha.31/33 liveness events (P0-1); file-channel-exclusive shutdown reality + `>4-wave` → per-task-`Agent` cost guidance (P2-11).
+- **`plugin/skills/team-protocols/lead-protocol.md`** — one-WP claim-lock watchdog = immediate halt-and-escalate (P0-4); Brief-from-source extended to config-derived constants — grep/Read actual `pom.xml`/`jacoco`/`jest.config`/`package.json`, cite file:line (P1-8); section-offset map computed once at gather-context, passed into every spawn `state_slice` (P1-10); no-baseline revert hazard + human-checkpoint recommendation at every wave close (P2-12); status-bearing DEBT register table `OPEN | RESOLVED-in-WAVE-N | DEFERRED-v<X>`, rows flip in place (P2-13).
+- **`plugin/skills/develop/SKILL.md`** — terse pointers (net −6 lines, size-constrained file): capability-probe step (P0-1), named "Per-task Agent — hard-locked QA (first-class mode)" section (P0-2), Final Verification re-spec — Lead does lightweight scope verification, authoritative build/test delegated to per-WP QA (P1-9), section-offset map at Gather Context (P1-10), idempotent re-entry / `PIPELINE-COMPLETE` terminal sentinel (P2-14).
+- **`plugin/hooks/scripts/team-gate-reconciliation.py`** — reconciles gate state from the file-channel envelope dir when the bus is dead (finding A); accepts `idle_notification` (not only `shutdown_response`) as a teammate-quiesced ack so teardown does not hang on the file-channel-exclusive reviewer (finding H); strict fail-open preserved.
+
+8 files, +303/-44. `validate.py` after this release: `25 pass, 0 warn, 0 fail` — no count changes (edits only, no new assets). Fix-cycle trace: `.ai-assets-memory/plugin-author/fix-cycles/retro-ai-assets-2026-05-17.json`.
+
 ## [0.3.13] — 2026-05-13 — `/feedback` dual MD+JSON output parity
 
 Closes the open contract dependency surfaced in v0.3.12: `/plugin-author fix-feedback` now consumes a canonical JSON written next to the Markdown report, eliminating the degraded `--md` fallback for fresh reports.

@@ -67,6 +67,8 @@ Procedure for >6 WP plans:
 3. After each wave clears DEV→REVIEW→QA, the Lead prints a checkpoint summary (WPs completed, files changed, open risks, residual budget) and asks: `"Wave M complete. Proceed to wave M+1, pause, or replan?"`
 4. If the user does not override, default is `proceed`. The default is non-blocking — wait at most 60 s for an explicit pause / replan; otherwise auto-continue.
 
+**No-baseline hazard — recommend a human checkpoint at every wave close (P2-12).** A multi-wave `/develop` run accumulates ALL waves into one uncommitted working-tree blob (the Lead never commits). A naive `git checkout`/`git reset`/`git stash` to undo a bad wave N therefore destroys waves 1..N-1 too — there is no per-wave baseline to revert to. The agent cannot commit, but it MUST, in the wave-close checkpoint summary (step 3), explicitly recommend the user create a human checkpoint before proceeding, e.g.: `"Wave M complete. RECOMMENDED before wave M+1: 'git add -A && git commit -m \"wave M checkpoint\"' (or 'git stash push -m \"wave M\"' / 'git tag wave-M-checkpoint') so a later wave can be reverted without losing waves 1..M."` Surface this on EVERY wave close, not just the first.
+
 Single-wave plans (≤6 WPs) skip this entirely.
 
 ### Brief-from-source (F4)
@@ -76,6 +78,10 @@ Every Developer / Reviewer / QA spawn payload's `goal` and `constraints` MUST be
 Why: field debrief observed Reviewer flagging "3 design discrepancies" in DB-1 that were all artefacts of a Lead paraphrase, not the design.md content. The Developer correctly rejected the paraphrased brief and re-read design.md §9.2/§9.3. The post-judge reconciliation note then had to walk back all three findings.
 
 Procedure: before constructing each spawn payload, the Lead calls `Read(<source-doc>, offset=<section-start>, limit=<section-length>)` and pastes the quoted text into the payload as `constraints: ["<source-section-verbatim-block>"]` plus `source_refs: ["<file>:<line-range>"]`. The teammate is then required by `developer-protocol.md` Self-verification step 6 to coverage-check the diff against this verbatim block, so paraphrase drift is caught at the gate.
+
+**Verbatim extraction extends to config-derived numbers (P1-8).** The mandate is NOT limited to design/PRD prose. Coverage gates, file-size caps, cache names, and dependency versions MUST also be extracted verbatim — the Lead `grep`/`Read`s the actual `pom.xml`, `build.gradle`, `jest.config.*`, `jacoco`/coverage config, `package.json`, lockfile, or CI cache key and pastes the REAL value into `constraints`, never a number recalled from Lead context memory. A paraphrased "coverage must be ~80%" or "uses Node 18" that disagrees with the on-disk config produces the same gate-corrupting drift as a paraphrased design section. Cite the file:line in `source_refs`.
+
+**Section-offset map (P1-10).** Once, at gather-context, the Lead runs `grep -n '^#' <design-doc>` (and for every large source doc a teammate may need) and builds a `section → line-range` map. This map is passed into EVERY spawn payload's `state_slice` (e.g. `state_slice.section_map: {"§9.2 Auth": "412-468", ...}`) so a teammate can `Read(<doc>, offset, limit)` the exact span and never blind-`Read` a 37K-token doc that would fail the round-trip. Compute the map once and reuse it across all waves; refresh only if the doc changes.
 
 ## Pipeline Enforcement
 
@@ -163,6 +169,8 @@ The procedure below applies symmetrically to Developer, Reviewer, and QA. Read `
    - **Hard ceiling: 25 minutes wall-clock from the original hand-off** regardless of evidence (caps a teammate that is producing micro-progress but never converging).
 
    This replaces the v0.3.5–v0.3.10 90 s × 2 cadence. Idle notifications alone (without other evidence) are NOT a "no progress" signal — alpha runtime emits `idle_notification` pings even when the teammate is mid-tool-call. Filter them out unless they are the ONLY thing the teammate has produced.
+
+   **One-WP claim-lock watchdog (P0-4).** The Developer card mandates a one-WP claim lock — a teammate holds at most one in-progress WP and the next is claimable ONLY after the prior WP's G7 envelope is on disk. The Lead watchdog MUST enforce this structurally where the runtime cannot: if it observes a 2nd WP's `active_files` modified (`git status --short`) OR a 2nd WP task transitioned to `in_progress` while the 1st WP's `G7-<role>-WP-N.json` envelope has NOT been written, this is an immediate **halt-and-escalate** — stop the teammate, do NOT run the nudge cadence, surface the breach to the user, and record `claim-lock-violation: <role> touched WP-<n+1> before WP-<n> G7` in `REVIEW-LOG.md` "Liveness events". This is a protocol breach that corrupts the per-WP gate, NOT a recoverable idle flake — treat it as a hard stop, not a watchdog timer event.
 
    **Stale-`blockedBy` recovery (v0.3.9, alpha.31 secondary symptom).** If the silent teammate's task shows `blockedBy: [<upstream-id>]` and `<upstream-id>` is already `completed`, the panel state is stale and the teammate may be reading it as "still blocked". `TaskUpdate` has no `removeBlockedBy` operation. Recovery: the Lead deletes the stuck downstream task and re-creates it with no `blockedBy` (preserving description, owner, and a sentinel metadata field linking to the original task ID for audit). Record one line in `REVIEW-LOG.md` "Liveness events": `stale-blockedBy: task <new-id> replaces <old-id>; upstream <upstream-id> was completed but blockedBy did not auto-clear`. Run this BEFORE nudge #1 if the symptom is observed, not after — the teammate may engage immediately once the panel state is consistent.
 
@@ -318,6 +326,18 @@ After EACH task is fully done (all pipeline stages passed), print a progress tab
 | 2 | ... | Frontend Developer | done | changes requested | 2 | - | IN REVIEW |
 | 3 | ... | Python Developer | - | - | - | - | PENDING |
 
+## Debt register — status-bearing table (P2-13)
+
+Unresolved issues, deferred work, and carried-over risk are NOT tracked as ad-hoc prose notes scattered across `REVIEW-LOG.md`. The Lead maintains a single **status-bearing DEBT register table** in `REVIEW-LOG.md`, updated in place at every wave close:
+
+| ID | Debt | Severity | Status | Origin | Resolution |
+|----|------|----------|--------|--------|------------|
+| D1 | ... | high | `OPEN` | WP-3 review | — |
+| D2 | ... | medium | `RESOLVED-in-WAVE-2` | WP-1 QA | fixed in WP-7 |
+| D3 | ... | low | `DEFERRED-v0.4` | WP-5 | backlog ticket #123 |
+
+`Status` ∈ `OPEN | RESOLVED-in-WAVE-N | DEFERRED-v<X>`. **Resolving a debt FLIPS its existing row in place** (`OPEN` → `RESOLVED-in-WAVE-N`) — it does NOT add a new prose note elsewhere and leave the original row stale. At each wave-close checkpoint the Lead reconciles every `OPEN` row: still open, resolved this wave, or explicitly deferred with a version tag. A debt may not silently disappear; it must end as `RESOLVED-in-WAVE-N` or `DEFERRED-v<X>`.
+
 ## Final Summary + REVIEW-LOG.md
 
 After ALL tasks are done, print:
@@ -325,7 +345,7 @@ After ALL tasks are done, print:
 - Total tasks completed
 - Total review iterations across all tasks
 - Which Developer(s) were involved and what each handled
-- Any unresolved issues or risks
+- The DEBT register table (above) — no remaining `OPEN` rows without an explicit `DEFERRED-v<X>` decision
 - List of all changed files (grouped by subproject)
 
 Additionally write `REVIEW-LOG.md` to the current working directory — `/create-pr` consumes it as the primary source for auto-building the PR description (per the create-pr skill body).

@@ -13,8 +13,8 @@
     },
     "status": {
       "type": "string",
-      "enum": ["ok", "needs_clarification", "failed", "partial"],
-      "description": "Terminal state. ok = goal achieved, work complete. needs_clarification = subagent halted awaiting user input. failed = work could not be completed. partial = some deliverables done, others blocked."
+      "enum": ["in_progress", "ok", "needs_clarification", "failed", "partial"],
+      "description": "Lifecycle state. in_progress = NON-terminal checkpoint state: per the write-early ordering (retrospective P1-5), the envelope is written FIRST with status in_progress and result.summary already populated, BEFORE self-verification, then overwritten/finalized to a terminal state (ok/failed/partial) once verification completes. A truncation mid-verify therefore leaves a discoverable partial envelope with the work summary already persisted instead of nothing. in_progress does NOT require needs_clarification and does NOT trigger the needs_clarification conditional. Terminal states: ok = goal achieved, work complete. needs_clarification = subagent halted awaiting user input. failed = work could not be completed. partial = some deliverables done, others blocked."
     },
     "tokens_used": {
       "type": "object",
@@ -45,7 +45,7 @@
         "files_changed": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "Repo-relative paths of created/modified files."
+          "description": "Repo-relative paths of created/modified files. MUST be produced mechanically from `git status --porcelain` plus untracked files at return time (retrospective P1-6) — never recalled from memory or reconstructed from tool-call history."
         },
         "diff_size_lines": {
           "type": "integer",
