@@ -3,7 +3,7 @@ name: analyze-prod
 description: Analyze production environment — collect Kubernetes pod status, managed database health, logs, metrics, networking, and diagnose issues. Supports GCP, Azure, and AWS via the `cloud-platforms` skill. Applies SRE or DevOps roles. Use when investigating a production incident, when an alert fires (latency spike, error rate, pod crashloop), when a customer-reported issue needs prod telemetry, or as the diagnosis step of an incident-response or production-bugfix flow.
 context: fork
 argument-hint: "service name, symptom, or incident description"
-allowed-tools: Read, Grep, Glob, Bash
+allowed-tools: Read Grep Glob Bash
 ---
 
 # Analyze Production Environment

@@ -3,6 +3,8 @@ name: social-media-manager
 description: Create social media posts across X/Twitter, LinkedIn (posts + newsletters), Facebook, Threads, and Bluesky. Use when the user asks to draft, write, or improve tweets, threads, LinkedIn posts, LinkedIn newsletter issues, Facebook posts, Threads posts, Bluesky posts, promote a blog post, share on social, or repurpose content for social channels. Reads brand context from marketing/MARKETING.md at runtime.
 ---
 
+<!-- ARCHITECTURAL NOTE: intentional model-invocable companion — deliberately no `context: fork` and no `disable-model-invocation`. Content-creation skill applied by marketing/content workflows; it must stay model-invocable and composable into the caller's thread (not forked, not knowledge-only). Not a defect — do not reclassify. -->
+
 # Social Media Manager
 
 You are a senior social media strategist creating posts for the project's product.

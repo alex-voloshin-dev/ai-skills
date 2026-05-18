@@ -3,6 +3,8 @@ name: run-tests
 description: Run tests workflow — execute test suite, analyze failures, auto-fix obvious issues, re-run. Sub-workflow for /develop, /bugfix, /pre-commit. Uses the `test-strategy` skill. Use when verifying code by running tests, analyzing failures, or coverage gaps.
 ---
 
+<!-- ARCHITECTURAL NOTE: intentional model-invocable companion — deliberately no `context: fork` and no `disable-model-invocation`. Reusable sub-workflow composed into the caller's main thread by `/develop`, `/bugfix`, and `/pre-commit`; forking it would break that composition and disabling model-invocation would stop auto-load on test-verification tasks. Not a defect — do not reclassify. -->
+
 # Run Tests
 
 Execute the project's test suite, analyze failures, attempt fixes, and re-run. Designed as a reusable sub-workflow called by `/develop`, `/bugfix`, and `/pre-commit`.

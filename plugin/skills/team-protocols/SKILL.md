@@ -18,22 +18,16 @@ You are the Lead. You run in the main conversation thread and coordinate the tea
 
 **Hard invariant**: every agent role MUST run as a NAMED subagent spawned via `Agent`, with its own isolated context. The Lead (main thread) NEVER executes Developer / Reviewer / QA work inline with `Bash`/`Read`/`Edit`. If you skip the spawn and do the work directly in the main thread, you have violated this protocol — the user loses the ability to inspect each role independently and the pipeline gates collapse to procedural-only enforcement.
 
-> Observed alpha.23 failure mode: the skill describes roles in prose but never issues a literal `Agent(...)` call, and the model proceeds inline with `Bash`/`Read`/`Edit`. Every role-spawn step in this protocol contains an explicit `Agent({...})` invocation example that the workflow MUST execute, not paraphrase. Literal templates + G7 payload + role-by-role spawn map live in [`spawn-pattern.md`](./spawn-pattern.md).
+> Observed alpha.23 failure mode: the skill describes roles in prose but never issues a literal `Agent(...)` call and proceeds inline. Every role-spawn step MUST execute an explicit `Agent({...})` call, not paraphrase it. Literal templates + G7 payload + role-by-role spawn map live in [`spawn-pattern.md`](./spawn-pattern.md) — load it before the first spawn.
 
-## Pre-flight tool load (Path B only, v0.3.9)
+## Pre-flight (Path B) — tool load · wave sizing · brief-from-source · file-channel
 
-Before issuing the Path B team-create prompt, if `TeamCreate` / `TaskCreate` / `TaskUpdate` / `SendMessage` / `TeamDelete` / `TaskStop` / `Monitor` schemas are not already in the active toolset, the Lead loads them in a single batched call: `ToolSearch(query: "select:TeamCreate,TaskCreate,TaskUpdate,SendMessage,TeamDelete,TaskStop,Monitor")`. This avoids the mid-workflow latency observed when each tool is fetched on first use (the harness defers tool schemas — calling an unloaded tool raises `InputValidationError`). Skip this step if the Lead has already loaded these tools earlier in the session.
+Before issuing the Path B team-create prompt the Lead runs four pre-flight checks. **Read `lead-protocol.md` "Pre-flight — wave sizing and brief-from-source" and "File-channel transport — first-class, not fallback" and apply them verbatim** — the summary below is the trigger, not the full procedure:
 
-## Pre-flight wave sizing + brief-from-source (v0.3.11)
-
-Before team-create, the Lead also runs the two pre-flight checks from `lead-protocol.md` "Pre-flight — wave sizing and brief-from-source":
-
-1. **Wave sizing**: plans with >6 WPs split into 3-6 WP waves with checkpoint between waves (F8 — single team-create reliably converges on 3-6 WPs, not 38).
-2. **Brief-from-source**: every spawn payload's `goal` + `constraints` are assembled by `Read` of the source design/PRD VERBATIM, never paraphrased from Lead context (F4 — paraphrase drift caused 3 false "discrepancies" in DB-1 during v22).
-
-## File-channel transport — first-class, not fallback (v0.3.11)
-
-Per `lead-protocol.md` "File-channel transport — first-class, not fallback", the Lead wires `.ai-skills-memory/sessions/<sid>/team-envelopes/` as the canonical liveness signal at team-create. The `team-gate-reconciliation.py` hook writes a snapshot envelope automatically on every `TaskCompleted` and `TeammateIdle`; teammates write their G7 envelopes there too (per `developer-protocol.md` and `reviewer-protocol.md` "File-channel envelopes"). The Lead `Monitor`s the directory so silent-lead-bound-bus failures (alpha.36) do not stall the pipeline.
+1. **Tool load (v0.3.9)**: if `TeamCreate`/`TaskCreate`/`TaskUpdate`/`SendMessage`/`TeamDelete`/`TaskStop`/`Monitor` are not in the active toolset, batch-load them once via `ToolSearch(query: "select:TeamCreate,TaskCreate,TaskUpdate,SendMessage,TeamDelete,TaskStop,Monitor")` (harness defers tool schemas — an unloaded tool raises `InputValidationError`). Skip if already loaded.
+2. **Wave sizing (F8)**: plans with >6 WPs split into 3-6 WP waves with a checkpoint between waves (one team-create reliably converges on 3-6 WPs, not 38).
+3. **Brief-from-source (F4)**: every spawn payload's `goal` + `constraints` are assembled by `Read` of the source design/PRD VERBATIM, never paraphrased from Lead context.
+4. **File-channel transport (v0.3.11)**: wire `.ai-skills-memory/sessions/<sid>/team-envelopes/` as the canonical liveness signal at team-create. `team-gate-reconciliation.py` writes a snapshot envelope on every `TaskCompleted`/`TeammateIdle`; teammates write G7 envelopes there too (per `developer-protocol.md` / `reviewer-protocol.md` "File-channel envelopes"); the Lead `Monitor`s the directory so silent-bus failures (alpha.36) do not stall the pipeline.
 
 ## Two Paths — Subagents OR Agent Teams
 
@@ -43,15 +37,7 @@ Two execution paths are supported. Both preserve the DEV → REVIEW → QA gate 
 
 **Hard technical block** = a documented Path A trigger in `path-selection-rules.md`: (1) team-create returns "Agent Teams not enabled" / equivalent (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` unset or Lead inside a subagent); (2) Pre-spawn tool-capability check (alpha.32) shows every writing role lacks `Write`/`Edit` AND Lead-writes-file restructure is unsafe. Partial mismatches are handled per role per alpha.32. In these cases only, fall back silently to Path A.
 
-**Invalid reasons to downgrade Path B → Path A** (these are protocol violations — never use them):
-- "the pipeline is sequential, parallelism doesn't help" — Path B's value is UX, not parallelism
-- "Path A is simpler / cleaner / fewer tools" — Path B's panel gives strictly more visibility
-- "tmux / iTerm2 not available" — Path B has `in-process` display mode that works on every terminal
-- "Windows host" / "no Unix tools" / "no WSL" — Agent Teams is platform-independent in `in-process` mode
-- "small / simple feature" — size is irrelevant to path selection
-- "single-stack project" — stack count is irrelevant to path selection
-
-The full anti-rationalization checklist with observed failure modes (alpha.26 / alpha.27 / alpha.30) lives in [`path-selection-rules.md`](./path-selection-rules.md).
+**Invalid reasons to downgrade Path B → Path A are protocol violations** — "sequential pipeline / parallelism doesn't help", "Path A is simpler/fewer tools", "no tmux/iTerm2", "Windows / no WSL / no Unix tools", "small or simple feature", and "single-stack project" are ALL invalid (Path B's value is UX visibility, not parallelism; `in-process` display mode is platform-independent; size and stack count are irrelevant to path selection). The full anti-rationalization checklist with each invalid trigger and the observed failure modes (alpha.26 / alpha.27 / alpha.30) lives in [`path-selection-rules.md`](./path-selection-rules.md) — **read it and apply every invalid-trigger rule verbatim** before any path downgrade.
 
 **Detection is implicit, not explicit.** Do NOT run an explicit env-var check (no `echo $CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` Bash call) — that triggers a tool-permission prompt for the user without adding value. Just attempt Path B Step 1 directly. If it succeeds you're in Teams mode. If it returns "Agent Teams not enabled" or similar, fall back to Path A immediately and proceed.
 

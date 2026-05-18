@@ -1,6 +1,6 @@
 ---
 name: eval
-description: Run plugin evaluation tiers — Tier 1 linters and Tier 2 judge-calibration drift smoke. Wraps the eval/runner.py harness. Use for pre-release validation, regression detection, or skill tuning. Tier 1 is free (no LLM); Tier 2 budgets tokens per `eval/config.json`. Tier 3 (full behavioral suites) is planned but not yet shipped — runner returns error code 3 if invoked.
+description: Run plugin evaluation tiers — Tier 1 linters and Tier 2 judge-calibration drift smoke. Wraps the eval/runner.py harness. Use when running pre-release validation, detecting calibration regression, or tuning a skill. Tier 1 is free (no LLM); Tier 2 budgets tokens per `eval/config.json`. Tier 3 (full behavioral suites) is planned but not yet shipped — runner returns error code 3 if invoked.
 context: fork
 argument-hint: "[skill-name | --tier 1|2 | --rubric NAME]"
 ---
@@ -15,6 +15,13 @@ Validate the plugin against rubric-scored test cases. Two tiers shipped today:
   2. **Judge model drift** — Anthropic ships a new Haiku version that scores samples differently
   3. **Sample drift** — someone edits a calibration sample so it no longer hits its band
 - **Tier 3 — behavioral** (planned, not shipped): full executor + judge + blind-comparator per skill case. `runner.py --tier 3` currently exits with error code 3.
+
+## When to use
+
+- Pre-release validation — run Tier 1 linters (free, no LLM) across all skills before tagging a release
+- Calibration-drift detection — run Tier 2 to catch rubric drift, judge-model drift, or sample drift against the ±0.5 score-band tolerance
+- Skill tuning — scope Tier 1 to one skill (`/eval <skill-name>`) or Tier 2 to one rubric (`/eval --tier 2 --rubric <name>`) while iterating
+- Release gate — `/eval --all` to run Tier 1 + Tier 2 in a single pass
 
 ## Invocation
 
@@ -62,6 +69,14 @@ Per `plugin/eval/config.json`:
 - Tier 1: stderr findings + summary count of CRITICAL / WARNING. Exit code 0/1/2.
 - Tier 2: per-sample PASS/FAIL with score delta + dry-run skip count. Exit code 0/1/2.
 
+## Failure modes
+
+- **Tier 3 invoked:** `runner.py --tier 3` (and any `--baseline`/`--resume`/per-skill Tier 3 form) is not shipped — the runner exits with **error code 3**. Use Tier 1 or Tier 2 instead.
+- **Missing API key or SDK:** Tier 2 requires `ANTHROPIC_API_KEY` and the `anthropic` Python SDK. Without either, the runner reports `DRY-RUN ONLY`, skips all API calls, and performs no real scoring.
+- **Token cap exceeded:** Tier 2 has a 50K soft / 150K hard cap per `plugin/eval/config.json`; a plan that would breach the hard cap is rejected before any API call.
+- **Calibration drift detected:** a sampled good/bad sample scoring outside its ±0.5 band fails (rubric drift, judge-model drift, or sample drift) — exit code 1; inspect the per-sample score delta to localize which class drifted.
+- **Future surfaces referenced:** `plugin/eval/cases/` and `plugin/eval/results/` directories do not exist, and the Tier-3 behavioral suite + blind-comparator are not yet wired — relying on those today fails. (The `eval-judge` agent itself *is* shipped — `plugin/agents/eval-judge.md` powers RALF subjective oracles now — but the Tier-3 behavioral path that would invoke it from `/eval` is not yet wired.)
+
 ## Integration
 
 - **Wraps**: `plugin/eval/runner.py` (entry) + `plugin/eval/tier2.py` (Tier 2 implementation)
@@ -77,7 +92,7 @@ These are referenced by the planned Tier 3 design but **not implemented**:
 
 - `plugin/eval/cases/<skill>/*.json` — per-skill behavioral test cases. Directory does not exist; expect to ship in Phase 4.
 - `plugin/eval/results/<run-id>/` — per-run output artefacts.
-- `eval-judge` subagent role — currently inline; if the planned design needs a dedicated agent, it would land in `plugin/agents/`.
+- Tier-3 behavioral-suite invocation path that wires `plugin/agents/eval-judge.md` (shipped) to `plugin/eval/cases/` + `plugin/eval/results/` — the judge agent exists today; the case/result harness that drives it does not.
 - `--baseline <skill>` capture to `.committed/eval-baselines/<release-tag>.json`.
 - Blind-comparator (third agent in isolated context with skills suppressed) — design-only.
 

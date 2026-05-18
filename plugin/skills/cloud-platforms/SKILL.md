@@ -41,5 +41,5 @@ Each reference file follows a consistent structure:
 ## Integration
 
 - **Used by roles**: `Agent(devops-engineer)`, `Agent(sre-engineer)`, `Agent(cloud-architect)`
-- **Used by workflows**: `/analyze-prod`, `/bugfix`, `/infra-change`, `/deploy-production`, `/ml-pipeline`
+- **Used by workflows**: `/analyze-prod`, `/bugfix`, `/infra-change`, `/deploy-production`
 - **Complements**: `deployment-procedures` skill (rollback procedures)

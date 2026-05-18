@@ -106,4 +106,3 @@ Overflow strategy: truncate lowest-priority layers first (L7 → L6 → L5).
 - **Used by workflows**: `/plugin-doctor` (context-engineering checks during plugin self-diagnostic), `/develop` and `/feature-dev` (AI/LLM features), `/feature-design` (Wave-2 review for AI/LLM systems), `/plan` (AI work packages), `/code-review` (context quality review)
 - **Companion skill**: `prompt-engineering` skill (technique selection, template patterns, eval, security checklist)
 - **Collaborates with roles**: `Agent(solution-architect)` (AI system design), `Agent(product-manager)` (agent contracts), `Agent(sre-engineer)` (context observability), `Agent(software-engineer)` (implementation)
-- **Primary source**: `guides/context_engineering_guide.md`

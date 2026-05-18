@@ -1,6 +1,6 @@
 ---
 name: pre-commit
-description: Pre-commit quality gate — lint, format, type-check, test, validate before committing. Detects existing pre-commit framework / Husky / Lefthook / lint-staged and routes to it; otherwise runs an inline stack-detected gate. Use before git commit to ensure code quality. Not the [pre-commit framework](https://pre-commit.com) itself — see Step 0 for framework detection.
+description: Pre-commit quality gate — lint, format, type-check, test, validate before committing. Detects existing pre-commit framework / Husky / Lefthook / lint-staged and routes to it; otherwise runs an inline stack-detected gate. Use when running a quality gate over staged changes before a git commit to catch lint/format/type/test failures. Not the [pre-commit framework](https://pre-commit.com) itself — see Step 0 for framework detection.
 disable-model-invocation: true
 ---
 

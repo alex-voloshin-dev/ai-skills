@@ -67,55 +67,21 @@ Translate `--project` (or `$PWD`) to the Claude Code log path:
 
 List `*.jsonl` files; keep those with `mtime >= now - days` (or all if `--days 0`). Sort newest first; truncate to `--max-sessions`. Record the resolved window and file count in the report header.
 
-### 3. Stream-parse each session file
+### 3–6. Parse · attribute · group · render
 
-Each line is a JSON object. Stream-parse (do not load whole file). For each line, classify:
-
-- `type=system, subtype=stop_hook_summary` with non-empty `hookErrors[]` → **hook error**
-- `type=system, subtype=tool_use_failure` or any `type=system` with a `level: error` field → **tool/system error**
-- `type=assistant` with `stop_reason` in {`tool_use_error`, `max_tokens`, `refusal`} → **assistant abnormal stop**
-- `type=user` with content matching `<task-notification>` and `<status>failed|timeout|cancelled</status>` → **task/subagent failure**
-- `type=system` with subtype mentioning `subagent` and `level` in {`warning`, `error`} → **subagent anomaly**
-- `type=system` with `permissionMode=plan` toggles that contradict the user request → **permission-mode drift**
-- Any line containing `${CLAUDE_PLUGIN_ROOT}` plus an error string → **plugin path/runtime error**
-
-The classifier and event-extraction logic live in `scripts/collect_session_data.py` (see "Worker script" below). Edit the script when new event types appear in Claude Code releases.
-
-### 4. Attribute each finding
-
-For every classified event, attach:
-
-- `sessionId`, `timestamp`, `cwd`, `gitBranch`, `version` (Claude Code version)
-- `source`: agent / subagent name, skill name, hook name, or command name (parsed from the event payload)
-- `pluginId`: derived from the path (e.g., `ai-skills` if the hook path contains `/plugins/cache/ai-skills/`)
-- `severity`: `error` (blocking), `warn` (non-blocking), `info` (anomaly worth noting)
-- `excerpt`: ≤ 400-char verbatim slice of the event payload (no full payload to keep the report compact)
-- `surrounding_context`: previous and next 1 event in the same session (to show the lead-up and reaction)
-
-### 5. Group findings
-
-Group by:
-
-1. **Source kind** — hook / subagent / skill / command / system
-2. **Source identity** — e.g., `subagent-depth-guard.py`, `develop`, `/feedback`
-3. **Failure signature** — normalized error string (file path masked, line numbers stripped) so recurring failures collapse into one finding with a count
-
-Within each group, list 3 most-recent occurrences as evidence; collapse the rest into a count.
-
-### 6. Render reports
-
-Render both reports from the shared template in `templates/extended-template.md`:
-
-- **Extended (file):** every group, every evidence excerpt, full recommendations table
-- **Brief (stdout):** top 5 groups by occurrence count + top 3 recommendations + path to the extended report
-
-#### 6a. Paired canonical JSON output (v0.3.13+)
-
-Every `/feedback` run also writes a machine-readable counterpart of the Markdown report at the same stem, e.g. `feedback-2026-05-13-0910.json` next to `feedback-2026-05-13-0910.md`. The JSON conforms to `plugin/skills/feedback/output-schema.json` (schema_version `"1"`) and has **full parity** with the MD: every finding present in the Markdown appears in the JSON with the same severity, source kind, identity, signature, count, first/last seen, and up to 3 evidence excerpts (≤ 400 chars each). The JSON also carries `meta.report_md_path` pointing back at the paired MD for traceability.
-
-Invocation contract: call the worker with `--out-json <stem>.json --report-md-path <stem>.md --tool-version <ai-skills@VERSION>`. The worker writes the JSON atomically (`*.tmp` + rename) so a half-written file is never visible to a downstream reader. Schema-validate using the bundled schema (`output-schema.json`) when `jsonschema` is available.
-
-The JSON is the canonical contract for `/plugin-author fix-feedback --from <stem>.json`. Reparsing the Markdown is a degraded fallback only (per `plugin-author/feedback-parser.md`), and downstream consumers MUST prefer the JSON whenever it exists.
+Steps 3 (stream-parse + event classifier), 4 (per-finding attribution
+fields), 5 (3-level grouping + signature collapse), 6 (render extended +
+brief), and 6a (paired canonical JSON parity contract) carry the precise
+classification rules, attribution schema, and the MD↔JSON parity invariant.
+**Read `report-pipeline.md` and apply steps 3–6a verbatim** before parsing —
+those rules are mandatory. In short: stream-parse each `.jsonl` line and
+classify into hook/tool/assistant/subagent/permission/plugin events; attribute
+each with session/source/severity/excerpt; group by source-kind → identity →
+normalized failure signature; render the extended (file) + brief (stdout)
+reports from `templates/extended-template.md`; and write a schema-conformant
+paired `.json` (full parity, atomic write) next to every `.md` per
+`output-schema.json` — the JSON is the canonical contract for `/plugin-author
+fix-feedback`.
 
 Sections in both:
 
@@ -141,14 +107,13 @@ Last line of stdout is always `Extended report: <absolute-path-to-on-disk-report
 
 ## Worker script
 
-`scripts/collect_session_data.py` is the deterministic parser. By default it emits the legacy aggregation shape on stdout (`{"meta": ..., "findings": [raw events], "groups": [aggregated]}`) for the Markdown renderer. With `--stdout canonical` it emits the canonical schema (schema_version `"1"`) instead. With `--out-json <path>` it atomically writes the canonical JSON to a file in addition to whatever it streams on stdout. The skill body always passes `--out-json` and `--report-md-path` so the paired `.json` lands next to the `.md` per the parity contract above.
-
-The worker MUST:
-
-- Stream-parse line by line (sessions can be hundreds of MB)
-- Skip malformed JSON lines but increment a counter; surface counter in the report header (and in `meta.malformed_lines` of the canonical JSON)
-- Mask any value matching `(?i)(api[_-]?key|secret|token|password|credential)[\"'\s:=]+[^\s\"']+` → `<redacted>`
-- Be invocable as `python3 plugin/skills/feedback/scripts/collect_session_data.py --days 7 --project <abs-path> --out-json <stem>.json --report-md-path <stem>.md --tool-version 'ai-skills@<ver>'` from the plugin tree
+`scripts/collect_session_data.py` is the deterministic parser; the skill body
+always passes `--out-json` and `--report-md-path` so the paired `.json` lands
+next to the `.md`. Its full invocation contract and the worker MUST-rules
+(stream-parse, malformed-line counter, secret-redaction regex, exact CLI form,
+`--stdout canonical` vs default aggregation shape) are in
+`report-pipeline.md` ("Worker script") — **read and follow it verbatim** when
+invoking the worker.
 
 ## Templates
 
@@ -184,7 +149,7 @@ Both files include placeholders the skill substitutes at render time.
 
 ## Integration
 
-- **Reads**: `~/.claude/projects/<sanitized-cwd>/*.jsonl`
+- **Reads**: `~/.claude/projects/<sanitized-cwd>/*.jsonl`; `report-pipeline.md` (steps 3–6a + worker contract)
 - **Writes**: paired Markdown + canonical JSON reports at the same stem (e.g. `feedback-2026-05-13-0910.{md,json}`), plus a one-line summary append to `.ai-skills-memory/feedback/feedback.log`
 - **Downstream consumer**: `/plugin-author fix-feedback --from <report>.json` ingests the canonical JSON and produces a fix-cycle (one WP per finding, DEV → REVIEW → QA pipeline) — see `plugin/skills/plugin-author/feedback-parser.md` for the consumed shape. Markdown reparse via `--md` is degraded fallback only.
 - **Companion**: `/plugin-doctor` (live plugin diagnostic), `/eval` (rubric-based skill quality), `/bugfix` (file a fix once a finding is confirmed)

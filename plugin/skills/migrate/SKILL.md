@@ -1,6 +1,6 @@
 ---
 name: migrate
-description: Planned migration with rollback plan — schema, library, version, framework. Multi-agent pipeline with RALF on validation. Use for database schema changes with rollback, framework version upgrades, library replacements. Not for refactors without external contract change (use /refactor) or small bug-fix releases (use /develop).
+description: Planned migration with rollback plan — schema, library, version, framework. Multi-agent pipeline with RALF on validation. Use when planning database schema changes with rollback, framework version upgrades, or library replacements. Not for refactors without external contract change (use /refactor) or small bug-fix releases (use /develop).
 context: fork
 argument-hint: "<migration description, e.g. 'Postgres 13 → 14'> [--staged]"
 ---

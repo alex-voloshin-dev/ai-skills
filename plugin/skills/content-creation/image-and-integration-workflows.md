@@ -1,6 +1,6 @@
 # Image Generation, Integration, and Measurement Workflows
 
-Companion to `content-tools-guide.md`. Covers AI image generation workflows, external service integration, MCP integration points, content brief templates, and content performance measurement.
+Companion to `@content-tools`. Covers AI image generation workflows, external service integration, MCP integration points, content brief templates, and content performance measurement.
 
 ## AI Image Generation Workflows
 

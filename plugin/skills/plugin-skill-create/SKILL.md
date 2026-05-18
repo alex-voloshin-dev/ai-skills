@@ -1,6 +1,6 @@
 ---
 name: plugin-skill-create
-description: Internal procedure for `/plugin-author create`. Scaffolds a new skill INSIDE the ai-skills plugin (under `plugin/skills/`) with H5 frontmatter, eval test-case stub, and memory-write points pre-wired. Conforms to the agentskills.io specification (https://agentskills.io/specification) and ai-skills plugin conventions. No longer slash-invocable — call `/plugin-author create <name>` instead. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill.
+description: Internal procedure for `/plugin-author create`. Scaffolds a new skill INSIDE the ai-skills plugin (under `plugin/skills/`) with H5 frontmatter, eval test-case stub, and memory-write points pre-wired. Conforms to the agentskills.io specification (https://agentskills.io/specification) and ai-skills plugin conventions. No longer slash-invocable — call `/plugin-author create <name>` instead. Use when scaffolding a new skill (workflow or companion utility) under `plugin/skills/` with spec-conformant H5 frontmatter, an eval test-case stub, and memory-write points pre-wired. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill.
 disable-model-invocation: true
 ---
 
