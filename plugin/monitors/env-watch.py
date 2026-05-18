@@ -13,14 +13,20 @@ without a bash dependency. The sibling `env-watch.sh` is kept around as
 a deprecated shim — `monitors/monitors.json` now points at this `.py`.
 
 Behavior:
-  1. Exits silently (rc=0) when CLAUDE_USER_CONFIG_env_watch_enabled
-     is not "true". Default for the userConfig knob is "false", so this
-     monitor is opt-in.
+  1. Exits silently (rc=0) when the userConfig knob `env_watch_enabled` is not
+     truthy. The knob is enabled when its value (after stripping whitespace and
+     lowercasing) is one of: "true", "1", "yes", "on". Everything else —
+     including absent, "false", "0", "no", "off", "" — keeps the monitor
+     disabled. This is intentionally opt-in; the default userConfig value of
+     false leaves the monitor off. Runtime env var: CLAUDE_PLUGIN_OPTION_env_watch_enabled
+     (legacy fallback: CLAUDE_USER_CONFIG_env_watch_enabled).
   2. Exits silently (rc=0) when no docker-compose.yml / compose.yaml /
      docker-compose.yaml is present in cwd.
   3. Exits silently (rc=0) when `docker` CLI is not on PATH.
   4. Polls `docker compose ps --format json` every N seconds (default
-     15, override via CLAUDE_USER_CONFIG_env_watch_interval, min 5).
+     15, override via userConfig knob `env_watch_interval`; runtime env var:
+     CLAUDE_PLUGIN_OPTION_env_watch_interval, legacy fallback:
+     CLAUDE_USER_CONFIG_env_watch_interval; min 5).
   5. Diffs current snapshot against previous in-memory snapshot.
      Emits one JSON line per service whose State or Health changed.
   6. Honors SIGTERM (POSIX) and SIGINT (all platforms incl. Windows).
@@ -50,11 +56,31 @@ MIN_INTERVAL_SEC = 5
 DEFAULT_INTERVAL_SEC = 15
 DOCKER_TIMEOUT_SEC = 10
 
+# Truthy tokens accepted for the opt-in env var (case-insensitive, stripped).
+_TRUTHY: frozenset[str] = frozenset({"true", "1", "yes", "on"})
+
+# Prefix resolution order: canonical first, legacy fallback second.
+_PLUGIN_OPTION_PREFIXES = ("CLAUDE_PLUGIN_OPTION_", "CLAUDE_USER_CONFIG_")
+
+
+def _cfg(key: str, default: str = "") -> str:
+    """Read a plugin userConfig knob by bare KEY (stdlib-only, no _lib import).
+
+    Tries CLAUDE_PLUGIN_OPTION_<KEY> first, then CLAUDE_USER_CONFIG_<KEY>
+    as a legacy fallback. Returns `default` when neither is set or the value
+    is empty/whitespace.
+    """
+    for prefix in _PLUGIN_OPTION_PREFIXES:
+        raw = os.environ.get(prefix + key)
+        if raw is not None and raw.strip() != "":
+            return raw
+    return default
+
 
 # ---------- Guards ----------
 
 def _opt_in() -> bool:
-    return os.environ.get("CLAUDE_USER_CONFIG_env_watch_enabled", "false") == "true"
+    return _cfg("env_watch_enabled", "false").strip().lower() in _TRUTHY
 
 
 def _has_compose_file(cwd: Path) -> bool:
@@ -66,7 +92,7 @@ def _has_docker() -> bool:
 
 
 def _interval_seconds() -> int:
-    raw = os.environ.get("CLAUDE_USER_CONFIG_env_watch_interval", "")
+    raw = _cfg("env_watch_interval", "")
     try:
         n = int(raw) if raw else DEFAULT_INTERVAL_SEC
     except (TypeError, ValueError):

@@ -62,6 +62,26 @@ DEFAULT_PII_PATTERNS_PATH = "hooks/scripts/pii-patterns.txt"
 PROJECT_PII_EXTENSION = ".ai-skills-memory/.committed/pii-patterns.txt"
 
 
+# ---------- Plugin config ----------
+
+_PLUGIN_OPTION_PREFIXES = ("CLAUDE_PLUGIN_OPTION_", "CLAUDE_USER_CONFIG_")
+
+
+def plugin_option(key: str, default: str | None = None) -> str | None:
+    """Read a plugin userConfig value by its bare KEY.
+
+    Claude Code >= 2.1.x exports userConfig as CLAUDE_PLUGIN_OPTION_<KEY>
+    (plugins-reference.md L480). Older builds used CLAUDE_USER_CONFIG_<KEY>.
+    Both prefixes are accepted, CLAUDE_PLUGIN_OPTION_ taking precedence.
+    Returns `default` when neither is set or the value is empty/whitespace.
+    """
+    for prefix in _PLUGIN_OPTION_PREFIXES:
+        raw = os.environ.get(prefix + key)
+        if raw is not None and raw.strip() != "":
+            return raw
+    return default
+
+
 # ---------- Time ----------
 
 

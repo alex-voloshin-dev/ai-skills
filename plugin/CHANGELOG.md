@@ -6,6 +6,18 @@ All notable changes to the `ai-skills` plugin. Format: [Keep a Changelog](https:
 
 Next release in planning.
 
+## [0.4.3] — 2026-05-18 — userConfig env-var prefix fix (all knobs were silently inert)
+
+`/plugin-author improve` run (HEAVY, 3 WPs — WP1 `_lib.plugin_option()` foundation, WP2 consumer migration, WP3 docs; every DEV→REVIEW→QA gate green; Path A per-task `Agent` spawns + Lead reconciliation). Root cause verified against Claude Code's official `plugins-reference.md`.
+
+### Fixed — userConfig env-var prefix (all knobs were silently inert)
+
+- **Root cause** — the plugin read userConfig values from `CLAUDE_USER_CONFIG_<KEY>`, but Claude Code ≥2.1.x exports them as `CLAUDE_PLUGIN_OPTION_<KEY>` (plugins-reference.md §User configuration, L480). Effect: every userConfig knob was a no-op — the env-watch monitor, RALF session caps, and the subagent depth-guard all fell back to defaults regardless of user settings.
+- **Fix** — new `_lib.plugin_option()` dual-prefix reader (`CLAUDE_PLUGIN_OPTION_<KEY>` primary, `CLAUDE_USER_CONFIG_<KEY>` legacy fallback); `ralph-stop.py` and `subagent-depth-guard.py` migrated to it; the standalone `env-watch.py` got an equivalent stdlib-only `_cfg()`. The `env_watch_enabled` opt-in is now truthy-tolerant (`true/1/yes/on`, case-insensitive) instead of a strict `== "true"`.
+- **Operational note** — per plugins-reference.md L551, monitors require a Claude Code session restart (not just `/reload-plugins`) for the env-watch fix to take effect.
+
+Gates: `validate.py` `25 pass, 0 warn, 0 fail`; DEV→REVIEW→QA per WP; cumulative scope 6 files.
+
 ## [0.4.2] — 2026-05-18 — Form A description convention (lead with "Use this skill when")
 
 `/plugin-author improve --scope description` run (7 WPs / 3 waves — WP-G foundation + WP-S1…S6, every DEV→REVIEW→QA gate green; Path A per-task `Agent` spawns + Lead file-channel reconciliation per the documented persistent-team degradation block). Adopts agentskills.io's recommended imperative phrasing as a **stricter ai-skills overlay ("Form A")**: every skill `description` now BEGINS with the literal phrase `Use this skill when …`, with capability/routing/disambiguation folded losslessly into the same sentence (third person, ≤1024 chars). Chosen over the upstream-faithful capability-lead variant by explicit, twice-confirmed user decision.

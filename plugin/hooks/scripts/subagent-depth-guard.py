@@ -21,8 +21,9 @@ This is that hook. It runs on SubagentStart (after subagent-start-budget) and:
   3. Computes depth by walking the parent chain:
        - depth = 1 if parent_trace_id is None or unknown
        - depth = parent_depth + 1 otherwise
-  4. Reads MAX_DEPTH from env CLAUDE_USER_CONFIG_subagent_max_depth (default 3
-     per subagent-isolation.md).
+  4. Reads MAX_DEPTH from userConfig knob `subagent_max_depth` (default 3
+     per subagent-isolation.md; resolved as CLAUDE_PLUGIN_OPTION_subagent_max_depth
+     at runtime, with CLAUDE_USER_CONFIG_subagent_max_depth as legacy fallback).
   5. If depth > MAX_DEPTH, blocks the spawn with a clear diagnostic + records
      the violation to errors.log.
   6. Otherwise appends a `start` event to spawn-chain.jsonl and exits 0.
@@ -52,9 +53,9 @@ DEFAULT_MAX_DEPTH = 3
 SPAWN_CHAIN_FILENAME = "spawn-chain.jsonl"
 
 
-def _read_int_env(var: str, default: int) -> int:
-    raw = os.environ.get(var)
-    if raw is None or raw == "":
+def _read_int_env(key: str, default: int) -> int:
+    raw = _lib.plugin_option(key)
+    if raw is None or raw.strip() == "":
         return default
     try:
         return int(raw)
@@ -147,7 +148,7 @@ def main() -> None:
     depth = _compute_depth(trace_id, parent_trace_id, chain_events)
 
     max_depth = _read_int_env(
-        "CLAUDE_USER_CONFIG_subagent_max_depth",
+        "subagent_max_depth",
         DEFAULT_MAX_DEPTH,
     )
 

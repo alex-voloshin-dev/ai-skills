@@ -20,10 +20,11 @@ v0.1: simplified — supports `oracle-pass` and `same-error-repeats` kill-on
 signals + iteration cap. Other oracle types and signals deferred to a follow-up.
 
 Per Round 14 HIGH-C (alpha.16): also enforces RALF session-aggregate caps
-read from the userConfig env vars
-`CLAUDE_USER_CONFIG_ralph_session_max_iter`,
-`CLAUDE_USER_CONFIG_ralph_session_token_budget`,
-`CLAUDE_USER_CONFIG_ralph_session_time_cap_minutes`.
+read from the userConfig knobs
+`ralph_session_max_iter`, `ralph_session_token_budget`,
+`ralph_session_time_cap_minutes`
+(resolved at runtime as CLAUDE_PLUGIN_OPTION_<knob>; legacy
+CLAUDE_USER_CONFIG_<knob> accepted as fallback).
 Aggregates are tracked in the session token meter
 (`ralf_iter_total`, `ralf_tokens_total`, `ralf_started_at`) and incremented
 once per Stop intercept (one per iteration). When any aggregate exceeds its
@@ -58,9 +59,9 @@ import _lib  # noqa: E402
 
 # ---------- session-aggregate cap helpers (HIGH-C, alpha.16) ----------
 
-def _read_int_env(var: str, default: int | None) -> int | None:
-    raw = os.environ.get(var)
-    if raw is None or raw == "":
+def _read_int_env(key: str, default: int | None) -> int | None:
+    raw = _lib.plugin_option(key)
+    if raw is None or raw.strip() == "":
         return default
     try:
         return int(raw)
@@ -69,16 +70,16 @@ def _read_int_env(var: str, default: int | None) -> int | None:
 
 
 def _session_caps() -> dict[str, int | None]:
-    """Read session-aggregate RALF caps from userConfig env vars."""
+    """Read session-aggregate RALF caps from userConfig knobs (bare keys)."""
     return {
         "max_iter": _read_int_env(
-            "CLAUDE_USER_CONFIG_ralph_session_max_iter", 20
+            "ralph_session_max_iter", 20
         ),
         "token_budget": _read_int_env(
-            "CLAUDE_USER_CONFIG_ralph_session_token_budget", 400000
+            "ralph_session_token_budget", 400000
         ),
         "time_cap_minutes": _read_int_env(
-            "CLAUDE_USER_CONFIG_ralph_session_time_cap_minutes", 180
+            "ralph_session_time_cap_minutes", 180
         ),
     }
 

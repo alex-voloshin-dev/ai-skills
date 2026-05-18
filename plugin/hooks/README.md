@@ -68,7 +68,7 @@ If `tool-output-wrap.py` did not run first, `tool-output-normalize.py` logs a wr
 - `ralph-stop.py` — RALF iteration controller. If `.ai-skills-memory/ralph/<run-id>/active.lock` exists:
   - Runs the oracle (`oracle-pass` SUCCESS marker + `same-error-repeats:N`).
   - Checks per-workflow caps (`max_iterations` from `config.json`).
-  - Checks session-aggregate caps from `CLAUDE_USER_CONFIG_ralph_session_max_iter`, `CLAUDE_USER_CONFIG_ralph_session_token_budget`, and `CLAUDE_USER_CONFIG_ralph_session_time_cap_minutes`. Compares against the session meter (`ralf_iter_total`, `ralf_tokens_total`, elapsed minutes from `ralf_started_at`).
+  - Checks session-aggregate caps from the userConfig knobs `ralph_session_max_iter`, `ralph_session_token_budget`, and `ralph_session_time_cap_minutes` (Claude Code exports these as `CLAUDE_PLUGIN_OPTION_<KEY>`; the legacy `CLAUDE_USER_CONFIG_<KEY>` prefix is still accepted as a fallback). Compares against the session meter (`ralf_iter_total`, `ralf_tokens_total`, elapsed minutes from `ralf_started_at`).
   - On terminal state → writes `budget.json`, releases the lock, allows Stop (exit 0).
   - Otherwise → writes the `iter-NNN/prompt.md` continuation and blocks Stop (exit 2 with re-injection prompt).
   - Never blocks Stop because of an internal hook bug (`__main__` wraps `main()` and exits 0 on exception).
