@@ -4,9 +4,9 @@ description: Knowledge skill — deployment strategy reference (rolling, blue-gr
 disable-model-invocation: true
 ---
 
-# Deploy to Production
+# Deployment Procedures — Strategy & Rollback Reference
 
-Production deployment skill providing rollback procedures, health check patterns, and verification checklists. Ensures safe, repeatable production deployments.
+Knowledge reference for deployment strategies (rolling, blue-green, canary, recreate) plus rollback decision criteria, pre-deploy checklists, health-check patterns, and post-deploy verification. Loaded by the `/deploy-production` and `/deploy-staging` workflows; not a workflow itself.
 
 ## When to Use
 

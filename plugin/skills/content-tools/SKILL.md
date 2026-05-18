@@ -1,6 +1,6 @@
 ---
 name: content-tools
-description: Content research workflows and AI text-generation prompt templates — topic research, data/fact gathering, existing-content audit, blog content brief template, and AI-text patterns for headline generation, value propositions, feature-to-benefit translation, FAQ generation, social proof. Use as the reusable knowledge layer for /content-creation and /marketing email + social-post operations.
+description: Content research workflows and AI text-generation prompt templates — topic research, data/fact gathering, existing-content audit, blog content brief template, and AI-text patterns for headline generation, value propositions, feature-to-benefit translation, FAQ generation, social proof. The reusable knowledge layer behind /content-creation and /marketing email + social-post operations. Use when researching a content topic, gathering supporting facts, auditing existing content, building a blog content brief, or generating headlines/value-props/FAQ/social-proof copy for a blog post, landing page, or email.
 disable-model-invocation: true
 ---
 

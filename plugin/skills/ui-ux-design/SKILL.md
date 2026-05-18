@@ -93,6 +93,8 @@ See `figma-workflow.md` for detailed Figma project setup, component organization
 
 See `accessibility-checklist.md` for the comprehensive WCAG 2.2 AA audit checklist.
 
+See `visual-audit-checklist.md` for the browser-screenshot visual-audit procedure.
+
 ### Quick Audit (5-Minute Check)
 
 1. **Tab through the page** — can you reach and operate every interactive element?

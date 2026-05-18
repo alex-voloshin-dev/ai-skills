@@ -151,7 +151,7 @@ Run `/plan` with the produced ARD and design docs as input.
 
 ## Integration
 
-- **Input from**: `/product` (PRD output), `/feature-design` (design pack); direct PRD/brief
+- **Input from**: `/feature-design` (PRD / design pack); direct PRD/brief
 - **Followed by**: `/plan` (work decomposition), `/develop` (implementation)
 - **Roles**: `Agent(solution-architect)` (default), `Agent(cloud-architect)` (--cloud), `Agent(devops-architect)` (--cicd)
 - **Output style**: `${CLAUDE_PLUGIN_ROOT}/output-styles/design-pack.md`

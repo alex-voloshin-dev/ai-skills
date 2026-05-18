@@ -1,6 +1,6 @@
 ---
 name: content-creation
-description: Content creation workflow + tools knowledge — blog post authoring (8-step pipeline), page content optimization, AI text/image generation tools, quality gates, GEO/AEO structure, humanization. Use to write blog posts, create page content, draft conversion copy, generate visuals, or run quality audits on existing content.
+description: Content creation workflow + tools knowledge — blog post authoring (8-step pipeline), page content optimization, AI text/image generation tools, quality gates, GEO/AEO structure, humanization. Use when the user needs to write a blog post, create or optimize page content, draft conversion copy, generate visuals, or run a quality audit on existing content.
 context: fork
 argument-hint: "<content type: blog-post | page | landing | email | other>"
 ---
@@ -102,20 +102,16 @@ For `<type>: page | landing | email | other`. Same agents (product-manager + con
 4. **SEO sync** — apply companion `seo-content-sync-checklist.md` to ensure visible text + meta + JSON-LD all in sync
 5. **Review + publish** — same as blog Step 6 + 7
 
-Visual content via AI tools per companion `content-tools-guide.md` and `image-and-integration-workflows.md`.
+Visual content via AI tools per `@content-tools` knowledge skill and companion `image-and-integration-workflows.md`.
 
 ## Content Quality Gates (apply to every content type)
 
-Eight gates — each must pass before publish:
-
-1. **Accuracy** — claims verifiable, stats cited, pricing/screenshots current, legal claims reviewed
-2. **Brand alignment** — voice + tone + terminology per guidelines; no off-brand humor/slang
-3. **Conversion** — value prop above-fold, one primary CTA per section, benefits-focused, social proof near decision points
-4. **Accessibility** — descriptive alt text, video captions, 4.5:1 contrast, readable at 200% zoom, no color-only meaning
-5. **SEO + content sync** — unique title + meta, H1→H2→H3 hierarchy, descriptive internal anchors, structured data, surfaces in sync (`seo-content-sync-checklist.md`)
-6. **Legal + ethics** — no fabricated testimonials, no misleading before/after, AI images reviewed for artifacts/bias, attribution for third-party, license compliance, no dark patterns
-7. **GEO/AEO structure** (mandatory for public-facing) — macro/meso/micro applied, answer-first, entity consistent, high-leverage formats, schema identified, `geo-content` rule satisfied
-8. **Humanization** (mandatory) — `@humanizer` scan; no AI vocabulary, promotional inflation, chatbot artifacts, em-dash overuse, filler/hedging; anti-AI audit; sounds natural read aloud
+The eight publish gates (accuracy, brand alignment, conversion,
+accessibility, SEO+content sync, legal+ethics, GEO/AEO structure,
+humanization) are binding for every content type. **Read
+[`quality-gates-and-series.md`](./quality-gates-and-series.md) and apply the
+"Content Quality Gates" section verbatim** before publishing any piece — each
+gate must pass before publish.
 
 ## AI Tool References
 
@@ -127,12 +123,10 @@ All agent spawns use `plugin/schemas/spawn-payload.schema.json`. Returns conform
 
 ## Memory writes
 
-| Layer | When | Shape |
-|---|---|---|
-| L4 | After draft complete | `.ai-skills-memory/content/<slug>/draft-summary.md` (per piece, for trend tracking) |
-| L4 | After publish | Run-log line in `.ai-skills-memory/runs.jsonl` |
-
-Blog post output goes to the project's blog directory (NOT to `.ai-skills-memory/`) per project conventions.
+L4 memory writes (draft-summary after draft, run-log line after publish) are
+mandatory. **Read [`quality-gates-and-series.md`](./quality-gates-and-series.md)
+and apply the "Memory writes" section verbatim** at draft-complete and at
+publish.
 
 ## Companions
 
@@ -141,16 +135,14 @@ Blog post output goes to the project's blog directory (NOT to `.ai-skills-memory
 - **`about-pricing-and-layout-patterns.md`** — about, pricing, layout patterns
 - **`image-and-integration-workflows.md`** — visual content workflows + integration
 - **`seo-content-sync-checklist.md`** — keep visible text + SEO meta + JSON-LD in sync
+- **`quality-gates-and-series.md`** — 8 publish quality gates + blog series pattern + L4 memory writes (Read + apply verbatim)
 
 ## Content Series Pattern (blog)
 
-When creating a multi-part series:
-1. Plan all parts upfront — titles, topics, order in the brief (Step 2)
-2. Cross-link between parts — each post links prev + next
-3. Teaser for upcoming parts at end of each
-4. Draft all parts before publishing the first — ensures consistency + cross-links work
-5. Stagger publishing 3–7 days apart
-6. On publish day: update previous part's teaser to real link
+When creating a multi-part blog series, the 6-step series pattern is binding.
+**Read [`quality-gates-and-series.md`](./quality-gates-and-series.md) and apply
+the "Content Series Pattern" section verbatim** before drafting or publishing a
+series.
 
 ## Integration
 

@@ -2,7 +2,7 @@
 name: learnings-write
 description: Curated write to L4 (project) or L5 (user-global, opt-in) learnings memory. Use to capture patterns, lessons learned, or architectural decisions worth surfacing in future sessions. Spawns memory-curator agent to dedupe + PII-filter + schema-validate before append.
 context: fork
-argument-hint: "<learning text>"
+argument-hint: "<learning text> [--committed]"
 ---
 
 # /learnings-write — Capture a Durable Learning
@@ -22,6 +22,7 @@ Append a curated entry to `learnings.md` (L4 project, default) or `~/.claude/ai-
 /learnings-write "Async state management — startTransition for non-urgent updates"
 /learnings-write "Why we chose gRPC over REST" --global
 /learnings-write "Postgres text column index trailing whitespace gotcha" --tags "postgres,index"
+/learnings-write "ADR: adopt outbox pattern for cross-service events" --committed
 ```
 
 ## Arguments
@@ -32,6 +33,7 @@ Append a curated entry to `learnings.md` (L4 project, default) or `~/.claude/ai-
 | `--global` | off | Write to L5 (requires `userConfig.user_global_memory_enabled: true`) |
 | `--tags "tag1,tag2"` | none | Comma-separated tags for search |
 | `--source <id>` | auto | Workflow run-id this learning came from |
+| `--committed` | off | Write to the committed L4 layer (`.ai-skills-memory/.committed/learnings.md`) — routes through the `pre-tool-use-committed-write.py` allowlist hook |
 
 ## Behavior
 

@@ -1,6 +1,6 @@
 ---
 name: refactor
-description: Plan and execute a code refactor — change structure without changing behavior. Multi-agent pipeline with mandatory test-equivalence gate via RALF. Use for breaking up large functions, migrating to new patterns, extracting to library, improving testability. Not for adding features (use /develop) or fixing bugs (use /bugfix).
+description: Plan and execute a code refactor — change structure without changing behavior. Multi-agent pipeline with mandatory test-equivalence gate via RALF. Use when breaking up large functions, migrating to new patterns, extracting to a library, or improving testability. Not for adding features (use /develop) or fixing bugs (use /bugfix).
 context: fork
 argument-hint: "[--files <glob>] --goal '<plain-english goal>' [--preserve-tests]"
 ---
@@ -26,7 +26,7 @@ Plan + execute + verify a refactor that changes structure without changing behav
 
 ```
 /refactor --files "src/api/*.ts" --goal "extract auth middleware to shared lib"
-/refactor --scope "convert class-based to functional components"
+/refactor --files "src/components/**/*.tsx" --goal "convert class-based to functional components"
 /refactor --files "src/data/*.py" --goal "introduce Repository pattern" --preserve-tests
 ```
 

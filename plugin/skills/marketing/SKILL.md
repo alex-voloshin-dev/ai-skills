@@ -1,6 +1,6 @@
 ---
 name: marketing
-description: Recurring marketing operations dispatcher — social posts, blog posts, email campaigns, trend research, analytics, content repurposing, community engagement, strategy review. Use for any daily/weekly/monthly marketing task in a project that already has marketing/MARKETING.md. For first-time strategy setup, use /marketing-init.
+description: Recurring marketing operations dispatcher — social posts, blog posts, email campaigns, trend research, analytics, content repurposing, community engagement, strategy review. Use when running any daily/weekly/monthly marketing task in a project that already has marketing/MARKETING.md. For first-time strategy setup, use /marketing-init.
 context: fork
 argument-hint: "<operation: social-post | blog-post | email | trend-research | analytics | strategy-review | community | content-repurpose>"
 ---
