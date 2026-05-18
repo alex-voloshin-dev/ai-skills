@@ -8,6 +8,10 @@ Two responsibilities:
 1. Validate G7 return contract (per plugin/schemas/return-contract.schema.json).
    Per R6 HIGH-4: on validation failure, log to errors.log, fail-open, surface
    diagnostic to orchestrator via stderr. NEVER block parent workflow.
+   A SubagentStop with NO return-contract key at all is the normal case for
+   non-G7 / ad-hoc subagent tasks and is NOT a validation failure — only an
+   actually-supplied (present) return payload is validated. This distinguishes
+   "no contract" (silent) from "malformed contract" (logged ERROR + stderr).
 2. If userConfig.subagent_learnings_enabled = true, capture non-trivial
    subagent outputs to .ai-skills-memory/sessions/<id>/subagent-reports/<name>-<id>.md
    for memory-curator to review later.
@@ -54,12 +58,23 @@ def main() -> None:
     data = _lib.read_stdin_json()
     sid = str(data.get("session_id") or "unknown").replace(":", "-").replace(".", "-")
 
+    # Distinguish "no return-contract key supplied at all" (normal case for
+    # non-G7 / ad-hoc subagent stops — must NOT be flagged) from "a contract
+    # was supplied but is malformed" (a real validation failure worth ERROR +
+    # stderr). FINDING-1: the old `... or {}` default made an absent contract
+    # indistinguishable from an empty one, so validate_return_contract({}) ran
+    # on every plain SubagentStop and spammed errors.log.
+    contract_present = (
+        "return_contract" in data or "returnContract" in data
+    )
     return_payload = data.get("return_contract") or data.get("returnContract") or {}
     user_config = data.get("user_config") or data.get("userConfig") or {}
     learnings_enabled = bool(user_config.get("subagent_learnings_enabled", False))
 
-    # Validate (R6 HIGH-4)
-    if isinstance(return_payload, dict):
+    # Validate (R6 HIGH-4) — only when a return contract was actually supplied.
+    # An empty / absent payload means "this subagent did not return a G7
+    # contract", which is allowed; we fail-open silently.
+    if contract_present and isinstance(return_payload, dict) and return_payload:
         issues = validate_return_contract(return_payload)
         if issues:
             diagnostic = {

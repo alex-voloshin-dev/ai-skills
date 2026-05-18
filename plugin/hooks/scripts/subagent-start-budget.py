@@ -8,8 +8,10 @@ schema repeatedly violated).
 Per R8 spawn-payload schema (G7) and ralph-budget rule:
 1. Validate G7 spawn payload schema. First 2 violations per session = WARNING.
    3rd+ violation = ERROR + block with a pasteable JSON example. Counter lives
-   in the session token meter (`g7_violation_count`). Closes audit §2.3 — Lead
-   was producing free-form spawn prompts indefinitely without escalation.
+   in the session token meter (`g7_violation_count`) and is incremented by
+   exactly one per violation; a spawn with a fully valid G7 payload resets it
+   to 0 so a corrected Lead is no longer blocked. Closes audit §2.3 — Lead was
+   producing free-form spawn prompts indefinitely without escalation.
 2. Read session token meter; check against userConfig session_token_soft_cap +
    session_token_hard_cap.
 3. If estimated input + meter exceeds hard cap → block spawn with diagnostic.
@@ -89,10 +91,28 @@ def main() -> None:
     if isinstance(payload, dict):
         required = ["trace_id", "subagent_role", "goal", "constraints", "allowed_tools", "budget"]
         missing = [k for k in required if k not in payload]
+        prior_count = int(meter.get("g7_violation_count", 0) or 0)
+        if not missing:
+            # FINDING-2(b): a valid G7 payload clears the strike state, as the
+            # block message and SKILL docstring promise ("the Lead must
+            # complete one valid spawn" to clear the counter). Without this the
+            # counter only ever grew and every later spawn stayed blocked for
+            # the whole session. `update_token_meter` adds numeric+numeric, so
+            # we pass the exact negative delta to land on 0 deterministically.
+            if prior_count:
+                _lib.update_token_meter(
+                    session_dir, {"g7_violation_count": -prior_count}
+                )
         if missing:
-            prior_count = int(meter.get("g7_violation_count", 0) or 0)
+            # FINDING-2(a): keep the persisted counter and `new_count`
+            # consistent. The old code computed new_count = prior_count + 1
+            # locally but always passed a literal +1 delta to the meter, so the
+            # two diverged across spawns. Pass the exact delta (= 1) so the
+            # stored value equals new_count.
             new_count = prior_count + 1
-            _lib.update_token_meter(session_dir, {"g7_violation_count": 1})
+            _lib.update_token_meter(
+                session_dir, {"g7_violation_count": new_count - prior_count}
+            )
             if new_count > G7_VIOLATION_GRACE:
                 _lib.log_to(
                     "errors.log",
@@ -119,7 +139,9 @@ def main() -> None:
                     "full schema and `plugin/skills/develop/SKILL.md` Lead "
                     "section for a worked Agent(...) example. To clear the "
                     "violation counter, the Lead must complete one valid "
-                    "spawn (the counter resets on the next session)."
+                    "spawn — a spawn whose payload has all six required G7 "
+                    "fields resets the counter to 0 immediately (it also "
+                    "resets on the next session)."
                 )
             _lib.log_to(
                 "errors.log",
@@ -130,7 +152,7 @@ def main() -> None:
                     "issue": "spawn_payload_schema_violation",
                     "missing_fields": missing,
                     "violation_count": new_count,
-                    "grace_remaining": G7_VIOLATION_GRACE - new_count,
+                    "grace_remaining": max(0, G7_VIOLATION_GRACE - new_count),
                     "session_id": sid,
                 },
             )
