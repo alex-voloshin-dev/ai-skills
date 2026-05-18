@@ -6,6 +6,34 @@ All notable changes to the `ai-skills` plugin. Format: [Keep a Changelog](https:
 
 Next release in planning.
 
+## [0.4.2] — 2026-05-18 — Form A description convention (lead with "Use this skill when")
+
+`/plugin-author improve --scope description` run (7 WPs / 3 waves — WP-G foundation + WP-S1…S6, every DEV→REVIEW→QA gate green; Path A per-task `Agent` spawns + Lead file-channel reconciliation per the documented persistent-team degradation block). Adopts agentskills.io's recommended imperative phrasing as a **stricter ai-skills overlay ("Form A")**: every skill `description` now BEGINS with the literal phrase `Use this skill when …`, with capability/routing/disambiguation folded losslessly into the same sentence (third person, ≤1024 chars). Chosen over the upstream-faithful capability-lead variant by explicit, twice-confirmed user decision.
+
+### Changed — convention codified (foundation)
+
+- **`plugin/skills/prompt-engineering/optimizing-descriptions.md`** — ai-skills overlay rewritten: description MUST begin with the literal `Use this skill when …` (Form A) + new Form A before/after example. Upstream digest (lines 1–104) untouched.
+- **`plugin/skills/prompt-engineering/skill-authoring-spec.md`** — overlay bullet → "BEGINS with `Use this skill when …` (Form A)".
+- **`plugin/skills/plugin-skill-create/SKILL.md`** — scaffold placeholder + convention bullet → Form A; literal `TODO` token preserved as the unedited-scaffold CRITICAL guard.
+- **`plugin/skills/plugin-skill-audit/SKILL.md`** — spec + plugin-convention checks → Form A; `TODO` still CRITICAL; third-person retained.
+- **`plugin/eval/runner.py`** — docstring + H5 WARNING wording name Form A; explicit `\bUse this skill when\b` regex alternative **added** (all 12 legacy alternatives byte-identical — zero Tier-1 regression; Form A already passed via `\bUse this\b`).
+- **3 `plugin-skill-create` calibration samples** — synced to the new scaffold text; `TODO` token, pass/fail intent, and `score-N.N` filenames preserved.
+
+### Changed — all 75 skill descriptions → Form A
+
+- Every `plugin/skills/*/SKILL.md` `description:` rewritten to lead with `Use this skill when `, information-lossless vs prior (tool/flag names, `--cloud`/`--cicd` routing, applied role, and all "Not for X — use /Y" / "knowledge skill — never invoked directly" boundary clauses retained verbatim). Body + all other frontmatter byte-identical per file.
+- `marketing-init` subject-verb agreement fix (`define`/`produce` → `defines`/`produces`); `social-media-manager` multi-trigger scalar normalized to begin `Use this skill when ` (was `…whenever`).
+
+Gates: `validate.py` `25 pass, 0 warn, 0 fail`; Tier-1 `0 CRITICAL, 0 WARNING`; 75/75 descriptions begin Form A and ≤1024 chars; `EXPECTED_COUNTS` unchanged (no asset added/removed); QA cross-skill trigger-collision sweep across all adjacency clusters found **no new collision** (disambiguation clauses survived). 81 files (75 SKILL.md + 6 foundation). Plugin scope only — Codex/Windsurf parity reflection (`.agents/`, `.windsurf/`, `review/parity-matrix.md`) deferred as a separate tracked change.
+
+## [0.4.1] — 2026-05-17 — plugin-author audit fix-cycle + plugin-doctor hook fixes
+
+`/plugin-author` audit/fix-cycle on plugin skills plus hook reliability fixes (reconstructed from commit history — no entry was written at release time).
+
+- **plugin skills** — agentskills.io audit + cross-skill coherence + SKILL.md/rule size-limit fix-cycle (`79980cd`).
+- **`plugin/hooks/`** — `subagent-stop-learnings` false-error signals fixed; spawn budget counter corrected (`1128a1f`).
+- **`plugin-doctor`** — subagent-hook ERR-signal false positives resolved (`b459430`).
+
 ## [0.4.0] — 2026-05-17 — BREAKING: marketplace + plugin renamed `ai-assets` → `ai-skills`
 
 Full repo-identity rename. This entry is the **sole intentional retention of the old `ai-assets` token** (kept here to document the cut).
