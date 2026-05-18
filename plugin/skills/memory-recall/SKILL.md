@@ -1,6 +1,6 @@
 ---
 name: memory-recall
-description: Query `.ai-skills-memory/learnings.md` (L4 project memory) and optionally `~/.claude/ai-skills/learnings.md` (L5 user-global) by topic or keyword. Returns matching excerpts with surrounding context. Use when starting a task to surface prior decisions, gotchas, or conventions that apply.
+description: Use this skill when starting a task to surface prior decisions, gotchas, or conventions that apply — to query `.ai-skills-memory/learnings.md` (L4 project memory) and optionally `~/.claude/ai-skills/learnings.md` (L5 user-global) by topic or keyword, returning matching excerpts with surrounding context.
 context: fork
 argument-hint: "<topic-or-keyword>"
 ---

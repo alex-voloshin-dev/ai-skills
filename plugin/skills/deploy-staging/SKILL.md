@@ -1,6 +1,6 @@
 ---
 name: deploy-staging
-description: Deploy to staging workflow — build, deploy to a staging environment, run smoke tests, verify. Use when deploying a completed feature to staging for smoke-testing and verification before a production release.
+description: Use this skill when deploying a completed feature to staging for smoke-testing and verification before a production release — the deploy-to-staging workflow that builds, deploys to a staging environment, runs smoke tests, and verifies.
 disable-model-invocation: true
 argument-hint: [service-name]
 ---

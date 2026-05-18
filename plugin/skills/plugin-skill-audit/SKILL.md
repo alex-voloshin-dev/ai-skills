@@ -1,6 +1,6 @@
 ---
 name: plugin-skill-audit
-description: Internal procedure for `/plugin-author audit`. Audit, validate, and update existing skills inside the ai-skills plugin (under `plugin/skills/`). Checks frontmatter against the agentskills.io specification, body length, progressive-disclosure structure, cross-reference integrity, eval-case wiring, and ai-skills plugin conventions. No longer slash-invocable — call `/plugin-author audit [<name> | --all] [--deep] [--strict] [--fix]` instead. Use when auditing, validating, or fixing an existing plugin skill's frontmatter, body length, progressive-disclosure structure, cross-references, or eval wiring — after editing skills under `plugin/skills/`, before merging a PR that touches them, or when a skill stops triggering as expected. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill (the safe-fix table and audit checks are the cached digest of upstream spec rules).
+description: Use this skill when auditing, validating, or fixing an existing plugin skill's frontmatter, body length, progressive-disclosure structure, cross-references, or eval wiring — after editing skills under `plugin/skills/`, before merging a PR that touches them, or when a skill stops triggering as expected — the internal procedure for `/plugin-author audit`. Checks frontmatter against the agentskills.io specification plus ai-skills plugin conventions and optionally applies safe fixes. No longer slash-invocable — call `/plugin-author audit [<name> | --all] [--deep] [--strict] [--fix]` instead. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill (the safe-fix table and audit checks are the cached digest of upstream spec rules).
 disable-model-invocation: true
 ---
 
@@ -60,7 +60,7 @@ Source of truth: digest `prompt-engineering/skill-authoring-spec.md`; only audit
 Frontmatter — required fields:
 
 - `name` — `fail` if not 1–64 chars / not lowercase a–z+digits+hyphens / leading-trailing or consecutive (`--`) hyphen / not equal to the parent directory name (mismatch is always `fail`, never `--fix`)
-- `description` — `fail` if not 1–1024 chars or empty; **CRITICAL fail if it contains the `TODO` token**; `warn` if missing what+when, trigger keywords, or imperative "Use when…" phrasing (see `prompt-engineering/optimizing-descriptions.md`)
+- `description` — `fail` if not 1–1024 chars or empty; **CRITICAL fail if it contains the literal `TODO` token**; `warn` if it does NOT begin with the literal `Use this skill when …` phrase (Form A), or is missing the folded-in capability / trigger keywords / third person (see `prompt-engineering/optimizing-descriptions.md`)
 
 Frontmatter — optional fields permitted by spec:
 
@@ -107,7 +107,7 @@ Selectable via `--check scripts`; runs inside `all`. Per file under `scripts/` (
 
 ## Plugin-convention checks (group `plugin` — runs as part of `all`)
 
-- Description carries the H5 `Use when …` pattern and is third-person — `warn` otherwise
+- Description **BEGINS with the literal `Use this skill when …`** phrase (Form A) and is third-person — `warn` otherwise; still **CRITICAL-fail** on a literal `TODO` token
 - `context: fork` for a slash command; `disable-model-invocation: true` only with no `context: fork`
 - No project-specific assumptions banned by `plugin/rules/global-package-rules.md`; English-only
 - Sibling resource files referenced from `SKILL.md` ≥ once — `warn` on orphans

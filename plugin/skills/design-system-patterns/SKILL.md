@@ -1,6 +1,6 @@
 ---
 name: design-system-patterns
-description: UI/UX knowledge base covering user research, personas, jobs-to-be-done, user journeys, usability testing, information architecture, wireframing, prototyping, visual design, typography, color theory, grid systems, visual hierarchy, micro-interactions, animation, design systems, atomic design, design tokens, Figma workflows, WCAG 2.2 accessibility, responsive and mobile-first design, Material Design 3, Apple HIG, Nielsen heuristics, Gestalt principles, conversion-centered design, and design-to-code handoff. Use when designing UI, defining or auditing a design system, reviewing UX deliverables, specifying components, evaluating accessibility, or producing redlines and tokens for engineering handoff.
+description: Use this skill when designing UI, defining or auditing a design system, reviewing UX deliverables, specifying components, evaluating accessibility, or producing redlines and tokens for engineering handoff — the UI/UX knowledge base covering user research, personas, jobs-to-be-done, user journeys, usability testing, information architecture, wireframing, prototyping, visual design, typography, color theory, grid systems, visual hierarchy, micro-interactions, animation, design systems, atomic design, design tokens, Figma workflows, WCAG 2.2 accessibility, responsive and mobile-first design, Material Design 3, Apple HIG, Nielsen heuristics, Gestalt principles, conversion-centered design, and design-to-code handoff.
 disable-model-invocation: true
 ---
 

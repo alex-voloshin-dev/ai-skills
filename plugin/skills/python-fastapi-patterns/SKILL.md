@@ -1,6 +1,6 @@
 ---
 name: python-fastapi-patterns
-description: Python backend patterns knowledge base — Python 3.12+, FastAPI layered architecture, Pydantic v2 schemas, SQLAlchemy 2.0 async ORM, Alembic migrations, async/await, dependency injection, pytest with httpx.AsyncClient, OAuth2/JWT security, ruff and mypy strict, structured logging and Prometheus metrics. Use when designing or implementing Python backend code in FastAPI projects, reviewing Python pull requests, or onboarding new contributors to FastAPI conventions.
+description: Use this skill when designing or implementing Python backend code in FastAPI projects, reviewing Python pull requests, or onboarding new contributors to FastAPI conventions — a Python backend patterns knowledge base covering Python 3.12+, FastAPI layered architecture, Pydantic v2 schemas, SQLAlchemy 2.0 async ORM, Alembic migrations, async/await, dependency injection, pytest with httpx.AsyncClient, OAuth2/JWT security, ruff and mypy strict, structured logging and Prometheus metrics.
 disable-model-invocation: true
 ---
 

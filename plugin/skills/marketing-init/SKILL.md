@@ -1,6 +1,6 @@
 ---
 name: marketing-init
-description: One-time marketing strategy initialization — gather project context, run ICP/positioning interview, define strategy (positioning, messaging, channels, pillars, tactical plan), produce marketing/MARKETING.md and marketing/content-calendar.md in the target repo. Use when bootstrapping marketing for a project that has no MARKETING.md yet. Routes ongoing recurring operations to /marketing.
+description: Use this skill when bootstrapping marketing for a project that has no MARKETING.md yet — to run one-time marketing strategy initialization that gathers project context, runs an ICP/positioning interview, defines strategy (positioning, messaging, channels, pillars, tactical plan), and produces marketing/MARKETING.md and marketing/content-calendar.md in the target repo. Routes ongoing recurring operations to /marketing.
 context: fork
 argument-hint: ""
 ---

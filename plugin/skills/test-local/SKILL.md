@@ -1,6 +1,6 @@
 ---
 name: test-local
-description: Local dev testing workflow — verify test environment, provision infrastructure (Docker, Testcontainers), run multi-level test suite (unit → integration → E2E), coverage analysis, quality gate. Applies QA Engineer role. Use when running a full local QA cycle before commit or PR.
+description: Use this skill when running a full local QA cycle before commit or PR — a local dev testing workflow that verifies the test environment, provisions infrastructure (Docker, Testcontainers), runs a multi-level test suite (unit → integration → E2E), performs coverage analysis, and applies a quality gate. Applies the QA Engineer role.
 context: fork
 argument-hint: "service name or test scope"
 ---

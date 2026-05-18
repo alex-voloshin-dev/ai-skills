@@ -1,6 +1,6 @@
 ---
 name: worktree-isolation
-description: Git worktree branch isolation for feature development and bugfixes — branch naming, worktree setup, branch verification, and safe cleanup. Use when developing features or fixing bugs in isolated branches via git worktree.
+description: Use this skill when developing features or fixing bugs in isolated branches via git worktree — git worktree branch isolation for feature development and bugfixes, covering branch naming, worktree setup, branch verification, and safe cleanup.
 ---
 
 <!-- ARCHITECTURAL NOTE: intentional model-invocable companion — deliberately no `context: fork` and no `disable-model-invocation`. Branch-isolation procedure applied by `/develop` and `/bugfix` Developers; it must stay model-invocable and composable into the caller's thread (not forked, not knowledge-only). Not a defect — do not reclassify. -->

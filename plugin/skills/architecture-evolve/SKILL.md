@@ -1,6 +1,6 @@
 ---
 name: architecture-evolve
-description: Architecture migration and evolution — produce ADR for the migration decision, target-state ARCHITECTURE.md, phased migration plan (strangler fig, expand-contract, branch by abstraction), fitness functions, and rollback strategy. Use when migrating between technologies (e.g., REST → gRPC, monolith → microservices, on-prem → cloud) or executing a redesign initiative.
+description: Use this skill when migrating between technologies (REST → gRPC, monolith → microservices, on-prem → cloud, framework upgrade), executing a major redesign driven by tech debt or scale, or a strategic platform shift (database engine, message bus, identity provider, observability vendor) — including when the user describes a "from X to Y" move without saying "evolve" or "migration" — to plan and document architecture migration and evolution — an ADR for the migration decision, target-state ARCHITECTURE.md, a phased migration plan (strangler fig, expand-contract, branch by abstraction), fitness functions, and a rollback strategy. Not for new feature design — use `/architecture-design` instead.
 context: fork
 argument-hint: "<migration initiative — from X to Y>"
 ---

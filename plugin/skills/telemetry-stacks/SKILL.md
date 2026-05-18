@@ -1,6 +1,6 @@
 ---
 name: telemetry-stacks
-description: Knowledge skill — production telemetry stack reference covering Prometheus + Grafana, Datadog, Honeycomb, New Relic, Sentry, and OpenTelemetry + Tempo / Jaeger. Per-stack ingestion model, query patterns, UI surface, and when each stack is the right choice. Loaded by `/analyze-prod`, `/analyze-local`, `/env-analyze`, `/infra-change`, and `/bugfix` workflows when production-context diagnosis needs vendor-specific query syntax. Use when querying a production telemetry stack, when authoring or reviewing an analysis workflow that needs vendor query examples, or when identifying which stack is deployed from `CLAUDE.md`, helm charts, `prometheus-operator` CRDs, or an OTel collector config.
+description: Use this skill when querying a production telemetry stack, when authoring or reviewing an analysis workflow that needs vendor query examples, or when identifying which stack is deployed from `CLAUDE.md`, helm charts, `prometheus-operator` CRDs, or an OTel collector config — a knowledge skill providing a production telemetry stack reference covering Prometheus + Grafana, Datadog, Honeycomb, New Relic, Sentry, and OpenTelemetry + Tempo / Jaeger, with per-stack ingestion model, query patterns, UI surface, and when each stack is the right choice. Loaded by `/analyze-prod`, `/analyze-local`, `/env-analyze`, `/infra-change`, and `/bugfix` workflows when production-context diagnosis needs vendor-specific query syntax.
 disable-model-invocation: true
 ---
 

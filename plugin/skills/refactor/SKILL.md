@@ -1,6 +1,6 @@
 ---
 name: refactor
-description: Plan and execute a code refactor — change structure without changing behavior. Multi-agent pipeline with mandatory test-equivalence gate via RALF. Use when breaking up large functions, migrating to new patterns, extracting to a library, or improving testability. Not for adding features (use /develop) or fixing bugs (use /bugfix).
+description: Use this skill when breaking up large functions, migrating to new patterns, extracting to a library, or improving testability — to plan and execute a code refactor that changes structure without changing behavior via a multi-agent pipeline with a mandatory test-equivalence gate enforced by RALF. Not for adding features (use /develop) or fixing bugs (use /bugfix).
 context: fork
 argument-hint: "[--files <glob>] --goal '<plain-english goal>' [--preserve-tests]"
 ---

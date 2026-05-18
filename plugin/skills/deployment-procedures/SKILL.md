@@ -1,6 +1,6 @@
 ---
 name: deployment-procedures
-description: Knowledge skill — deployment strategy reference (rolling, blue-green, canary, recreate) plus rollback decision criteria, pre-deploy checklist, and post-deploy verification. Loaded by `/deploy-production` and `/deploy-staging` workflows; not a workflow itself. Use when authoring or reviewing a deploy workflow that needs the strategy and rollback knowledge.
+description: Use this skill when authoring or reviewing a deploy workflow that needs the strategy and rollback knowledge — the deployment strategy reference (rolling, blue-green, canary, recreate) plus rollback decision criteria, pre-deploy checklist, and post-deploy verification, loaded by the `/deploy-production` and `/deploy-staging` workflows; not a workflow itself.
 disable-model-invocation: true
 ---
 

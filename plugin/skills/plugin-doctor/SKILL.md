@@ -1,6 +1,6 @@
 ---
 name: plugin-doctor
-description: Self-diagnostic for the ai-skills plugin — validates skill frontmatter, hook executability, run-log parseability, and judge calibration. Default mode is fast and cost-free; `--calibrate-judge` is opt-in. Use when installing the plugin, upgrading to a new version, or troubleshooting unexpected plugin behavior.
+description: Use this skill when installing the plugin, upgrading to a new version, or troubleshooting unexpected plugin behavior — a self-diagnostic for the ai-skills plugin that validates skill frontmatter, hook executability, run-log parseability, and judge calibration. Default mode is fast and cost-free; `--calibrate-judge` is opt-in.
 context: fork
 argument-hint: "[--calibrate-judge]"
 ---

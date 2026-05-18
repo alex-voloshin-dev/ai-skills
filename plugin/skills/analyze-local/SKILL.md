@@ -1,6 +1,6 @@
 ---
 name: analyze-local
-description: Docker-specific local diagnostic — collect container status, logs, networking, resource usage, and diagnose issues in a local docker-compose stack. Applies SRE or DevOps roles for investigation. Use when a local container won't start, a service is unreachable from the host, a docker-compose stack is misbehaving, or as the Docker-layer diagnosis step of a local bugfix flow. For multi-scope environment analysis (Docker + Kubernetes + CI runner + drift snapshot + optional auto-fix) use `/env-analyze` instead.
+description: Use this skill when a local container won't start, a service is unreachable from the host, a local docker-compose stack is misbehaving, or as the Docker-layer diagnosis step of a local bugfix flow — including when the user describes the symptom without naming Docker — to run a Docker-specific local diagnostic that collects container status, logs, networking, and resource usage and diagnoses issues, applying the SRE or DevOps role for investigation. For multi-scope environment analysis (Docker + Kubernetes + CI runner + drift snapshot + optional auto-fix) use `/env-analyze` instead.
 context: fork
 argument-hint: "container name, symptom, or issue description"
 allowed-tools: Read Grep Glob Bash

@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: Context engineering knowledge base — context stack model, RAG pipeline design, memory engineering, multi-agent context coordination. Use when designing AI agent systems or RAG pipelines that need a principled approach to selecting, structuring, and delivering context to LLMs.
+description: Use this skill when designing AI agent systems or RAG pipelines that need a principled approach to selecting, structuring, and delivering context to LLMs — the context engineering knowledge base covering the context stack model, RAG pipeline design, memory engineering, and multi-agent context coordination.
 disable-model-invocation: true
 ---
 

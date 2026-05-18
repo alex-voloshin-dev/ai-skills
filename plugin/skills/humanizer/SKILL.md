@@ -1,6 +1,6 @@
 ---
 name: humanizer
-description: Remove signs of AI-generated writing from text. Use when editing, reviewing, or producing any public-facing text — blog posts, social media, UI copy, emails, landing pages, documentation. Detects and fixes AI patterns including inflated symbolism, promotional language, vague attributions, em dash overuse, rule of three, AI vocabulary, negative parallelisms, sycophantic tone, and filler phrases.
+description: Use this skill when editing, reviewing, or producing any public-facing text — blog posts, social media, UI copy, emails, landing pages, documentation — to remove signs of AI-generated writing by detecting and fixing AI patterns including inflated symbolism, promotional language, vague attributions, em dash overuse, rule of three, AI vocabulary, negative parallelisms, sycophantic tone, and filler phrases.
 ---
 
 <!-- ARCHITECTURAL NOTE: intentional model-invocable companion — deliberately no `context: fork` and no `disable-model-invocation`. Per repo CLAUDE.md the `@humanizer` skill MUST be applied to all public-facing content, so it MUST remain model-invocable (no `disable-model-invocation`) and composable into any writing thread (no `context: fork`). Not a defect — do not reclassify. -->

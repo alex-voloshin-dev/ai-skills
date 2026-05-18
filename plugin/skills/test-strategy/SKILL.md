@@ -1,6 +1,6 @@
 ---
 name: test-strategy
-description: Test strategy design, test writing guide, and coverage targets. Use when writing tests, designing test plans, setting up test infrastructure, or evaluating test quality. Provides patterns for unit, integration, E2E, and API testing.
+description: Use this skill when writing tests, designing test plans, setting up test infrastructure, or evaluating test quality — test strategy design, a test writing guide, and coverage targets, providing patterns for unit, integration, E2E, and API testing.
 ---
 
 <!-- ARCHITECTURAL NOTE: intentional model-invocable companion — deliberately no `context: fork` and no `disable-model-invocation`. Test-design knowledge skill applied by QA and `/run-tests`; it must stay model-invocable and composable into the caller's thread (not forked, not knowledge-only). Not a defect — do not reclassify. -->

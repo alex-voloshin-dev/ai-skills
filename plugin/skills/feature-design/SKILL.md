@@ -1,6 +1,6 @@
 ---
 name: feature-design
-description: Convert a 1–3 sentence feature idea into a complete design pack (PRD, ARCHITECTURE, UX-FLOW, DATA-MODEL, RISKS, IMPLEMENTATION-PLAN, REVIEW-LOG). Multi-agent three-wave pipeline orchestrated by feature-design-lead. Use when starting a new feature from concept. Not for refactors (use /refactor), bugfixes (use /bugfix), or refining existing PRDs (use /develop directly).
+description: Use this skill when starting a new feature from concept — to convert a 1–3 sentence feature idea into a complete design pack (PRD, ARCHITECTURE, UX-FLOW, DATA-MODEL, RISKS, IMPLEMENTATION-PLAN, REVIEW-LOG) via a multi-agent three-wave pipeline orchestrated by feature-design-lead. Not for refactors (use /refactor), bugfixes (use /bugfix), or refining existing PRDs (use /develop directly).
 argument-hint: "<idea, 1-3 sentences>"
 ---
 

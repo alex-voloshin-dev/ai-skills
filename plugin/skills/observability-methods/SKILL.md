@@ -1,6 +1,6 @@
 ---
 name: observability-methods
-description: Knowledge skill — industry-canonical observability methodologies (Four Golden Signals, RED, USE, Distributed Tracing) with method-to-problem mapping. Explains which signals each method surfaces and when each method applies. Loaded by `/analyze-prod`, `/analyze-local`, `/env-analyze`, `/infra-change`, and `/bugfix` workflows when production-context diagnosis needs a named methodology. Use when picking a diagnostic vocabulary for a latency, error-rate, saturation, or crashloop investigation, when authoring or reviewing an analysis workflow that needs the method reference, or when correlating SLI metrics and active alerts against a method's signal set.
+description: Use this skill when picking a diagnostic vocabulary for a latency, error-rate, saturation, or crashloop investigation, when authoring or reviewing an analysis workflow that needs the method reference, or when correlating SLI metrics and active alerts against a method's signal set — a knowledge skill of industry-canonical observability methodologies (Four Golden Signals, RED, USE, Distributed Tracing) with method-to-problem mapping that explains which signals each method surfaces and when each method applies. Loaded by `/analyze-prod`, `/analyze-local`, `/env-analyze`, `/infra-change`, and `/bugfix` workflows when production-context diagnosis needs a named methodology.
 disable-model-invocation: true
 ---
 

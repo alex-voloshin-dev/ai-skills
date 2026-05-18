@@ -1,6 +1,6 @@
 ---
 name: cloud-platforms
-description: Knowledge module — platform-specific CLI commands, managed service patterns, networking, IAM, observability, and operational procedures across GCP, Azure, and AWS. Loaded by `/analyze-prod`, `/infra-change`, `/deploy-production`, and similar workflows; not a workflow itself. Use when authoring a workflow that needs cloud-platform-specific commands or when reviewing such workflows for platform coverage.
+description: Use this skill when authoring or running a workflow that needs cloud-platform-specific commands, or when reviewing such workflows for platform coverage — as a knowledge module (not a workflow itself) providing platform-specific CLI commands, managed service patterns, networking, IAM, observability, and operational procedures across GCP, Azure, and AWS. Loaded by `/analyze-prod`, `/infra-change`, `/deploy-production`, and similar workflows.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: react-nextjs-patterns
-description: React and Next.js conventions — Next.js App Router routing and rendering, React Server Components vs Client Components boundary, TypeScript strict-mode discipline, Tailwind CSS and shadcn/ui styling, React Query and Server Actions data fetching, Core Web Vitals performance optimization, WCAG 2.2 accessibility, Next.js metadata API and structured data for SEO, unit testing with Vitest and React Testing Library, end-to-end testing with Playwright. Use when implementing frontend code in Next.js projects, reviewing React or Next.js pull requests, onboarding to App Router conventions, or designing a frontend architecture that needs canonical React/Next.js patterns.
+description: Use this skill when the agent is implementing frontend code in Next.js projects, reviewing React or Next.js pull requests, onboarding to App Router conventions, or designing a frontend architecture that needs canonical React/Next.js patterns — for canonical React and Next.js conventions covering Next.js App Router routing and rendering, React Server Components vs Client Components boundary, TypeScript strict-mode discipline, Tailwind CSS and shadcn/ui styling, React Query and Server Actions data fetching, Core Web Vitals performance optimization, WCAG 2.2 accessibility, Next.js metadata API and structured data for SEO, unit testing with Vitest and React Testing Library, and end-to-end testing with Playwright.
 disable-model-invocation: true
 ---
 

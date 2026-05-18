@@ -1,6 +1,6 @@
 ---
 name: terraform-procedures
-description: Terraform and OpenTofu procedures — state operations (state list/show/mv/rm/pull/push), plan/apply lifecycle, OpenTofu fork compatibility, state-surgery safety warnings, and workspace handling. Loaded by `/infra-change` and other infrastructure workflows; not a workflow itself. Use when authoring or running a Terraform plan/apply, refactoring modules, performing state surgery, importing existing cloud resources, or working in repos that use OpenTofu instead of HashiCorp Terraform.
+description: Use this skill when authoring or running a Terraform plan/apply, refactoring modules, performing state surgery, importing existing cloud resources, or working in repos that use OpenTofu instead of HashiCorp Terraform — Terraform and OpenTofu procedures covering state operations (state list/show/mv/rm/pull/push), plan/apply lifecycle, OpenTofu fork compatibility, state-surgery safety warnings, and workspace handling. Loaded by `/infra-change` and other infrastructure workflows; not a workflow itself.
 disable-model-invocation: true
 ---
 

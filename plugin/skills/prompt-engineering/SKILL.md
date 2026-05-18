@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-description: Prompt engineering knowledge base — technique taxonomy, template patterns, OWASP LLM Top 10 security checklist, eval frameworks, structured output contracts, cost optimization. Use when designing prompts, building AI features, or auditing LLM security.
+description: Use this skill when designing prompts, building AI features, or auditing LLM security — a prompt engineering knowledge base covering technique taxonomy, template patterns, the OWASP LLM Top 10 security checklist, eval frameworks, structured output contracts, and cost optimization.
 disable-model-invocation: true
 ---
 

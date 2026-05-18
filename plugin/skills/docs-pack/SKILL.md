@@ -1,6 +1,6 @@
 ---
 name: docs-pack
-description: Generate user-facing documentation pack (README, API reference, runbook, tutorial) for a module or feature. Distinct from the `docs` knowledge skill — `docs-pack` produces git-versioned user docs while `docs` is general documentation guidance. Use for onboarding users, API documentation, or operational procedures.
+description: Use this skill when onboarding users to a feature, producing API documentation, or writing operational procedures — to generate a user-facing documentation pack (README, API reference, runbook, tutorial) for a module or feature; distinct from the `docs` knowledge skill — `docs-pack` produces git-versioned user docs while `docs` is general documentation guidance.
 context: fork
 argument-hint: "<path> [--template api-reference|user-guide|runbook|architecture] [--audience developer|operator|user]"
 ---

@@ -1,6 +1,6 @@
 ---
 name: infra-change
-description: Infrastructure change workflow — Terraform plan/apply, Helm diff/upgrade, Kubernetes manifest changes with mandatory approval gates. Applies DevOps role. Safe-by-default with plan review before any mutation. Use when changing infrastructure config (Terraform, Helm, K8s) and a destructive or production-touching operation is involved.
+description: Use this skill when changing infrastructure config (Terraform, Helm, K8s) and a destructive or production-touching operation is involved — to run the infrastructure change workflow (Terraform plan/apply, Helm diff/upgrade, Kubernetes manifest changes) with mandatory approval gates. Applies DevOps role. Safe-by-default with plan review before any mutation.
 disable-model-invocation: true
 argument-hint: [description of infrastructure change]
 ---

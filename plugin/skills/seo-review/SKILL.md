@@ -1,6 +1,6 @@
 ---
 name: seo-review
-description: SEO review workflow — technical SEO audit, meta tags, structured data validation, Core Web Vitals, crawlability, indexability, AI search readiness. Applies SEO Engineer role. Use when auditing a public-facing page or site for search visibility, before publishing a marketing or blog page, when traffic drops or indexing issues are suspected, when validating JSON-LD / Open Graph / canonical / sitemap setup, or as the SEO gate inside `/content-creation` and `/docs-pack`.
+description: Use this skill when auditing a public-facing page or site for search visibility, before publishing a marketing or blog page, when traffic drops or indexing issues are suspected, when validating JSON-LD / Open Graph / canonical / sitemap setup, or as the SEO gate inside `/content-creation` and `/docs-pack` — to run the SEO review workflow (technical SEO audit, meta tags, structured data validation, Core Web Vitals, crawlability, indexability, AI search readiness) applying the SEO Engineer role.
 argument-hint: "URL or page path"
 ---
 

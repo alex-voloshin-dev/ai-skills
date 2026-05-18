@@ -1,6 +1,6 @@
 ---
 name: architecture-design
-description: Feature-level architecture design — produce ARD/ADR, C4 diagrams, API contracts, data models, NFR spec, and security review from a feature PRD. Routes to solution-architect (default), cloud-architect (--cloud), or devops-architect (--cicd). Use when a feature PRD needs design before /plan can decompose it.
+description: Use this skill when a new feature with a PRD needs architectural definition before `/plan` can decompose it for implementation — including when the user describes a feature to be built but does not say "architecture" or "design" — to produce a feature-level design pack — ARD/ADR, C4 diagrams, API contracts, data models, NFR spec, and security review from the PRD. Routes to solution-architect (default — feature-level system design), cloud-architect (`--cloud` for cloud infra design, landing zones, networking, multi-cloud), or devops-architect (`--cicd` for pipeline design, deployment strategy, platform engineering).
 context: fork
 argument-hint: "<PRD path or feature description> [--cloud | --cicd]"
 ---

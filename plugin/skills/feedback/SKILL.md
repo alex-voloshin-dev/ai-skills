@@ -1,6 +1,6 @@
 ---
 name: feedback
-description: Collect and analyze past Claude Code session logs for the ai-skills plugin to surface agent, subagent, skill, command, and hook errors, timeouts, unexpected exits, and other anomalies that point at plugin defects. Defaults to the last 7 days of sessions for the current project. Produces an extended Markdown report on disk plus a brief on-screen summary. Use when reviewing how the plugin behaved across recent runs, after a release to confirm reliability, before filing a plugin bug report, or when planning the next plugin improvement cycle.
+description: Use this skill when reviewing how the plugin behaved across recent runs, after a release to confirm reliability, before filing a plugin bug report, or when planning the next plugin improvement cycle — to collect and analyze past Claude Code session logs for the ai-skills plugin and surface agent, subagent, skill, command, and hook errors, timeouts, unexpected exits, and other anomalies that point at plugin defects. Defaults to the last 7 days of sessions for the current project. Produces an extended Markdown report on disk plus a brief on-screen summary.
 context: fork
 argument-hint: "[--days N] [--project PATH] [--plugin NAME] [--out PATH] [--severity all|warn|error]"
 ---

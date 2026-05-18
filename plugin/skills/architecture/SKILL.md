@@ -1,6 +1,6 @@
 ---
 name: architecture
-description: Architecture entry-point router — auto-classifies a request as feature design, existing-system analysis, or migration/evolution, then dispatches to /architecture-design, /architecture-analyze, or /architecture-evolve. Use when the user wants "architecture" but the scope is ambiguous. For known scope, invoke the specialized command directly.
+description: Use this skill when the user wants "architecture" work but the scope is ambiguous and you want auto-classification — as the architecture entry-point router that classifies the request as feature design, existing-system analysis, or migration/evolution and then dispatches to `/architecture-design`, `/architecture-analyze`, or `/architecture-evolve`. For a known scope, invoke the specialized command directly instead.
 context: fork
 argument-hint: "<feature PRD, analysis request, or migration brief>"
 ---

@@ -1,6 +1,6 @@
 ---
 name: gitops-detection
-description: GitOps and orchestrator detection — marker patterns and routing rules for Argo CD, Flux, Atlantis, HCP Terraform / Terraform Cloud, Spacelift, and env0. Loaded by `/infra-change` and related infrastructure workflows; not a workflow itself. Use when starting any Terraform or Helm change to determine whether the apply flow is owned by a controller (in which case the change is a git PR, not a local imperative command).
+description: Use this skill when the agent is starting any Terraform or Helm change and needs to determine whether the apply flow is owned by a controller (in which case the change is a git PR, not a local imperative command) — for GitOps and orchestrator detection covering marker patterns and routing rules for Argo CD, Flux, Atlantis, HCP Terraform / Terraform Cloud, Spacelift, and env0. Loaded by `/infra-change` and related infrastructure workflows; not a workflow itself.
 disable-model-invocation: true
 ---
 

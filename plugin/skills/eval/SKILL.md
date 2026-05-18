@@ -1,6 +1,6 @@
 ---
 name: eval
-description: Run plugin evaluation tiers — Tier 1 linters and Tier 2 judge-calibration drift smoke. Wraps the eval/runner.py harness. Use when running pre-release validation, detecting calibration regression, or tuning a skill. Tier 1 is free (no LLM); Tier 2 budgets tokens per `eval/config.json`. Tier 3 (full behavioral suites) is planned but not yet shipped — runner returns error code 3 if invoked.
+description: Use this skill when running pre-release validation, detecting calibration regression, or tuning a skill — to run plugin evaluation tiers (Tier 1 linters and Tier 2 judge-calibration drift smoke) by wrapping the eval/runner.py harness. Tier 1 is free (no LLM); Tier 2 budgets tokens per `eval/config.json`. Tier 3 (full behavioral suites) is planned but not yet shipped — runner returns error code 3 if invoked.
 context: fork
 argument-hint: "[skill-name | --tier 1|2 | --rubric NAME]"
 ---

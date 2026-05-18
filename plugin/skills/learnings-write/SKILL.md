@@ -1,6 +1,6 @@
 ---
 name: learnings-write
-description: Curated write to L4 (project) or L5 (user-global, opt-in) learnings memory. Use to capture patterns, lessons learned, or architectural decisions worth surfacing in future sessions. Spawns memory-curator agent to dedupe + PII-filter + schema-validate before append.
+description: Use this skill when capturing patterns, lessons learned, or architectural decisions worth surfacing in future sessions — to perform a curated write to L4 (project) or L5 (user-global, opt-in) learnings memory. Spawns memory-curator agent to dedupe + PII-filter + schema-validate before append.
 context: fork
 argument-hint: "<learning text> [--committed]"
 ---

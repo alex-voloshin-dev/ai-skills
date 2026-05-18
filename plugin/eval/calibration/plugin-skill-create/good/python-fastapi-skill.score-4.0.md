@@ -26,13 +26,13 @@ plugin/eval/calibration/feature-flags-rollout/
 ```yaml
 ---
 name: feature-flags-rollout
-description: TODO — replace this placeholder. One sentence describing what the skill does. Use when <TODO: trigger phrase>.
+description: Use this skill when <TODO: trigger phrase> — TODO replace this placeholder describing what the skill does.
 context: fork
 argument-hint: "[--strategy <canary|percent|targeted>]"
 ---
 ```
 
-`name` matches parent directory. `TODO —` placeholder present in description (audit guard intact). `context: fork` correct for `--invocable`. `argument-hint` stub appropriate for workflow type.
+`name` matches parent directory. Description is Form A (begins `Use this skill when …`) with the literal `TODO` placeholder token present (audit guard intact). `context: fork` correct for `--invocable`. `argument-hint` stub appropriate for workflow type.
 
 ## Body Skeleton (sections present)
 

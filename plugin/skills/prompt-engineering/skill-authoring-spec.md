@@ -237,8 +237,8 @@ paths are relative to the skill directory root.
   operationalization of the upstream ≤500-line / ≤5000-token guidance)
 - **English-only**; **no absolute user-machine paths**; references **one level
   deep** from `SKILL.md` (matches upstream)
-- Description in **third person** + the **`Use when …`** trigger pattern (H5)
-  — see `optimizing-descriptions.md`
+- Description in **third person** and **BEGINS with `Use this skill when …`**
+  (Form A) — see `optimizing-descriptions.md`
 - User-invocable forked workflows: `context: fork` + `argument-hint`;
   knowledge-only: `disable-model-invocation: true`
 - Any add/hide of a skill/agent/rubric/sample bumps `EXPECTED_COUNTS` in

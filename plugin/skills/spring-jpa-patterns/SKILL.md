@@ -1,6 +1,6 @@
 ---
 name: spring-jpa-patterns
-description: Spring Boot 3 + JPA backend patterns — Java 21+ features, layered architecture, Spring Data JPA, Hibernate fetch strategies, Flyway migrations, HikariCP pool tuning, Redis caching with Spring Cache, Spring Security 6 filter chains, REST API design (RFC 7807, pagination, versioning), Testcontainers + JUnit 5 + Mockito testing, Micrometer + Actuator observability, virtual threads and performance tuning. Use when implementing Java backend services in Spring Boot projects, reviewing JPA entity models, configuring connection pools or caches, designing REST endpoints, writing repository/service/controller layers, or onboarding to Spring conventions.
+description: Use this skill when the agent is implementing Java backend services in Spring Boot projects, reviewing JPA entity models, configuring connection pools or caches, designing REST endpoints, writing repository/service/controller layers, or onboarding to Spring conventions — for Spring Boot 3 + JPA backend patterns covering Java 21+ features, layered architecture, Spring Data JPA, Hibernate fetch strategies, Flyway migrations, HikariCP pool tuning, Redis caching with Spring Cache, Spring Security 6 filter chains, REST API design (RFC 7807, pagination, versioning), Testcontainers + JUnit 5 + Mockito testing, Micrometer + Actuator observability, and virtual threads and performance tuning.
 disable-model-invocation: true
 ---
 

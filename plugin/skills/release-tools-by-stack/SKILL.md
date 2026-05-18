@@ -1,6 +1,6 @@
 ---
 name: release-tools-by-stack
-description: Release tooling reference — release-please, semantic-release, Changesets, GoReleaser, cargo-release, JReleaser, plus monorepo per-package versioning via Changesets, Lerna, and Nx. Covers detection markers, per-tool version-bump + changelog commands, and per-stack release conventions for Node, Go, Rust, and Java. Use when picking a release tool for a stack or running version bump + changelog generation inside the `/release` workflow.
+description: Use this skill when the agent is picking a release tool for a stack or running version bump + changelog generation inside the `/release` workflow — for the release tooling reference covering release-please, semantic-release, Changesets, GoReleaser, cargo-release, JReleaser, plus monorepo per-package versioning via Changesets, Lerna, and Nx, including detection markers, per-tool version-bump + changelog commands, and per-stack release conventions for Node, Go, Rust, and Java.
 disable-model-invocation: true
 ---
 

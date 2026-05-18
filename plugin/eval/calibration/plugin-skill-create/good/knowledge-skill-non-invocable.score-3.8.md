@@ -25,14 +25,14 @@ plugin/eval/calibration/gcp-iam-patterns/
 ```yaml
 ---
 name: gcp-iam-patterns
-description: TODO — replace this placeholder. Knowledge reference covering <TODO: subject>. Use when <TODO: trigger phrase>.
+description: Use this skill when <TODO: trigger phrase> — TODO replace this placeholder; knowledge reference covering <TODO: subject>.
 disable-model-invocation: true
 ---
 ```
 
 Key correctness notes:
 - `name` matches parent directory — OK
-- `TODO —` placeholder present (audit guard intact) — OK
+- Description is Form A (begins `Use this skill when …`); literal `TODO` placeholder token present (audit guard intact) — OK
 - `disable-model-invocation: true` — correctly chosen for `--type knowledge` + `--invocable=false`
 - `context: fork` — correctly OMITTED (not invocable)
 - `argument-hint` — correctly OMITTED (no slash invocation)

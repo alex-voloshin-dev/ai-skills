@@ -1,6 +1,6 @@
 ---
 name: content-creation
-description: Content creation workflow + tools knowledge — blog post authoring (8-step pipeline), page content optimization, AI text/image generation tools, quality gates, GEO/AEO structure, humanization. Use when the user needs to write a blog post, create or optimize page content, draft conversion copy, generate visuals, or run a quality audit on existing content.
+description: Use this skill when the user needs to write a blog post, create or optimize page content, draft conversion copy, generate visuals, or run a quality audit on existing content — including when the request describes the deliverable without saying "content creation" — to run the content creation workflow plus tools knowledge — blog-post authoring (8-step pipeline), page content optimization, AI text/image generation tools, quality gates, GEO/AEO structure, and humanization. Accepts content type blog-post | page | landing | email | other.
 context: fork
 argument-hint: "<content type: blog-post | page | landing | email | other>"
 ---

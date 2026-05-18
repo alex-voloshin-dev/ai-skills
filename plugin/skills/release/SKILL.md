@@ -1,6 +1,6 @@
 ---
 name: release
-description: Release workflow — version bump, changelog generation, signed git tag, release notes. Detects existing release tooling (release-please, semantic-release, Changesets, GoReleaser, cargo-release, JReleaser) and routes to it; otherwise runs an inline stack-detected release. Use when cutting a release, tagging a version, preparing a changelog, or publishing release notes.
+description: Use this skill when cutting a release, tagging a version, preparing a changelog, or publishing release notes — to run the release workflow (version bump, changelog generation, signed git tag, release notes) which detects existing release tooling (release-please, semantic-release, Changesets, GoReleaser, cargo-release, JReleaser) and routes to it, otherwise runs an inline stack-detected release.
 disable-model-invocation: true
 argument-hint: "[version-number] [--prerelease alpha|beta|rc]"
 ---

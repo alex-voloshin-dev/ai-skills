@@ -1,6 +1,6 @@
 ---
 name: create-pr
-description: Create a pull request — collect diff, generate PR description with context, apply checklist, and push. Detects .github/PULL_REQUEST_TEMPLATE.md + CODEOWNERS + stacked-PR tools (Graphite / Sapling / git-spice). Use when ready to submit code for review, opening a draft PR, or pushing a branch for review.
+description: Use this skill when ready to submit code for review, opening a draft PR, or pushing a branch for review — to create a pull request by collecting the diff, generating a PR description with context, applying a checklist, and pushing, detecting .github/PULL_REQUEST_TEMPLATE.md + CODEOWNERS + stacked-PR tools (Graphite / Sapling / git-spice).
 disable-model-invocation: true
 argument-hint: "[--draft] [--base <branch>]"
 ---

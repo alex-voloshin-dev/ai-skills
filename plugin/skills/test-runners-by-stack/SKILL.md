@@ -1,6 +1,6 @@
 ---
 name: test-runners-by-stack
-description: Per-stack test runner commands and conventions for TypeScript/JavaScript, Java, Python, Go, and .NET — unit, integration, E2E, and coverage commands plus Testcontainers conventions and quality-gate signals. Reference table for picking the right command after stack detection. Use when running tests in a specific stack, wiring CI test steps, or designing test infrastructure. Knowledge skill — loaded as context by `/test-local` and `/test-strategy`, never invoked directly.
+description: Use this skill when running tests in a specific stack, wiring CI test steps, or designing test infrastructure — per-stack test runner commands and conventions for TypeScript/JavaScript, Java, Python, Go, and .NET covering unit, integration, E2E, and coverage commands plus Testcontainers conventions and quality-gate signals, a reference table for picking the right command after stack detection. Knowledge skill — loaded as context by `/test-local` and `/test-strategy`, never invoked directly.
 disable-model-invocation: true
 ---
 

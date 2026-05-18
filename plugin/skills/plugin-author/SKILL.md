@@ -1,16 +1,17 @@
 ---
 name: plugin-author
 description: >-
-  Umbrella workflow for ai-skills plugin-asset authoring and maintenance —
+  Use this skill when extending, repairing, or improving plugin assets,
+  when ingesting a `/feedback` report as a fix-cycle backlog, or when you
+  do not remember which lower-level command is right for the job — the
+  umbrella workflow for ai-skills plugin-asset authoring and maintenance:
   creating, auditing, fixing, improving, refactoring, and migrating skills,
   agents, rules, hooks, prompts, schemas, and rubrics inside the plugin.
   Auto-classifies the request, loads the right knowledge skills
   (`@prompt-engineering`, `@context-engineering`, `@team-protocols`), and
   spawns the right subagents (`prompt-engineer`, `system-architect`,
   `python-engineer`, `software-engineer`, `qa-engineer`, `eval-judge`) via
-  the `Agent` tool. Use when extending, repairing, or improving plugin
-  assets, when ingesting a `/feedback` report as a fix-cycle backlog, or
-  when you do not remember which lower-level command is right for the job.
+  the `Agent` tool.
 argument-hint: "<create | audit | fix-feedback | improve | refactor | migrate> [target] [--from <report>] [--deep] [--learnings] [--strict]"
 ---
 

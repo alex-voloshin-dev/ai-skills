@@ -1,6 +1,6 @@
 ---
 name: plugin-skill-create
-description: Internal procedure for `/plugin-author create`. Scaffolds a new skill INSIDE the ai-skills plugin (under `plugin/skills/`) with H5 frontmatter, eval test-case stub, and memory-write points pre-wired. Conforms to the agentskills.io specification (https://agentskills.io/specification) and ai-skills plugin conventions. No longer slash-invocable — call `/plugin-author create <name>` instead. Use when scaffolding a new skill (workflow or companion utility) under `plugin/skills/` with spec-conformant H5 frontmatter, an eval test-case stub, and memory-write points pre-wired. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill.
+description: Use this skill when scaffolding a new skill (workflow, knowledge, or companion utility) under `plugin/skills/` and you need spec-conformant frontmatter, an eval test-case stub, and memory-write points pre-wired — the internal procedure for `/plugin-author create`. Generates a new skill INSIDE the ai-skills plugin conforming to the agentskills.io specification (https://agentskills.io/specification) and ai-skills plugin conventions. No longer slash-invocable — call `/plugin-author create <name>` instead. Read by the `prompt-engineer` agent at task start when DEV-ing or reviewing a plugin skill.
 disable-model-invocation: true
 ---
 
@@ -54,7 +54,7 @@ Not for: general-purpose Anthropic skill creation — use the upstream `skill-cr
 ```yaml
 ---
 name: <name>
-description: TODO — replace this placeholder. One sentence describing what the skill does. Use when <TODO: trigger phrase>.
+description: Use this skill when <TODO: trigger phrase> — TODO replace this placeholder describing what the skill does.
 context: fork           # if --invocable
 argument-hint: "<arg>"  # if --invocable
 disable-model-invocation: true  # if --type knowledge AND not --invocable
@@ -121,7 +121,7 @@ Hard invariants every scaffold MUST satisfy (enforced by `/plugin-author audit -
 
 - **Body ≤ 12K chars** per project rule (matches the upstream ≤500-line recommendation)
 - **Description in third person** — first-person breaks discovery
-- **`Use when` trigger pattern** present in every description (H5 convention)
+- **Form A**: every description **BEGINS with the literal `Use this skill when …`** phrase (ai-skills strict operationalization of upstream imperative phrasing; capability folded into the same sentence)
 - **Never overwrite** existing skill — refuse if `plugin/skills/<name>/` already exists
 - **Plugin-only scope** — never scaffolds skills outside `plugin/skills/`. For project-local skills use upstream `skill-creator`
 - **English-only** per repo CLAUDE.md

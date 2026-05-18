@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Plan feature implementation across services and roles — parse PRD/feature brief, read project architecture (ARCHITECTURE.md, CLAUDE.md), decompose into work packages per service/role with complexity estimates, run a multi-reviewer feedback loop (product-manager + solution-architect + system-architect). Use when the user has a PRD or feature brief and needs an executable plan before code is written.
+description: Use this skill when the user has a PRD or feature brief and needs an executable plan before code is written — to plan feature implementation across services and roles by parsing the PRD/feature brief, reading project architecture (ARCHITECTURE.md, CLAUDE.md), decomposing into work packages per service/role with complexity estimates, and running a multi-reviewer feedback loop (product-manager + solution-architect + system-architect).
 context: fork
 argument-hint: [PRD or feature brief path]
 ---

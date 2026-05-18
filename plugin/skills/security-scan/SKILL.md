@@ -1,6 +1,6 @@
 ---
 name: security-scan
-description: Security scan workflow — dependency audit, OWASP checklist, secrets scan, vulnerability report. Applies software-engineer role with security focus. Use when auditing a repo for vulnerabilities, before a release or production deploy, when a CVE alert needs investigation, when reviewing a third-party dependency upgrade, or as the security gate inside `/code-review`, `/security-audit`, or `/develop`.
+description: Use this skill when auditing a repo for vulnerabilities, before a release or production deploy, when a CVE alert needs investigation, when reviewing a third-party dependency upgrade, or as the security gate inside `/code-review`, `/security-audit`, or `/develop` — to run the security scan workflow (dependency audit, OWASP checklist, secrets scan, vulnerability report) applying the software-engineer role with security focus.
 context: fork
 argument-hint: "scope or focus area for the scan"
 allowed-tools: Read Grep Glob Bash

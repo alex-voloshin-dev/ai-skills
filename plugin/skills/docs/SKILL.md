@@ -1,6 +1,6 @@
 ---
 name: docs
-description: Internal documentation workflow — edit technical docs, ADRs, PRDs, design notes, release notes, and UI microcopy without touching source code. Applies Content Writer role. Use when the user asks to edit internal markdown documentation and source code must stay untouched. For public-facing blog posts, landing pages, and marketing content use `/content-creation` (it owns the GEO/SEO/humanizer pipeline). For full multi-document user-facing packs (README + API ref + runbook + tutorial) use `/docs-pack`.
+description: Use this skill when the user asks to edit internal markdown documentation and source code must stay untouched — the internal documentation workflow to edit technical docs, ADRs, PRDs, design notes, release notes, and UI microcopy without touching source code, applying the Content Writer role. For public-facing blog posts, landing pages, and marketing content use `/content-creation` (it owns the GEO/SEO/humanizer pipeline). For full multi-document user-facing packs (README + API ref + runbook + tutorial) use `/docs-pack`.
 argument-hint: [documentation target or section]
 ---
 

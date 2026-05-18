@@ -7,7 +7,7 @@ no LLM calls). Tier 2 + Tier 3 stubs return clear "not implemented in v0.1"
 errors so the CLI surface is stable and `/eval` skill validates flag parsing.
 
 Tier 1 checks (no cost, fast):
-- Skill frontmatter: name + description present, lowercase-hyphens, third-person, "Use when" trigger (H5)
+- Skill frontmatter: name + description present, lowercase-hyphens, third-person, Form A trigger (description begins with "Use this skill when …")
 - Hook references: every entry in hooks.json resolves to a script file
 - Char limits: no SKILL.md or rule.md exceeds 12_000 chars (project rule)
 - AST validity: every plugin/hooks/scripts/*.py compiles cleanly via py_compile
@@ -47,7 +47,8 @@ CHAR_LIMIT_RULE = 12_000
 PLUGIN_ROOT = pathlib.Path(os.environ.get("CLAUDE_PLUGIN_ROOT") or pathlib.Path(__file__).resolve().parent.parent)
 
 USE_WHEN_RE = re.compile(
-    r"\bUse when\b"
+    r"\bUse this skill when\b"        # Form A (ai-skills overlay: mandatory leading phrase)
+    r"|\bUse when\b"
     r"|\bUse this\b"
     r"|\bUse to\b"
     r"|\bUse for\b"
@@ -140,7 +141,7 @@ def lint_skill(path: pathlib.Path, findings: list[Finding]) -> None:
         if not USE_WHEN_RE.search(desc_normalized):
             # Skip H5 check for non-invocable utility skills explicitly opting out
             if "disable-model-invocation: true" not in text:
-                findings.append(Finding("WARNING", str(path), "description lacks `Use when` trigger pattern (H5)"))
+                findings.append(Finding("WARNING", str(path), "description does not begin with the `Use this skill when …` phrase (Form A)"))
         # Guard against unedited /plugin-skill-create scaffolds. The placeholder
         # description ships with a literal `TODO` token; scaffolded skills that
         # forgot to edit this should fail audit, not silently pass.

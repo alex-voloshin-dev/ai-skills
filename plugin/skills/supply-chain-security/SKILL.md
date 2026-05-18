@@ -1,6 +1,6 @@
 ---
 name: supply-chain-security
-description: Software supply chain security knowledge — SBOM generation (Syft, CycloneDX, SPDX), SLSA provenance levels 1 through 4, Sigstore Cosign artifact signing, EPSS exploit-prediction scores, CISA KEV known-exploited catalog, and dependency-confusion / typosquatting / lockfile-validation patterns. Covers EO 14028 and EU Cyber Resilience Act SBOM mandates. Use when running a security audit, scanning dependencies, prioritizing CVEs by exploit likelihood, signing release artifacts, generating SBOMs for compliance, or reviewing CI/CD artifact integrity.
+description: Use this skill when the agent is running a security audit, scanning dependencies, prioritizing CVEs by exploit likelihood, signing release artifacts, generating SBOMs for compliance, or reviewing CI/CD artifact integrity — software supply chain security knowledge covering SBOM generation (Syft, CycloneDX, SPDX), SLSA provenance levels 1 through 4, Sigstore Cosign artifact signing, EPSS exploit-prediction scores, CISA KEV known-exploited catalog, dependency-confusion / typosquatting / lockfile-validation patterns, and EO 14028 and EU Cyber Resilience Act SBOM mandates.
 disable-model-invocation: true
 ---
 

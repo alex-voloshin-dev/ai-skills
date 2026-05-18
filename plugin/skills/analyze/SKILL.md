@@ -1,6 +1,6 @@
 ---
 name: analyze
-description: Deep analysis workflow for codebases, architectures, systems, products, markets, or research topics. Use when the user asks to analyze, investigate, assess, evaluate, compare, or research something in a structured way.
+description: Use this skill when the user asks to analyze, investigate, assess, evaluate, compare, or research a codebase, architecture, system, product, market, or research topic in a structured way — including requests that need explicit scope, framework-driven reasoning, and separated facts/inference/recommendation but do not use the word "analyze" — to run a deep analysis workflow producing traceable scope, evidence, and conclusions. Not for quick one-off lookups or implementation work — this is an investigation-and-conclusions workflow.
 context: fork
 argument-hint: [topic, question, or area to analyze]
 ---

@@ -1,6 +1,6 @@
 ---
 name: spike
-description: Time-boxed exploration with go/no-go writeup. Use when evaluating new tech, prototyping approaches, researching unknowns, or building a proof-of-concept. Single-pass with optional reviewer; no RALF (a spike is exploration, not convergence). Not for development (use /develop) or decisions already made.
+description: Use this skill when evaluating new tech, prototyping approaches, researching unknowns, or building a proof-of-concept — for a time-boxed exploration with a go/no-go writeup, single-pass with optional reviewer and no RALF (a spike is exploration, not convergence). Not for development (use /develop) or decisions already made.
 context: fork
 argument-hint: "<research question> [--time-cap <minutes>] [--poc]"
 ---

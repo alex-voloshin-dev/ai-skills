@@ -1,6 +1,6 @@
 ---
 name: context-load
-description: Load a per-role slice of project context from CLAUDE.md / AGENTS.md / ARCHITECTURE.md / project memory. Returns Markdown ready to embed in a subagent prompt. Use when assembling a subagent prompt and you need its context kept small and on-topic — db-engineer gets DB sections, ui-ux-designer gets UI/UX sections, etc.
+description: Use this skill when assembling a subagent prompt and you need its context kept small and on-topic (db-engineer gets DB sections, ui-ux-designer gets UI/UX sections, etc.) — to load a per-role slice of project context from CLAUDE.md / AGENTS.md / ARCHITECTURE.md / project memory and return Markdown ready to embed in a subagent prompt.
 context: fork
 argument-hint: "--for <role-name> [--max-tokens N]"
 ---

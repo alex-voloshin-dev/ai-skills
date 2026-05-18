@@ -1,6 +1,6 @@
 ---
 name: marketing-strategy
-description: Marketing strategy frameworks — hierarchy (mission → positioning → messaging → channels → pillars → tactical → calendar), channel-selection (audience/resource/content fit), content-pillar model, and measurement framework (vanity / engagement / pipeline / revenue). The reusable knowledge layer behind /marketing-init (one-time setup) and /marketing (recurring ops) — both reference these frameworks instead of inlining them. Use when defining or revising marketing positioning, messaging, channel mix, content pillars, a tactical/calendar plan, or success metrics.
+description: Use this skill when the agent is defining or revising marketing positioning, messaging, channel mix, content pillars, a tactical/calendar plan, or success metrics — for marketing strategy frameworks covering hierarchy (mission → positioning → messaging → channels → pillars → tactical → calendar), channel-selection (audience/resource/content fit), content-pillar model, and measurement framework (vanity / engagement / pipeline / revenue). The reusable knowledge layer behind /marketing-init (one-time setup) and /marketing (recurring ops) — both reference these frameworks instead of inlining them.
 disable-model-invocation: true
 ---
 

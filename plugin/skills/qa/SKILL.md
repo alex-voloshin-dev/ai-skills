@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Use when the user asks to validate a feature, write or improve tests, report a bug, or audit acceptance criteria coverage. /qa = QA-task workflows (verification, test creation, bug reports, exploratory). /test-strategy = test design principles + pyramid + coverage targets (knowledge). /test-local = test execution workflow.
+description: Use this skill when the user asks to validate a feature, write or improve tests, report a bug, or audit acceptance criteria coverage — /qa = QA-task workflows (verification, test creation, bug reports, exploratory). /test-strategy = test design principles + pyramid + coverage targets (knowledge). /test-local = test execution workflow.
 context: fork
 argument-hint: [feature description, bug report, or test target]
 ---

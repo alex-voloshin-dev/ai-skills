@@ -1,6 +1,6 @@
 ---
 name: architecture-analyze
-description: Analyze existing architecture — produce ARCHITECTURE.md, C4 diagrams of current state, component inventory, gap analysis (current vs target), and technical debt register. Routes to system-architect (default), cloud-architect (--cloud), or devops-architect (--cicd). Use when a service, module, or system needs documentation, audit, or tech-debt assessment.
+description: Use this skill when a service, module, or system needs documentation, audit, or tech-debt assessment — onboarding a new team to an undocumented service, establishing a pre-redesign "what do we actually have?" baseline, or a tech-debt audit before roadmap planning, including when the user does not say "architecture" — to analyze the existing architecture and produce ARCHITECTURE.md, current-state C4 diagrams, a component inventory, gap analysis (current vs target), and a technical-debt register. Routes to system-architect (default — system/module/service analysis), cloud-architect (`--cloud` for cloud-resource inventory + cost + compliance review), or devops-architect (`--cicd` for CI/CD platform audit + DORA baseline + governance review).
 context: fork
 argument-hint: "<service or system to analyze> [--cloud | --cicd]"
 ---

@@ -1,6 +1,6 @@
 ---
 name: security-audit
-description: Full security scan of codebase and infrastructure — secrets, dependencies, auth, access control, data handling, cryptography, infra. Coverage against OWASP Top 10 (Web 2021) AND OWASP GenAI/LLM Top 10 (2025) per G3. Use when running a pre-release audit, compliance check, or threat modeling. Not for code-review security feedback (use /code-review) or pen testing (use professional service).
+description: Use this skill when running a pre-release audit, compliance check, or threat modeling — to perform a full security scan of codebase and infrastructure (secrets, dependencies, auth, access control, data handling, cryptography, infra) with coverage against OWASP Top 10 (Web 2021) AND OWASP GenAI/LLM Top 10 (2025) per G3. Not for code-review security feedback (use /code-review) or pen testing (use professional service).
 context: fork
 argument-hint: "[--scope 'secrets,deps,auth,...'] [--report-type summary|detailed]"
 ---

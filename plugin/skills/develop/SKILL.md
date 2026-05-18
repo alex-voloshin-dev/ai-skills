@@ -1,11 +1,12 @@
 ---
 name: develop
 description: >-
-  Multi-agent feature implementation pipeline — DEVELOP → REVIEW → QA with
-  developer(s), reviewer, QA, and lead orchestrator. Spawns specialized
-  subagents via the Agent tool (`subagent_type: "ai-skills:<role>"`).
-  Use when implementing a feature with the canonical Anthropic `Agent`
-  tool available — preferred over single-agent /feature-dev fallback.
+  Use this skill when implementing a feature with the canonical Anthropic
+  `Agent` tool available — the multi-agent feature implementation pipeline
+  (DEVELOP → REVIEW → QA with developer(s), reviewer, QA, and lead
+  orchestrator) that spawns specialized subagents via the Agent tool
+  (`subagent_type: "ai-skills:<role>"`); preferred over the single-agent
+  /feature-dev fallback.
 argument-hint: "[PRD path or feature description]"
 ---
 

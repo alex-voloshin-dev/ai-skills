@@ -26,7 +26,7 @@ The scaffold replaced it with a 1,200-char skeleton:
 ```yaml
 ---
 name: bugfix
-description: TODO — replace this placeholder. One sentence describing what the skill does. Use when <TODO: trigger phrase>.
+description: Use this skill when <TODO: trigger phrase> — TODO replace this placeholder describing what the skill does.
 context: fork
 argument-hint: "<arg>"
 ---

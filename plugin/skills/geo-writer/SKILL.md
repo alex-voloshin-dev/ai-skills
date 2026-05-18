@@ -1,6 +1,6 @@
 ---
 name: geo-writer
-description: Optimize text for GEO/AEO — Generative Engine Optimization and Answer Engine Optimization. Use when writing or editing public-facing text intended to be cited or quoted by LLMs (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) — blog posts, landing pages, help articles, FAQ blocks, programmatic SEO templates, pillar guides.
+description: Use this skill when writing or editing public-facing text intended to be cited or quoted by LLMs (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) — blog posts, landing pages, help articles, FAQ blocks, programmatic SEO templates, pillar guides — to optimize that text for GEO/AEO (Generative Engine Optimization and Answer Engine Optimization).
 ---
 
 <!-- ARCHITECTURAL NOTE: intentional model-invocable companion — deliberately no `context: fork` and no `disable-model-invocation`. GEO writing guide applied by the Content Writer and the `/content-creation` / `/docs-pack` pipelines; it must stay model-invocable and composable into the caller's thread (not forked, not knowledge-only). Not a defect — do not reclassify. -->

@@ -1,6 +1,6 @@
 ---
 name: subagent-spawn
-description: Typed delegation helper. Constructs a valid G7 spawn payload for a chosen role, validates against role-selection-table.md and the spawn-payload schema, returns a fully-formed Agent(...) call ready for orchestrator use. Use when manually delegating from a workflow or building a custom orchestrator.
+description: Use this skill when manually delegating from a workflow or building a custom orchestrator — a typed delegation helper that constructs a valid G7 spawn payload for a chosen role, validates against role-selection-table.md and the spawn-payload schema, and returns a fully-formed Agent(...) call ready for orchestrator use.
 context: fork
 argument-hint: "--role <role> [--task '<text>'] [--stack <stack>]"
 ---

@@ -1,6 +1,6 @@
 ---
 name: ai-skills-init
-description: Use when bootstrapping a target repository to be ai-skills-aware on first run in a new repo or when adopting the ai-skills plugin. Creates CLAUDE.md scaffolding, initializes .ai-skills-memory/ directory tree from L1 templates, configures .gitignore. Idempotent — safe to re-run.
+description: Use this skill when bootstrapping a target repository to be ai-skills-aware — on the first run of any ai-skills workflow in a fresh repo, when adopting the ai-skills plugin in an existing repo, or after upgrading to a plugin version that adds new memory paths or templates, including when the user does not say "init" but asks to "set up" or "onboard" the repo — to detect codebase type, create CLAUDE.md + AGENTS.md scaffolding, initialize the .ai-skills-memory/ directory tree from L1 templates, and configure .gitignore. Idempotent — safe to re-run. Accepts `--codebase-type <type>` and `--overwrite`. Not for re-initializing only memory — use `/memory-init` instead.
 context: fork
 argument-hint: "[--codebase-type <type>] [--overwrite]"
 ---

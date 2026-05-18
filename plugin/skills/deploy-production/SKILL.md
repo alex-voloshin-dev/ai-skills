@@ -1,6 +1,6 @@
 ---
 name: deploy-production
-description: Deploy to production workflow — final checks, approval gate, deploy, verify, rollback plan. Uses the `deployment-procedures` skill. Use when shipping to production after staging is green, when a deploy needs a documented rollback plan, or when the APPROVE-gate workflow is required. Requires explicit APPROVE before any production mutation.
+description: Use this skill when shipping to production after staging is green, when a deploy needs a documented rollback plan, or when the APPROVE-gate workflow is required — the deploy-to-production workflow (final checks, approval gate, deploy, verify, rollback plan) that uses the `deployment-procedures` skill and requires explicit APPROVE before any production mutation.
 disable-model-invocation: true
 argument-hint: "[service-name] [version]"
 ---

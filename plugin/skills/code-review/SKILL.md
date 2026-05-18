@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Use when reviewing a pull request or code change before merge — produces a verdict (APPROVE / REQUEST_CHANGES / COMMENT) using Google's eng-practices framing (code health over perfection) and conventional comments vocabulary (nit / suggestion / issue / praise). Distinct from /security-scan (no dependency CVE scan) and /security-audit (no full OWASP audit).
+description: Use this skill when reviewing a pull request, merge request, or code change before merge, conducting an architecture review, auditing code for security/performance/quality, or running a pre-merge quality gate — including when applied by a Reviewer or QA subagent — to produce a verdict (APPROVE / REQUEST_CHANGES / COMMENT) using Google's eng-practices framing (code health over perfection) and conventional comments vocabulary (nit / suggestion / issue / praise). Distinct from /security-scan (no dependency CVE scan) and /security-audit (no full OWASP audit).
 ---
 
 <!-- ARCHITECTURAL NOTE: intentional model-invocable companion — deliberately no `context: fork` and no `disable-model-invocation`. This skill is applied by the Reviewer subagent (via `@code-review`) and other workflows; a forked body could not be applied inside a Reviewer/QA subagent, and disabling model-invocation would stop agents auto-loading it on review tasks. Not a defect — do not reclassify. -->

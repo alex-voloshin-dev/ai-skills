@@ -1,12 +1,14 @@
 ---
 name: bugfix
 description: >-
-  End-to-end bugfix workflow with mandatory DEVELOP → REVIEW → QA pipeline.
-  Lead orchestrates triage intake, environment analysis (`/env-analyze` for
-  local, `/analyze-prod` for production), evidence collection, and bug report
-  — then spawns developer/reviewer/QA via the Anthropic `Agent` tool to apply,
-  review, and verify the fix. Use when investigating, diagnosing, and fixing
-  a reported bug.
+  Use this skill when investigating, diagnosing, and fixing a reported bug —
+  including when the user reports an error message or broken behavior without
+  saying "bugfix" — to run an end-to-end bugfix workflow with a mandatory
+  DEVELOP → REVIEW → QA pipeline: the Lead orchestrates triage intake,
+  environment analysis (`/env-analyze` for local, `/analyze-prod` for
+  production), evidence collection, and bug report, then spawns
+  developer/reviewer/QA via the Anthropic `Agent` tool to apply, review, and
+  verify the fix.
 argument-hint: "[bug description or error message]"
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: memory-init
-description: Initialize the .ai-skills-memory/ skeleton in the current project — directory structure, .gitignore rules, learnings.md template, .committed/ allowlist. Idempotent — safe to re-run on a project that already has memory wired. Use when bootstrapping memory in a freshly cloned repo or when upgrading from a pre-memory plugin version.
+description: Use this skill when bootstrapping memory in a freshly cloned repo or when upgrading from a pre-memory plugin version — to initialize the .ai-skills-memory/ skeleton in the current project (directory structure, .gitignore rules, learnings.md template, .committed/ allowlist). Idempotent — safe to re-run on a project that already has memory wired.
 context: fork
 argument-hint: ""
 ---

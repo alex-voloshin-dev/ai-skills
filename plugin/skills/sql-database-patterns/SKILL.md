@@ -1,6 +1,6 @@
 ---
 name: sql-database-patterns
-description: Database patterns knowledge base — PostgreSQL, MySQL, SQL Server, MongoDB, Redis, Cassandra, DynamoDB engines, schema design, SQL optimization, indexing strategies (B-tree, hash, GIN, GiST, BRIN, partial, covering), partitioning (range, list, hash), replication topologies, NoSQL data modeling, time-series, graph, monitoring, capacity planning, backup and recovery. Use when designing schemas, reviewing migrations, tuning queries, modeling NoSQL access patterns, configuring replication, planning partitioning, auditing indexes, or onboarding to database conventions.
+description: Use this skill when the agent is designing schemas, reviewing migrations, tuning queries, modeling NoSQL access patterns, configuring replication, planning partitioning, auditing indexes, or onboarding to database conventions — the database patterns knowledge base for PostgreSQL, MySQL, SQL Server, MongoDB, Redis, Cassandra, DynamoDB engines, schema design, SQL optimization, indexing strategies (B-tree, hash, GIN, GiST, BRIN, partial, covering), partitioning (range, list, hash), replication topologies, NoSQL data modeling, time-series, graph, monitoring, capacity planning, backup and recovery.
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: helm-procedures
-description: Helm procedures — helm diff (via helm-diff plugin), atomic upgrade with --atomic and --wait, helm install / upgrade / rollback, release history, and values-file conventions. Loaded by `/infra-change` and other Kubernetes deployment workflows; not a workflow itself. Use when authoring or running a Helm upgrade, previewing chart changes with helm diff, rolling back a release, inspecting release history, or managing values files for a Helm chart.
+description: Use this skill when the agent is authoring or running a Helm upgrade, previewing chart changes with helm diff, rolling back a release, inspecting release history, or managing values files for a Helm chart — for Helm procedures covering helm diff (via helm-diff plugin), atomic upgrade with --atomic and --wait, helm install / upgrade / rollback, release history, and values-file conventions. Loaded by `/infra-change` and other Kubernetes deployment workflows; not a workflow itself.
 disable-model-invocation: true
 ---
 

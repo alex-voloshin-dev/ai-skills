@@ -1,6 +1,6 @@
 ---
 name: ralph
-description: Standalone RALF (Read-Act-Learn-Feedback) iteration loop entry point for power users. Wraps a task in a feedback loop with a mechanically-verifiable oracle and a kill-on signal. Use when iterating until a binary success condition (test passes, schema validates, output matches a regex). Not for open-ended exploration — use /spike for that.
+description: Use this skill when iterating a task until a binary success condition holds (test passes, schema validates, output matches a regex) and a power user wants a standalone RALF (Read-Act-Learn-Feedback) iteration loop — to wrap the task in a feedback loop with a mechanically-verifiable oracle and a kill-on signal. Not for open-ended exploration — use /spike for that.
 context: fork
 argument-hint: "<task description>"
 ---

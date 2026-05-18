@@ -105,11 +105,38 @@ The `skill-creator` Skill (github.com/anthropics/skills) automates this loop.
 ## ai-skills overlay (additive, never weaker than upstream)
 
 - Description in **third person** — first-person ("I help…") breaks discovery.
-- Every description carries the **`Use when …`** trigger pattern (H5
-  convention) — the operationalized form of upstream's "imperative phrasing".
+- **Form A (mandatory leading phrase):** every description **BEGINS with the
+  literal phrase `Use this skill when `** (capital `U`; the four words
+  `Use this skill when` then a space), followed by *when/why* the user (or,
+  for knowledge skills, the agent) would invoke it. This is the ai-skills
+  **strict operationalization** of upstream's "imperative phrasing" — upstream
+  *recommends* `Use this skill when…` somewhere in the description; the
+  ai-skills overlay *requires* it as the first token. The capability
+  ("…to <do X>" / "…for <Y>") is **folded into the same description** — no
+  information is lost versus the older capability-lead form. Stay third
+  person, ≤ 1024 chars, and keep triggering/disambiguation keywords.
 - The literal token **`TODO`** in a description is a CRITICAL audit fail
   (guards unedited `/plugin-author create` scaffolds).
 - 1024-char hard limit is enforced by `plugin/dev/validate.py` — never exceed.
 - Eval-first: do not change a triggering description without a measurement
   rationale (trigger-rate before/after on the ~20-query set).
 - Companion spec digest: `skill-authoring-spec.md` (same dir).
+
+### Form A before / after
+
+The upstream "Process CSV → Analyze CSV…" example above keeps the *capability*
+in the lead (upstream-faithful). The ai-skills overlay re-leads the **same
+content** with the mandatory `Use this skill when …` phrase — capability
+folded in, no information lost:
+
+- Before (capability-lead, upstream-style): `description: Analyze CSV and
+  tabular data files — compute summary statistics, add derived columns,
+  generate charts, and clean messy data, even if the user does not say "CSV".`
+- After (Form A, ai-skills overlay): `description: Use this skill when the
+  user has a CSV, TSV, or Excel file and wants to explore, transform, or
+  visualize it (even if they don't say "CSV" or "analysis") — to compute
+  summary statistics, add derived columns, generate charts, and clean messy
+  data.`
+
+The "after" form begins with the exact token `Use this skill when ` and still
+carries every keyword and the full capability from the "before" form.
