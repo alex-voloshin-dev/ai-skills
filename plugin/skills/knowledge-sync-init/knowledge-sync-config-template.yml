@@ -1,0 +1,147 @@
+# =============================================================================
+# knowledge/.knowledge-sync.yml — reconciled (union) schema
+# -----------------------------------------------------------------------------
+# Produced by /knowledge-sync-init; mutated by /knowledge-sync.
+# GIT-VERSIONED (committed to the target repo — shared across machines/CI,
+# survives clean checkouts). The ONLY mutable state /knowledge-sync writes back
+# here is `last_scanned_sha` and `external_sources[*].watermark`; everything
+# else is human/init-owned.
+#
+# This template is the AUTHORITATIVE schema = the architecture §4.1 schema PLUS
+# the security-mandated fields. Security additions are marked  # [SEC].
+# Lead/decision additions are marked  # [Lead] / # [Decision N].
+# Replace every <placeholder> at init; delete sources/areas you do not use.
+# Credentials NEVER live in this file — external auth is via the environment /
+# the MCP layer; this file references tools by namespace only.
+# =============================================================================
+
+version: 1                       # int. Schema version for forward-compat migration. Default 1.
+
+knowledge_root: ./knowledge      # string (repo-relative). The docs-tree root, auto-detected
+                                 #   from the link in CLAUDE.md/AGENTS.md. Default ./knowledge.
+
+# ─── Doc-area map ────────────────────────────────────────────────────────────
+# Each area = a doc subtree + the source globs whose changes should trigger an
+# update to that subtree. Keyed by area name (e.g. tech-docs | product | api).
+doc_areas:
+  <area-name>:
+    path: <glob>                 # string (required). Where this area's MARKDOWN lives,
+                                 #   repo-relative, e.g. knowledge/product/**.
+    sources:                     # list<glob> (required, >=1). Repo paths whose CHANGE
+      - <glob>                   #   should regenerate this area, e.g. src/**, docs/prd/**.
+    update_policy: propose       # enum {propose|direct}. Per-area override of the top-level
+                                 #   default. Default: inherits update_policy.default.
+    role_hint: <role>            # string (optional). Extra stack role spawned alongside
+                                 #   content-writer for accuracy (e.g. backend-engineer,
+                                 #   api-designer). Default: none.
+    enabled: true                # bool. Area is scanned when true. Default true.
+
+# ─── External sources (optional, all OPT-IN / disabled by default) ───────────
+# Non-git inputs. Each carries an enable flag + a per-source WATERMARK that
+# /knowledge-sync advances on a successful run. Tools map to MCP / WebFetch.
+external_sources:
+  linear:
+    enabled: false               # bool. Default false (opt-in). Off => skipped entirely.
+    tool: mcp__claude_ai_Linear  # string. MCP namespace used to query.
+    scope: read-only             # [SEC] C5 — least-privilege; never create/update/delete.
+    filter: { team: <team-id> }  # map (optional). Query scope, e.g. team/project ids.
+    watermark: null              # ISO-8601 | null. "issues updatedAt > watermark".
+                                 #   null => first run pulls the bounded first_run window.
+                                 #   Advanced to max(updatedAt) on success.
+    maps_to: [product]           # list<area-name>. Which doc_areas these deltas feed.
+  notion:
+    enabled: false
+    tool: mcp__claude_ai_Notion
+    scope: read-only             # [SEC] C5
+    filter: { database: <db-id> }
+    watermark: null              # ISO-8601. "pages last_edited_time > watermark".
+    maps_to: [product, tech-docs]
+  changelog:
+    enabled: false
+    tool: WebFetch
+    url: https://example.com/changelog   # string (required when tool=WebFetch).
+    watermark: null              # opaque string: last-seen content hash OR top-entry date.
+                                 #   Compared to detect "changed since last fetch".
+    maps_to: [tech-docs]
+
+webfetch_url_allowlist:          # [SEC] C10 — ONLY these URLs may be fetched. URLs found
+  - https://example.com/changelog #   inside untrusted content are NEVER fetched.
+
+# ─── Change-detection baseline (git source) ─────────────────────────────────
+last_scanned_sha: <sha|null>     # string|null. HEAD at the end of the last SUCCESSFUL run.
+                                 #   null => first run does the bounded first_run backfill.
+                                 #   The ONE field /knowledge-sync mutates most often.
+
+first_run:                       # [Decision #2/#3] bounded backfill when baseline/watermark null.
+  git_window_commits: 50         # whichever of commits/days is SMALLER bounds the first git diff.
+  git_window_days: 14
+  external_window_days: 14       # bounded window for external sources with watermark: null.
+
+# ─── Update policy ──────────────────────────────────────────────────────────
+update_policy:
+  default: propose               # enum {propose|direct}. [SEC] C2 — secure default; never a
+                                 #   silent commit. propose = branch + draft PR.
+  pr:                            # map. Used only when an effective policy = propose.
+    base: <branch>               # string. PR base branch. Default: repo default branch.
+    draft: true                  # bool. Default true (draft PR via /create-pr --draft).
+    branch_prefix: knowledge-sync/   # string. Branch-name prefix. Default knowledge-sync/.
+    granularity: per-run         # [Decision #1] enum {per-run|per-area}. Default per-run
+                                 #   (all propose areas batched into one PR).
+
+# ─── Path deny-list ─────────────────────────────────────────────────────────
+denied_paths:                    # [SEC] C4 — never auto-edited (in addition to anything OUTSIDE
+  - SECURITY.md                  #   knowledge_root, which is always blocked).
+  - LICENSE
+  - CONTRIBUTING.md
+  - CODEOWNERS
+
+# ─── Budgets (cost / fan-out guardrails) ────────────────────────────────────
+budgets:                         # [SEC] C6/C8 — hard-abort on exceed; log to L4; baseline
+  max_areas_per_run: 5           #   does NOT advance on a budget abort.
+  max_tokens_per_run: 50000
+  max_tokens_per_day: 200000
+
+# ─── KB conventions (hygiene contract) ──────────────────────────────────────
+conventions:                     # [Lead] see "KB conventions & document sizing".
+  source: generated              # enum {generated|template}. How CONVENTIONS.md was created at init.
+  file: knowledge/CONVENTIONS.md # authoritative, git-versioned, STRICTLY enforced style guide.
+  enforcement: strict            # enum {strict|advisory}. strict = non-conforming output is
+                                 #   blocked/auto-fixed before write. Default + recommended.
+  public_content: false          # knowledge/ is internal => humanizer/SEO/GEO/AEO NOT applied.
+  sizing:
+    target_words: 1500           # read-verbatim target (~2000 tokens; avoids G2 normalize).
+    soft_cap_words: 2000         # flag "consider splitting" (the G2 normalize threshold).
+    hard_cap_words: 3000         # MUST split — NON-OVERRIDABLE floor.
+    split_strategy: by-h2-topic  # enum {by-h2-topic|by-section|manual-flag}.
+  structure:
+    one_topic_per_doc: true
+    diataxis_mode_per_doc: true  # tutorial|how-to|reference|explanation — never mixed.
+    max_h2_sections: 9
+    toc_over_words: 1200         # add a table of contents for any doc above this length.
+  front_matter:                  # non-overridable minimum: title, area, last_reviewed, source_refs.
+    required: [title, area, owner, last_reviewed, source_refs]
+  naming:
+    pattern: kebab-case
+    one_h1_per_doc: true
+
+# ─── Scheduling hint (advisory only — Claude Code owns the clock) ────────────
+schedule:
+  cadence: daily                 # enum {daily|weekly|manual}. ADVISORY: records intent. The
+                                 #   plugin does NOT enforce it; the schedule routine does.
+  mechanism: remote-routine      # enum {remote-routine|durable-cron|manual}. Records what
+                                 #   /knowledge-sync-init registered. Default remote-routine
+                                 #   (the only truly unattended option; durable-cron is
+                                 #   idle-only and auto-expires after 7 days).
+  registered: false              # bool. True once init successfully registered a routine.
+
+# -----------------------------------------------------------------------------
+# Notes:
+# - Credentials NEVER live in this file (C4/A01). External-source auth is via the
+#   environment / MCP layer; the config references tools by namespace only.
+# - Run-lock is intentionally NOT in this committed file (Decision #7): a lockfile
+#   under .ai-skills-memory/knowledge-sync/.lock is preferred over mutating
+#   committed config mid-run.
+# - The floor is non-overridable: required front-matter (title, area, last_reviewed,
+#   source_refs), the 3000-word hard cap, and update_policy.default: propose. A repo
+#   may make conventions STRICTER, never weaker than this floor.
+# -----------------------------------------------------------------------------

@@ -41,6 +41,7 @@ Not needed when running `/ai-skills-init` — that workflow runs memory-init as 
    ├── spikes/                  (/spike reports)
    ├── security-audits/         (/security-audit findings)
    ├── docs/                    (/docs-pack generation summaries)
+   ├── knowledge-sync/          (/knowledge-sync per-run logs + run-lock)
    └── .committed/
        ├── README.md            (from plugin/memory/templates/committed-readme.md)
        ├── .allowlist-extensions.txt   (project-extension allowlist, empty by default)

@@ -85,7 +85,7 @@ FORBIDDEN_AGENT_FIELDS = {"permissionMode", "hooks", "mcpServers"}
 
 EXPECTED_COUNTS = {
     "agents": 26,
-    "skills": 75,                # 53 baseline + 22 P2/P3/P4 refactor + DX umbrellas:
+    "skills": 77,                # 53 baseline + 22 P2/P3/P4 refactor + DX umbrellas:
                                  #   P2 splits: +marketing-init, +marketing-strategy,
                                  #   +architecture-design, +architecture-analyze,
                                  #   +architecture-evolve, +content-tools
@@ -100,12 +100,19 @@ EXPECTED_COUNTS = {
                                  #   v0.3.12 DX umbrella: +plugin-author (consolidator)
                                  #   v0.3.12 user-invocable add: +feedback
                                  #   (session-log analyzer for plugin reliability)
+                                 #   knowledge-sync WP-1: +knowledge-sync-init
+                                 #   knowledge-sync WP-2: +knowledge-sync
+                                 #   (recurring main-thread dispatcher; walking
+                                 #   skeleton = read->delta->map->report only)
     "rules": 12,
     "hooks": 19,                 # excludes _lib.py (16 + ralph-iter-meter v0.1.6 + subagent-depth-guard v0.1.7 + team-gate-reconciliation v0.3.11)
     "events": 14,                # +TeammateIdle (v0.3.11, Path B liveness)
-    "rubrics": 47,               # 17 base + 4 meta-tools (P1.D) + 24 per-skill workflow rubrics (audit B coverage push) + feedback (v0.3.12) + plugin-author (v0.3.12 DX umbrella)
-    "calibration_samples": 282,  # 6 per rubric × 47
-    "user_invocable_skills": 31, # skills with `context: fork` frontmatter.
+    "rubrics": 48,               # 17 base + 4 meta-tools (P1.D) + 24 per-skill workflow rubrics (audit B coverage push) + feedback (v0.3.12) + plugin-author (v0.3.12 DX umbrella) + knowledge-sync (WP-6)
+    "calibration_samples": 288,  # 6 per rubric × 48
+    "user_invocable_skills": 32, # skills with `context: fork` frontmatter.
+                                 # knowledge-sync WP-1: +1 (knowledge-sync-init is
+                                 # context: fork; the recurring /knowledge-sync added
+                                 # in WP-2 is main-thread, NOT counted here).
                                  # v0.3.12 DX consolidation: -2 (plugin-skill-create
                                  # and plugin-skill-audit absorbed by /plugin-author;
                                  # both now disable-model-invocation: true). The new
@@ -115,7 +122,7 @@ EXPECTED_COUNTS = {
                                  # = 31 context-fork + 5 main-thread orchestrators
                                  # (/develop, /team-bugfix, /feature-design, /bugfix,
                                  # /plugin-author) = 36 unchanged.
-    "user_docs": 16,             # +plugin-author.md (v0.3.12 DX umbrella)
+    "user_docs": 17,             # +plugin-author.md (v0.3.12 DX umbrella) + knowledge-sync.md (WP-7)
     "schemas": 2,
     "output_styles": 2,
     "userConfig_knobs": 13,
@@ -611,7 +618,10 @@ def check_orchestration_dual_path(report: Report) -> None:
     and Agent Teams (when CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1) paths. Verify
     each orchestration skill body contains the detection bash block + both Path
     A and Path B sections."""
-    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix", "plugin-author"}
+    # knowledge-sync joined the set with WP-3/WP-4: it now fans out one
+    # Agent(content-writer) per affected doc area, so it must declare both
+    # paths + the no-silent-fallback hard rule like the other orchestrators.
+    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix", "plugin-author", "knowledge-sync"}
     issues = []
     for name in ORCHESTRATION_SKILLS:
         p = PLUGIN_ROOT / "skills" / name / "SKILL.md"
@@ -655,7 +665,9 @@ def check_orchestration_skills_no_fork(report: Report) -> None:
     NOT have `context: fork` — that would run them in a forked subagent where
     the Agent tool is unavailable. Confirmed alpha.25 failure mode.
     """
-    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix", "plugin-author"}
+    # knowledge-sync joined the set with WP-3/WP-4: it spawns per-area writers
+    # via the Agent tool, so it MUST stay main-thread (no `context: fork`).
+    ORCHESTRATION_SKILLS = {"develop", "team-bugfix", "feature-design", "bugfix", "plugin-author", "knowledge-sync"}
     issues = []
     for name in ORCHESTRATION_SKILLS:
         p = PLUGIN_ROOT / "skills" / name / "SKILL.md"

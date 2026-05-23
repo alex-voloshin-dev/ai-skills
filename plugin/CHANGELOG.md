@@ -6,6 +6,29 @@ All notable changes to the `ai-skills` plugin. Format: [Keep a Changelog](https:
 
 Next release in planning.
 
+## [0.5.0] — 2026-05-23 — new feature: `knowledge-sync` (scheduled knowledge-base rescan & update)
+
+`/plugin-author create` run (8 work-packages across 6 waves; Path A synchronous `Agent` spawns + Lead disk-reconciliation per the documented Agent-Teams stall pattern). New skill pair that keeps a repo's internal `knowledge/` documentation tree in sync with code and opt-in external sources, on a daily cadence delegated to Claude Code's `schedule`/remote-routine layer (the plugin owns the work, not the clock). Designed end-to-end first (`/feature-design` → `design-drafts/knowledge-sync/PRODUCT-SPEC.md`, untracked).
+
+### Added — `knowledge-sync-init` + `knowledge-sync` skill pair
+
+- **`plugin/skills/knowledge-sync-init/`** (`context: fork`) — one-time setup: detects `knowledge_root` from `CLAUDE.md`/`AGENTS.md`, maps doc areas to source globs, records opt-in external sources (Linear/Notion/WebFetch, all disabled by default), captures a baseline SHA, sets the per-area update policy, generates or seeds `knowledge/CONVENTIONS.md`, provisions the L4 memory dir, and offers to register the daily routine. Ships `knowledge-sync-config-template.yml` (the full `.knowledge-sync.yml` schema) + `references/CONVENTIONS.default.md`.
+- **`plugin/skills/knowledge-sync/`** (main-thread, NO `context: fork` — fans out per area) — the recurring dispatcher: read config → git delta (`last_scanned_sha..HEAD` + bounded first-run backfill) → opt-in external-source deltas (per-source watermark) → map to affected areas → no-change early-exit → per-area `Agent(content-writer)` fan-out → pre-write gate band → update policy → baseline advance on success → L4 run record. Companion resources: `execution.md`, `security.md`, `kb-hygiene.md`, `external-sources.md`.
+- **Security (must-not-ship floor):** single G1 untrusted-content choke-point (diff/file/subagent/MCP/WebFetch), propose-only secure default (branch + `/create-pr --draft`; never auto-commits/pushes), secret-scan + output-validation gates, path deny-list + `knowledge_root` traversal guard, read-only MCP scopes (C5), WebFetch URL allowlist (C10), per-run/per-day token budgets + fan-out cap, PII filter. OWASP LLM Top 10 mapped in `security.md`.
+- **KB-hygiene enforcement:** `knowledge/CONVENTIONS.md` strictly enforced pre-write (front-matter required keys with a non-removable 4-key floor, **3000-word hard cap** → split by H2 topic, single H1, kebab-case naming, one topic / one Diátaxis mode). `knowledge/` is treated as internal/non-public — no humanizer/SEO/GEO.
+
+### Added — eval + docs
+
+- **`plugin/eval/judge-rubrics/knowledge-sync.md`** — 7 dimensions; release blockers D4 (safety) ≥ 4, D5 (untrusted-content wrapping) ≥ 3, D7 (conventions) ≥ 4; pass average ≥ 4.0. **6 calibration samples** (3 good / 3 bad) under `plugin/eval/calibration/knowledge-sync/`.
+- **`plugin/docs/workflows/knowledge-sync.md`** — user workflow doc (setup + recurring run + scheduling + safety + conventions).
+- **`plugin/skills/memory-init/SKILL.md`** — added the `knowledge-sync/` L4 sibling (per-run logs + run-lock).
+
+### Changed — counts
+
+- `plugin/dev/validate.py` `EXPECTED_COUNTS`: skills 75 → 77, user_invocable_skills 31 → 32, rubrics 47 → 48, calibration_samples 282 → 288, user_docs 16 → 17; `knowledge-sync` added to both `ORCHESTRATION_SKILLS` sets (dual-path + no-fork checks).
+
+Gates: `validate.py` `25 pass, 0 warn, 0 fail`; Tier-1 eval `0 CRITICAL, 0 WARNING`; both SKILL.md ≤ 12 000 chars; every WP DEV→REVIEW→QA green (security-engineer review on the security wave; eval-judge stalls recovered via Lead-author + independent review). Plugin scope only; the `design-drafts/` design pack is intentionally left untracked.
+
 ## [0.4.4] — 2026-05-22 — /feedback sees its own dominant failure (silent-idle subagents)
 
 Direct fix-cycle (no subagent spawn — implemented inline with on-disk re-verification against the f4ai session logs, per the documented Path-B teammate-degradation block). Closes the `/feedback` blind spot surfaced by a `/plugin-doctor` cross-check: a default run reported the plugin "clean" (1 transient finding) while the hook had honestly recorded **99 silent-idle teammate envelopes** in the same window. `/feedback` was measuring its most common, most expensive failure with the wrong source — parsing transcripts (where a truncated subagent turn leaves no `max_tokens`/`refusal`/error `stop_reason`) and never reading `team-envelopes/`, the plugin's own source of truth for that failure.
