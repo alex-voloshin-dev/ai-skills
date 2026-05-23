@@ -66,13 +66,18 @@
         "report_md_path": {
           "type": "string",
           "description": "Path to the paired Markdown report. Empty string when no MD is being written."
+        },
+        "team_envelopes_scanned": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of team-gate-reconciliation file-channel envelopes scanned under `<project>/.ai-skills-memory/sessions/*/team-envelopes/`. Optional; absent in pre-v2 reports. Source of the subagent silent-idle / interrupted-write findings that the JSONL transcripts cannot surface."
         }
       }
     },
     "verdict": {
       "type": "string",
       "enum": ["GREEN", "YELLOW", "RED", "INSUFFICIENT_DATA"],
-      "description": "Overall health verdict. RED if any error finding; YELLOW if any warn (and no errors); GREEN if all info or no findings; INSUFFICIENT_DATA when sessions_scanned == 0."
+      "description": "Overall health verdict. RED if any error finding; YELLOW if any warn (and no errors); GREEN if all info or no findings; INSUFFICIENT_DATA when sessions_scanned == 0. Exception (R3): a single-occurrence transient upstream-API error (e.g. HTTP 529 overloaded, count == 1) is treated as warn for the verdict only — its finding still carries severity `error`."
     },
     "findings": {
       "type": "array",

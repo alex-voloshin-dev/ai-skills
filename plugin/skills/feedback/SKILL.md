@@ -83,6 +83,13 @@ paired `.json` (full parity, atomic write) next to every `.md` per
 `output-schema.json` — the JSON is the canonical contract for `/plugin-author
 fix-feedback`.
 
+Classifier v2 (see `report-pipeline.md` §3a–3c) additionally: matches
+task-notifications across `queue-operation`/`attachment` events (not just
+`user`) and adds the `killed` status; scans `team-envelopes/` for silent-idle
+subagents and interrupted G7 writes — the dominant `/develop` failure that the
+transcripts cannot show; and softens the verdict so a single transient
+upstream-API error (e.g. HTTP 529 overloaded) does not force RED on its own.
+
 Sections in both:
 
 1. **Executive Summary** — verdict (GREEN/YELLOW/RED), window, sessions analyzed, total findings, top failure signature
@@ -149,7 +156,7 @@ Both files include placeholders the skill substitutes at render time.
 
 ## Integration
 
-- **Reads**: `~/.claude/projects/<sanitized-cwd>/*.jsonl`; `report-pipeline.md` (steps 3–6a + worker contract)
+- **Reads**: `~/.claude/projects/<sanitized-cwd>/*.jsonl`; `<project>/.ai-skills-memory/sessions/*/team-envelopes/*.json` (classifier v2 — the team-gate-reconciliation envelopes that surface silent-idle subagents the transcripts cannot show); `report-pipeline.md` (steps 3–6a + worker contract)
 - **Writes**: paired Markdown + canonical JSON reports at the same stem (e.g. `feedback-2026-05-13-0910.{md,json}`), plus a one-line summary append to `.ai-skills-memory/feedback/feedback.log`
 - **Downstream consumer**: `/plugin-author fix-feedback --from <report>.json` ingests the canonical JSON and produces a fix-cycle (one WP per finding, DEV → REVIEW → QA pipeline) — see `plugin/skills/plugin-author/feedback-parser.md` for the consumed shape. Markdown reparse via `--md` is degraded fallback only.
 - **Companion**: `/plugin-doctor` (live plugin diagnostic), `/eval` (rubric-based skill quality), `/bugfix` (file a fix once a finding is confirmed)

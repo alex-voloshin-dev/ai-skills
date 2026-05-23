@@ -6,6 +6,25 @@ All notable changes to the `ai-skills` plugin. Format: [Keep a Changelog](https:
 
 Next release in planning.
 
+## [0.4.4] — 2026-05-22 — /feedback sees its own dominant failure (silent-idle subagents)
+
+Direct fix-cycle (no subagent spawn — implemented inline with on-disk re-verification against the f4ai session logs, per the documented Path-B teammate-degradation block). Closes the `/feedback` blind spot surfaced by a `/plugin-doctor` cross-check: a default run reported the plugin "clean" (1 transient finding) while the hook had honestly recorded **99 silent-idle teammate envelopes** in the same window. `/feedback` was measuring its most common, most expensive failure with the wrong source — parsing transcripts (where a truncated subagent turn leaves no `max_tokens`/`refusal`/error `stop_reason`) and never reading `team-envelopes/`, the plugin's own source of truth for that failure.
+
+### Fixed — classifier blind to silent-idle subagents (the dominant /develop failure)
+
+- **New team-envelope reliability scan** (`collect_session_data.py`) — the worker now scans `<project>/.ai-skills-memory/sessions/*/team-envelopes/*.json` (the `team-gate-reconciliation` hook's output) as a first-class subagent-reliability source: `TeammateIdle`/`idle_notification` with `teammate_quiesced:true` → **warn** (`bus_state_absent` splits the worse sub-case into its own group); orphan `*.json.tmp` with no sibling final → **error** (lost G7 write), while a `.tmp` whose final exists → **info** (recovered/cosmetic, filtered at the warn floor — not data loss). `meta.team_envelopes_scanned` records the count.
+- **R1 — task-notification classifier (`type=user`-only → cross-type)** — task failures delivered on `type=queue-operation` / `type=attachment` carry no string `message.content`, so the old `content`-only match silently dropped them. v2 searches the whole serialized event, accepts `queue-operation`/`attachment`/`assistant` types, adds the `killed` and `canceled` statuses, and **dedupes per session by `(task-id, status)`** so the count reflects distinct failures, not raw deliveries (validated: 8 raw `failed` deliveries → 3 distinct, matching the manual cross-check).
+- **R3 — verdict softening for transient upstream errors** — a single-occurrence upstream-API error (HTTP 529 "overloaded", 429 rate-limit; `count == 1`) no longer forces RED on its own; it is treated as warn for the verdict while the finding keeps `severity: error`. A recurring upstream error (`count ≥ 2`) still escalates.
+- **Classifier version** bumped `1` → `2`.
+
+### Changed — schema + docs
+
+- **`output-schema.json`** — added optional `meta.team_envelopes_scanned` (integer); refined the `verdict` description for the R3 exception. Backward-compatible (additive, `schema_version` stays `"1"`).
+- **`report-pipeline.md`** — new §3a (cross-type task-notif + dedup), §3b (team-envelope scan), §3c (R3 verdict softening).
+- **`SKILL.md`** — Integration `Reads` now lists `team-envelopes/`; step-summary documents the v2 classifier behavior.
+
+Gates: `validate.py` `25 pass, 0 warn, 0 fail`; canonical JSON re-validated against `output-schema.json` (`jsonschema` ✓); unit checks for R3 (single→YELLOW, recurring→RED), orphan-`.tmp`-without-final→error, recovered-`.tmp`→info, and no-envelope-dir→no-crash all pass; live run on f4ai now surfaces the 99 silent-idle envelopes + a previously-missed `killed` task plus 3 deduped `failed` tasks. Plugin scope only (`collect_session_data.py`, `output-schema.json`, `report-pipeline.md`, `SKILL.md`, `plugin.json`).
+
 ## [0.4.3] — 2026-05-18 — userConfig env-var prefix fix (all knobs were silently inert)
 
 `/plugin-author improve` run (HEAVY, 3 WPs — WP1 `_lib.plugin_option()` foundation, WP2 consumer migration, WP3 docs; every DEV→REVIEW→QA gate green; Path A per-task `Agent` spawns + Lead reconciliation). Root cause verified against Claude Code's official `plugins-reference.md`.

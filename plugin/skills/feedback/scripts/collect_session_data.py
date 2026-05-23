@@ -77,13 +77,42 @@ import sys
 from pathlib import Path
 from typing import Any, Iterable, Iterator
 
-CLASSIFIER_VERSION = "1"
+CLASSIFIER_VERSION = "2"  # v2: cross-type task-notif (R1), team-envelope scan, R3 verdict
 MAX_EXCERPT_CHARS = 400
 SECRET_RE = re.compile(
     r"(?i)(api[_-]?key|secret|token|password|credential)([\"'\s:=]+)([^\s\"']+)"
 )
 PATH_NUM_RE = re.compile(r"\b\d+\b")            # for signature normalization
 ABS_PATH_RE = re.compile(r"/[A-Za-z0-9._/-]+")   # for signature normalization (masked to <path>)
+
+# Task-notification statuses that indicate a real subagent/task failure.
+# `killed` (SIGKILL'd background tasks) and `canceled` (US spelling) observed in
+# real logs alongside the original failed/timeout/cancelled/error set —
+# see report-pipeline.md §3.
+FAILED_TASK_STATUSES = frozenset(
+    {"failed", "timeout", "cancelled", "canceled", "error", "killed"}
+)
+
+# Event types that can carry a `<task-notification>` payload. On
+# queue-operation/attachment events the notification text is NOT in
+# message.content (often null), so rule #4 searches the whole serialized event.
+TASK_NOTIF_EVENT_TYPES = frozenset(
+    {"user", "queue-operation", "attachment", "assistant"}
+)
+
+# Quiesce events (file-channel envelopes) that signal a Path B teammate went
+# silent/idle — the dominant /develop reliability degradation (silent-idle
+# before a G7 return). Filenames begin with one of these.
+QUIESCE_EVENTS: tuple[str, ...] = ("TeammateIdle", "idle_notification")
+
+# Single-occurrence transient upstream-API errors (e.g. Anthropic HTTP 529
+# "overloaded", 429 rate-limit) are retried by the runtime and are not plugin
+# defects; they must not force a RED verdict on their own (R3). Note: signature
+# normalization collapses digits to `<n>`, so match on words, not "529".
+_TRANSIENT_UPSTREAM_RE = re.compile(
+    r"(?i)(overloaded|api[_ ]error|service[ _]unavailable"
+    r"|rate[ _-]?limit|too many requests|http\s*<n>)"
+)
 
 
 # ------------- helpers -------------
@@ -193,6 +222,39 @@ def _source_from_payload(obj: dict, kind: str) -> str:
 
 # ------------- classifiers -------------
 
+def _event_text(obj: dict) -> str:
+    """Searchable text for an event.
+
+    Prefers a string `message.content`; otherwise falls back to the serialized
+    payload. task-notifications on `queue-operation`/`attachment` events carry
+    no string `message.content`, so the notification markup only appears in the
+    full serialization — that is why rule #4 must search this blob, not just
+    `message.content`.
+    """
+    msg = obj.get("message")
+    if isinstance(msg, dict):
+        c = msg.get("content")
+        if isinstance(c, str) and c:
+            return c
+    try:
+        return json.dumps(obj, ensure_ascii=False)
+    except Exception:
+        return repr(obj)
+
+
+def _task_notif_key(obj: dict) -> str | None:
+    """Stable (task_id, status) key for a task-notification event, used to
+    dedupe the same failure delivered on multiple event types (a single
+    reviewer failure appears as both a `queue-operation` and a `user` event).
+    Returns None when the event carries no resolvable task id."""
+    blob = _event_text(obj)
+    tid = re.search(r"<task-id>([^<]+)</task-id>", blob)
+    st = re.search(r"<status>([a-z]+)</status>", blob)
+    if tid and st:
+        return f"{tid.group(1).strip()}:{st.group(1)}"
+    return None
+
+
 def _classify(obj: dict) -> tuple[str, str, str] | None:
     """
     Returns (kind, severity, signature) if this event is a finding, else None.
@@ -223,12 +285,16 @@ def _classify(obj: dict) -> tuple[str, str, str] | None:
         if stop in ("tool_use_error", "max_tokens", "refusal"):
             return "assistant", "warn", _signature(f"stop_reason={stop}")
 
-    # 4. task-notification failure inside a user event
-    if t == "user":
-        content = obj.get("message", {}).get("content", "")
-        if isinstance(content, str) and "<task-notification>" in content:
-            m = re.search(r"<status>([a-z]+)</status>", content)
-            if m and m.group(1) in ("failed", "timeout", "cancelled", "error"):
+    # 4. task-notification failure across user / queue-operation / attachment /
+    #    assistant events. On queue-operation/attachment events the notification
+    #    text is not in message.content (often null), so search the whole
+    #    serialized payload. Statuses include `killed` (SIGKILL'd background
+    #    tasks) seen in real logs. See report-pipeline.md §3.
+    if t in TASK_NOTIF_EVENT_TYPES:
+        blob = _event_text(obj)
+        if "<task-notification>" in blob:
+            m = re.search(r"<status>([a-z]+)</status>", blob)
+            if m and m.group(1) in FAILED_TASK_STATUSES:
                 return "subagent", "error", _signature(f"task status={m.group(1)}")
 
     # 5. tool failure
@@ -237,6 +303,179 @@ def _classify(obj: dict) -> tuple[str, str, str] | None:
         return "system", "error", sig
 
     return None
+
+
+# ------------- team-envelope reliability scan -------------
+#
+# The dominant /develop failure mode — a Path B teammate going silent-idle
+# before returning its G7 envelope — leaves almost no trace in the JSONL
+# transcript (a truncated assistant turn carries no max_tokens/refusal/error
+# stop_reason, so rule #3 never fires). The ai-skills team-gate-reconciliation
+# hook DOES record every such transition to
+#   <project>/.ai-skills-memory/sessions/<sid>/team-envelopes/<event>-*.json
+# with teammate_quiesced=true. This scanner reads that authoritative source so
+# /feedback can finally see its own most-common failure. See
+# report-pipeline.md §3 and plugin/hooks/scripts/team-gate-reconciliation.py.
+
+
+def _extract_role_from_envelope_name(name: str) -> str:
+    """Role hint from a file-channel envelope filename (G7-developer-WP-7 →
+    developer; findings-reviewer-* → reviewer)."""
+    if name.startswith("G7-"):
+        parts = name[3:].split("-")
+        if parts and parts[0]:
+            return parts[0]
+    if "reviewer" in name:
+        return "reviewer"
+    return "unknown"
+
+
+def _mtime_iso(p: Path) -> str:
+    try:
+        return dt.datetime.fromtimestamp(
+            p.stat().st_mtime, dt.timezone.utc
+        ).isoformat(timespec="seconds")
+    except OSError:
+        return ""
+
+
+def _file_excerpt(p: Path) -> str:
+    try:
+        raw = p.read_text(encoding="utf-8")
+    except OSError:
+        return ""
+    s = _redact(raw)
+    if len(s) > MAX_EXCERPT_CHARS:
+        s = s[: MAX_EXCERPT_CHARS - 1] + "…"
+    return s
+
+
+def _scan_team_envelopes(
+    project_path: str,
+    days: int,
+    floor: int,
+    sev_order: dict,
+) -> tuple[list[dict], int]:
+    """Scan <project>/.ai-skills-memory/sessions/*/team-envelopes/ for subagent
+    reliability signals invisible to the JSONL transcripts.
+
+    Returns ``(findings, envelopes_scanned)``. Two signal classes:
+
+    - **Silent-idle** — ``TeammateIdle``/``idle_notification`` envelopes with
+      ``teammate_quiesced=true`` → ``warn``. The Path B teammate went quiet;
+      verify its G7 return on disk. ``bus_state_absent=true`` is the worse
+      sub-case (the team bus was dead too) and groups separately.
+    - **Interrupted writes** — orphan ``*.json.tmp`` with no sibling final →
+      ``error`` (a cut-off atomic write = a lost return). When the final IS
+      present the ``.tmp`` is a recovered/cosmetic leftover → ``info`` (filtered
+      at the default warn floor, so recovered orphans never inflate the report).
+
+    These envelopes are written exclusively by the ai-skills
+    team-gate-reconciliation hook, so they always belong to plugin ``ai-skills``
+    (the caller gates this scan on the plugin filter). Read-only; never raises —
+    a per-file error is skipped, not propagated.
+    """
+    findings: list[dict] = []
+    scanned = 0
+    root = Path(project_path).resolve() / ".ai-skills-memory" / "sessions"
+    if not root.is_dir():
+        return findings, scanned
+    cutoff = (
+        dt.datetime.now(dt.timezone.utc).timestamp() - days * 86400
+        if days > 0
+        else None
+    )
+
+    def _emit(session_id, fname, sev, sig, ts, branch, excerpt):
+        if sev_order[sev] < floor:
+            return
+        h = hashlib.sha1(f"{session_id}:{fname}".encode()).hexdigest()[:8]
+        findings.append({
+            "id": f"f-{h}",
+            "session_id": session_id,
+            "line": 0,
+            "ts": ts or "",
+            "cwd": str(Path(project_path).resolve()),
+            "git_branch": branch or "",
+            "cli_version": "",
+            "kind": "subagent",
+            "source": "team-gate-reconciliation",
+            "plugin_id": "ai-skills",
+            "severity": sev,
+            "signature": sig,
+            "excerpt": excerpt,
+            "lead_in": "",
+            "follow_up": "",
+        })
+
+    try:
+        session_dirs = sorted(p for p in root.iterdir() if p.is_dir())
+    except OSError:
+        return findings, scanned
+
+    for session_dir in session_dirs:
+        env_dir = session_dir / "team-envelopes"
+        if not env_dir.is_dir():
+            continue
+        session_id = session_dir.name
+        try:
+            entries = sorted(env_dir.iterdir())
+        except OSError:
+            continue
+        for fpath in entries:
+            if not fpath.is_file():
+                continue
+            try:
+                if cutoff is not None and fpath.stat().st_mtime < cutoff:
+                    continue
+            except OSError:
+                continue
+            name = fpath.name
+
+            # Interrupted / recovered atomic writes.
+            if name.endswith(".json.tmp"):
+                scanned += 1
+                final = fpath.with_suffix("")  # strip trailing .tmp → .json
+                role = _extract_role_from_envelope_name(name)
+                if final.exists():
+                    _emit(session_id, name, "info",
+                          "recovered orphan envelope .tmp (final present)",
+                          _mtime_iso(fpath), "", _file_excerpt(fpath))
+                else:
+                    _emit(session_id, name, "error",
+                          f"interrupted envelope write: orphan .tmp, no final ({role})",
+                          _mtime_iso(fpath), "", _file_excerpt(fpath))
+                continue
+
+            if not name.endswith(".json"):
+                continue
+
+            # Silent-idle quiesce envelopes.
+            if name.startswith(QUIESCE_EVENTS):
+                scanned += 1
+                try:
+                    env = json.loads(fpath.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError, ValueError):
+                    continue
+                if not isinstance(env, dict) or not env.get("teammate_quiesced"):
+                    continue
+                bus_absent = bool(env.get("bus_state_absent"))
+                ev = env.get("event") or "TeammateIdle"
+                disk = env.get("disk_state")
+                branch = disk.get("branch", "") if isinstance(disk, dict) else ""
+                sig = (
+                    f"teammate silent-idle quiesced via {ev} "
+                    f"(bus_state_absent={str(bus_absent).lower()})"
+                )
+                _emit(session_id, name, "warn", sig,
+                      env.get("ts", ""), branch, _file_excerpt(fpath))
+                continue
+
+            # Clean transitions (TaskCompleted / shutdown_response / G7 finals):
+            # counted as scanned context, not findings.
+            scanned += 1
+
+    return findings, scanned
 
 
 # ------------- pipeline -------------
@@ -274,6 +513,7 @@ def collect(
     for path in files:
         session_id = path.stem
         prev_summary = None
+        seen_task_notifs: set[str] = set()  # dedup task-notif failures per session
         window: list[dict] = []  # short tail of last 2 events for lead-in / follow-up
         # We need follow-up too — do a two-pass over a small ring.
         events = list(_stream_jsonl(path))
@@ -288,6 +528,15 @@ def collect(
             kind, sev, sig = classified
             if sev_order[sev] < floor:
                 continue
+            # Dedup the same task-notification failure delivered on multiple
+            # event types (queue-operation + user) so the count reflects
+            # distinct failures, not raw deliveries.
+            if kind == "subagent" and sig.startswith("task status="):
+                tn_key = _task_notif_key(obj)
+                if tn_key is not None:
+                    if tn_key in seen_task_notifs:
+                        continue
+                    seen_task_notifs.add(tn_key)
             raw_excerpt = _excerpt(obj)
             plugin_id = _detect_plugin_id(raw_excerpt) or _detect_plugin_id(
                 json.dumps(obj.get("hookInfos") or "", ensure_ascii=False)
@@ -328,6 +577,20 @@ def collect(
                 "lead_in": lead_in or "",
                 "follow_up": follow_up or "",
             })
+
+    # Team-envelope reliability scan — the dominant /develop failure mode
+    # (Path B silent-idle before G7 return) is invisible to the transcripts but
+    # recorded by the team-gate-reconciliation hook. Envelopes are ai-skills-
+    # owned, so only scan when the plugin filter admits ai-skills.
+    env_findings: list[dict] = []
+    envelopes_scanned = 0
+    if plugin_filter in ("all", "ai-skills"):
+        env_findings, envelopes_scanned = _scan_team_envelopes(
+            project_path, days, floor, sev_order
+        )
+        findings.extend(env_findings)
+    meta["team_envelopes_scanned"] = envelopes_scanned
+    meta["team_envelope_findings"] = len(env_findings)
 
     # group
     groups: dict[tuple[str, str, str], dict] = {}
@@ -377,13 +640,34 @@ SCHEMA_VERSION = "1"
 SEVERITY_ORDER = ("info", "warn", "error")  # ascending
 
 
+def _is_transient_upstream(finding: dict) -> bool:
+    """R3: a single-occurrence transient upstream-API error (e.g. Anthropic
+    HTTP 529 "overloaded", 429 rate-limit) is retried by the runtime and is not
+    a plugin defect, so it must not force RED on its own. Only count == 1
+    qualifies — a recurring upstream error is a real signal worth escalating."""
+    if int(finding.get("count", 1)) != 1:
+        return False
+    blob = f"{finding.get('source_identity', '')} {finding.get('signature', '')}".lower()
+    if "api_error" in blob:
+        return True
+    return bool(_TRANSIENT_UPSTREAM_RE.search(blob))
+
+
 def _verdict(canonical_findings: list[dict], sessions_scanned: int) -> str:
     if not canonical_findings:
         return "INSUFFICIENT_DATA" if sessions_scanned == 0 else "GREEN"
-    sev_set = {f["severity"] for f in canonical_findings}
-    if "error" in sev_set:
+    # Effective severity per finding: a single-occurrence transient upstream-API
+    # error is downgraded to warn so it does not force RED (R3). Its real
+    # severity is preserved in the finding itself — only the verdict softens.
+    eff = []
+    for f in canonical_findings:
+        sev = f.get("severity", "warn")
+        if sev == "error" and _is_transient_upstream(f):
+            sev = "warn"
+        eff.append(sev)
+    if "error" in eff:
         return "RED"
-    if "warn" in sev_set:
+    if "warn" in eff:
         return "YELLOW"
     return "GREEN"
 
@@ -453,6 +737,7 @@ def to_canonical(
             "malformed_lines": int(legacy_meta.get("lines_skipped_malformed", 0)),
             "classifier_version": legacy_meta.get("classifier_version", "unknown"),
             "report_md_path": report_md_path or "",
+            "team_envelopes_scanned": int(legacy_meta.get("team_envelopes_scanned", 0)),
         },
         "verdict": _verdict(canonical_findings, int(legacy_meta.get("sessions_scanned", 0))),
         "findings": canonical_findings,
