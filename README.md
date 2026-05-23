@@ -41,6 +41,30 @@ repo tracks parity across all three with a public matrix. When a
 feature lands in Claude Code first, the matrix tracks the gap and the
 workaround for Codex / Windsurf until parity is reached.
 
+**What doesn't cross runtimes.** Parity means capability coverage, not
+identical mechanics. Some primitives are Claude-Code-only and degrade to
+advisory prose elsewhere:
+
+- **No shared asset path.** Each runtime hard-codes where it looks —
+  `plugin/skills/` (Claude Code), `.windsurf/workflows/` (Windsurf),
+  `AGENTS.md` / `prompts/` (Codex). No single layout is read by all, so
+  assets are packaged per runtime rather than read from one tree.
+- **Runtime machinery is Claude-Code-only.** The `Agent` sub-agent
+  spawn, G7 spawn/return schemas, RALF loops, and the eval framework
+  have no equivalent in Codex or Windsurf.
+- **Hooks don't port fully.** Claude Code runs 18 hooks across 13
+  events; Windsurf runs 4 (security only); Codex documents intent but
+  enforces nothing. Hook-backed guardrails become advisory in Codex.
+- **Orchestration falls back to single-agent.** `/develop`,
+  `/feature-design`, and `/bugfix` rely on the `Agent` tool; on Codex
+  and Windsurf they run as single-agent sequential prompts.
+- **Install is not uniform.** Claude Code installs as a plugin; Codex
+  and Windsurf install via one script (`install.sh` / `install.ps1`).
+
+The per-capability breakdown lives in
+[`review/parity-matrix.md`](./review/parity-matrix.md); the parity model
+is in [`PARITY.md`](./PARITY.md).
+
 ### Eval-driven, not hand-wavy
 
 Most public discourse on AI coding-agent evaluation is a vague "AI eval
@@ -190,7 +214,7 @@ ai-skills/
 
 ## Status
 
-- **Latest version:** 0.3.10 (see [`plugin/CHANGELOG.md`](./plugin/CHANGELOG.md) for history)
+- **Latest version:** 0.5.1 (see [`plugin/CHANGELOG.md`](./plugin/CHANGELOG.md) for history)
 - **License:** [MIT](./LICENSE)
 - **Maintainer:** Alex Voloshin
   ([@alex-voloshin-dev](https://github.com/alex-voloshin-dev)) — MS CS in progress

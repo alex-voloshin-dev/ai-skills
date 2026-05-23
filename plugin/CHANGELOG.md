@@ -6,6 +6,15 @@ All notable changes to the `ai-skills` plugin. Format: [Keep a Changelog](https:
 
 Next release in planning.
 
+## [0.5.1] — 2026-05-23 — docs: cross-vendor limitations + single-source design direction
+
+Documentation-only. No plugin asset, count, or behavior change.
+
+### Added — cross-vendor parity limitations
+
+- **`README.md`** — new "What doesn't cross runtimes" block under the Tri-vendor parity section: five concrete limitations (no shared asset path, Claude-Code-only runtime machinery, partial hook portability, single-agent orchestration fallback, non-uniform install) with links to `review/parity-matrix.md` and `PARITY.md`.
+- **`PARITY.md`** — new "Design direction: single-source generation (roadmap, not yet implemented)" section: the target of `plugin/` + marketplace as the single source of truth with release-time generation of the Codex / Windsurf / GitHub Copilot packages, why a generator beats a universal file or runtime host-detection, a four-vendor primitive mapping, the hard limits the migration cannot remove, and the asymmetric PnP install model. Marked explicitly as design intent — the repo still ships hand-maintained tri-vendor packages.
+
 ## [0.5.0] — 2026-05-23 — new feature: `knowledge-sync` (scheduled knowledge-base rescan & update)
 
 `/plugin-author create` run (8 work-packages across 6 waves; Path A synchronous `Agent` spawns + Lead disk-reconciliation per the documented Agent-Teams stall pattern). New skill pair that keeps a repo's internal `knowledge/` documentation tree in sync with code and opt-in external sources, on a daily cadence delegated to Claude Code's `schedule`/remote-routine layer (the plugin owns the work, not the clock). Designed end-to-end first (`/feature-design` → `design-drafts/knowledge-sync/PRODUCT-SPEC.md`, untracked).

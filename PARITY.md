@@ -131,6 +131,49 @@ Codex and Windsurf carry the simpler 4 carry-over hooks (security/audit only) pl
 - [ ] No project-specific references in any package
 - [ ] Parity matrix changelog updated
 
+## Design direction: single-source generation (roadmap, not yet implemented)
+
+> **Status: design intent.** The repo today still ships hand-maintained Codex + Windsurf packages as described above. This section records the target architecture and its hard limits, so the eventual migration stays honest about what it can and cannot deliver.
+
+**Goal.** Make `plugin/` plus the marketplace manifest the only source of truth in the tracked tree. Author every asset once for Claude Code (the primary) and generate the Codex / Windsurf / GitHub Copilot packages at release time, instead of maintaining them by hand. Target end-user experience: minimal configuration (plug-and-play) per vendor.
+
+**Why generation, not a universal file or runtime detection.** Two simpler ideas were considered and rejected:
+
+- *One universal file per asset, each vendor ignoring the others' parts.* Works for body content (a model follows the relevant conditional branch) but not for discovery: each runtime hard-codes where it looks, so a file in `plugin/skills/` is never found by Windsurf or Copilot. It also multiplies context cost on every invocation and risks cross-contamination on weaker models.
+- *Runtime detection of the host agent.* The mechanism that would detect and branch is itself vendor-specific — only Claude Code runs hooks/scripts. Codex and Copilot have no script runtime, so detection cannot run there.
+
+A build step is therefore unavoidable: one generator reads `plugin/` and emits each vendor's tree into that vendor's expected path.
+
+### Four-vendor primitive mapping (target)
+
+| Capability | Claude Code (source) | Codex | Windsurf | GitHub Copilot |
+|---|---|---|---|---|
+| Project instructions | `CLAUDE.md` | `AGENTS.md` | `.windsurf/rules/` | `.github/copilot-instructions.md` |
+| Invocable workflows | `skills/*` (`context: fork`) | `prompts/` | `.windsurf/workflows/` | `.github/prompts/*.prompt.md` |
+| Background knowledge | knowledge skills | `AGENTS.md` body | `.windsurf/skills/` | `.github/instructions/*.instructions.md` |
+| Roles / personas | `agents/*` | role overlays | `.windsurf/rules/roles/` | `.github/chatmodes/*.chatmode.md` |
+| Guardrails | `rules/*` + hooks | `.codex/rules/*` | `.windsurf/rules/*` + hooks | instructions (advisory) |
+
+`AGENTS.md` is the one converging cross-vendor standard (read by Codex, newer Windsurf, Copilot, and Claude Code via config). Workflows, roles, and hooks do not converge — they keep vendor-specific paths.
+
+### Hard limits the migration cannot remove
+
+- **No shared asset path** — assets must be packaged per runtime, not read from one tree.
+- **Runtime machinery is Claude-Code-only** — `Agent` spawn, G7 schemas, RALF loops, and the eval framework have no equivalent; dependent skills degrade to advisory prose.
+- **Hooks don't port fully** — full in Claude Code, security-only in Windsurf, none enforced in Codex/Copilot.
+- **Orchestration falls back to single-agent** — multi-agent workflows (`/develop`, `/feature-design`, `/bugfix`) run as single-agent sequential prompts off Claude Code.
+
+### PnP is asymmetric
+
+Only Claude Code has a true plugin/marketplace install. The realistic floor for the others is one install command; Copilot assets are per-repository by nature.
+
+| Vendor | Install | PnP level |
+|---|---|---|
+| Claude Code | marketplace / plugin | true plug-and-play |
+| Codex | one installer script | one command |
+| Windsurf | one installer script | one command |
+| Copilot | `.github/*` committed per repo | per-repository |
+
 ## Validation
 
 Run a parity check by comparing asset inventories:
