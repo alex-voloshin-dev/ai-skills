@@ -1,6 +1,6 @@
 # ai-skills
 
-> Vendor-agnostic agentic-dev tooling: 26 agents, 73 skills, and 45 eval
+> Vendor-agnostic agentic-dev tooling: 26 agents, 77 skills, and 48 eval
 > rubrics that work across Claude Code, Codex, and Windsurf.
 
 Engineering teams adopting AI coding agents hit the same wall: ad-hoc
@@ -8,8 +8,8 @@ patterns that work for one developer don't scale to the team, evaluation
 is hand-wavy, and switching runtimes means rewriting everything. This
 repo is the working playbook of patterns that survived production use
 across all three major agentic-dev runtimes — with a tracked parity
-matrix so you know exactly what's available where, and 45 eval rubrics
-with 270 calibrated samples so "is it working?" has an answer.
+matrix so you know exactly what's available where, and 48 eval rubrics
+with 288 calibrated samples so "is it working?" has an answer.
 
 ---
 
@@ -18,9 +18,9 @@ with 270 calibrated samples so "is it working?" has an answer.
 | Asset | Count | What it is |
 |-------|-------|------------|
 | **Agents** | 26 | Specialized sub-agents (review, planning, testing, refactor, security, etc.) — invoked from a parent agent or a slash command |
-| **Skills** | 53 | Reusable, named instruction packs that adapt the agent's behavior to a domain (Python, Go, AWS, frontend, etc.) |
-| **Eval rubrics** | 45 | Scorable rubrics for AI coding-agent output — code quality, test discipline, prompt-following, etc. |
-| **Calibration samples** | 270 | Labeled examples (6 per rubric) that show what each rubric catches in practice — not theory |
+| **Skills** | 77 | Reusable, named instruction packs that adapt the agent's behavior to a domain (Python, Go, AWS, frontend, etc.) |
+| **Eval rubrics** | 48 | Scorable rubrics for AI coding-agent output — code quality, test discipline, prompt-following, etc. |
+| **Calibration samples** | 288 | Labeled examples (6 per rubric) that show what each rubric catches in practice — not theory |
 | **Hooks** | 18 | Pre/post-action interceptors for guardrails (no `git commit`, file size limits, etc.) |
 | **Rules** | 12 | Cross-cutting policies enforced at the agent or repo level |
 | **Workflows** | 32 | User-invocable slash commands that compose agents + skills into a multi-step recipe |
@@ -68,7 +68,7 @@ is in [`PARITY.md`](./PARITY.md).
 ### Eval-driven, not hand-wavy
 
 Most public discourse on AI coding-agent evaluation is a vague "AI eval
-is hard". The 45 rubrics ship with 270 calibrated samples showing what
+is hard". The 48 rubrics ship with 288 calibrated samples showing what
 each rubric actually catches in production code. If you're
 operationalizing AI coding agents on a team, "how do I know it's
 working?" has an answer.
@@ -188,10 +188,10 @@ ai-skills/
 ├── plugin/                  # Claude Code plugin (canonical for Claude Code)
 │   ├── .claude-plugin/      # Plugin manifest + 13 userConfig knobs
 │   ├── agents/              # 26 specialized agents
-│   ├── skills/              # 73 skills (32 context: fork + 4 main-thread orchestrators + 37 knowledge skills)
+│   ├── skills/              # 77 skills
 │   ├── rules/               # 12 cross-cutting policies
 │   ├── hooks/               # 18 hook scripts across 13 lifecycle events
-│   ├── eval/                # 45 rubrics + 270 calibration samples + Tier 1/2 runner
+│   ├── eval/                # 48 rubrics + 288 calibration samples + Tier 1/2 runner
 │   ├── schemas/             # G7 spawn-payload + return-contract JSON schemas
 │   ├── docs/                # Getting-started + workflow + concept docs
 │   └── dev/validate.py      # Local validator
@@ -217,7 +217,7 @@ ai-skills/
 - **Latest version:** 0.5.1 (see [`plugin/CHANGELOG.md`](./plugin/CHANGELOG.md) for history)
 - **License:** [MIT](./LICENSE)
 - **Maintainer:** Alex Voloshin
-  ([@alex-voloshin-dev](https://github.com/alex-voloshin-dev)) — MS CS in progress
+  ([@alex-voloshin-dev](https://github.com/alex-voloshin-dev))
 - **Issues / discussion:** open a GitHub issue
 - **Updates:** periodic, visible commits weekly
 
